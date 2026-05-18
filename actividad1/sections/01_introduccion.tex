@@ -1,0 +1,23 @@
+\chapter{Introduccion}
+
+La robotica movil industrial permite automatizar movimientos repetitivos dentro de planta sin exigir una infraestructura tan rigida como la de los AGV tradicionales. En sectores con alta exigencia de calidad, como el aeronautico, su interes no se limita al transporte: tambien permite registrar entregas, controlar utiles, reducir interferencias con operarios y reforzar rutinas de prevencion FOD.
+
+En el caso planteado, Lunabotics actua como empresa ficticia responsable de preparar una oferta para Alestis Puerto Real. El cliente trabaja con componentes estructurales del A320, entre ellos el HTP, elemento aerodinamico horizontal situado en la cola que contribuye a la estabilidad longitudinal de la aeronave. En torno a la seccion 19.1 del avion convergen operaciones de estructura posterior, interfaces con elementos de cola, utiles de montaje, inspecciones y flujos de materiales que requieren coordinacion fina entre estaciones.
+
+La dificultad principal no reside en fabricar el HTP mediante un robot movil, sino en sostener un flujo productivo exigente. Cuando un operario debe abandonar su estacion para buscar herramientas, consumibles o documentacion, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, utiles no localizados, entregas no registradas o inspecciones FOD tardias.
+
+El objetivo de este informe es presentar una oferta tecnica y comercial creible, basada en robots moviles autonomos, que apoye el crecimiento de capacidad de 40 HTP al mes hacia 80 HTP al mes o mas. Para ello se propone una arquitectura AMR-FOD-Kitting, validable de forma teorica y simulable en CoppeliaSim antes de un piloto fisico.
+
+\section{Alcance de la propuesta}
+
+La solucion cubre transporte interno de kits, herramientas, consumibles y utiles ligeros o moderados; inspeccion preventiva FOD con camara; trazabilidad mediante RFID/QR; retorno de utiles usados; supervision de misiones; y registro de eventos. Quedan fuera del alcance la fabricacion directa de piezas aeronauticas, la manipulacion estructural pesada del HTP y la sustitucion de procesos certificados de calidad.
+
+\section{Supuestos y exclusiones}
+
+La propuesta asume una nave interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y disponibilidad de personal para carga/descarga del AMR. Tambien asume que los kits y herramientas pueden etiquetarse mediante RFID, QR o una combinacion de ambos.
+
+Se excluyen del presupuesto la obra civil, la certificacion formal de procesos aeronauticos, modificaciones estructurales de estaciones, integraciones ERP/MES altamente personalizadas no descritas en el alcance, y cualquier manipulacion automatica de piezas grandes del HTP. Estas exclusiones son deliberadas: evitan inflar promesas y delimitan una solucion de robotica movil defendible.
+
+\section{Criterio de realismo industrial}
+
+La propuesta se formula como apoyo a la operacion existente. Un sistema AMR puede liberar tiempo operativo, mejorar trazabilidad y estabilizar el suministro a estaciones, pero no reemplaza la validacion aeronautica, la planificacion de produccion ni la responsabilidad del personal especializado. Este enfoque evita promesas poco defendibles y mantiene coherencia con los contenidos de Sistemas Roboticos Moviles \cite{siegwart2011,tzafestas2014,ollero2001}.

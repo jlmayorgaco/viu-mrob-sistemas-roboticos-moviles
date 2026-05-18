@@ -1,0 +1,69 @@
+\chapter{Oferta comercial y presupuesto}
+
+El presupuesto se formula como estimacion academica para una oferta preliminar. Incluye hardware, sensores, accesorios, software, ingenieria, instalacion, formacion, mantenimiento, desplazamientos/logistica y margen comercial. Los importes no son una cotizacion real ni sustituyen una consulta a proveedores.
+
+\section{Hipotesis de coste}
+
+\begin{itemize}
+  \item Plataforma AMR omnidireccional industrial o equivalente representable en CoppeliaSim: 55.000 \texteuro{} por robot.
+  \item Paquete de sensores por robot: LiDAR 2D/3D, RGB-D, RFID/QR, IMU y encoders: 18.500 \texteuro{}.
+  \item Accesorios de kitting y portacargas: 6.500 \texteuro{} por robot.
+  \item Seguridad industrial adicional: escaner, bumpers y parada de emergencia: 7.500 \texteuro{} por robot.
+  \item HMI, tablet y comunicaciones industriales: 2.500 \texteuro{} por robot.
+\end{itemize}
+
+\section{Presupuesto por escenarios}
+
+\begin{longtable}{P{0.34\textwidth}r r r}
+\toprule
+\textbf{Partida presupuestaria} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+\midrule
+\endhead
+Plataformas AMR omnidireccionales & 55.000 & 385.000 & 935.000\\
+Sensores: LiDAR, RGB-D, RFID/QR, IMU & 18.500 & 129.500 & 314.500\\
+Accesorios portacargas/kitting & 6.500 & 45.500 & 110.500\\
+Seguridad: escaner, bumpers, E-stop & 7.500 & 52.500 & 127.500\\
+HMI, tablets y comunicaciones & 2.500 & 17.500 & 42.500\\
+Software de supervision y base de datos & 35.000 & 52.000 & 78.000\\
+Ingenieria, simulacion y configuracion & 30.000 & 75.000 & 145.000\\
+Instalacion y puesta en marcha & 12.000 & 36.000 & 85.000\\
+Formacion de operarios y mantenimiento & 6.000 & 15.000 & 28.000\\
+Mantenimiento primer año & 7.200 & 50.400 & 122.400\\
+Desplazamientos y logistica & 4.000 & 12.000 & 24.000\\
+\midrule
+\textbf{Subtotal antes de margen} & \textbf{184.200} & \textbf{870.400} & \textbf{2.012.400}\\
+Margen comercial estimado (12\%) & 22.104 & 104.448 & 241.488\\
+\midrule
+\textbf{Total estimado} & \textbf{206.304} & \textbf{974.848} & \textbf{2.253.888}\\
+\bottomrule
+\caption{Presupuesto estimado por escenario, en euros.}
+\label{tab:presupuesto}
+\end{longtable}
+
+\section{Interpretacion comercial}
+
+El escenario de 1 robot se recomienda como piloto controlado y no como solucion definitiva. Su objetivo comercial es reducir incertidumbre tecnica y operativa. El escenario de 7 robots representa una primera expansion industrial con gestor de flota y cobertura de varias estaciones. El escenario de 17 robots se justifica solo si la planta confirma la necesidad de soportar un volumen cercano a 80 HTP al mes o mas, y si los indicadores del piloto y la expansion demuestran utilidad.
+
+La diapositiva extra de presupuesto se incluye en la presentacion del proyecto, con la misma estructura de partidas para que la defensa oral mantenga coherencia con esta oferta comercial.
+
+\section{Coste total de propiedad}
+
+Para evitar una lectura incompleta del presupuesto, se recomienda evaluar el coste total de propiedad a tres años. La estimacion incluye mantenimiento anual, sustitucion preventiva de consumibles, soporte de software y pequeñas adaptaciones de rutas. No se incluyen ampliaciones mayores de integracion MES/ERP ni cambios de layout no previstos.
+
+\begin{longtable}{P{0.36\textwidth}r r r}
+\toprule
+\textbf{Concepto TCO 3 años} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+\midrule
+\endhead
+Inversion inicial estimada & 206.304 & 974.848 & 2.253.888\\
+Mantenimiento años 2 y 3 & 14.400 & 100.800 & 244.800\\
+Soporte software años 2 y 3 & 12.000 & 28.000 & 42.000\\
+Recalibraciones y ajustes de ruta & 5.000 & 18.000 & 36.000\\
+\midrule
+\textbf{TCO 3 años estimado} & \textbf{237.704} & \textbf{1.121.648} & \textbf{2.576.688}\\
+\bottomrule
+\end{longtable}
+
+\section{Condiciones comerciales academicas}
+
+Se propone un pago por hitos: 30\% al inicio de ingenieria y simulacion, 40\% tras entrega del piloto instalado, 20\% tras validacion de KPIs y 10\% al cierre documental y formacion. En un contrato real, estos hitos deberian acompañarse de clausulas de aceptacion, responsabilidad, soporte, ciberseguridad y tratamiento de datos.

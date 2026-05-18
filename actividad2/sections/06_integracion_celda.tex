@@ -1,0 +1,17 @@
+\chapter{Integracion en celda robotizada}
+
+El enunciado pide añadir el robot Pioneer con su script a una celda robotizada para que trabaje coordinado con otros sistemas. La integracion propuesta es logistica y de acompañamiento: el Pioneer sigue a Bill o se desplaza hacia puntos de servicio para simular transporte ligero, asistencia a operario o inspeccion de una zona.
+
+\section{Interaccion con la celda}
+
+\begin{itemize}
+  \item El robot parte de una zona segura de espera.
+  \item Recibe un objetivo: Bill, mannequin o un dummy de estacion.
+  \item Navega evitando obstaculos fijos de la celda.
+  \item Se detiene a una distancia de seguridad.
+  \item Registra estado de llegada mediante una variable o señal de CoppeliaSim.
+\end{itemize}
+
+\section{Coordinacion}
+
+La coordinacion basica puede realizarse con señales internas de CoppeliaSim. Por ejemplo, una señal `missionReady` habilita el movimiento y una señal `pioneerArrived` informa a la celda de que el robot llego. En una ampliacion posterior, estas señales pueden conectarse con scripts de otros robots o con un supervisor externo.

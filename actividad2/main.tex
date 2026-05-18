@@ -1,0 +1,55 @@
+\documentclass[11pt,oneside]{report}
+\usepackage{viu-mrob-activity}
+\usepackage{amsmath,amssymb,siunitx,float,caption,subcaption,listings}
+\sisetup{output-decimal-marker={,},group-separator={.},group-minimum-digits=4}
+\graphicspath{{figures/}{images/institutional/}}
+
+\lstdefinelanguage{Lua}{
+  morekeywords={function,end,if,then,else,elseif,for,while,do,local,return,and,or,not},
+  sensitive=true,
+  morecomment=[l]{--},
+  morestring=[b]"
+}
+\lstset{
+  language=Lua,
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{UniPrimary!60},
+  keywordstyle=\color{UniPrimaryDeep}\bfseries,
+  commentstyle=\color{UniMuted}\itshape,
+  showstringspaces=false
+}
+
+\SetVIUMaster{Master Universitario en Robotica y Automatizacion de Procesos Industriales}
+\SetVIUSubject{Sistemas Roboticos Moviles}
+\SetVIUActivityType{Actividad 2}
+\SetVIUActivityTitle{Programacion y control de un robot terrestre tipo Pioneer en CoppeliaSim/Lua}
+\SetVIUProfessor{Jose I. Iñiguez\\\scriptsize\texttt{jinigueza@professor.universidadviu.com}}
+\SetVIUAuthor{Jorge Luis Mayorga Taborda}
+\SetVIUDate{26 de mayo de 2026}
+\SetVIUGroup{Robot Pioneer P3DX}
+
+\begin{document}
+\MakeVIUActivityTitle
+\tableofcontents
+\clearpage
+
+\input{sections/00_resumen}
+\input{sections/01_introduccion}
+\input{sections/02_entorno_coppeliasim}
+\input{sections/03_modelo_robot}
+\input{sections/04_campos_potenciales}
+\input{sections/05_anticolisiones}
+\input{sections/06_integracion_celda}
+\input{sections/07_validacion}
+\input{sections/08_conclusiones}
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliografia}
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\appendix
+\input{sections/09_anexos}
+\end{document}

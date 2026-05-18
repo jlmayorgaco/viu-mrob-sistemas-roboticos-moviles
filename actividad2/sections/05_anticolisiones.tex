@@ -1,0 +1,33 @@
+\chapter{Parte 2: sistema anticolisiones}
+
+La segunda parte modifica el comportamiento anterior para que el robot esquive obstaculos mientras mantiene atraccion hacia el objetivo. Se añade una fuerza repulsiva asociada a sensores de proximidad:
+
+\[
+\vec{F}_{rep} =
+\begin{cases}
+k_{rep}\left(\frac{1}{d}-\frac{1}{d_0}\right)\frac{1}{d^2}\hat{u}_{obs}, & d < d_0\\
+0, & d \ge d_0
+\end{cases}
+\]
+
+donde \(d\) es la distancia al obstaculo, \(d_0\) el umbral de influencia y \(\hat{u}_{obs}\) la direccion de alejamiento.
+
+\section{Combinacion de fuerzas}
+
+La fuerza total se calcula como:
+
+\[
+\vec{F}_{total} = \vec{F}_{att} + \sum_i \vec{F}_{rep,i}
+\]
+
+El vector resultante determina el rumbo deseado. Si un obstaculo aparece frontalmente, la componente repulsiva modifica el angulo de giro y reduce la velocidad. Para evitar movimientos inestables se aplican saturaciones y un filtro simple sobre la consigna.
+
+\section{Casos de prueba}
+
+\begin{itemize}
+  \item Obstaculo aislado entre robot y objetivo.
+  \item Pasillo estrecho con margen suficiente.
+  \item Objetivo movil representado por Bill.
+  \item Obstaculo inesperado durante la aproximacion.
+  \item Escenario sin obstaculos para comprobar que no se degrada la Parte 1.
+\end{itemize}

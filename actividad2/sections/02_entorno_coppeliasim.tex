@@ -1,0 +1,14 @@
+\chapter{Entorno CoppeliaSim}
+
+CoppeliaSim permite simular robots moviles, sensores, cuerpos rigidos y scripts de control en una escena 3D. Para esta actividad se emplea un robot tipo Pioneer P3DX, comun en docencia por su modelo diferencial sencillo y por la disponibilidad de ejemplos de sensores de proximidad.
+
+Los archivos originales de la asignatura se han copiado a la carpeta `coppeliasim/`:
+
+\begin{itemize}
+  \item `Actividad2\_1\_Pioneer.ttt`: base para la parte de desplazamiento hacia objetivo.
+  \item `Actividad2\_2\_Pioneer.ttt`: base para la parte de evitacion de colisiones.
+\end{itemize}
+
+\section{Configuracion recomendada}
+
+Antes de ejecutar el script definitivo se recomienda comprobar nombres de objetos, jerarquia del robot, alias de motores, sensores de proximidad, objeto objetivo y sistema de coordenadas de la escena. Esta verificacion evita errores tipicos al copiar codigo de ejemplo: handles nulos, signos invertidos en las ruedas o lectura de objetivo respecto al marco incorrecto.

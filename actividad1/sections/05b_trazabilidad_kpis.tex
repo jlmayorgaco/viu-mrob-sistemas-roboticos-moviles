@@ -1,0 +1,38 @@
+\chapter{Trazabilidad problema--requisito--solucion}
+
+Para que la oferta sea defendible ante el profesor y ante un cliente industrial, cada problema debe quedar conectado con un requisito, una funcion tecnica y un indicador de verificacion. La tabla siguiente evita que la propuesta parezca una lista de componentes sin justificacion.
+
+\begin{longtable}{P{0.20\textwidth}P{0.20\textwidth}P{0.26\textwidth}P{0.24\textwidth}}
+\toprule
+\textbf{Problema observado} & \textbf{Requisito derivado} & \textbf{Respuesta tecnica} & \textbf{KPI de aceptacion}\\
+\midrule
+\endhead
+Operarios abandonan la estacion para buscar utiles. & Reducir desplazamientos improductivos. & Misiones AMR de entrega y retorno de utiles usados. & Minutos de desplazamiento evitados por turno; misiones completadas sin intervencion.\\
+Kits o herramientas llegan tarde o incompletos. & Trazabilidad y confirmacion de entrega. & Lectura RFID/QR, HMI de estacion y registro de recepcion. & Entregas a tiempo; incidencias de kit incompleto; entregas sin confirmacion.\\
+Riesgo FOD en zonas de trabajo. & Inspeccion preventiva documentada. & Camara RGB-D, rondas FOD y evidencias fotograficas asociadas a mision. & Eventos FOD detectados; tiempo de respuesta; zonas inspeccionadas por turno.\\
+Pasillos y estaciones con restricciones variables. & Navegacion flexible y segura. & AMR omnidireccional con SLAM, LiDAR y zonas de seguridad. & Paradas de seguridad; bloqueos de ruta; tiempo medio de replanificacion.\\
+Escalado de 40 a 80 HTP/mes. & Solucion escalable multi-robot. & Gestor de flota, prioridades de mision y base de datos unica. & Utilizacion de flota; disponibilidad; throughput logistico por turno.\\
+Falta de evidencia fina para mejora continua. & Registro auditable de eventos. & Base de datos de misiones, trazabilidad y excepciones. & Porcentaje de misiones con registro completo; informes semanales generados.\\
+\bottomrule
+\end{longtable}
+
+\section{KPIs recomendados para el piloto}
+
+\begin{longtable}{P{0.28\textwidth}P{0.30\textwidth}P{0.30\textwidth}}
+\toprule
+\textbf{Indicador} & \textbf{Formula o criterio} & \textbf{Umbral de aceptacion}\\
+\midrule
+\endhead
+Exito de mision & Misiones finalizadas / misiones lanzadas. & \(\geq 95\%\) en piloto controlado.\\
+Disponibilidad AMR & Tiempo operativo / tiempo planificado. & \(\geq 90\%\) durante el piloto.\\
+Entrega a tiempo & Entregas dentro de ventana / entregas totales. & \(\geq 90\%\) tras ajuste de rutas.\\
+Registro completo & Misiones con kit, destino, hora y confirmacion / total. & \(\geq 98\%\).\\
+Incidentes de seguridad & Eventos con contacto o parada no controlada. & 0 incidentes con daño o contacto no previsto.\\
+Aceptacion de operarios & Encuesta breve de utilidad y carga operativa. & Media \(\geq 4/5\).\\
+Tiempo improductivo recuperado & Horas estimadas antes--despues por estacion. & Tendencia positiva documentada, sin prometer plantilla menor.\\
+\bottomrule
+\end{longtable}
+
+\section{Evidencia esperada}
+
+La evidencia minima para cerrar el piloto debe incluir mapa de rutas, listado de misiones, historico de alarmas, registro de entregas RFID/QR, capturas FOD, encuesta de usuarios y comparativa de tiempos antes--despues. Esta evidencia no sustituye una certificacion aeronautica, pero permite defender que la solucion aporta valor medible.

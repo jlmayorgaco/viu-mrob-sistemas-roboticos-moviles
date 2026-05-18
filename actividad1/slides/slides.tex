@@ -1,0 +1,216 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=16cm,paperheight=9cm,margin=0.65cm]{geometry}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\pagestyle{empty}
+
+\definecolor{UniPrimary}{HTML}{E8552D}
+\definecolor{UniPrimaryDeep}{HTML}{C44624}
+\definecolor{UniDark}{HTML}{1A1A1A}
+\definecolor{UniLight}{HTML}{F6F7F9}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.18cm}
+\renewcommand{\familydefault}{\sfdefault}
+\newcounter{slide}
+\newcommand{\slide}[2]{%
+  \ifnum\value{slide}>0\clearpage\fi
+  \stepcounter{slide}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[UniPrimaryDeep] (current page.north west) rectangle ([yshift=-1.0cm]current page.north east);
+    \node[anchor=west,text=white,font=\bfseries\large] at ([xshift=0.65cm,yshift=-0.52cm]current page.north west) {#1};
+    \node[anchor=east,text=white,font=\small] at ([xshift=-0.65cm,yshift=-0.52cm]current page.north east) {\theslide};
+  \end{tikzpicture}
+  \vspace*{0.72cm}
+  #2
+}
+
+\begin{document}
+\slide{Sistema AMR-FOD-Kitting para linea HTP A320}{
+{\Large Actividad 1: Oferta de automatizacion a planta industrial}\\
+{\normalsize Universidad Internacional de Valencia}\\[0.2cm]
+Autor: Jorge Luis Mayorga Taborda\\
+Profesor: Jose I. Iñiguez\\
+Entrega: 26 de mayo de 2026
+}
+
+\slide{Objetivo de la propuesta}{
+\textbf{Alcance:} mejorar logistica interna, trazabilidad e inspeccion FOD en el entorno HTP A320 y seccion 19.1 de Alestis Puerto Real.
+\begin{itemize}
+  \item No se propone fabricar el HTP con robots moviles.
+  \item Automatizacion de kitting, herramientas, consumibles, retorno de utiles y registros.
+  \item Apoyo al escalado desde 40 HTP/mes hacia 80 HTP/mes o mas.
+\end{itemize}
+}
+
+\slide{Presentacion de Lunabotics}{
+\begin{itemize}
+  \item Empresa ficticia especializada en robotica movil industrial.
+  \item Enfoque: soluciones AMR seguras, trazables y desplegables por fases.
+  \item Propuesta: piloto, expansion y despliegue extendido.
+  \item Validacion previa mediante CoppeliaSim y simulacion de rutas.
+\end{itemize}
+}
+
+\slide{Contexto: Alestis, HTP y seccion 19.1}{
+\begin{itemize}
+  \item El HTP es el estabilizador horizontal de cola del A320.
+  \item La seccion 19.1 se asocia al entorno posterior e interfaces de cola.
+  \item El proceso requiere utiles, kits, herramientas, consumibles, inspecciones y registros.
+  \item La oportunidad esta en estabilizar el flujo operativo, no en cambiar el montaje certificado.
+\end{itemize}
+}
+
+\slide{Informacion obtenida de la entrevista}{
+\small
+\begin{tabularx}{\textwidth}{Y Y}
+\toprule
+\textbf{Hallazgo} & \textbf{Implicacion}\\
+\midrule
+Microperdidas por busqueda de utiles. & Misiones AMR de entrega y retorno.\\
+Kits o herramientas incompletas bloquean estaciones. & RFID/QR y confirmacion digital.\\
+FOD es riesgo sensible. & Rondas con camara RGB-D y registro.\\
+Layout variable y zonas estrechas. & Base omnidireccional y SLAM.\\
+\bottomrule
+\end{tabularx}
+}
+
+\slide{Problemas detectados}{
+\begin{itemize}
+  \item Desplazamientos improductivos de operarios.
+  \item Esperas por kits, herramientas y consumibles.
+  \item Riesgo FOD en zonas de trabajo aeronautico.
+  \item Trazabilidad fina insuficiente.
+  \item Coordinacion manual entre estaciones y logistica.
+  \item Necesidad de escalar capacidad sin aumentar desorden operativo.
+\end{itemize}
+}
+
+\slide{Requisitos, trazabilidad y KPIs}{
+\begin{tabularx}{\textwidth}{Y Y}
+\toprule
+\textbf{Problema / requisito} & \textbf{Respuesta / KPI}\\
+\midrule
+Desplazamientos improductivos. & Misiones AMR; minutos evitados por turno.\\
+Kits incompletos o tardios. & RFID/QR + HMI; entregas a tiempo.\\
+Riesgo FOD. & RGB-D + rondas; eventos registrados.\\
+Layout variable. & AMR omnidireccional; replanificaciones seguras.\\
+Escalado 40 a 80 HTP/mes. & Gestor de flota; disponibilidad y utilizacion.\\
+\bottomrule
+\end{tabularx}
+{\small Umbrales piloto: exito de mision \(\geq 95\%\), registro completo \(\geq 98\%\), incidentes con daño = 0.}
+}
+
+\slide{Alternativas roboticas}{
+\small
+\begin{tabularx}{\textwidth}{l Y Y}
+\toprule
+\textbf{Opcion} & \textbf{Resultado} & \textbf{Motivo}\\
+\midrule
+AGV & No principal & Rutas demasiado rigidas.\\
+AMR diferencial & Viable & Menor maniobrabilidad lateral.\\
+AMR omnidireccional & Seleccionado & Mejor aproximacion a estaciones.\\
+Orugas & Descartado & Excesivo para pavimento industrial.\\
+Dron & Descartado & Riesgo y baja carga en interior.\\
+Patas & Descartado & Coste y complejidad innecesaria.\\
+\bottomrule
+\end{tabularx}
+}
+
+\slide{Robot seleccionado}{
+\textbf{AMR omnidireccional}: plataforma tipo KUKA YouBot, KUKA Omnirob o equivalente industrial representable en CoppeliaSim.
+\begin{itemize}
+  \item Movimiento lateral sin cambiar orientacion.
+  \item Mejor maniobra cerca de estaciones, estructuras y operarios.
+  \item Mas flexible que un AGV de ruta fija.
+  \item Adecuado para validar navegacion, sensores y misiones.
+\end{itemize}
+}
+
+\slide{Sensores y arquitectura}{
+\begin{itemize}
+  \item LiDAR 2D/3D para SLAM, obstaculos y seguridad.
+  \item Camara RGB-D para inspeccion FOD.
+  \item RFID/QR para kits, herramientas y entregas.
+  \item IMU, encoders, bumpers, escaner laser y E-stop.
+  \item HMI, WiFi industrial, supervisor y base de datos.
+\end{itemize}
+}
+
+\slide{Flujo operativo}{
+\begin{enumerate}
+  \item Planificacion de mision.
+  \item Carga de kit o herramienta.
+  \item Lectura RFID/QR.
+  \item Navegacion hasta estacion.
+  \item Entrega y confirmacion.
+  \item Inspeccion FOD si aplica.
+  \item Retorno de utiles o nueva mision.
+\end{enumerate}
+}
+
+\slide{Escenario piloto: 1 robot}{
+\begin{itemize}
+  \item Objetivo: validar navegacion, seguridad, kitting e inspeccion FOD.
+  \item Alcance: zona acotada y estaciones seleccionadas.
+  \item Riesgos: aceptacion de usuarios, mapa incompleto, interferencias.
+  \item Criterios: 95\% de misiones completadas, cero incidentes, esperas reducidas.
+  \item Coste estimado: 206.300 \texteuro{}.
+\end{itemize}
+}
+
+\slide{Escenarios de expansion: 7 y 17 robots}{
+\begin{tabularx}{\textwidth}{l Y Y}
+\toprule
+\textbf{Escenario} & \textbf{Alcance} & \textbf{Coste estimado}\\
+\midrule
+7 robots & Varias estaciones HTP, retornos de utiles, rondas FOD, gestor de flota. & 974.800 \texteuro{}\\
+17 robots & Cobertura extendida, integracion avanzada y soporte a 80 HTP/mes o mas. & 2.253.900 \texteuro{}\\
+\bottomrule
+\end{tabularx}
+}
+
+\slide{Viabilidad y beneficios}{
+\begin{itemize}
+  \item Seguridad mediante sensores, zonas, velocidad limitada y E-stop.
+  \item Integracion gradual: HMI local, base de datos, despues MES/ERP.
+  \item Beneficios: menor espera, trazabilidad, datos de flujo y prevencion FOD.
+  \item Validacion previa en CoppeliaSim: rutas, obstaculos, aproximacion lateral y misiones trazadas.
+  \item Riesgos mitigados: aceptacion de operarios, mapa desactualizado, WiFi y lecturas RFID/QR.
+\end{itemize}
+}
+
+\slide{Presupuesto detallado}{
+\scriptsize
+\begin{tabularx}{\textwidth}{Y r r r}
+\toprule
+\textbf{Partida} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+\midrule
+Hardware AMR, sensores, kitting, seguridad, HMI & 90.000 & 630.000 & 1.530.000\\
+Software supervision y base de datos & 35.000 & 52.000 & 78.000\\
+Ingenieria, simulacion y configuracion & 30.000 & 75.000 & 145.000\\
+Instalacion, formacion, mantenimiento y logistica & 29.200 & 113.400 & 259.400\\
+Margen comercial 12\% & 22.104 & 104.448 & 241.488\\
+\midrule
+\textbf{Total estimado} & \textbf{206.304} & \textbf{974.848} & \textbf{2.253.888}\\
+\bottomrule
+\end{tabularx}
+{\tiny TCO 3 años estimado: 237.704 / 1.121.648 / 2.576.688 \texteuro{}. Cifras academicas, no cotizacion vinculante.}
+}
+
+\slide{Conclusion}{
+\textbf{Decision recomendada:} iniciar con piloto de 1 AMR omnidireccional, validado en CoppeliaSim y medido con KPIs de seguridad, entregas, trazabilidad, FOD y aceptacion operativa.
+\begin{itemize}
+  \item Solucion viable, escalable y realista.
+  \item Alineada con robotica movil industrial.
+  \item Apoya el aumento de capacidad sin prometer automatizacion imposible.
+\end{itemize}
+}
+\end{document}

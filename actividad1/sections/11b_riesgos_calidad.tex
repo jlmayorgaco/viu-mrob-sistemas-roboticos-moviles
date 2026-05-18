@@ -1,0 +1,32 @@
+\chapter{Riesgos, calidad y aceptacion}
+
+Una oferta profesional no solo enumera beneficios; tambien muestra los riesgos y como se controlan. La matriz siguiente resume los principales riesgos del Sistema AMR-FOD-Kitting y sus mitigaciones.
+
+\begin{longtable}{P{0.24\textwidth}P{0.12\textwidth}P{0.12\textwidth}P{0.32\textwidth}P{0.10\textwidth}}
+\toprule
+\textbf{Riesgo} & \textbf{Prob.} & \textbf{Impacto} & \textbf{Mitigacion} & \textbf{Resp.}\\
+\midrule
+\endhead
+Interferencia con operarios en pasillos. & Media & Alta & Zonas de seguridad, velocidad limitada, escaner laser, pruebas con peatones y formacion. & HSE/Ing.\\
+Lecturas RFID/QR incompletas. & Media & Media & Puntos de lectura redundantes, validacion HMI y excepciones visibles. & Logistica\\
+Falsos positivos FOD. & Media & Media & Clasificacion asistida, revision humana y ajuste de iluminacion/camara. & Calidad\\
+Mapa desactualizado por cambios de layout. & Media & Alta & Procedimiento de remapeo, control de cambios y versionado de rutas. & Ing.\\
+Saturacion de red WiFi. & Baja & Alta & Estudio de cobertura, QoS industrial y modo degradado con cola local. & IT/OT\\
+Baja aceptacion del operario. & Media & Alta & Piloto participativo, HMI simple, formacion corta y medicion de carga operativa. & Produccion\\
+Coste percibido superior al beneficio inicial. & Media & Media & Piloto medido, KPIs antes--despues y expansion condicionada a evidencia. & Direccion\\
+\bottomrule
+\end{longtable}
+
+\section{Criterios de aceptacion por fase}
+
+\begin{itemize}
+  \item \textbf{Seguridad:} cero contactos no previstos, parada de emergencia verificada y rutas validadas con operarios.
+  \item \textbf{Operacion:} al menos 95\% de misiones completadas en piloto, con causas de fallo clasificadas.
+  \item \textbf{Trazabilidad:} al menos 98\% de misiones con registro completo de identificador, destino, hora y confirmacion.
+  \item \textbf{FOD:} rondas registradas y eventos revisables por calidad, sin sustituir inspecciones obligatorias.
+  \item \textbf{Escalabilidad:} gestor de flota probado antes de pasar de 1 a 7 robots.
+\end{itemize}
+
+\section{Gobierno de datos}
+
+Los datos de misiones deben conservarse con identificador unico, sello temporal, estacion, robot, operador de confirmacion, tipo de mision, excepciones y evidencias FOD. Se recomienda un periodo minimo de conservacion de 12 meses para analisis de mejora continua y auditorias internas. El acceso debe separarse por perfiles: operario, supervisor, mantenimiento, calidad y administrador.

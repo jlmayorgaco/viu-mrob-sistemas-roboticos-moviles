@@ -1,0 +1,22 @@
+\chapter{Funcionamiento operativo}
+
+El flujo diario se diseña para que el robot apoye al operario sin introducir pasos innecesarios. La operacion normal sigue la secuencia siguiente:
+
+\begin{enumerate}
+  \item \textbf{Planificacion de mision.} El supervisor, la estacion o el planificador genera una mision de entrega, retorno o inspeccion.
+  \item \textbf{Carga de kit o herramienta.} El personal de logistica coloca el material en el modulo portacargas del AMR.
+  \item \textbf{Lectura RFID/QR.} El robot valida identificadores de kit, herramienta, orden y destino.
+  \item \textbf{Navegacion hasta estacion.} El AMR calcula ruta, evita obstaculos y ajusta velocidad segun zona.
+  \item \textbf{Entrega.} El robot se posiciona de forma lateral u orientada segun la estacion y avisa al operario.
+  \item \textbf{Confirmacion.} El operario confirma en HMI, tablet o lector QR; el sistema registra la transaccion.
+  \item \textbf{Inspeccion FOD si aplica.} El robot captura imagen de la zona o ejecuta una ronda definida.
+  \item \textbf{Retorno o nueva mision.} El AMR devuelve utiles usados, va a carga o acepta la siguiente tarea.
+\end{enumerate}
+
+\section{Gestion de excepciones}
+
+Si el robot detecta un obstaculo persistente, una lectura RFID incoherente, una zona bloqueada o una alarma de seguridad, la mision pasa a estado de excepcion. La HMI muestra la causa y propone reintento, reasignacion, llamada a operario o retirada del robot. Esta gestion es importante porque una automatizacion industrial fiable debe contemplar fallos cotidianos sin detener toda la linea.
+
+\section{Datos generados para validacion}
+
+Cada mision genera datos que alimentan la validacion posterior: identificador de robot, ruta prevista, ruta ejecutada, tiempo de espera, eventos de seguridad, lecturas RFID/QR, confirmacion de entrega, incidencias FOD y resultado final. Estos registros permiten comparar la operacion real con los escenarios simulados en CoppeliaSim y detectar desviaciones antes de escalar la flota.

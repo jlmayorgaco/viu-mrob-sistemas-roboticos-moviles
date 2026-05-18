@@ -1,0 +1,143 @@
+\documentclass[10pt]{article}
+\usepackage[paperwidth=16cm,paperheight=9cm,margin=0.65cm]{geometry}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\pagestyle{empty}
+
+\definecolor{UniPrimary}{HTML}{E8552D}
+\definecolor{UniPrimaryDeep}{HTML}{C44624}
+\definecolor{UniLight}{HTML}{F6F7F9}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.18cm}
+\renewcommand{\familydefault}{\sfdefault}
+\newcounter{slide}
+\newcommand{\slide}[2]{%
+  \ifnum\value{slide}>0\clearpage\fi
+  \stepcounter{slide}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[UniPrimaryDeep] (current page.north west) rectangle ([yshift=-1.0cm]current page.north east);
+    \node[anchor=west,text=white,font=\bfseries\large] at ([xshift=0.65cm,yshift=-0.52cm]current page.north west) {#1};
+    \node[anchor=east,text=white,font=\small] at ([xshift=-0.65cm,yshift=-0.52cm]current page.north east) {\theslide};
+  \end{tikzpicture}
+  \vspace*{0.72cm}
+  #2
+}
+
+\begin{document}
+\slide{Programacion y control de un robot Pioneer}{
+{\Large Actividad 2 - CoppeliaSim/Lua}\\
+Universidad Internacional de Valencia\\[0.2cm]
+Autor: Jorge Luis Mayorga Taborda\\
+Profesor: Jose I. Iñiguez\\
+Entrega: 26 de mayo de 2026
+}
+
+\slide{Objetivo}{
+\begin{itemize}
+  \item Programar un Pioneer P3DX en CoppeliaSim.
+  \item Parte 1: desplazamiento hacia un objetivo mediante campos potenciales.
+  \item Parte 2: evitacion reactiva de obstaculos.
+  \item Integracion del robot en una celda robotizada.
+\end{itemize}
+}
+
+\slide{Entorno de simulacion}{
+\begin{itemize}
+  \item CoppeliaSim con scripts Lua embebidos.
+  \item Escenas base: Actividad2\_1\_Pioneer.ttt y Actividad2\_2\_Pioneer.ttt.
+  \item Objetivos posibles: mannequin, Bill o dummy de estacion.
+  \item Validacion visual y mediante indicadores de distancia.
+\end{itemize}
+}
+
+\slide{Modelo Pioneer P3DX}{
+\[
+v_L = v - \frac{L}{2}\omega,\qquad
+v_R = v + \frac{L}{2}\omega
+\]
+\[
+\omega_L = \frac{v_L}{r},\qquad
+\omega_R = \frac{v_R}{r}
+\]
+Robot diferencial con control por velocidad de ruedas y sensores de proximidad.
+}
+
+\slide{Parte 1: campos potenciales}{
+\[
+\vec{F}_{att}=k_{att}
+\begin{bmatrix}
+x_g-x_r\\
+y_g-y_r
+\end{bmatrix}
+\]
+\begin{itemize}
+  \item Calcular vector robot-objetivo.
+  \item Obtener rumbo deseado con atan2.
+  \item Regular avance y giro con saturacion.
+  \item Detener al entrar en tolerancia.
+\end{itemize}
+}
+
+\slide{Parte 2: anticolisiones}{
+\begin{itemize}
+  \item Cada sensor cercano genera fuerza repulsiva.
+  \item La direccion final combina atraccion y repulsion.
+  \item El robot reduce velocidad cuando hay obstaculos cerca.
+  \item Se prueban obstaculos frontales, laterales y objetivo movil.
+\end{itemize}
+}
+
+\slide{Flujo de control}{
+\begin{tikzpicture}[node distance=8mm,box/.style={draw=UniPrimaryDeep,rounded corners,fill=UniLight,align=center,text width=2.7cm,minimum height=10mm},arr/.style={-{Latex},UniPrimaryDeep,thick}]
+\node[box] (read) {Leer objetivo y sensores};
+\node[box,right=of read] (force) {Calcular fuerzas};
+\node[box,right=of force] (cmd) {Convertir a v, omega};
+\node[box,below=of force] (wheels) {Enviar velocidades de rueda};
+\draw[arr] (read)--(force);
+\draw[arr] (force)--(cmd);
+\draw[arr] (cmd)--(wheels);
+\draw[arr] (wheels.west)--++(-1.7,0)|-(read.south);
+\end{tikzpicture}
+}
+
+\slide{Integracion en celda}{
+\begin{itemize}
+  \item Zona segura de espera.
+  \item Mision hacia Bill, mannequin o punto de estacion.
+  \item Evitacion de obstaculos de la celda.
+  \item Señales internas: missionReady y pioneerArrived.
+  \item Capturas finales para evidenciar coordinacion.
+\end{itemize}
+}
+
+\slide{Validacion}{
+\begin{tabularx}{\textwidth}{Y Y}
+\toprule
+\textbf{Prueba} & \textbf{Criterio}\\
+\midrule
+Atraccion & Distancia al objetivo decrece.\\
+Llegada & Parada dentro de tolerancia.\\
+Obstaculo frontal & Rodeo sin colision.\\
+Objetivo movil & Seguimiento estable.\\
+Celda & No invadir zonas de otros equipos.\\
+\bottomrule
+\end{tabularx}
+}
+
+\slide{Conclusiones}{
+\begin{itemize}
+  \item Campos potenciales: solucion sencilla y didactica.
+  \item La evitacion reactiva mejora seguridad de navegacion.
+  \item CoppeliaSim permite ajustar parametros antes de la demostracion.
+  \item Limitacion: posibles minimos locales y oscilaciones.
+\end{itemize}
+}
+\end{document}

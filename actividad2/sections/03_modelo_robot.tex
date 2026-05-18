@@ -1,0 +1,18 @@
+\chapter{Modelo del robot Pioneer}
+
+El Pioneer P3DX se modela como robot diferencial. Su movimiento se controla mediante dos ruedas motrices: izquierda y derecha. A partir de una velocidad lineal deseada \(v\) y una velocidad angular deseada \(\omega\), las velocidades de rueda pueden aproximarse como:
+
+\[
+v_L = v - \frac{L}{2}\omega,\qquad
+v_R = v + \frac{L}{2}\omega
+\]
+
+donde \(L\) es la distancia entre ruedas. En CoppeliaSim estas velocidades se transforman a velocidad angular de motor dividiendo por el radio de rueda \(r\):
+
+\[
+\omega_L = \frac{v_L}{r},\qquad \omega_R = \frac{v_R}{r}
+\]
+
+\section{Sensores}
+
+Para la segunda parte se emplean sensores de proximidad frontales o laterales. Cada lectura de obstaculo se transforma en una componente repulsiva. La suma de atraccion al objetivo y repulsion de obstaculos produce un vector de movimiento reactivo. Este enfoque es sencillo y adecuado para la actividad, aunque puede presentar minimos locales, oscilaciones o trayectorias suboptimas \cite{siegwart2011,tzafestas2014}.

@@ -1,0 +1,36 @@
+\chapter{Anexos}
+
+\section{Archivos de escena}
+
+\begin{itemize}
+  \item `coppeliasim/Actividad2\_1\_Pioneer.ttt`
+  \item `coppeliasim/Actividad2\_2\_Pioneer.ttt`
+\end{itemize}
+
+\section{Parametros iniciales sugeridos}
+
+\begin{longtable}{P{0.32\textwidth}P{0.22\textwidth}P{0.36\textwidth}}
+\toprule
+\textbf{Parametro} & \textbf{Valor inicial} & \textbf{Comentario}\\
+\midrule
+\endhead
+\(v_{max}\) & 0,45 m/s & Velocidad lineal maxima prudente en simulacion.\\
+\(\omega_{max}\) & 1,2 rad/s & Limite de giro para evitar oscilaciones.\\
+\(k_{att}\) & 0,8 & Ganancia de atraccion al objetivo.\\
+\(k_{rep}\) & 0,35 & Ganancia inicial de repulsion.\\
+\(d_0\) & 0,8 m & Distancia de influencia de obstaculos.\\
+Tolerancia de llegada & 0,25 m & Distancia para considerar mision completada.\\
+\bottomrule
+\end{longtable}
+
+\section{Checklist de entrega}
+
+\begin{itemize}
+  \item Documento PDF compilado.
+  \item Presentacion Beamer/PDF compilada.
+  \item Escena CoppeliaSim con Pioneer integrado.
+  \item Script Lua de atraccion al objetivo.
+  \item Script Lua con evitacion de colisiones.
+  \item Capturas de ejecucion en CoppeliaSim.
+  \item Descripcion de parametros y resultados.
+\end{itemize}

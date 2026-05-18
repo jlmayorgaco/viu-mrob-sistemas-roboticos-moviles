@@ -1,0 +1,20 @@
+\chapter{Validacion}
+
+La validacion combina observacion visual, indicadores numericos y pruebas repetidas. No basta con que el robot se mueva: debe alcanzar el objetivo, evitar colisiones y mantener un comportamiento estable.
+
+\begin{longtable}{P{0.28\textwidth}P{0.42\textwidth}P{0.20\textwidth}}
+\toprule
+\textbf{Prueba} & \textbf{Criterio} & \textbf{Estado esperado}\\
+\midrule
+\endhead
+Atraccion a objetivo & El robot reduce distancia hasta entrar en tolerancia. & Cumplido\\
+Parada cerca de meta & La velocidad se reduce sin atravesar el objetivo. & Cumplido\\
+Obstaculo frontal & El robot gira y rodea el obstaculo sin contacto. & Cumplido\\
+Obstaculos laterales & El robot mantiene distancia minima. & Cumplido\\
+Integracion en celda & El robot no invade zonas de otros equipos. & Pendiente de captura final\\
+\bottomrule
+\end{longtable}
+
+\section{Evidencias a incluir}
+
+La version final debe incorporar capturas de CoppeliaSim para cada parte, nombres de scripts, parametros principales y una descripcion breve de los resultados observados. Si se exportan trayectorias, pueden añadirse graficas de distancia al objetivo y distancia minima a obstaculos.

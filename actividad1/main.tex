@@ -1,0 +1,48 @@
+\documentclass[11pt,oneside]{report}
+\usepackage{viu-mrob-activity}
+\usepackage{amsmath,amssymb,siunitx,float,caption,subcaption}
+\sisetup{output-decimal-marker={,},group-separator={.},group-minimum-digits=4}
+\graphicspath{{figures/}{images/institutional/}}
+
+\SetVIUMaster{Master Universitario en Robotica y Automatizacion de Procesos Industriales}
+\SetVIUSubject{Sistemas Roboticos Moviles}
+\SetVIUActivityType{Actividad 1}
+\SetVIUActivityTitle{Oferta de automatizacion a planta industrial}
+\SetVIUProfessor{Jose I. Iñiguez\\\scriptsize\texttt{jinigueza@professor.universidadviu.com}}
+\SetVIUAuthor{Jorge Luis Mayorga Taborda}
+\SetVIUDate{26 de mayo de 2026}
+\SetVIUGroup{Lunabotics}
+
+\begin{document}
+\MakeVIUActivityTitle
+\tableofcontents
+\clearpage
+
+\input{sections/00_resumen}
+\input{sections/01_introduccion}
+\input{sections/02_metodologia}
+\input{sections/03_entrevista}
+\input{sections/04_problema}
+\input{sections/05_requisitos}
+\input{sections/05b_trazabilidad_kpis}
+\input{sections/06_alternativas}
+\input{sections/07_propuesta_tecnica}
+\input{sections/08_arquitectura}
+\input{sections/08b_validacion_coppeliasim}
+\input{sections/09_funcionamiento}
+\input{sections/10_despliegue}
+\input{sections/11_viabilidad}
+\input{sections/11b_riesgos_calidad}
+\input{sections/12_presupuesto}
+\input{sections/13_roi}
+\input{sections/14_plan_implantacion}
+\input{sections/15_conclusiones}
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliografia}
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\appendix
+\input{sections/16_anexos}
+\end{document}

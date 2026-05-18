@@ -1,0 +1,24 @@
+\chapter{Requisitos tecnicos}
+
+La tabla siguiente convierte los problemas observados en requisitos tecnicos verificables. Estos requisitos guian la seleccion del robot, los sensores y la arquitectura de supervision.
+
+\begin{longtable}{P{0.24\textwidth}P{0.34\textwidth}P{0.32\textwidth}}
+\toprule
+\textbf{Requisito} & \textbf{Necesidad operativa} & \textbf{Criterio de cumplimiento}\\
+\midrule
+\endhead
+Navegacion autonoma interior & Moverse entre almacen, estaciones y zonas de retorno sin guiado fisico fijo. & SLAM, mapas actualizables, rutas replanificables y navegacion en pasillos compartidos.\\
+Seguridad con operarios & Operar cerca de personal, estructuras y utiles de gran tamaño. & Escaner laser de seguridad, paradas controladas, bumpers y parada de emergencia visible.\\
+Maniobrabilidad & Entrar y salir de zonas estrechas sin bloquear estaciones. & Cinematica omnidireccional o base holonomica con movimiento lateral.\\
+Carga util moderada & Transportar kits, herramientas, consumibles y utiles ligeros o medios. & Modulo portacargas adaptable, bandejas identificadas y fijacion segura.\\
+Trazabilidad & Registrar que se entrega, a quien, donde y cuando. & Lectura RFID/QR, confirmacion HMI y base de datos de misiones.\\
+Inspeccion FOD & Detectar objetos extraños en rondas preventivas o al cerrar una entrega. & Camara RGB-D o industrial, iluminacion auxiliar y registro de imagen/evento.\\
+Integracion con supervision & Coordinar prioridades de planta y seguimiento de estado. & API con supervisor, MES/ERP o planificador; panel HMI para operarios.\\
+Escalabilidad multi-robot & Pasar de piloto a flota sin rediseñar todo el sistema. & Gestor de flota, asignacion de misiones y reglas de prioridad.\\
+Mantenimiento sencillo & Evitar dependencia excesiva de perfiles especializados. & Componentes comerciales, diagnostico remoto, plan de repuestos y formacion.\\
+\bottomrule
+\end{longtable}
+
+\begin{decisionbox}
+El requisito dominante es la seguridad operativa. Si el robot no puede convivir con operarios y utiles en movimiento, los beneficios de trazabilidad o kitting quedan subordinados. Por ello, la propuesta incluye sensores redundantes de percepcion y seguridad desde el escenario piloto.
+\end{decisionbox}

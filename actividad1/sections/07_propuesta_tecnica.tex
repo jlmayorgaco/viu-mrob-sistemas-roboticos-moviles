@@ -1,0 +1,39 @@
+\chapter{Propuesta tecnica}
+
+\section{Sistema AMR-FOD-Kitting para linea HTP A320}
+
+La propuesta consiste en implantar un sistema de robots moviles autonomos para suministro coordinado, trazabilidad e inspeccion preventiva. El robot actua como enlace entre zonas de preparacion, estaciones del HTP A320, areas de retorno de utiles y puntos de supervision. Su funcion principal es mover elementos correctos en el momento correcto y dejar evidencia digital de cada accion.
+
+\section{Funciones principales}
+
+\begin{itemize}
+  \item Transporte interno de kits, herramientas, consumibles y utiles de carga moderada.
+  \item Lectura RFID/QR de bandejas, herramientas, ordenes y puntos de entrega.
+  \item Entrega confirmada mediante HMI, tablet de estacion o escaneo de operario autorizado.
+  \item Inspeccion preventiva FOD en rutas o zonas definidas.
+  \item Retorno de utiles usados y aviso de incidencias de material.
+  \item Registro de misiones, eventos, tiempos y excepciones para analisis posterior.
+\end{itemize}
+
+\section{Sensores y componentes}
+
+\begin{longtable}{P{0.28\textwidth}P{0.62\textwidth}}
+\toprule
+\textbf{Elemento} & \textbf{Justificacion}\\
+\midrule
+\endhead
+LiDAR 2D/3D & Navegacion, SLAM, deteccion de obstaculos y apoyo a zonas de seguridad.\\
+Camara RGB-D o industrial & Inspeccion FOD, verificacion visual de zonas y evidencia fotografica de incidencias.\\
+RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estacion.\\
+IMU y encoders & Odometria y fusion sensorial para localizacion robusta.\\
+Bumpers y escaner laser de seguridad & Reduccion de riesgo en contacto accidental y parada segura ante presencia humana.\\
+Parada de emergencia & Requisito basico de operacion industrial y aceptacion por seguridad.\\
+HMI/tablet & Solicitud de misiones, confirmacion de entregas y visualizacion de estado.\\
+WiFi industrial & Comunicacion con supervisor, gestor de flota y base de datos.\\
+Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, historico FOD y auditoria operativa.\\
+\bottomrule
+\end{longtable}
+
+\section{Modo de operacion seguro}
+
+El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de proteccion configurables y ejecuta parada segura si se invade el campo de seguridad. Las rutas se validan en CoppeliaSim y posteriormente en planta con pruebas controladas. La supervision permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.

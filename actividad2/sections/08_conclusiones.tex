@@ -1,0 +1,7 @@
+\chapter{Conclusiones}
+
+La Actividad 2 permite aplicar conceptos basicos de robotica movil en un entorno de simulacion controlado. La solucion por campos potenciales es adecuada para una primera implementacion porque traduce de forma directa la posicion del objetivo y las lecturas de obstaculos en consignas de movimiento.
+
+El robot Pioneer P3DX resulta apropiado por su modelo diferencial sencillo, disponibilidad en CoppeliaSim y facilidad para incorporar sensores de proximidad. La parte de anticolisiones aporta el comportamiento minimo necesario para integrar el robot en una celda con obstaculos o con un objetivo movil como Bill.
+
+Como limitacion, los campos potenciales pueden sufrir minimos locales y oscilaciones. Por ello se recomienda documentar parametros, saturaciones y casos de fallo. Para una version ampliada podria añadirse planificacion global, memoria de obstaculos o un algoritmo de navegacion mas robusto.

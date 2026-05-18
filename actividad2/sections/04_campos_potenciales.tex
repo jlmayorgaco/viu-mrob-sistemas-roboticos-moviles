@@ -1,0 +1,35 @@
+\chapter{Parte 1: navegacion por campos potenciales}
+
+La primera parte consiste en hacer que el robot avance hacia un objetivo. El objetivo puede ser un objeto \textit{mannequin}, Bill u otro dummy definido en la escena. La idea es calcular la posicion relativa entre robot y objetivo y convertirla en velocidad de avance y giro.
+
+\section{Ley de control}
+
+Sea \((x_r,y_r)\) la posicion del robot y \((x_g,y_g)\) la posicion del objetivo. El vector de atraccion se define como:
+
+\[
+\vec{F}_{att} = k_{att}\begin{bmatrix}x_g-x_r\\y_g-y_r\end{bmatrix}
+\]
+
+El angulo deseado se obtiene con \(\operatorname{atan2}(y_g-y_r,x_g-x_r)\). La velocidad angular se calcula con el error entre el angulo deseado y la orientacion actual del robot. Para evitar movimientos bruscos se saturan \(v\) y \(\omega\).
+
+\section{Pseudocodigo}
+
+\begin{lstlisting}
+target = sim.getObject('/mannequin')
+robot  = sim.getObject('/PioneerP3DX')
+
+-- En cada paso de simulacion:
+robotPos  = sim.getObjectPosition(robot, -1)
+targetPos = sim.getObjectPosition(target, -1)
+dx = targetPos[1] - robotPos[1]
+dy = targetPos[2] - robotPos[2]
+desiredHeading = math.atan2(dy, dx)
+headingError = normalizeAngle(desiredHeading - robotYaw)
+v = clamp(kv * math.sqrt(dx*dx + dy*dy), 0, vmax)
+w = clamp(kw * headingError, -wmax, wmax)
+setWheelSpeeds(v, w)
+\end{lstlisting}
+
+\section{Criterios de exito}
+
+El robot debe avanzar hacia el objetivo, reducir velocidad cerca de la meta, evitar oscilaciones excesivas y detenerse dentro de una tolerancia definida. La entrega final debera incluir capturas de la escena y, si es posible, una grafica de distancia al objetivo.
