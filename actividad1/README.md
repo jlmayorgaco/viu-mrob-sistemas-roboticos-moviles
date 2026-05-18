@@ -8,7 +8,7 @@ Proyecto LaTeX para la Actividad 1: oferta de automatizacion a planta industrial
 - `sections/`: capitulos del informe.
 - `slides/slides.tex`: presentacion PDF en LaTeX, equivalente a PowerPoint.
 - `slides/build_pptx.py`: generador autocontenido de la presentacion editable PowerPoint.
-- `tables/`: CSV auxiliares de presupuesto, KPIs y trazabilidad.
+- `tables/`: CSV auxiliares de presupuesto, KPIs, trazabilidad, referencias comerciales y supuestos ROI.
 - `references.bib`: bibliografia usada.
 - `figures/` y `tables/`: carpetas preparadas para anexar recursos.
 

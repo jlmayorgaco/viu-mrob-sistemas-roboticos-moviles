@@ -246,12 +246,12 @@ def budget_slide() -> str:
     s.rect(0, 0, 13.333, 7.5, COLORS["white"])
     s.rect(0, 0, 13.333, 0.16, COLORS["amber"])
     s.textbox(0.58, 0.42, 11.8, 0.6, ["Presupuesto detallado"], size=29, color=COLORS["navy"], bold=True)
-    s.textbox(0.62, 1.02, 11.6, 0.35, ["Estimacion academica, no cotizacion real. Importes sin IVA."], size=13, color=COLORS["muted"])
+    s.textbox(0.62, 1.02, 11.6, 0.35, ["Estimacion con referencias comerciales publicas; no cotizacion vinculante. Importes sin IVA."], size=13, color=COLORS["muted"])
     headers = ["Escenario", "CAPEX", "TCO 3 anos", "Uso previsto"]
     rows = [
-        ["1 robot", "206.304 EUR", "237.704 EUR", "piloto controlado"],
-        ["7 robots", "974.848 EUR", "1.121.648 EUR", "expansion de linea"],
-        ["17 robots", "2.253.888 EUR", "2.576.688 EUR", "despliegue extendido"],
+        ["1 robot", "198.688 EUR", "242.388 EUR", "piloto controlado"],
+        ["7 robots", "904.736 EUR", "1.075.636 EUR", "expansion de linea"],
+        ["17 robots", "2.051.616 EUR", "2.436.516 EUR", "despliegue extendido"],
     ]
     x0, y0 = 0.75, 1.72
     widths = [2.2, 2.4, 2.5, 5.0]
@@ -268,7 +268,7 @@ def budget_slide() -> str:
             s.textbox(x + 0.08, y + 0.14, w - 0.16, 0.22, [cell], size=12, color=COLORS["ink"], align="c")
             x += w
     s.textbox(0.95, 4.38, 11.3, 1.18, [
-        "Partidas incluidas: robots, sensores, utiles de transporte, software, ingenieria, instalacion, formacion, mantenimiento, desplazamientos y margen comercial.",
+        "Partidas incluidas: AMR-FOD-Kitting, software, ingenieria, CoppeliaSim, instalacion, formacion, mantenimiento, ciberseguridad y margen.",
         "La decision recomendada es un piloto de 1 robot con metricas de exito antes de escalar a 7 y 17 unidades."
     ], size=14, color=COLORS["ink"], bullet=True)
     footer(s)
@@ -356,7 +356,7 @@ SLIDES = [
     ]),
     two_column_slide("Escenarios de despliegue", "Piloto: 1 robot", [
         "Validar rutas, aceptacion operativa y registro de trazabilidad.",
-        "Coste CAPEX estimado: 206.304 EUR.",
+        "Coste CAPEX estimado: 198.688 EUR.",
         "Exito: misiones sin incidentes y reduccion medible de esperas."
     ], "Expansion: 7 y 17 robots", [
         "7 robots: cobertura de varias estaciones y turnos.",

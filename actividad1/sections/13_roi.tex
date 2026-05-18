@@ -1,32 +1,57 @@
 \chapter{Analisis economico y ROI}
 
-El analisis economico utiliza el salario medio indicado en el enunciado: entre 20.000 y 28.000 \texteuro{} anuales por operario. Para una estimacion prudente se adopta un valor central de 24.000 \texteuro{} anuales y un factor de coste empresa de 1,35, lo que equivale a 32.400 \texteuro{} anuales. Con 1.760 horas laborables al año, el coste horario cargado aproximado es de 18,4 \texteuro{}/h.
+El ROI se calcula con una premisa conservadora: la robotica movil no elimina puestos ni duplica por si sola la produccion. Su valor aparece cuando reduce esperas, desplazamientos, errores de suministro, busquedas de utiles y eventos FOD que interrumpen la operacion. El enunciado aporta un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el analisis se usa un salario central de 24.000 \texteuro{}/ano, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
 
 \section{Recuperacion de tiempo operativo}
 
-\begin{longtable}{P{0.24\textwidth}P{0.22\textwidth}P{0.22\textwidth}P{0.22\textwidth}}
+Las hipotesis se formulan como tiempo recuperado, no como ahorro de plantilla. Esto evita una lectura simplista del proyecto y encaja mejor con una linea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o mas.
+
+\begin{longtable}{P{0.18\textwidth}r r r r}
 \toprule
-\textbf{Escenario} & \textbf{Hipotesis de tiempo recuperado} & \textbf{Horas/año recuperadas} & \textbf{Valor anual estimado}\\
+\textbf{Escenario} & \textbf{Operarios afectados} & \textbf{Min/dia recuperados} & \textbf{Horas/ano} & \textbf{Valor anual}\\
 \midrule
 \endhead
-1 robot & 15 operarios recuperan 0,25 h/turno durante 220 dias. & 825 h & 15.180 \texteuro{}\\
-7 robots & 45 operarios recuperan 0,75 h/turno durante 240 dias. & 8.100 h & 149.040 \texteuro{}\\
-17 robots & 70 operarios recuperan 1,0 h/turno durante 250 dias. & 17.500 h & 322.000 \texteuro{}\\
+1 robot & 15 & 15 & 825 & 15.180 \texteuro{}\\
+7 robots & 45 & 33 & 5.940 & 109.296 \texteuro{}\\
+17 robots & 70 & 48 & 14.000 & 257.600 \texteuro{}\\
 \bottomrule
+\caption{Valor anual de tiempo operativo recuperado con coste horario cargado de 18,4 \texteuro{}/h.}
+\label{tab:roi-tiempo}
 \end{longtable}
 
-Estas cifras no implican reduccion directa de plantilla. El beneficio se interpreta como tiempo disponible para operaciones de mayor valor, menor espera, mejor continuidad y mayor capacidad para absorber el crecimiento de produccion. En una planta que busca pasar de 40 a 80 HTP al mes, recuperar horas operativas puede ser mas importante que convertirlas en ahorro contable inmediato.
+La lectura importante es que el piloto no se justifica por ahorro financiero directo. Se justifica por aprendizaje medible: rutas reales, comportamiento de seguridad, aceptacion de operarios, calidad de lectura RFID/QR, tiempos de entrega y utilidad de las rondas FOD. En cambio, los escenarios de 7 y 17 robots empiezan a tener sentido industrial si el tiempo recuperado se convierte en menos esperas entre estaciones y mayor continuidad de trabajo.
+
+\section{Horas de equilibrio}
+
+Para comprobar si la propuesta es realista, se anualiza el CAPEX a cinco anos y se compara con las horas que tendrian que recuperarse solo para cubrir la inversion. Esta prueba muestra una conclusion clave: el caso de negocio no debe venderse como simple ahorro de mano de obra.
+
+\begin{longtable}{P{0.18\textwidth}r r r}
+\toprule
+\textbf{Escenario} & \textbf{CAPEX} & \textbf{CAPEX anualizado a 5 anos} & \textbf{Horas/ano de equilibrio}\\
+\midrule
+\endhead
+1 robot & 198.688 & 39.738 & 2.160\\
+7 robots & 904.736 & 180.947 & 9.834\\
+17 robots & 2.051.616 & 410.323 & 22.300\\
+\bottomrule
+\caption{Horas anuales necesarias para cubrir la inversion si solo se considerara tiempo operativo.}
+\label{tab:roi-break-even}
+\end{longtable}
+
+El escenario de 1 robot queda por debajo del punto de equilibrio financiero si se mira solo el tiempo recuperado. El de 7 robots se acerca mas, pero aun requiere beneficios operativos adicionales. El de 17 robots exige una mejora de flujo global, no solo misiones de transporte. Esta lectura es deliberadamente prudente: una oferta profesional debe mostrar donde esta el limite del argumento economico.
 
 \section{Beneficios no monetizados}
 
+El retorno completo incluye beneficios que no se deben convertir de forma artificial a euros si no hay datos historicos de la planta. Para Alestis Puerto Real tendrian peso especifico:
+
 \begin{itemize}
-  \item Reduccion de incidencias por herramientas o kits no localizados.
-  \item Mejor evidencia de trazabilidad ante auditorias internas.
-  \item Menor riesgo de incidencias FOD por rondas preventivas documentadas.
-  \item Priorizacion objetiva de misiones segun necesidades de estacion.
-  \item Datos para rediseñar layout, horarios de suministro y dimensionamiento de recursos.
+  \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estacion.
+  \item Evidencia de trazabilidad de entrega: robot, kit, estacion, hora, lector RFID/QR y confirmacion humana.
+  \item Menor exposicion a incidencias FOD mediante rondas preventivas con registro visual y de eventos.
+  \item Mejor dimensionamiento de recursos logisticos al disponer de datos de misiones, colas, rutas y tiempos.
+  \item Mayor capacidad para absorber el crecimiento de 40 a 80 HTP/mes sin duplicar movimientos manuales de soporte.
 \end{itemize}
 
 \section{Lectura del retorno}
 
-El retorno financiero directo del piloto es limitado si se considera solo tiempo recuperado. Su valor principal es validar seguridad, aceptacion y datos reales. En los escenarios de 7 y 17 robots el retorno mejora, pero sigue dependiendo de que la planta use el sistema para reorganizar suministro, reducir esperas y apoyar el aumento de cadencia. Por tanto, el ROI debe evaluarse como combinacion de productividad, calidad, trazabilidad y mitigacion de riesgo, no como sustitucion de personal.
+El ROI defendible no es una promesa de reduccion de plantilla. Es una combinacion de tres efectos: recuperacion de tiempo improductivo, reduccion de variabilidad logistica y control documentado de trazabilidad/FOD. Por eso la recomendacion comercial es escalonada. Primero se compra informacion fiable con el piloto. Luego se decide si 7 robots cubren el cuello de botella logistico. Solo despues tendria sentido estudiar 17 robots, siempre condicionado a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilizacion de flota.

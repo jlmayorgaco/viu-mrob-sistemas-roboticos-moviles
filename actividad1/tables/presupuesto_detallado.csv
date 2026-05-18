@@ -1,14 +1,13 @@
 partida,escenario_1_robot,escenario_7_robots,escenario_17_robots
-Plataformas AMR omnidireccionales,55000,385000,935000
-Sensores LiDAR RGB-D RFID QR IMU,18500,129500,314500
-Accesorios portacargas kitting,6500,45500,110500
-Seguridad escaner bumpers E-stop,7500,52500,127500
-HMI tablets comunicaciones,2500,17500,42500
-Software supervision base datos,35000,52000,78000
-Ingenieria simulacion configuracion,30000,75000,145000
-Instalacion puesta en marcha,12000,36000,85000
-Formacion operarios mantenimiento,6000,15000,28000
-Mantenimiento primer ano,7200,50400,122400
-Desplazamientos logistica,4000,12000,24000
-Margen comercial 12 por ciento,22104,104448,241488
-total,206304,974848,2253888
+Paquetes AMR-FOD-Kitting completos,69800,488600,1186600
+Software flota trazabilidad conectores MES ERP,22000,58000,105000
+Ingenieria simulacion CoppeliaSim configuracion,42000,112000,215000
+Instalacion mapeo pruebas puesta en marcha,18000,52000,120000
+Formacion gestion cambio operativo,8500,24000,42000
+Mantenimiento preventivo primer ano,5600,39200,95200
+Desplazamientos logistica medios auxiliares,5000,18000,36000
+Ciberseguridad documentacion aceptacion,6500,16000,32000
+Subtotal antes contingencia margen,177400,807800,1831800
+Contingencia y margen comercial 12 por ciento,21288,96936,219816
+Total CAPEX estimado,198688,904736,2051616
+TCO tres anos estimado,242388,1075636,2436516
