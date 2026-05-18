@@ -127,10 +127,10 @@ Patas & Descartado & Coste y complejidad innecesaria.\\
 \slide{Robot seleccionado}{
 \textbf{AMR omnidireccional}: plataforma tipo KUKA YouBot, KUKA Omnirob o equivalente industrial representable en CoppeliaSim.
 \begin{itemize}
-  \item Movimiento lateral sin cambiar orientacion.
+  \item Ruedas mecanum/suecas: movimiento lateral sin cambiar orientacion.
   \item Mejor maniobra cerca de estaciones, estructuras y operarios.
   \item Mas flexible que un AGV de ruta fija.
-  \item Adecuado para validar navegacion, sensores y misiones.
+  \item Adecuado para validar navegacion, sensores, actuadores y misiones.
 \end{itemize}
 }
 
@@ -140,6 +140,7 @@ Patas & Descartado & Coste y complejidad innecesaria.\\
   \item Camara RGB-D para inspeccion FOD.
   \item RFID/QR para kits, herramientas y entregas.
   \item IMU, encoders, bumpers, escaner laser y E-stop.
+  \item Planificacion global A*/Dijkstra y evitacion local DWA/campos potenciales como referencia.
   \item HMI, WiFi industrial, supervisor y base de datos.
 \end{itemize}
 }

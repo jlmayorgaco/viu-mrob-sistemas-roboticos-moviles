@@ -7,6 +7,7 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 - `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentacion PDF, PowerPoint editable, presupuesto y tablas auxiliares.
 - `actividad2/`: estructura separada para la segunda actividad, con fuentes y recursos de CoppeliaSim.
 - `docs/enunciado/`: guias y archivos base proporcionados para la asignatura.
+- `docs/ppt/`: presentaciones y temas cubiertos en el curso.
 
 ## Estructura
 
@@ -32,11 +33,19 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 |   |-- references.bib
 |   `-- README.md
 `-- docs/
-    `-- enunciado/
-        |-- Actividad_1_SRM.pdf
-        |-- Actividad_2_SRM.pdf
-        |-- Actividad2_1_Pioneer.ttt
-        `-- Actividad2_2_Pioneer.ttt
+    |-- enunciado/
+    |   |-- Actividad_1_SRM.pdf
+    |   |-- Actividad_2_SRM.pdf
+    |   |-- Actividad2_1_Pioneer.ttt
+    |   `-- Actividad2_2_Pioneer.ttt
+    `-- ppt/
+        |-- Tema_1_Robotica_Movil.pdf
+        |-- Tema_1_2_Robotica_Movil.pdf
+        |-- Tema_1_3_Otros_Tipos_Robots.pdf
+        |-- Tema_2_Diseno_y_Arquitectura.pdf
+        |-- Tema_2_Motores.pdf
+        |-- Tema_3.pdf
+        `-- Tema_4.pdf
 ```
 
 ## Actividad 1

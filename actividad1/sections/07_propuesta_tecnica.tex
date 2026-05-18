@@ -34,6 +34,12 @@ Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, historico F
 \bottomrule
 \end{longtable}
 
+\section{Actuadores, motorizacion y control}
+
+La plataforma se concibe como un AMR electrico de ruedas omnidireccionales, coherente con los contenidos del curso sobre robots que ruedan, efectores, actuadores y controladores. Cada rueda mecanum/sueca se acciona mediante motor electrico con controlador de velocidad, realimentacion por encoder y supervision de corriente/temperatura. El control de bajo nivel convierte consignas de velocidad longitudinal, lateral y angular en velocidades de rueda, mientras que el nivel de navegacion limita aceleraciones, radios de seguridad y velocidades maximas por zona.
+
+Los actuadores no se plantean para manipular piezas estructurales del HTP. Su funcion es mover la base, accionar elementos auxiliares simples del modulo portacargas si se incorporan, activar señales luminosas/acusticas y ejecutar parada segura. Esta separacion entre locomocion, seguridad y proceso evita sobredimensionar la solucion y mantiene el alcance dentro de una aplicacion realista de robotica movil industrial.
+
 \section{Modo de operacion seguro}
 
 El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de proteccion configurables y ejecuta parada segura si se invade el campo de seguridad. Las rutas se validan en CoppeliaSim y posteriormente en planta con pruebas controladas. La supervision permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.

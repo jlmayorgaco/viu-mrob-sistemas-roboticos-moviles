@@ -14,6 +14,7 @@ Mapa de planta & Pasillos, estaciones de HTP, zona de preparacion de kits, punto
 Obstaculos & Utiles, carros, estructuras, operarios simulados como objetos dinamicos y zonas temporalmente bloqueadas.\\
 Sensores & LiDAR 2D/3D para obstaculos, camara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validacion.\\
 Misiones & Entrega de kit, entrega de herramienta, retorno de util, ronda FOD y mision cancelada por obstaculo persistente.\\
+Algoritmos & Localizacion por SLAM/fusion sensorial, planificador global tipo A*/Dijkstra y evitacion local mediante DWA o campos potenciales como referencia conceptual.\\
 \bottomrule
 \end{longtable}
 
@@ -37,3 +38,7 @@ Multi-robot & Dos o mas AMR comparten pasillo. & Sin interbloqueos; prioridad de
 \section{Criterios de salida de simulacion}
 
 Antes de pasar a piloto fisico, el modelo debe demostrar que las rutas propuestas no invaden zonas restringidas, que el robot puede aproximarse a estaciones sin maniobras excesivas, que las paradas de seguridad no bloquean el flujo de forma recurrente y que las misiones generan registros completos. Los parametros finales de simulacion deben guardarse como anexo tecnico: mapa, velocidad maxima, radios de seguridad, tolerancia de posicion, zonas prohibidas y tiempos de mision.
+
+\section{Relacion con navegacion y localizacion del curso}
+
+La validacion usa los conceptos de localizacion, planificacion y anticolision estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimacion de pose; el SLAM permite construir o actualizar el mapa de una nave cambiante; el planificador global genera una ruta hacia la estacion; y el planificador local evita obstaculos dinamicos como operarios, carros o utiles. En una implantacion real se seleccionaria el algoritmo concreto segun el software del AMR, pero para la oferta academica se deja trazado el vinculo tecnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.

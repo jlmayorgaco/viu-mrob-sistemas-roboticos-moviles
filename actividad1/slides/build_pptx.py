@@ -222,7 +222,7 @@ def architecture_slide() -> str:
     layers = [
         ("Percepcion", "LiDAR 2D/3D, RGB-D, QR/RFID"),
         ("Localizacion", "SLAM, odometria, IMU"),
-        ("Misiones", "colas, prioridades, trazabilidad"),
+        ("Planificacion", "A*/Dijkstra, DWA, campos potenciales"),
         ("Control", "base omnidireccional, seguridad"),
         ("Planta", "MES/ERP, HMI, base de datos")
     ]
@@ -330,6 +330,7 @@ SLIDES = [
         "Robot con patas: coste y complejidad no justificados."
     ], "Opcion seleccionada", [
         "AMR omnidireccional equivalente a KUKA YouBot/Omnirob en CoppeliaSim.",
+        "Ruedas mecanum/suecas para movimiento lateral sin cambiar orientacion.",
         "Movimiento lateral sin reorientar la carga.",
         "Mayor adaptacion a cambios de estacion que un AGV."
     ]),
