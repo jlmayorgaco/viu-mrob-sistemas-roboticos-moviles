@@ -21,6 +21,9 @@
 build/
 previews/
 
+# Local course slide packs not required for submission
+docs/ppts/
+
 # OS/editor noise
 .DS_Store
 Thumbs.db

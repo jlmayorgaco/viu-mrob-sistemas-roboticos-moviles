@@ -289,10 +289,10 @@ SLIDES = [
         "Validar el despliegue con simulacion en CoppeliaSim y piloto medible."
     ]),
     standard_slide("Presentacion de Lunabotics", "Empresa ficticia que formula una oferta tecnica y comercial para Alestis Puerto Real.", [
-        "Especializacion: robotica movil, integracion industrial y automatizacion intralogistica.",
-        "Alcance: diseno teorico, arquitectura, presupuesto, riesgos y plan de implantacion.",
-        "Criterio: no automatizar la fabricacion del HTP, sino los flujos auxiliares que la condicionan.",
-        "Entrega orientada a escalado progresivo y supervision humana."
+        "Empresa joven de integracion de robotica movil industrial.",
+        "Capacidades: CoppeliaSim, AMR, LiDAR/RGB-D/RFID, HMI y datos de planta.",
+        "Experiencia de referencia: pilotos intralogisticos y celdas con bases omnidireccionales.",
+        "Enfoque comercial: piloto medible, expansion controlada y despliegue con KPIs validados."
     ]),
     two_column_slide("Contexto industrial", "HTP y seccion 19.1", [
         "HTP: estabilizador horizontal del A320.",

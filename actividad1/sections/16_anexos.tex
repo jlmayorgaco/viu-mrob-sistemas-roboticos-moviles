@@ -6,13 +6,21 @@
 Actua como Carlos Pérez, trabajador con mas de diez años de experiencia en Alestis Puerto Real. Lunabotics necesita preparar una oferta tecnica y comercial de robotica movil para mejorar procesos relacionados con el HTP del A320 y la seccion 19.1. Responde como experto de planta: explica que ocurre en esa zona, que materiales o herramientas se mueven, que problemas recurrentes aparecen, si hay retrasos por componentes o utiles no localizados, que papel tiene FOD y que restricciones tendria un robot movil. Si la conversacion se desvia hacia temas personales, Cadiz o cultura local, redirige de forma natural hacia el proceso productivo. No propongas que el robot fabrique directamente el HTP; enfocate en transporte interno, kitting, retorno de utiles, trazabilidad RFID/QR, inspeccion preventiva y datos utiles para una oferta comercial.
 \end{summarybox}
 
-\section{Capturas de entrevista}
+\section{Evidencia textual de entrevista}
 
-\begin{itemize}
-  \item Placeholder 1: captura de inicio de conversacion con Carlos Pérez.
-  \item Placeholder 2: captura de respuestas sobre HTP, seccion 19.1 y flujo logistico.
-  \item Placeholder 3: captura de respuestas sobre FOD, trazabilidad y automatizacion.
-\end{itemize}
+La guia de la actividad recomienda conservar evidencia de la conversacion con el experto. En esta entrega se incorpora la entrevista completa como acta tecnica en el Capitulo 3 y se resume aqui en tres bloques verificables, equivalentes al contenido que se mostraria en capturas de pantalla.
+
+\begin{summarybox}
+\textbf{Evidencia 1: enfoque de la conversacion.} Lunabotics solicita informacion sobre procesos reales de Alestis Puerto Real, evitando desviaciones personales. Carlos Pérez identifica el HTP del A320, la seccion 19.1, las interfaces de cola y la necesidad de coordinar utiles, documentacion, inspecciones y materiales auxiliares.
+\end{summarybox}
+
+\begin{summarybox}
+\textbf{Evidencia 2: problemas operativos detectados.} La conversacion recoge microesperas por kits, herramientas o utiles no localizados; prestamos informales de herramientas; falta de trazabilidad fina en el momento de entrega; y movimientos repetitivos que reducen capacidad real aunque no siempre aparezcan como parada formal.
+\end{summarybox}
+
+\begin{summarybox}
+\textbf{Evidencia 3: implicaciones roboticas.} El experto descarta fabricar el HTP con un robot movil y orienta la solucion hacia AMR para kitting, retorno de utiles, inspeccion preventiva FOD, registro RFID/QR, navegacion segura con operarios y despliegue piloto medido con KPIs.
+\end{summarybox}
 
 \section{Matriz de cumplimiento contra la guia oficial}
 
@@ -26,12 +34,12 @@ Diseño teorico de un sistema robotico para una aplicacion industrial concreta. 
 Parte 1: entrevista con un experto. & Capitulo de entrevista con ficha, acta tecnica, conversacion simulada, hallazgos e implicaciones. & Cumplido\\
 Parte 2: oferta tecnica basada en robotica movil. & Identificacion del problema, requisitos, alternativas, robot seleccionado, sensores, arquitectura, operacion y validacion en CoppeliaSim. & Cumplido\\
 Parte 3: oferta comercial de la misma solucion. & Presupuesto por partidas, escenarios 1/7/17 robots, TCO, ROI y condiciones comerciales academicas. & Cumplido\\
-Introduccion a Lunabotics. & Introduccion y presentacion de la empresa ficticia en informe y slides. & Cumplido\\
+Introduccion a Lunabotics, capacidades, experiencia y resultados de referencia. & Perfil de Lunabotics en la introduccion y diapositiva especifica de presentacion. & Cumplido\\
 Identificacion del problema en Alestis Puerto Real. & Capitulos de entrevista, problema, requisitos y matriz de trazabilidad. & Cumplido\\
 Propuesta de solucion con robot movil disponible en CoppeliaSim. & AMR omnidireccional tipo KUKA YouBot/Omnirob o equivalente. & Cumplido\\
 Viabilidad tecnica y comercial, incluyendo beneficios y retorno. & Capitulos de viabilidad, riesgos, presupuesto y ROI. & Cumplido\\
 Datos clave: 40 HTP/mes, objetivo 80 HTP/mes o mas, salario 20.000--28.000 euros/año. & Metodologia, despliegue y analisis economico. & Cumplido\\
-Añadir una diapositiva extra detallando presupuesto. & Diapositiva \textit{Presupuesto detallado} en presentacion PDF y PPTX. & Cumplido\\
+Añadir una diapositiva extra detallando presupuesto. & Diapositiva \textit{Presupuesto detallado} incluida en el informe, presentacion PDF y PPTX. & Cumplido\\
 Incluir tipo de robot y sensores adicionales. & Capitulo de propuesta tecnica, arquitectura, anexos y slides. & Cumplido\\
 Especificar cada partida presupuestaria. & Tabla de presupuesto por partidas y CSV auxiliar. & Cumplido\\
 \bottomrule
@@ -43,7 +51,35 @@ La Tabla~\ref{tab:presupuesto} contiene la version completa del presupuesto por 
 
 \section{Diapositiva extra de presupuesto}
 
-La presentacion incluye una diapositiva especifica titulada \textit{Presupuesto detallado}. Su objetivo es cumplir el requisito del enunciado de añadir una diapositiva extra con las partidas presupuestarias.
+La siguiente caja reproduce dentro del PDF del informe la diapositiva extra solicitada por la guia. La misma informacion aparece en la presentacion PDF y en el PowerPoint editable.
+
+\begin{tcolorbox}[
+  enhanced,
+  breakable,
+  colback=UniLight,
+  colframe=UniPrimaryDeep,
+  colbacktitle=UniPrimaryDeep,
+  coltitle=white,
+  title={Diapositiva extra: Presupuesto detallado},
+  fonttitle=\bfseries,
+  arc=1.5mm,
+  boxrule=0.8pt
+]
+\textbf{Sistema AMR-FOD-Kitting para linea HTP A320.} Estimacion academica sin IVA, no vinculante.
+
+\begin{tabularx}{\textwidth}{Y r r r}
+\toprule
+\textbf{Escenario} & \textbf{CAPEX} & \textbf{TCO 3 años} & \textbf{Uso recomendado}\\
+\midrule
+1 robot & 206.304 \texteuro{} & 237.704 \texteuro{} & Piloto controlado\\
+7 robots & 974.848 \texteuro{} & 1.121.648 \texteuro{} & Expansion de linea\\
+17 robots & 2.253.888 \texteuro{} & 2.576.688 \texteuro{} & Despliegue extendido\\
+\bottomrule
+\end{tabularx}
+
+\vspace{0.4em}
+\textbf{Partidas incluidas:} plataformas AMR, sensores, accesorios de kitting, seguridad, HMI/comunicaciones, software, ingenieria, instalacion, formacion, mantenimiento, desplazamientos/logistica y margen comercial.
+\end{tcolorbox}
 
 \section{Lista de sensores}
 
@@ -72,7 +108,7 @@ Escenarios de 1, 7 y 17 robots. & Cumplido\\
 Robot seleccionado y sensores adicionales. & Cumplido\\
 Uso de CoppeliaSim como marco de validacion. & Cumplido\\
 Presentacion PDF y PPTX editable equivalente a PowerPoint. & Cumplido\\
-Diapositiva extra de presupuesto. & Cumplido\\
+Diapositiva extra de presupuesto dentro del informe y la presentacion. & Cumplido\\
 Eliminacion de contenido ajeno al alcance de la Actividad 1. & Cumplido\\
 \bottomrule
 \end{longtable}
