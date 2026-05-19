@@ -97,10 +97,10 @@ def core_props() -> str:
                    xmlns:dcmitype="http://purl.org/dc/dcmitype/"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <dc:title>Actividad 1 - Sistema AMR-FOD-Kitting</dc:title>
-  <dc:subject>Sistemas Roboticos Moviles</dc:subject>
+  <dc:subject>Sistemas Robóticos Móviles</dc:subject>
   <dc:creator>Jorge Luis Mayorga Taborda</dc:creator>
-  <cp:keywords>AMR; FOD; HTP; A320; CoppeliaSim; robotica movil</cp:keywords>
-  <dc:description>Presentacion visual generada desde la fuente LaTeX/TikZ.</dc:description>
+  <cp:keywords>AMR; FOD; HTP; A320; CoppeliaSim; robótica móvil</cp:keywords>
+  <dc:description>Presentación visual generada desde la fuente LaTeX/TikZ.</dc:description>
   <dcterms:created xsi:type="dcterms:W3CDTF">{now}</dcterms:created>
   <dcterms:modified xsi:type="dcterms:W3CDTF">{now}</dcterms:modified>
 </cp:coreProperties>"""

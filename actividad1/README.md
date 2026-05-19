@@ -10,10 +10,10 @@ Proyecto LaTeX para la Actividad 1: oferta de automatización a planta industria
 - `slides/build_pptx.py`: generador autocontenido de PowerPoint visual desde el PDF de LaTeX/TikZ.
 - `figures/tikz/`: fuentes TikZ reutilizables del informe y la presentación.
 - `tables/`: CSV auxiliares de modelos, sensores/BOM, presupuesto, KPIs, trazabilidad, referencias comerciales, supuestos ROI y sensibilidad financiera.
-- `references.bib`: bibliografia usada.
+- `references.bib`: bibliografía usada.
 - `figures/` y `tables/`: carpetas preparadas para anexar recursos.
 
-Los enunciados originales estan en `../docs/enunciado/`.
+Los enunciados originales están en `../docs/enunciado/`.
 
 ## Compilar informe
 
@@ -39,7 +39,7 @@ cd slides
 python build_pptx.py
 ```
 
-El PPTX conserva el diseno final de `slides.pdf` como diapositivas visuales. La fuente editable de la presentación es `slides/slides.tex`.
+El PPTX conserva el diseño final de `slides.pdf` como diapositivas visuales. La fuente editable de la presentación es `slides/slides.tex`.
 
 ## Limpieza
 
