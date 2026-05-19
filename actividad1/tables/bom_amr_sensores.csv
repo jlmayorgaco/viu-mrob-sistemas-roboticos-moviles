@@ -1,6 +1,6 @@
 partida_por_amr,cantidad,importe_eur_estimado,base_calculo
 AMR 250 kg de referencia,1,44300,Precio publico MiR250 redondeado y contrastado con LD-250 KNAPP y rangos 2026
-Adaptacion omnidireccional y parametrizacion cinematica,1,1500,Parametrizacion de base mecanum/sueca objetivo y validacion de maniobra lateral
+Parametrizacion cinematica omnidireccional,1,1500,Modelado de base mecanum/sueca objetivo y validacion de maniobra lateral sin modificar fisicamente un AMR diferencial
 Modulo kitting bandejas fijaciones proteccion carga,1,8500,Diseno mecanico ligero para kits herramientas consumibles y utiles moderados
 LiDAR de navegacion,1,1500,Referencia Hokuyo UST-10LX y accesorios de montaje
 Camara RGB-D FOD,1,300,Referencia Intel RealSense D435i

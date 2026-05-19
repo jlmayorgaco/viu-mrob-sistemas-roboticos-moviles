@@ -4,7 +4,7 @@ El presupuesto se formula como oferta preliminar de integración. La cifra final
 
 \section{Base de referencias comerciales}
 
-La plataforma seleccionada en la oferta técnica es omnidireccional. Para el presupuesto, sin embargo, se normaliza el coste contra AMR comerciales de 250 kg porque ofrecen precios públicos y sirven como referencia de orden de magnitud para carga, autonomía, dimensiones y software de flota. Esta normalización no significa que el MiR250 o el LD-250 sean el modelo final elegido ni que tengan la misma cinemática que una base mecanum/sueca; se usan como \textit{benchmark} comercial trazable y se reserva una partida de integración para adaptar la solución a una base omnidireccional industrial equivalente.
+La plataforma seleccionada en la oferta técnica es omnidireccional. Para el presupuesto, sin embargo, se normaliza el coste contra AMR comerciales de 250 kg porque ofrecen precios públicos y sirven como referencia de orden de magnitud para carga, autonomía, dimensiones y software de flota. Esta normalización no significa que el MiR250 o el LD-250 sean el modelo final elegido ni que tengan la misma cinemática que una base mecanum/sueca; se usan como \textit{benchmark} comercial trazable y la compra real se cerraría con una plataforma omnidireccional industrial equivalente dentro del rango de mercado contrastado.
 
 El MiR250 aparece como referencia comercial con precio público de 44.284 \texteuro{}, dimensiones de 580 x 800 mm, carga útil de 250 kg y velocidad máxima de 2 m/s \cite{mekosrlMir250}. La ficha del fabricante confirma el uso para transporte interno de cargas pequeñas y medianas, carga máxima de 250 kg, superficie de carga de 800 x 580 mm, hasta 13 h de operación con carga máxima y uso interior \cite{mir250Specs}. Como contraste industrial se cita también el Omron LD-250, con carga máxima de 250 kg y arquitectura de AMR para transporte en fábricas y almacenes \cite{omronLd250}.
 
@@ -36,7 +36,7 @@ La partida de software y flota toma como referencia los rangos publicados por No
 
 \section{Criterios de normalización}
 
-El coste se separa en robot base e integración aeronáutica. La conversión operativa adoptada para partidas en dólares es 1 USD = 0,86 \texteuro{}; en una oferta real se actualizaría con el tipo de cambio y condiciones de importación del día de compra. Sobre el precio de referencia se añaden útiles portacargas, sensores de FOD/trazabilidad, seguridad, HMI, comunicaciones y adaptación a una plataforma omnidireccional equivalente. El paquete por robot queda así:
+El coste se separa en robot base e integración aeronáutica. La conversión operativa adoptada para partidas en dólares es 1 USD = 0,86 \texteuro{}; en una oferta real se actualizaría con el tipo de cambio y condiciones de importación del día de compra. Sobre el precio de referencia se añaden útiles portacargas, sensores de FOD/trazabilidad, seguridad, HMI, comunicaciones y parametrización de la plataforma omnidireccional equivalente. El paquete por robot queda así:
 
 \begin{longtable}{P{0.46\textwidth}rP{0.32\textwidth}}
 \toprule
@@ -65,7 +65,7 @@ El paquete normalizado por robot no es una suma directa de catálogo, porque inc
 \midrule
 \endhead
 AMR 250 kg de referencia & 1 & 44.300 & Precio público MiR250 redondeado; contrastado con LD-250, KNAPP y rangos 2026.\\
-Adaptación omnidireccional y parametrización cinemática & 1 & 1.500 & Parametrización de base mecanum/sueca objetivo y validación de maniobra lateral.\\
+Parametrización cinemática omnidireccional & 1 & 1.500 & Modelado de base mecanum/sueca objetivo, consignas \(v_x\), \(v_y\), \(\omega\) y validación de maniobra lateral; no implica modificar físicamente un AMR diferencial.\\
 Módulo kitting, bandejas, fijaciones y protección de carga & 1 & 8.500 & Diseño mecánico ligero para kits, herramientas, consumibles y útiles moderados.\\
 LiDAR de navegación & 1 & 1.500 & Referencia Hokuyo UST-10LX y accesorios de montaje.\\
 Cámara RGB-D/FOD & 1 & 300 & Referencia Intel RealSense D435i; se reserva integración en partida de visión/trazabilidad.\\
