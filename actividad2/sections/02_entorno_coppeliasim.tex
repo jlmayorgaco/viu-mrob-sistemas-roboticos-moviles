@@ -7,8 +7,15 @@ Los archivos originales de la asignatura se han copiado a la carpeta `coppeliasi
 \begin{itemize}
   \item `Actividad2\_1\_Pioneer.ttt`: base para la parte de desplazamiento hacia objetivo.
   \item `Actividad2\_2\_Pioneer.ttt`: base para la parte de evitacion de colisiones.
+  \item `Actividad2\_Pioneer\_Profesional\_10\_10.ttt`: escena final generada para la entrega, con celda robotizada, dummy `mannequin`, estacion objetivo, zonas de seguridad, obstaculos de celda, eventos temporizados y controlador profesional embebido en el Pioneer.
 \end{itemize}
 
 \section{Configuracion recomendada}
 
 Antes de ejecutar el script definitivo se recomienda comprobar nombres de objetos, jerarquia del robot, alias de motores, sensores de proximidad, objeto objetivo y sistema de coordenadas de la escena. Esta verificacion evita errores tipicos al copiar codigo de ejemplo: handles nulos, signos invertidos en las ruedas o lectura de objetivo respecto al marco incorrecto.
+
+\section{Escena final de entrega}
+
+La escena final se ha construido a partir de `Actividad2\_2\_Pioneer.ttt` y se guarda como un archivo nuevo, sin sobrescribir las escenas originales. El controlador `Pioneer\_Professional\_Controller` queda asociado al modelo `PioneerP3DX` y utiliza una ruta de waypoints hacia el dummy `mannequin`, con Bill y `GoalStation` como alternativas. La celda incluye una zona de espera, transportadores, palets, area de trabajo robotizada, vallas de seguridad, estacion de carga, HMI visual, waypoints de validacion, seis sensores virtuales adicionales y un gestor de escenarios.
+
+El gestor `VIU\_Scenario\_Event\_Manager` activa eventos de prueba durante la simulacion: arranque de ruta, pallet movil, parada por enclavamiento de seguridad, objetivo dinamico, pasillo estrecho, degradacion de sensor, bateria baja con limitacion de velocidad y aproximacion final. Estos eventos fuerzan estados de control `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`, por lo que la escena demuestra tanto los campos potenciales de la parte 1 como la extension anticolisiones y de integracion en celda de la parte 2.

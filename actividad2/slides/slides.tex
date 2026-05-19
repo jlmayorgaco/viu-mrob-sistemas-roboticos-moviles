@@ -36,7 +36,7 @@
 {\Large Actividad 2 - CoppeliaSim/Lua}\\
 Universidad Internacional de Valencia\\[0.2cm]
 Autor: Jorge Luis Mayorga Taborda\\
-Profesor: Jose I. Iñiguez\\
+Profesor: Jose I. Iniguez\\
 Entrega: 26 de mayo de 2026
 }
 
@@ -49,12 +49,30 @@ Entrega: 26 de mayo de 2026
 \end{itemize}
 }
 
+\slide{Trazabilidad 5/5}{
+\begin{tabularx}{\textwidth}{Y Y}
+\toprule
+\textbf{Guia y temas} & \textbf{Implementacion final}\\
+\midrule
+Pioneer en CoppeliaSim/Lua & Script Lua embebido en PioneerP3DX.\\
+Campos potenciales & Atraccion a mannequin con saturacion de velocidad.\\
+Anticolision & 16 ultrasonidos + 6 sensores virtuales.\\
+Celda robotizada & Docking/carga, HMI, transportadores, palets, vallas y eventos.\\
+Bateria y robustez & Zonas de velocidad, sensor degradado y telemetria industrial.\\
+A* cooperativo & 3 AMR auxiliares con reservas temporales, bateria y recarga.\\
+PPTs de clase & Modelo diferencial, sensores, FSM, navegacion y validacion.\\
+\bottomrule
+\end{tabularx}
+}
+
 \slide{Entorno de simulacion}{
 \begin{itemize}
   \item CoppeliaSim con scripts Lua embebidos.
   \item Escenas base: Actividad2\_1\_Pioneer.ttt y Actividad2\_2\_Pioneer.ttt.
+  \item Escena final: Actividad2\_Pioneer\_Profesional\_10\_10.ttt.
   \item Objetivos posibles: mannequin, Bill o dummy de estacion.
-  \item Validacion visual y mediante indicadores de distancia.
+  \item 16 ultrasonidos + 6 sensores virtuales de seguridad.
+  \item Escenarios: pallet movil, parada, objetivo dinamico, pasillo estrecho, sensor degradado y bateria baja.
 \end{itemize}
 }
 
@@ -91,15 +109,15 @@ y_g-y_r
   \item Cada sensor cercano genera fuerza repulsiva.
   \item La direccion final combina atraccion y repulsion.
   \item El robot reduce velocidad cuando hay obstaculos cerca.
-  \item Se prueban obstaculos frontales, laterales y objetivo movil.
+  \item Se prueban obstaculos frontales, laterales, objetivo movil, ruido y fallo intermitente de sensor.
 \end{itemize}
 }
 
 \slide{Flujo de control}{
 \begin{tikzpicture}[node distance=8mm,box/.style={draw=UniPrimaryDeep,rounded corners,fill=UniLight,align=center,text width=2.7cm,minimum height=10mm},arr/.style={-{Latex},UniPrimaryDeep,thick}]
-\node[box] (read) {Leer objetivo y sensores};
-\node[box,right=of read] (force) {Calcular fuerzas};
-\node[box,right=of force] (cmd) {Convertir a v, omega};
+\node[box] (read) {Leer objetivo, ruta y sensores};
+\node[box,right=of read] (force) {FSM + campos potenciales};
+\node[box,right=of force] (cmd) {Saturar v, omega};
 \node[box,below=of force] (wheels) {Enviar velocidades de rueda};
 \draw[arr] (read)--(force);
 \draw[arr] (force)--(cmd);
@@ -113,8 +131,27 @@ y_g-y_r
   \item Zona segura de espera.
   \item Mision hacia Bill, mannequin o punto de estacion.
   \item Evitacion de obstaculos de la celda.
-  \item Señales internas: missionReady y pioneerArrived.
-  \item Capturas finales para evidenciar coordinacion.
+  \item Senales internas: missionReady, pioneerArrived, pioneerState y pioneerScenario.
+  \item Celda con transportadores, palets, vallas, eventos, estacion objetivo y estacion de carga.
+\end{itemize}
+}
+
+\slide{Extensiones robustas}{
+\begin{itemize}
+  \item Bateria simulada con modos NORMAL, LOW y CHARGING.
+  \item Zonas de velocidad: docking, carril de aproximacion y zona por defecto.
+  \item Filtro de ruido y fallo intermitente en sensores fronto-laterales.
+  \item HMI visual con bateria, estado, zona activa, carga y fallo sensorial.
+  \item Flota auxiliar de 3 AMR con A* cooperativo y retorno a estaciones de carga.
+\end{itemize}
+}
+
+\slide{Flota A* cooperativa}{
+\begin{itemize}
+  \item 3 robots AMR auxiliares sobre una grilla de celda.
+  \item A* con reservas celda-tiempo y arista-tiempo para evitar ocupaciones simultaneas y cruces opuestos.
+  \item Bateria con descarga, retorno autonomo a estacion de carga y recarga hasta READY.
+  \item Resultado validado: 16 planes A*, 8 conflictos evitados, 4 eventos de carga y 3/3 robots recargados.
 \end{itemize}
 }
 
@@ -128,14 +165,19 @@ Llegada & Parada dentro de tolerancia.\\
 Obstaculo frontal & Rodeo sin colision.\\
 Objetivo movil & Seguimiento estable.\\
 Celda & No invadir zonas de otros equipos.\\
+Flota A* & 3 robots completan mision y recarga.\\
 \bottomrule
 \end{tabularx}
+
+\vspace{0.25cm}
+Validacion headless final: 4,328 m $\rightarrow$ 0,739 m, estado ARRIVED, 22 sensores activos, 8 escenarios observados y distancia minima a obstaculo 0,191 m. Flota: 16 planes A*, 8 conflictos evitados, 4 cargas y 3/3 robots READY.
 }
 
 \slide{Conclusiones}{
 \begin{itemize}
   \item Campos potenciales: solucion sencilla y didactica.
   \item La evitacion reactiva mejora seguridad de navegacion.
+  \item La flota A* demuestra coordinacion multi-robot y gestion de bateria.
   \item CoppeliaSim permite ajustar parametros antes de la demostracion.
   \item Limitacion: posibles minimos locales y oscilaciones.
 \end{itemize}

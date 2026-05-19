@@ -5,21 +5,39 @@
 \begin{itemize}
   \item `coppeliasim/Actividad2\_1\_Pioneer.ttt`
   \item `coppeliasim/Actividad2\_2\_Pioneer.ttt`
+  \item `coppeliasim/Actividad2\_Pioneer\_Profesional\_10\_10.ttt`
+  \item `coppeliasim/pioneer\_professional\_controller.lua`
+  \item `coppeliasim/scenario\_event\_manager.lua`
+  \item `coppeliasim/multi\_robot\_astar\_manager.lua`
+  \item `coppeliasim/build\_professional\_scene.py`
+  \item `coppeliasim/Actividad2\_Pioneer\_Profesional\_10\_10\_validation.json`
+  \item `slides/Actividad2\_Pioneer\_CoppeliaSim.pptx`
+  \item `slides/build\_editable\_pptx.js`
 \end{itemize}
 
-\section{Parametros iniciales sugeridos}
+\section{Parametros finales del controlador}
 
 \begin{longtable}{P{0.32\textwidth}P{0.22\textwidth}P{0.36\textwidth}}
 \toprule
-\textbf{Parametro} & \textbf{Valor inicial} & \textbf{Comentario}\\
+\textbf{Parametro} & \textbf{Valor final} & \textbf{Comentario}\\
 \midrule
 \endhead
-\(v_{max}\) & 0,45 m/s & Velocidad lineal maxima prudente en simulacion.\\
-\(\omega_{max}\) & 1,2 rad/s & Limite de giro para evitar oscilaciones.\\
-\(k_{att}\) & 0,8 & Ganancia de atraccion al objetivo.\\
-\(k_{rep}\) & 0,35 & Ganancia inicial de repulsion.\\
-\(d_0\) & 0,8 m & Distancia de influencia de obstaculos.\\
-Tolerancia de llegada & 0,25 m & Distancia para considerar mision completada.\\
+\(v_{max}\) & 0,55 m/s & Velocidad lineal maxima con limitacion de aceleracion.\\
+\(\omega_{max}\) & 1,45 rad/s & Limite de giro para evitar oscilaciones.\\
+\(k_{att}\) & 0,95 & Ganancia de atraccion al objetivo.\\
+\(k_{rep}\) & 1,78 & Ganancia de repulsion combinada para ultrasonidos y sensores virtuales.\\
+\(d_0\) & 0,72 m & Distancia de influencia de obstaculos fisicos.\\
+Rango virtual & 1,08 m & Anticipacion con sensores virtuales de seguridad.\\
+Bateria baja & 60\% & Umbral para limitar velocidad y actualizar HMI.\\
+Bateria critica & 30\% & Umbral para modo conservador.\\
+Ruido sensorial & 0,018 m & Perturbacion determinista aplicada a lecturas de proximidad.\\
+Distancia de seguimiento & 0,72 m & Separacion deseada respecto al objetivo.\\
+Tolerancia de llegada & 0,35 m & Distancia para considerar mision completada.\\
+Tolerancia de waypoint & 0,64 m & Radio de paso para ruta en celda.\\
+Robots de flota auxiliar & 3 & AMR visuales coordinados por A* cooperativo.\\
+Planes A* validados & 16 & Planificaciones generadas durante mision, retorno y carga.\\
+Conflictos cooperativos evitados & 8 & Reservas temporales que evitan ocupacion simultanea o cruces opuestos.\\
+Eventos de carga de flota & 4 & Retornos y recargas observados en la validacion headless.\\
 \bottomrule
 \end{longtable}
 
@@ -27,10 +45,16 @@ Tolerancia de llegada & 0,25 m & Distancia para considerar mision completada.\\
 
 \begin{itemize}
   \item Documento PDF compilado.
-  \item Presentacion Beamer/PDF compilada.
+  \item Presentacion PDF y PPTX compilada.
   \item Escena CoppeliaSim con Pioneer integrado.
   \item Script Lua de atraccion al objetivo.
   \item Script Lua con evitacion de colisiones.
-  \item Capturas de ejecucion en CoppeliaSim.
+  \item Gestor Lua de escenarios y eventos temporizados.
+  \item Gestor Lua multi-robot con A* cooperativo y reservas temporales.
+  \item Estacion de carga, HMI visual, bateria, zonas de velocidad y fallo sensorial.
+  \item Acabado visual industrial: piso texturizado, carriles, franjas de seguridad, grilla A* y rutas de flota.
+  \item Tres robots AMR auxiliares con descarga, retorno a carga, recarga y estado final READY.
+  \item Sensores virtuales adicionales integrados en el Pioneer.
+  \item Validacion automatizada en CoppeliaSim headless.
   \item Descripcion de parametros y resultados.
 \end{itemize}

@@ -1,7 +1,11 @@
 \chapter{Conclusiones}
 
-La Actividad 2 permite aplicar conceptos basicos de robotica movil en un entorno de simulacion controlado. La solucion por campos potenciales es adecuada para una primera implementacion porque traduce de forma directa la posicion del objetivo y las lecturas de obstaculos en consignas de movimiento.
+La Actividad 2 permite aplicar conceptos basicos de robotica movil en un entorno de simulacion controlado. La solucion por campos potenciales es adecuada para la implementacion solicitada porque traduce de forma directa la posicion del objetivo y las lecturas de obstaculos en consignas de movimiento.
 
-El robot Pioneer P3DX resulta apropiado por su modelo diferencial sencillo, disponibilidad en CoppeliaSim y facilidad para incorporar sensores de proximidad. La parte de anticolisiones aporta el comportamiento minimo necesario para integrar el robot en una celda con obstaculos o con un objetivo movil como Bill.
+El robot Pioneer P3DX resulta apropiado por su modelo diferencial sencillo, disponibilidad en CoppeliaSim y facilidad para incorporar sensores de proximidad. La solucion final amplifica el ejemplo de clase con una maquina de estados, ruta por waypoints, sensores virtuales, recuperacion anti-bloqueo, telemetria interna, bateria, zonas de velocidad, HMI y eventos de celda.
 
-Como limitacion, los campos potenciales pueden sufrir minimos locales y oscilaciones. Por ello se recomienda documentar parametros, saturaciones y casos de fallo. Para una version ampliada podria añadirse planificacion global, memoria de obstaculos o un algoritmo de navegacion mas robusto.
+El resultado cubre las dos partes del enunciado: atraccion al objetivo `mannequin` y evitacion de colisiones durante la navegacion. Ademas, incorpora coordinacion de celda mediante senales, parada de seguridad, obstaculo movil, objetivo dinamico, degradacion sensorial y bateria baja, lo que evidencia una ampliacion funcional del script visto en clase.
+
+Como ampliacion profesional, se anadio una flota auxiliar de tres AMR con A* cooperativo, reservas celda-tiempo/arista-tiempo, estaciones de carga y ciclo de descarga-recarga. Esta parte conecta los contenidos de navegacion global y coordinacion multi-robot de los PPTs con una demostracion ejecutable dentro de la misma escena.
+
+Como limitacion, los campos potenciales pueden sufrir minimos locales y oscilaciones. Por ello se han documentado parametros, saturaciones, estados de recuperacion y validacion automatizada. Para una version industrial podria profundizarse en DWA para seleccion de velocidades factibles y localizacion probabilistica tipo Kalman, Montecarlo o SLAM.

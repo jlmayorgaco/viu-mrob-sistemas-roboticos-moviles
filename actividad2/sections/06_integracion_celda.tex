@@ -1,17 +1,44 @@
 \chapter{Integracion en celda robotizada}
 
-El enunciado pide añadir el robot Pioneer con su script a una celda robotizada para que trabaje coordinado con otros sistemas. La integracion propuesta es logistica y de acompañamiento: el Pioneer sigue a Bill o se desplaza hacia puntos de servicio para simular transporte ligero, asistencia a operario o inspeccion de una zona.
+El enunciado pide anadir el robot Pioneer con su script a una celda robotizada para que trabaje coordinado con otros sistemas. La escena final implementa esa integracion en una aplicacion logistica de asistencia e inspeccion: el Pioneer sale de una zona segura, recorre una ruta de servicio, evita elementos de la celda y termina siguiendo al objetivo `mannequin` como equivalente operativo de Bill.
 
 \section{Interaccion con la celda}
 
 \begin{itemize}
-  \item El robot parte de una zona segura de espera.
-  \item Recibe un objetivo: Bill, mannequin o un dummy de estacion.
-  \item Navega evitando obstaculos fijos de la celda.
-  \item Se detiene a una distancia de seguridad.
-  \item Registra estado de llegada mediante una variable o señal de CoppeliaSim.
+  \item El robot parte de una zona segura de espera y docking.
+  \item La ruta se organiza mediante waypoints internos hasta la estacion objetivo.
+  \item El controlador acepta `mannequin`, Bill o `GoalStation` como referencias de mision.
+  \item La celda contiene vallas, transportadores, palets, una zona de trabajo robotizada y zonas visuales de seguridad.
+  \item El acabado visual incluye piso industrial texturizado con baldosas, carriles, franjas de seguridad, bahia de carga y grilla A* marcada.
+  \item El robot combina los 16 ultrasonidos del Pioneer con 6 sensores virtuales adicionales para anticipar obstaculos.
+  \item La celda incorpora estacion de carga, telemetria de bateria, zonas de velocidad y un HMI visual con estado, bateria, zona activa y fallo sensorial.
+  \item Como extension de celda se incorpora una flota auxiliar de 3 AMR con navegacion A* cooperativa, reservas temporales, estaciones de carga y ciclo de descarga/recarga de bateria.
+  \item La llegada se registra mediante `pioneerArrived`, `pioneerState`, `pioneerRouteIndex` y distancia final al objetivo.
 \end{itemize}
 
-\section{Coordinacion}
+\section{Coordinacion y eventos}
 
-La coordinacion basica puede realizarse con señales internas de CoppeliaSim. Por ejemplo, una señal `missionReady` habilita el movimiento y una señal `pioneerArrived` informa a la celda de que el robot llego. En una ampliacion posterior, estas señales pueden conectarse con scripts de otros robots o con un supervisor externo.
+La coordinacion se realiza con senales internas de CoppeliaSim. La senal `missionReady` habilita o bloquea el movimiento, `pioneerArrived` informa a la celda de que el robot llego, `pioneerScenario` identifica el escenario activo y `pioneerObstacleRisk` resume la criticidad de obstaculos detectados.
+
+La escena incluye el script `VIU\_Scenario\_Event\_Manager`, que activa eventos temporizados para demostrar comportamiento robusto:
+
+\begin{itemize}
+  \item S1: inicio de ruta desde la zona segura.
+  \item S2: pallet movil cruzando el carril de aproximacion.
+  \item S3: parada por enclavamiento de seguridad.
+  \item S4: objetivo dinamico en la estacion final.
+  \item S5: paso estrecho temporal.
+  \item S6: degradacion sensorial con ruido y fallo intermitente fronto-lateral.
+  \item S7: bateria baja simulada con limitacion de velocidad y actualizacion del HMI.
+  \item S8: aproximacion final y restauracion de la celda.
+\end{itemize}
+
+Estos eventos fuerzan estados `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`, por lo que la simulacion no se limita a un caso ideal, sino que prueba el robot en condiciones representativas de una celda automatizada.
+
+\section{Extension multi-robot cooperativa}
+
+Ademas del Pioneer principal exigido por la guia, la escena incluye tres robots AMR auxiliares (`VIU\_Fleet\_Robot\_1`, `VIU\_Fleet\_Robot\_2` y `VIU\_Fleet\_Robot\_3`) para demostrar coordinacion de flota en la misma celda. Esta capa no sustituye el controlador por campos potenciales del Pioneer: lo complementa con una prueba adicional de planificacion cooperativa.
+
+El script `multi\_robot\_astar\_manager.lua` ejecuta A* sobre una grilla discreta de la celda. Cada robot planifica hacia su estacion objetivo y el gestor reserva celdas en el tiempo para evitar que dos robots ocupen el mismo espacio en el mismo instante. Tambien se reservan transiciones entre celdas para evitar cruces opuestos o intercambios simultaneos de posicion.
+
+La flota incorpora baterias independientes. Durante la mision cada AMR consume bateria; cuando termina o cuando se fuerza el retorno, vuelve a su estacion de carga, entra en modo `CHARGING`, recupera energia y queda en estado `READY`. Esta logica permite validar descarga, retorno autonomo, recarga y reincorporacion sin interferir con la tarea principal del Pioneer.

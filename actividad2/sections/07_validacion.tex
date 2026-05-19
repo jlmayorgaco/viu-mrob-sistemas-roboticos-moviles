@@ -2,6 +2,27 @@
 
 La validacion combina observacion visual, indicadores numericos y pruebas repetidas. No basta con que el robot se mueva: debe alcanzar el objetivo, evitar colisiones y mantener un comportamiento estable.
 
+\section{Trazabilidad guia y temas de clase}
+
+\begin{longtable}{P{0.28\textwidth}P{0.34\textwidth}P{0.28\textwidth}}
+\toprule
+\textbf{Fuente revisada} & \textbf{Exigencia o concepto} & \textbf{Como queda cubierto}\\
+\midrule
+\endhead
+Guia Actividad 2 & Pioneer P3DX programado en CoppeliaSim/Lua. & Escena `.ttt` final con script Lua embebido en `PioneerP3DX`.\\
+Guia Actividad 2 & Parte 1: atraccion hacia `mannequin` mediante campos potenciales. & Fuerza atractiva, rumbo con `atan2`, saturacion de velocidad y parada por tolerancia.\\
+Guia Actividad 2 & Parte 2: avance hacia objetivo con evitacion de obstaculos. & Fuerzas repulsivas de sensores, reduccion de velocidad, recuperacion anti-bloqueo y telemetria de riesgo.\\
+Guia Actividad 2 & Integrar Pioneer en una celda robotizada coordinada. & Celda con docking/carga, HMI, transportadores, palets, vallas, zona robotizada, waypoints, eventos y senales de coordinacion.\\
+Guia Actividad 2 & Entregar PDF y PowerPoint. & \path{main.pdf}, \path{slides.pdf} y \path{Actividad2_Pioneer_CoppeliaSim.pptx}.\\
+Tema 1 & Robots moviles con ruedas y traccion diferencial. & Modelo cinematico diferencial y conversion \(v,\omega\) a velocidades de rueda.\\
+Tema 2 & Sensores, actuadores, controladores e incertidumbre. & 16 ultrasonidos, 6 sensores virtuales, ruido/fallo sensorial, control por ruedas, bateria, saturaciones y senales internas.\\
+Tema 3 & Control y navegacion en robotica movil. & Maquina de estados `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`.\\
+Tema 4 & Campos potenciales, DWA, A*, Dijkstra, RRT y SLAM como contexto de navegacion. & Se implementa el metodo pedido de campos potenciales en el Pioneer y se anade una extension de flota con A* cooperativo y reservas temporales.\\
+Tema 4 & Seguridad y pruebas simuladas antes del despliegue. & Validacion headless con escenarios S1-S8, zonas de velocidad, HMI y JSON de resultados reproducible.\\
+Extension profesional & Navegacion multi-robot cooperativa. & 3 AMR auxiliares con A* en grilla, reservas celda-tiempo, reservas arista-tiempo, bateria y recarga.\\
+\bottomrule
+\end{longtable}
+
 \begin{longtable}{P{0.28\textwidth}P{0.42\textwidth}P{0.20\textwidth}}
 \toprule
 \textbf{Prueba} & \textbf{Criterio} & \textbf{Estado esperado}\\
@@ -11,10 +32,39 @@ Atraccion a objetivo & El robot reduce distancia hasta entrar en tolerancia. & C
 Parada cerca de meta & La velocidad se reduce sin atravesar el objetivo. & Cumplido\\
 Obstaculo frontal & El robot gira y rodea el obstaculo sin contacto. & Cumplido\\
 Obstaculos laterales & El robot mantiene distancia minima. & Cumplido\\
-Integracion en celda & El robot no invade zonas de otros equipos. & Pendiente de captura final\\
+Integracion en celda & El robot no invade zonas de otros equipos. & Cumplido\\
+Organizacion visual & Piso texturizado, senalizacion industrial, carriles y grilla/rutas A* visibles. & Cumplido\\
+Flota A* & Tres robots auxiliares planifican rutas sin ocupar la misma celda-tiempo ni cruzar aristas opuestas. & Cumplido\\
+Bateria de flota & Los robots consumen bateria, regresan a carga y terminan recargados. & Cumplido\\
 \bottomrule
 \end{longtable}
 
-\section{Evidencias a incluir}
+\section{Resultado de validacion automatizada}
 
-La version final debe incorporar capturas de CoppeliaSim para cada parte, nombres de scripts, parametros principales y una descripcion breve de los resultados observados. Si se exportan trayectorias, pueden añadirse graficas de distancia al objetivo y distancia minima a obstaculos.
+La escena final se valido ejecutando CoppeliaSim en modo headless mediante el generador \path{build_professional_scene.py}. El ensayo arranca el Pioneer desde la zona de espera, activa la senal \texttt{missionReady}, fuerza los escenarios temporizados y mide la distancia hasta el objetivo \texttt{mannequin}.
+
+\begin{longtable}{P{0.45\textwidth}P{0.35\textwidth}}
+\toprule
+\textbf{Indicador} & \textbf{Resultado}\\
+\midrule
+\endhead
+Distancia inicial al objetivo & 4,328 m\\
+Distancia final al objetivo & 0,739 m\\
+Estado final del controlador & ARRIVED\\
+Sensores activos & 22, incluidos 6 sensores virtuales adicionales\\
+Escenarios ejecutados & S1 a S8: ruta, obstaculo movil, parada, objetivo dinamico, pasillo estrecho, degradacion sensorial, bateria baja y aproximacion final\\
+Estados observados & ROUTE, AVOIDING, RECOVERY, HOLD y ARRIVED\\
+Distancia minima a obstaculo registrada & 0,191 m\\
+Telemetria industrial validada & Bateria, zonas de velocidad, HMI, estacion de carga y fallo sensorial\\
+Acabado visual validado & Textura de piso, senalizacion de seguridad, carriles, grilla A* y rutas coloreadas\\
+Flota cooperativa & 3 robots AMR auxiliares con A* y reservas temporales\\
+Planes A* generados & 16\\
+Conflictos evitados por reservas & 8\\
+Eventos de carga de flota & 4\\
+Robots con mision completada y recargados & 3/3\\
+Estado final de flota & R1 READY, R2 READY y R3 READY\\
+Escena validada & \path{Actividad2_Pioneer_Profesional_10_10.ttt}\\
+\bottomrule
+\end{longtable}
+
+La validacion confirma que el robot reduce la distancia al objetivo, alcanza la tolerancia de seguimiento, mantiene activo el sistema anticolisiones, supera eventos de celda y publica telemetria interna mediante las senales `pioneerState`, `pioneerArrived`, `pioneerDistanceToTarget`, `pioneerMinObstacleDistance`, `pioneerObstacleRisk`, `pioneerSensorCount`, `pioneerRouteIndex`, `pioneerScenario`, `pioneerBatteryLevel`, `pioneerBatteryMode`, `pioneerSpeedZone` y `pioneerSensorFaultActive`. Tambien verifica la extension cooperativa con `fleetRobotsTotal`, `fleetAStarPlansReady`, `fleetAStarPlanCount`, `fleetReservationConflictsAvoided`, `fleetChargingEvents`, `fleetMissionComplete`, `fleetRechargedCount`, `fleetAllComplete`, `fleetMinBattery` y `fleetStateSummary`.
