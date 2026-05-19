@@ -229,7 +229,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 {
   const s = slideBase("La propuesta no robotiza el HTP: ordena el flujo que lo rodea", "Tesis", 2, C.teal);
   label(s, "Menos espera.\nMas trazabilidad.\nMenos riesgo FOD.", 0.78, 1.48, 4.5, 1.3, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
-  label(s, "La solucion AMR-FOD-Kitting automatiza transporte, confirmacion y evidencia; no invade procesos certificados de montaje aeronautico.", 0.84, 3.08, 4.7, 0.68, { size: 9, color: C.muted });
+  label(s, "Automatiza transporte, confirmacion y evidencia.", 0.84, 3.02, 4.2, 0.28, { size: 9, color: C.muted });
+  label(s, "No invade montaje aeronautico certificado.", 0.84, 3.38, 4.2, 0.28, { size: 9, bold: true, color: C.navy });
   s.addShape(pptx.ShapeType.line, { x: 7.15, y: 1.25, w: 0, h: 4.4, line: { color: C.teal, width: 1.2 } });
   metric(s, "40", "HTP/mes actuales aproximados", 7.85, 1.45, C.teal);
   metric(s, "80+", "HTP/mes como objetivo futuro", 7.85, 3.08, C.amber);
@@ -263,7 +264,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const s = slideBase("Flujo auxiliar en HTP A320 y seccion 19.1", "Contexto", 4, C.cyan);
   card(s, 0.85, 1.35, 11.75, 4.75, { fill: "EAF7FB", line: "9DDDEF" });
   label(s, "Estructura grande;\nsoporte logistico fino.", 1.2, 1.65, 4.3, 0.82, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
-  label(s, "El AMR no toca montaje certificado: estabiliza entregas, retorno de utiles, FOD y trazabilidad alrededor de la estacion.", 1.22, 2.72, 4.25, 0.58, { size: 8.5, color: C.muted });
+  label(s, "El AMR no toca montaje certificado.", 1.22, 2.66, 4.25, 0.24, { size: 8.4, bold: true, color: C.navy });
+  label(s, "Estabiliza entregas, retornos, FOD y trazabilidad.", 1.22, 2.98, 4.25, 0.24, { size: 8.1, color: C.muted });
   s.addShape(pptx.ShapeType.arc, { x: 1.1, y: 3.55, w: 5.5, h: 1.1, line: { color: C.navy, width: 1.5 }, adjustPoint: 0.3 });
   s.addShape(pptx.ShapeType.triangle, { x: 2.2, y: 3.15, w: 1.15, h: 0.85, rotate: 20, fill: { color: "6FB7C6" }, line: { color: "6FB7C6" } });
   s.addShape(pptx.ShapeType.rect, { x: 4.22, y: 3.46, w: 0.72, h: 1.05, fill: { color: "F3B37A" }, line: { color: "F3B37A" } });
@@ -274,7 +276,9 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   pill(s, "Estacion HTP\nentrega trazada", 9.0, 3.35, 1.65, C.amber);
   arrow(s, 10.7, 3.56, 11.18, 3.56, C.cyan);
   pill(s, "Retorno + FOD\nevidencia digital", 11.22, 3.35, 1.25, C.green);
-  label(s, "Lectura clave para la propuesta: la seccion 19.1 concentra dependencia de kits, herramientas, documentacion y disciplina FOD. Ahi el AMR reduce esperas y deja trazas, sin fabricar el HTP.", 6.76, 4.72, 5.4, 0.55, { size: 7.4, color: C.ink });
+  label(s, "Lectura clave para la propuesta", 6.76, 4.58, 3.2, 0.2, { size: 7.4, bold: true, color: C.navy });
+  label(s, "La seccion 19.1 depende de kits, herramientas y disciplina FOD.", 6.76, 4.88, 5.0, 0.24, { size: 6.9, color: C.ink });
+  label(s, "El AMR reduce esperas y deja trazas; no fabrica el HTP.", 6.76, 5.16, 5.0, 0.24, { size: 6.9, color: C.ink });
 }
 
 // 5
@@ -378,8 +382,10 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   });
   s.addShape(pptx.ShapeType.line, { x: 0.75, y: 3.52, w: 11.3, h: 0, line: { color: C.red, width: 1 } });
   label(s, "Interrupcion de seguridad: escaner, bumper o E-stop detienen cualquier mision", 0.82, 3.78, 7.6, 0.2, { size: 7.2, bold: true, color: C.red });
-  label(s, "registro minimo por mision", 0.82, 4.55, 2.2, 0.2, { size: 8.2, bold: true, color: C.navy });
-  label(s, "robot, kit, origen, destino, ruta prevista, ruta ejecutada, lectura RFID/QR, parada de seguridad, confirmacion e incidencia FOD si aplica.", 0.82, 4.92, 10.6, 0.36, { size: 7.4, color: C.ink });
+  label(s, "registro minimo por mision", 0.82, 4.50, 2.2, 0.2, { size: 8.2, bold: true, color: C.navy });
+  label(s, "Robot, kit, origen, destino y estacion.", 0.82, 4.88, 3.2, 0.22, { size: 7.1, color: C.ink });
+  label(s, "Ruta prevista y ruta ejecutada.", 4.25, 4.88, 2.7, 0.22, { size: 7.1, color: C.ink });
+  label(s, "RFID/QR, seguridad, confirmacion e incidencia FOD.", 7.1, 4.88, 4.2, 0.22, { size: 7.1, color: C.ink });
 }
 
 // 10
@@ -396,7 +402,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, t, x - 0.2, 3.82 + (i % 2) * 0.55, 0.72, 0.14, { size: 6.5, color: c, bold: true, align: "center" });
     if (i < steps.length - 1) arrow(s, x + 0.36, 3.36 + (i % 2) * 0.55, x + 1.18, 3.36 + ((i + 1) % 2) * 0.55, C.cyan);
   });
-  label(s, "La mision termina cuando queda evidencia: entrega confirmada, ruta registrada y excepcion documentada.", 2.2, 5.65, 8.6, 0.3, { size: 8, color: C.muted, align: "center" });
+  label(s, "La mision termina con evidencia:", 2.5, 5.52, 3.0, 0.22, { size: 8, bold: true, color: C.navy, align: "center" });
+  label(s, "entrega confirmada + ruta registrada + excepcion documentada.", 5.35, 5.52, 5.4, 0.22, { size: 8, color: C.muted, align: "center" });
 }
 
 // 11
@@ -411,78 +418,147 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     s.addShape(pptx.ShapeType.rect, { x: 7.05, y: 2.18 + i * 0.62, w: 0.11, h: 0.11, fill: { color: [C.violet, C.cyan, C.red, C.amber][i] }, line: { color: [C.violet, C.cyan, C.red, C.amber][i] } });
     label(s, t, 7.35, 2.05 + i * 0.62, 4.6, 0.28, { size: 7.7, color: C.ink });
   });
-  label(s, "Gate: 95 % misiones entregan, cero contactos, 100 % de misiones cerradas y ensayo de bateria antes de migrar ruta.", 7.05, 5.22, 4.6, 0.42, { size: 7.2, color: C.muted });
+  label(s, "Gate minimo antes de planta:", 7.05, 5.10, 2.6, 0.20, { size: 7.2, bold: true, color: C.navy });
+  label(s, "95 % misiones entregan; cero contactos.", 7.05, 5.42, 3.8, 0.20, { size: 6.7, color: C.muted });
+  label(s, "100 % misiones cerradas y bateria validada.", 7.05, 5.68, 3.9, 0.20, { size: 6.7, color: C.muted });
 }
 
 // 12
 {
-  const s = slideBase("No se vende una flota grande sin datos del piloto", "Despliegue", 12, C.teal);
-  const sc = [
-    ["1", "Piloto", "198.688 €", "zona acotada, rutas, RFID/QR y FOD", C.teal],
-    ["7", "Expansion", "904.736 €", "varias estaciones, retornos y gestor de flota", C.amber],
-    ["17", "Extendido", "2.051.616 €", "cobertura amplia condicionada a KPIs", C.green],
+  const s = slideBase("Tres fases con entregables y criterio de paso", "Despliegue", 12, C.teal);
+  const phases = [
+    ["1", "Piloto controlado", "198.688 € CAPEX", "Zona acotada y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
+    ["7", "Expansion", "904.736 € CAPEX", "Varias estaciones y gestor de flota.", "Retorno de utiles y tablero de incidencias.", "Riesgo: pasillos y baterias.", "Pasa: disponibilidad >= 90 %.", C.amber],
+    ["17", "Cobertura extendida", "2.051.616 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: comprar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
   ];
-  sc.forEach(([n, name, cost, note, col], i) => {
-    const x = 2.3 + i * 3.7;
-    s.addShape(pptx.ShapeType.ellipse, { x, y: 2.35, w: 0.2, h: 0.2, fill: { color: col }, line: { color: col } });
-    label(s, n, x - 0.18, 1.65, 0.56, 0.42, { size: 20, bold: true, color: col, align: "center" });
-    label(s, name, x - 0.45, 2.72, 0.9, 0.18, { size: 7.2, bold: true, color: C.ink, align: "center" });
-    label(s, cost, x - 0.65, 3.1, 1.3, 0.18, { size: 7.2, bold: true, color: col, align: "center" });
-    label(s, note, x - 1.0, 3.48, 2.0, 0.42, { size: 6.7, color: C.muted, align: "center" });
+  phases.forEach(([n, name, cost, scope1, scope2, risk, gate, col], i) => {
+    const x = 0.85 + i * 4.15;
+    card(s, x, 1.35, 3.65, 4.55, { fill: "FFFFFF", line: col });
+    label(s, n, x + 0.25, 1.72, 0.55, 0.38, { size: 20, bold: true, color: col });
+    label(s, name, x + 0.95, 1.82, 2.25, 0.22, { size: 8.2, bold: true, color: C.ink });
+    label(s, cost, x + 0.28, 2.42, 1.85, 0.22, { size: 8.3, bold: true, color: col });
+    label(s, scope1, x + 0.28, 3.05, 2.85, 0.22, { size: 6.4, color: C.ink });
+    label(s, scope2, x + 0.28, 3.35, 2.9, 0.22, { size: 6.4, color: C.ink });
+    label(s, risk, x + 0.28, 4.15, 2.9, 0.22, { size: 6.2, bold: true, color: C.red });
+    label(s, gate, x + 0.28, 4.62, 2.85, 0.30, { size: 6.2, color: C.muted });
   });
-  s.addShape(pptx.ShapeType.line, { x: 2.4, y: 4.62, w: 7.5, h: 0, line: { color: C.line, width: 1 } });
-  label(s, "Escalado por evidencia: seguridad, disponibilidad, aceptacion operativa, entregas a tiempo y trazabilidad completa.", 1.7, 5.1, 9.8, 0.32, { size: 8.2, color: C.ink, align: "center" });
+  label(s, "Regla comercial: no se escala por intuicion.", 1.0, 6.10, 4.0, 0.20, { size: 7.1, bold: true, color: C.navy });
+  label(s, "Se escala con trazas, seguridad, disponibilidad y uso real de flota.", 5.1, 6.10, 5.9, 0.20, { size: 7.1, bold: true, color: C.navy });
 }
 
 // 13
 {
-  const s = slideBase("La oferta separa robot, software, ingenieria y soporte", "Oferta", 13, C.amber);
-  const vals = [["198.688€", "1 robot", C.teal], ["904.736€", "7 robots", C.amber], ["2.051.616€", "17 robots", C.green]];
-  vals.forEach(([v, t, col], i) => {
-    label(s, v, 0.92 + i * 4.05, 1.55, 2.0, 0.32, { size: 16, bold: true, color: col });
-    label(s, t, 0.96 + i * 4.05, 2.02, 1.0, 0.18, { size: 6.8, color: C.muted });
-    [1.4, 0.82, 0.72, 0.9, 0.58].forEach((h, j) => {
-      s.addShape(pptx.ShapeType.rect, { x: 0.95 + i * 4.05 + j * 0.38, y: 5.15 - h, w: 0.16, h, fill: { color: [C.teal, C.violet, C.cyan, C.green, C.amber][j] }, line: { color: [C.teal, C.violet, C.cyan, C.green, C.amber][j] } });
-    });
+  const s = slideBase("Partidas por escenario, sin caja negra", "Presupuesto", 13, C.amber);
+  label(s, "CAPEX estimado sin IVA", 0.85, 1.14, 2.2, 0.18, { size: 6.4, bold: true, color: C.muted });
+  [["198.688 €", "1 robot", C.teal], ["904.736 €", "7 robots", C.amber], ["2.051.616 €", "17 robots", C.green]].forEach(([v, t, col], i) => {
+    label(s, v, 0.85 + i * 3.55, 1.48, 2.25, 0.3, { size: 13.8, bold: true, color: col });
+    label(s, t, 0.88 + i * 3.55, 1.86, 1.1, 0.16, { size: 6.3, bold: true, color: C.muted });
   });
-  label(s, "Estimacion academica sin IVA. Referencias comerciales de AMR 250 kg usadas como benchmark de coste; la solucion final mantiene base omnidireccional equivalente.", 0.85, 6.05, 11.2, 0.32, { size: 7.1, color: C.muted });
+  card(s, 0.85, 2.35, 11.65, 3.35, { fill: "FFFFFF", line: C.line });
+  label(s, "Partida", 1.03, 2.55, 2.5, 0.16, { size: 6.3, bold: true, color: C.ink });
+  label(s, "1 robot", 6.0, 2.55, 0.9, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
+  label(s, "7 robots", 8.42, 2.55, 0.95, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
+  label(s, "17 robots", 11.1, 2.55, 1.0, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
+  const rows = [
+    ["AMR + sensores + portakits", "69.800", "488.600", "1.186.600", C.teal],
+    ["Software flota + trazabilidad", "22.000", "58.000", "105.000", C.violet],
+    ["Ingenieria + CoppeliaSim", "42.000", "112.000", "215.000", C.cyan],
+    ["Instalacion + mapeo + SAT", "18.000", "52.000", "120.000", C.green],
+    ["Formacion + cambio operativo", "8.500", "24.000", "42.000", C.amber],
+    ["Mantenimiento ano 1", "5.600", "39.200", "95.200", C.teal],
+    ["Logistica + ciber + docs", "11.500", "34.000", "68.000", C.violet],
+    ["Contingencia + margen 12 %", "21.288", "96.936", "219.816", C.red],
+  ];
+  rows.forEach(([part, one, seven, seventeen, col], i) => {
+    const y = 2.95 + i * 0.31;
+    s.addShape(pptx.ShapeType.rect, { x: 1.03, y: y + 0.03, w: 0.06, h: 0.06, fill: { color: col }, line: { color: col } });
+    label(s, part, 1.18, y, 3.6, 0.16, { size: 5.8, bold: true, color: C.ink });
+    label(s, one, 5.7, y, 1.2, 0.16, { size: 5.8, color: C.ink, align: "right" });
+    label(s, seven, 8.08, y, 1.3, 0.16, { size: 5.8, color: C.ink, align: "right" });
+    label(s, seventeen, 10.72, y, 1.4, 0.16, { size: 5.8, color: C.ink, align: "right" });
+  });
+  label(s, "Referencias publicas: MiR250, LD-250, Hokuyo, Intel RealSense y Zebra.", 0.88, 6.05, 7.2, 0.18, { size: 6.4, color: C.muted });
+  label(s, "No es cotizacion vinculante.", 8.2, 6.05, 2.3, 0.18, { size: 6.4, bold: true, color: C.muted });
 }
 
 // 14
 {
-  const s = slideBase("Capacidad recuperada, no reduccion de plantilla", "ROI", 14, C.teal);
-  label(s, "ROI basado en\ndatos de planta", 0.9, 1.35, 4.0, 0.72, { face: "Aptos Display", size: 21, bold: true, color: C.navy });
-  label(s, "El salario 20.000-28.000 €/ano solo valora tiempo improductivo recuperado. La decision real exige VAN, OPEX, riesgo FOD y continuidad de flujo.", 0.95, 2.45, 4.2, 0.62, { size: 8.1, color: C.muted });
-  s.addShape(pptx.ShapeType.line, { x: 6.1, y: 1.22, w: 0, h: 4.65, line: { color: C.teal, width: 1.0 } });
-  label(s, "BENEFICIO ANUAL BRUTO REQUERIDO PARA VAN = 0", 6.45, 1.42, 4.9, 0.18, { size: 6.5, bold: true, color: C.muted });
-  [["1 robot", "62.829 € anuales", C.amber], ["7 robots", "316.429 € anuales", C.teal], ["17 robots", "714.125 € anuales", C.green]].forEach(([a, b, c], i) => {
-    label(s, a, 6.48, 2.02 + i * 1.05, 1.1, 0.2, { size: 7.5, bold: true, color: c });
-    label(s, b, 8.15, 1.92 + i * 1.05, 2.8, 0.28, { size: 13, bold: true, color: C.navy });
-    s.addShape(pptx.ShapeType.line, { x: 6.45, y: 2.55 + i * 1.05, w: 4.8, h: 0, line: { color: C.line, width: 0.8 } });
+  const s = slideBase("Tiempo recuperado frente a umbral financiero", "ROI", 14, C.teal);
+  card(s, 0.85, 1.28, 3.75, 4.7, { fill: "EAF7F6", line: C.teal });
+  label(s, "Supuesto de\ncalculo", 1.05, 1.48, 2.2, 0.52, { size: 13.0, bold: true, color: C.navy });
+  label(s, "Salario guia: 20.000-28.000 €/ano.", 1.06, 2.30, 2.8, 0.20, { size: 7.0, color: C.ink });
+  label(s, "Caso central: 24.000 €.", 1.06, 2.62, 2.4, 0.20, { size: 7.0, color: C.ink });
+  label(s, "Coste empresa 1,35; 1.760 h/ano.", 1.06, 2.94, 2.9, 0.20, { size: 7.0, color: C.ink });
+  label(s, "18,4 €/h", 1.05, 3.55, 2.3, 0.34, { size: 18, bold: true, color: C.teal });
+  label(s, "Se monetiza tiempo improductivo; no reduccion de plantilla.", 1.08, 4.28, 2.8, 0.32, { size: 6.7, bold: true, color: C.red });
+
+  label(s, "Beneficio anual: recuperado vs VAN cero", 5.05, 1.42, 4.4, 0.22, { size: 8, bold: true, color: C.muted });
+  label(s, "horas recuperadas", 5.05, 1.78, 1.6, 0.16, { size: 5.7, color: C.teal });
+  label(s, "umbral VAN cero", 7.05, 1.78, 1.5, 0.16, { size: 5.7, color: C.amber });
+  const roiRows = [
+    ["1 robot", "825 h/ano", "15.180 €", "62.829 €", 0.32, 1.16, C.amber],
+    ["7 robots", "5.940 h/ano", "109.296 €", "316.429 €", 2.02, 3.15, C.teal],
+    ["17 robots", "14.000 h/ano", "257.600 €", "714.125 €", 3.35, 4.55, C.green],
+  ];
+  roiRows.forEach(([esc, hrs, val, req, vw, rw, col], i) => {
+    const y = 2.45 + i * 1.05;
+    label(s, esc, 5.05, y, 1.0, 0.18, { size: 7, bold: true, color: col });
+    label(s, hrs, 6.05, y, 1.15, 0.18, { size: 5.8, color: C.muted });
+    s.addShape(pptx.ShapeType.rect, { x: 7.45, y: y - 0.05, w: vw, h: 0.12, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addShape(pptx.ShapeType.rect, { x: 7.45, y: y + 0.18, w: rw, h: 0.12, fill: { color: C.amber }, line: { color: C.amber } });
+    label(s, val, 7.5 + vw, y - 0.1, 0.95, 0.16, { size: 5.5, color: C.ink });
+    label(s, req, 7.5 + rw, y + 0.13, 0.95, 0.16, { size: 5.5, color: C.ink });
   });
+  label(s, "Lectura: con solo horas recuperadas el VAN central sigue exigente.", 5.05, 5.72, 5.3, 0.18, { size: 6.3, bold: true, color: C.navy });
+  label(s, "7 o 17 robots requieren menos esperas, continuidad de flujo y menor riesgo FOD.", 5.05, 5.98, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
+  label(s, "La decision final debe usar datos reales hacia 80 HTP/mes.", 5.05, 6.24, 5.3, 0.18, { size: 6.3, bold: true, color: C.navy });
 }
 
 // 15
 {
-  const s = slideBase("Partidas visibles, sin relleno ni promesas escondidas", "Oferta", 15, C.amber);
-  label(s, "Que compra el cliente", 0.92, 1.32, 3.2, 0.34, { size: 16, bold: true, color: C.navy });
-  [["AMR + sensores", "base AMR + LiDAR + seguridad + RFID-QR + HMI", C.teal], ["Software de flota", "trazabilidad + base de datos + conectores MES-ERP", C.violet], ["Ingenieria", "levantamiento + simulacion CoppeliaSim + configuracion + pruebas", C.cyan], ["Implantacion", "instalacion + formacion + mantenimiento + logistica + soporte", C.green], ["Margen y riesgo", "contingencia academica y margen comercial explicito", C.amber]].forEach(([a, b, c], i) => {
-    label(s, a, 0.95, 2.05 + i * 0.55, 1.7, 0.18, { size: 6.9, bold: true, color: c });
-    label(s, b, 3.0, 2.02 + i * 0.55, 5.0, 0.22, { size: 6.8, color: C.muted });
+  const s = slideBase("Entregables y condiciones de aceptacion", "Oferta comercial", 15, C.amber);
+  label(s, "Entregables de la fase piloto", 0.88, 1.35, 3.3, 0.26, { size: 12.8, bold: true, color: C.navy });
+  const deliverables = [
+    ["Mapa operativo", "rutas, zonas lentas, carga y entrega", C.teal],
+    ["Configuracion AMR", "misiones, prioridades y reglas de bateria", C.green],
+    ["Trazabilidad", "BD, RFID-QR, HMI y excepciones", C.violet],
+    ["FOD preventivo", "rondas con imagen y validacion humana", C.red],
+    ["Validacion CoppeliaSim", "SLAM, ruta bloqueada, cruce y FOD", C.cyan],
+    ["Formacion", "operarios, supervisores y mantenimiento", C.amber],
+  ];
+  deliverables.forEach(([a, b, c], i) => {
+    const y = 2.05 + i * 0.52;
+    s.addShape(pptx.ShapeType.rect, { x: 0.95, y: y + 0.05, w: 0.08, h: 0.08, fill: { color: c }, line: { color: c } });
+    label(s, a, 1.16, y - 0.04, 2.25, 0.18, { size: 6.6, bold: true, color: c });
+    label(s, b, 1.16, y + 0.20, 5.6, 0.18, { size: 5.8, color: C.ink });
   });
-  label(s, "69.800 €", 9.25, 1.65, 1.9, 0.34, { size: 18, bold: true, color: C.teal, align: "center" });
-  label(s, "paquete AMR-FOD-Kitting por robot, con sensores y seguridad.", 9.15, 2.1, 2.3, 0.36, { size: 7.1, color: C.muted, align: "center" });
-  label(s, "12 %", 9.5, 3.25, 1.45, 0.34, { size: 18, bold: true, color: C.amber, align: "center" });
-  label(s, "contingencia y margen comercial declarado.", 9.14, 3.72, 2.3, 0.34, { size: 7.1, color: C.muted, align: "center" });
-  label(s, "5 anos", 9.5, 4.85, 1.45, 0.34, { size: 18, bold: true, color: C.violet, align: "center" });
-  label(s, "VAN y sensibilidad financiera para decidir escalado.", 9.1, 5.32, 2.4, 0.34, { size: 7.1, color: C.muted, align: "center" });
+  card(s, 8.0, 1.35, 4.55, 4.75, { fill: "FFF7EF", line: C.amber });
+  label(s, "Gate de aceptacion", 8.28, 1.72, 2.0, 0.2, { size: 8, bold: true, color: C.muted });
+  const gates = [
+    ["Seguridad", "0 contactos o incidentes con dano", C.red],
+    ["Misiones", ">= 95 % completadas", C.teal],
+    ["Trazabilidad", ">= 98 % con registro completo", C.violet],
+    ["Disponibilidad", ">= 90 % en turno piloto", C.green],
+    ["FOD", "100 % eventos revisables", C.amber],
+    ["Escalado", "solo con VAN y datos de flujo", C.cyan],
+  ];
+  gates.forEach(([a, b, c], i) => {
+    const y = 2.35 + i * 0.50;
+    label(s, a, 8.32, y, 1.25, 0.16, { size: 6.0, bold: true, color: c });
+    label(s, b, 9.78, y, 2.05, 0.16, { size: 5.9, color: C.ink });
+    s.addShape(pptx.ShapeType.line, { x: 8.28, y: y + 0.28, w: 3.75, h: 0, line: { color: C.line, width: 0.6 } });
+  });
+  label(s, "Exclusion explicita: no se certifica montaje HTP.", 8.28, 5.52, 3.7, 0.18, { size: 6.0, bold: true, color: C.red });
+  label(s, "Tampoco sustituye inspeccion aeronautica obligatoria.", 8.28, 5.76, 3.7, 0.18, { size: 6.0, bold: true, color: C.red });
 }
 
 // 16
 {
   const s = slideBase("Recomendacion: medir antes de escalar", "Cierre", 16, C.green);
   label(s, "1 robot primero", 0.9, 1.45, 3.8, 0.42, { face: "Aptos Display", size: 22, bold: true, color: C.teal });
-  label(s, "Validar rutas, seguridad, entregas, trazabilidad, FOD y aceptacion operativa. Escalar solo con datos.", 0.95, 2.24, 4.2, 0.52, { size: 9, color: C.ink });
+  label(s, "Validar rutas, seguridad y entregas.", 0.95, 2.16, 3.3, 0.24, { size: 9, color: C.ink });
+  label(s, "Medir trazabilidad, FOD y aceptacion.", 0.95, 2.50, 3.3, 0.24, { size: 9, color: C.ink });
+  label(s, "Escalar solo con datos.", 0.95, 2.84, 2.4, 0.24, { size: 9, bold: true, color: C.navy });
   drawAmr(s, 7.2, 2.0, 1.15, C.cyan);
   arrow(s, 8.85, 2.45, 10.3, 2.45, C.cyan);
   s.addShape(pptx.ShapeType.rect, { x: 10.7, y: 2.2, w: 0.55, h: 0.78, fill: { color: C.amber }, line: { color: C.amber } });

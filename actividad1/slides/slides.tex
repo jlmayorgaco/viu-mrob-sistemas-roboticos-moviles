@@ -180,64 +180,130 @@
 \stopslide
 
 % 12
-\startslide{Despliegue}{No se vende una flota grande sin datos del piloto}{Green}
-  \scenario{2.25}{1}{Piloto}{198.688 \texteuro{}}{zona acotada, rutas, RFID/QR y FOD}{Teal}
-  \scenario{7.85}{7}{Expansión}{904.736 \texteuro{}}{varias estaciones, retornos y gestor de flota}{Amber}
-  \scenario{13.10}{17}{Extendido}{2.051.616 \texteuro{}}{cobertura amplia condicionada a KPIs}{Green}
-  \draw[Line,line width=0.6pt] (1.10,1.70) -- (14.10,1.70);
-  \node[anchor=west,font=\fontsize{8.2}{9.6}\selectfont,text=Ink,text width=13.1cm] at (1.15,0.92) {Escalado por evidencia: seguridad, disponibilidad, aceptación operativa, entregas a tiempo y trazabilidad completa.};
+\startslide{Despliegue}{Tres fases con entregables y criterio de paso}{Green}
+  \roundbox{0.90}{1.28}{4.45}{5.38}{Teal!8}{Teal!45}
+  \roundbox{5.78}{1.28}{4.45}{5.38}{Amber!9}{Amber!50}
+  \roundbox{10.66}{1.28}{4.45}{5.38}{Green!8}{Green!45}
+
+  \node[anchor=west,font=\fontsize{24}{25}\selectfont\bfseries,text=Teal] at (1.18,6.02) {1};
+  \node[anchor=west,font=\fontsize{8.3}{9.5}\selectfont\bfseries,text=Ink] at (2.05,6.05) {Piloto controlado};
+  \node[anchor=west,font=\fontsize{9.2}{10.2}\selectfont\bfseries,text=Teal] at (1.20,5.34) {198.688 \texteuro{} CAPEX};
+  \node[anchor=north west,font=\fontsize{6.15}{7.05}\selectfont,text=Ink,text width=3.70cm] at (1.20,4.78) {Zona acotada, 1--2 estaciones, rutas de entrega y retorno, lectura RFID--QR y ronda FOD documentada.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont\bfseries,text=Red,text width=3.75cm] at (1.20,3.16) {Riesgo: aceptación operaria y falsas alarmas FOD.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont,text=Muted,text width=3.75cm] at (1.20,2.42) {Pasa si: 95\% misiones completas, 98\% trazas y cero contactos.};
+
+  \node[anchor=west,font=\fontsize{24}{25}\selectfont\bfseries,text=Amber] at (6.06,6.02) {7};
+  \node[anchor=west,font=\fontsize{8.3}{9.5}\selectfont\bfseries,text=Ink] at (6.93,6.05) {Expansión};
+  \node[anchor=west,font=\fontsize{9.2}{10.2}\selectfont\bfseries,text=Amber] at (6.08,5.34) {904.736 \texteuro{} CAPEX};
+  \node[anchor=north west,font=\fontsize{6.15}{7.05}\selectfont,text=Ink,text width=3.70cm] at (6.08,4.78) {Varias estaciones, gestor de flota, prioridad de misiones, retorno de útiles y tablero de incidencias.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont\bfseries,text=Red,text width=3.75cm] at (6.08,3.16) {Riesgo: congestión de pasillos y baterías mal planificadas.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont,text=Muted,text width=3.75cm] at (6.08,2.42) {Pasa si: disponibilidad \(\geq 90\%\) y entregas a tiempo sostenidas.};
+
+  \node[anchor=west,font=\fontsize{24}{25}\selectfont\bfseries,text=Green] at (10.94,6.02) {17};
+  \node[anchor=west,font=\fontsize{8.3}{9.5}\selectfont\bfseries,text=Ink] at (12.02,6.05) {Cobertura extendida};
+  \node[anchor=west,font=\fontsize{9.2}{10.2}\selectfont\bfseries,text=Green] at (10.96,5.34) {2.051.616 \texteuro{} CAPEX};
+  \node[anchor=north west,font=\fontsize{6.15}{7.05}\selectfont,text=Ink,text width=3.70cm] at (10.96,4.78) {Cobertura amplia de flujo auxiliar, reservas de flota, KPIs por turno e integración MES--ERP progresiva.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont\bfseries,text=Red,text width=3.75cm] at (10.96,3.16) {Riesgo: comprar capacidad antes de medir cuello real.};
+  \node[anchor=north west,font=\fontsize{5.75}{6.55}\selectfont,text=Muted,text width=3.75cm] at (10.96,2.42) {Pasa si: el beneficio industrial se acerca al umbral VAN.};
+
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont\bfseries,text=Navy] at (1.04,1.00) {Regla comercial: no se escala por intuición; se escala con trazas, seguridad, disponibilidad y uso real de flota.};
 \stopslide
 
 % 13
-\startslide{Presupuesto}{La oferta separa robot, software, ingeniería y soporte}{Amber}
-  \foreach \x/\total/\label/\col in {1.15/198.688/1 robot/Teal,5.65/904.736/7 robots/Amber,10.15/2.051.616/17 robots/Green}{
-    \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=\col] at (\x,6.25) {\total \texteuro{}};
-    \node[anchor=west,font=\fontsize{7.5}{8.7}\selectfont\bfseries,text=Ink] at (\x,5.58) {\label};
-    \draw[\col,line width=1.2pt] (\x,5.25) -- (\x+3.20,5.25);
-    \fill[Teal] (\x,2.18) rectangle ++(0.34,1.85);
-    \fill[Violet] (\x+0.48,2.18) rectangle ++(0.34,0.78);
-    \fill[Cyan] (\x+0.96,2.18) rectangle ++(0.34,1.10);
-    \fill[Green] (\x+1.44,2.18) rectangle ++(0.34,0.98);
-    \fill[Amber] (\x+1.92,2.18) rectangle ++(0.34,0.62);
+\startslide{Presupuesto}{Partidas por escenario, sin caja negra}{Amber}
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont\bfseries,text=Muted] at (1.00,6.74) {CAPEX ESTIMADO SIN IVA};
+  \node[anchor=west,font=\fontsize{14.2}{15.2}\selectfont\bfseries,text=Teal] at (1.00,6.22) {198.688 \texteuro{}};
+  \node[anchor=west,font=\fontsize{14.2}{15.2}\selectfont\bfseries,text=Amber] at (5.30,6.22) {904.736 \texteuro{}};
+  \node[anchor=west,font=\fontsize{14.2}{15.2}\selectfont\bfseries,text=Green] at (9.55,6.22) {2.051.616 \texteuro{}};
+  \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Muted] at (1.03,5.73) {1 ROBOT};
+  \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Muted] at (5.33,5.73) {7 ROBOTS};
+  \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Muted] at (9.58,5.73) {17 ROBOTS};
+
+  \fill[Panel] (0.95,1.28) rectangle (15.05,5.32);
+  \draw[Line,line width=0.45pt] (0.95,5.32) rectangle (15.05,1.28);
+  \fill[Amber!18] (0.95,4.88) rectangle (15.05,5.32);
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Ink] at (1.15,5.05) {Partida};
+  \node[anchor=east,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Ink] at (7.20,5.05) {1 robot};
+  \node[anchor=east,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Ink] at (10.55,5.05) {7 robots};
+  \node[anchor=east,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Ink] at (14.62,5.05) {17 robots};
+
+  \foreach \y/\part/\one/\seven/\seventeen/\col in {
+    4.57/{AMR + sensores + portakits}/69.800/488.600/1.186.600/Teal,
+    4.16/{Software flota + trazabilidad}/22.000/58.000/105.000/Violet,
+    3.75/{Ingeniería + CoppeliaSim}/42.000/112.000/215.000/Cyan,
+    3.34/{Instalación + mapeo + SAT}/18.000/52.000/120.000/Green,
+    2.93/{Formación y cambio operativo}/8.500/24.000/42.000/Amber,
+    2.52/{Mantenimiento preventivo año 1}/5.600/39.200/95.200/Teal,
+    2.11/{Logística + ciberseguridad + docs}/11.500/34.000/68.000/Violet,
+    1.70/{Contingencia y margen 12\%}/21.288/96.936/219.816/Red} {
+    \fill[\col!9] (0.95,\y-0.15) rectangle (15.05,\y+0.17);
+    \fill[\col] (1.12,\y-0.03) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.55}{6.25}\selectfont\bfseries,text=Ink] at (1.32,\y) {\part};
+    \node[anchor=east,font=\fontsize{5.55}{6.25}\selectfont,text=Ink] at (7.20,\y) {\one};
+    \node[anchor=east,font=\fontsize{5.55}{6.25}\selectfont,text=Ink] at (10.55,\y) {\seven};
+    \node[anchor=east,font=\fontsize{5.55}{6.25}\selectfont,text=Ink] at (14.62,\y) {\seventeen};
   }
-  \node[anchor=west,font=\fontsize{7.6}{8.8}\selectfont,text=Muted,text width=13.5cm] at (1.14,1.08) {Estimación académica sin IVA. Referencias comerciales de AMR 250 kg usadas como benchmark de coste; la solución final mantiene base omnidireccional equivalente.};
+  \node[anchor=west,font=\fontsize{5.6}{6.4}\selectfont,text=Muted,text width=13.6cm] at (1.00,0.92) {Estimación académica basada en referencias comerciales públicas: MiR250 como benchmark de coste, LD-250 como contraste de carga, sensores Hokuyo/Intel/Zebra como orden de magnitud. No es cotización vinculante.};
 \stopslide
 
 % 14
-\startslide{ROI}{Capacidad recuperada, no reducción de plantilla}{Teal}
-  \node[anchor=west,font=\fontsize{20}{21}\selectfont\bfseries,text=Navy,text width=5.8cm] at (0.95,6.25) {ROI basado en datos de planta};
-  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Muted,text width=5.75cm] at (1.00,4.72) {El salario 20.000--28.000 \texteuro{}/año solo valora tiempo improductivo recuperado. La decisión real exige VAN, OPEX, riesgo FOD y continuidad de flujo.};
-  \draw[Teal,line width=1pt] (6.80,1.35) -- (6.80,6.58);
-  \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=Muted] at (7.35,6.42) {BENEFICIO ANUAL BRUTO REQUERIDO PARA VAN \(\approx 0\)};
-  \foreach \y/\esc/\req/\txt/\col in {
-    5.45/1 robot/62.829 \texteuro{} anuales/piloto: compra evidencia y no payback/Amber,
-    4.08/7 robots/316.429 \texteuro{} anuales/primer escalado con VAN exigente/Teal,
-    2.71/17 robots/714.125 \texteuro{} anuales/solo si KPIs reales justifican flota/Green}{
-    \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=\col] at (7.35,\y) {\esc};
-    \node[anchor=west,font=\fontsize{12.8}{13.8}\selectfont\bfseries,text=Navy] at (9.35,\y+0.04) {\req};
-    \node[anchor=west,font=\fontsize{6.3}{7.3}\selectfont,text=Muted,text width=4.0cm] at (9.38,\y-0.50) {\txt};
-    \draw[\col,line width=0.75pt] (7.35,\y-0.78) -- (14.45,\y-0.78);
+\startslide{ROI}{Tiempo recuperado frente a umbral financiero}{Teal}
+  \roundbox{0.95}{1.35}{4.25}{5.10}{Teal!8}{Teal!40}
+  \node[anchor=north west,font=\fontsize{13.0}{14.2}\selectfont\bfseries,text=Navy,text width=3.55cm,align=left] at (1.18,6.08) {Supuesto de\\cálculo};
+  \node[anchor=west,font=\fontsize{6.65}{7.45}\selectfont,text=Ink] at (1.22,4.72) {Salario guía: 20.000--28.000 \texteuro{}/año.};
+  \node[anchor=west,font=\fontsize{6.65}{7.45}\selectfont,text=Ink] at (1.22,4.36) {Caso central: 24.000 \texteuro{}.};
+  \node[anchor=west,font=\fontsize{6.65}{7.45}\selectfont,text=Ink] at (1.22,4.00) {Coste empresa 1,35; 1.760 h/año.};
+  \node[anchor=west,font=\fontsize{18.5}{19.5}\selectfont\bfseries,text=Teal] at (1.22,3.18) {18,4 \texteuro{}/h};
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=3.68cm] at (1.25,2.50) {Solo se monetiza tiempo improductivo recuperado; no reducción de plantilla.};
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont\bfseries,text=Red,text width=3.65cm] at (1.25,1.58) {El piloto compra medición, no payback inmediato.};
+
+  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont\bfseries,text=Muted] at (5.85,6.40) {BENEFICIO ANUAL: RECUPERADO VS. NECESARIO PARA VAN \(\approx 0\)};
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=Teal] at (5.86,6.05) {\rule{0.34cm}{0.09cm} valor de horas recuperadas};
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=Amber] at (8.40,6.05) {\rule{0.34cm}{0.09cm} umbral VAN cero};
+  \foreach \y/\esc/\hrs/\val/\req/\vw/\rw/\col in {
+    5.25/{1 robot}/{825 h/año}/{15.180 \texteuro{}}/{62.829 \texteuro{}}/0.36/1.35/Amber,
+    3.95/{7 robots}/{5.940 h/año}/{109.296 \texteuro{}}/{316.429 \texteuro{}}/2.15/3.50/Teal,
+    2.65/{17 robots}/{14.000 h/año}/{257.600 \texteuro{}}/{714.125 \texteuro{}}/3.75/5.05/Green} {
+    \node[anchor=west,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=\col] at (5.86,\y+0.22) {\esc};
+    \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Muted] at (7.18,\y+0.22) {\hrs};
+    \fill[Teal!72] (8.80,\y+0.17) rectangle ++(\vw,0.20);
+    \fill[Amber!82] (8.80,\y-0.18) rectangle ++(\rw,0.20);
+    \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink] at (8.82+\vw,\y+0.25) {\val};
+    \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink] at (8.82+\rw,\y-0.10) {\req};
+    \draw[Line,line width=0.4pt] (5.86,\y-0.54) -- (14.95,\y-0.54);
   }
+  \node[anchor=west,font=\fontsize{6.0}{6.9}\selectfont\bfseries,text=Navy,text width=8.9cm] at (5.86,1.30) {Lectura: con solo horas recuperadas el VAN central sigue exigente; la decisión de 7 o 17 robots debe apoyarse en menos esperas, continuidad de flujo, menor riesgo FOD y datos reales de capacidad hacia 80 HTP/mes.};
 \stopslide
 
 % 15
-\startslide{Oferta comercial}{Partidas visibles, sin relleno ni promesas escondidas}{Amber}
-  \node[anchor=west,font=\fontsize{16}{17}\selectfont\bfseries,text=Navy] at (0.95,6.40) {Qué compra el cliente};
+\startslide{Oferta comercial}{Entregables y condiciones de aceptación}{Amber}
+  \node[anchor=west,font=\fontsize{13.5}{14.7}\selectfont\bfseries,text=Navy] at (0.95,6.48) {Entregables de la fase piloto};
   \foreach \y/\ttl/\txt/\col in {
-    5.42/AMR + sensores/base omni + LiDAR + seguridad + RFID-QR + HMI/Teal,
-    4.47/Software de flota/trazabilidad + base de datos + conectores MES-ERP/Violet,
-    3.52/Ingeniería/levantamiento + simulación CoppeliaSim + configuración + pruebas/Cyan,
-    2.57/Implantación/instalación + formación + mantenimiento + logística + soporte/Green,
-    1.62/Margen y riesgo/contingencia académica y margen comercial explícito/Amber}{
-    \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=\col] at (1.02,\y) {\ttl};
-    \node[anchor=west,font=\fontsize{7.0}{8.2}\selectfont,text=Ink,text width=6.7cm] at (4.55,\y) {\txt};
+    5.70/{Mapa operativo}/{rutas permitidas, zonas lentas, puntos de carga y entrega}/Teal,
+    5.03/{Configuración AMR}/{misiones, prioridades, retorno de útiles y reglas de batería}/Green,
+    4.36/{Trazabilidad}/{BD de misiones, RFID--QR, HMI y registro de excepciones}/Violet,
+    3.69/{FOD preventivo}/{rondas con imagen, evento y validación humana}/Red,
+    3.02/{Validación CoppeliaSim}/{pruebas de SLAM, ruta bloqueada, cruce y misión FOD}/Cyan,
+    2.35/{Formación}/{operarios, supervisores, mantenimiento y protocolo de parada}/Amber} {
+    \fill[\col] (1.02,\y+0.03) circle (0.055);
+    \node[anchor=west,font=\fontsize{6.8}{7.7}\selectfont\bfseries,text=\col] at (1.24,\y+0.10) {\ttl};
+    \node[anchor=west,font=\fontsize{5.75}{6.55}\selectfont,text=Ink,text width=6.05cm] at (1.24,\y-0.22) {\txt};
   }
-  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Teal] at (11.18,6.10) {69.800 \texteuro{}};
-  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,5.45) {paquete AMR-FOD-Kitting por robot, con sensores y seguridad.};
-  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Amber] at (11.18,4.30) {12\%};
-  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,3.65) {contingencia y margen comercial declarado.};
-  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Violet] at (11.18,2.50) {5 años};
-  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,1.85) {VAN y sensibilidad financiera para decidir escalado.};
+
+  \roundbox{8.62}{1.55}{6.25}{4.98}{Amber!8}{Amber!45}
+  \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=Muted] at (8.92,6.12) {GATE DE ACEPTACIÓN};
+  \foreach \y/\crit/\umbral/\col in {
+    5.48/{Seguridad}/{0 contactos o incidentes con daño}/Red,
+    4.82/{Misiones}/{\(\geq 95\%\) completadas}/Teal,
+    4.16/{Trazabilidad}/{\(\geq 98\%\) con registro completo}/Violet,
+    3.50/{Disponibilidad}/{\(\geq 90\%\) en turno piloto}/Green,
+    2.84/{FOD}/{100\% eventos con evidencia revisable}/Amber,
+    2.18/{Escalado}/{siguiente fase solo con datos de VAN y flujo}/Cyan} {
+    \draw[\col,line width=0.55pt] (8.92,\y-0.25) -- (14.48,\y-0.25);
+    \node[anchor=west,font=\fontsize{6.25}{7.2}\selectfont\bfseries,text=\col] at (8.98,\y) {\crit};
+    \node[anchor=west,font=\fontsize{6.15}{7.1}\selectfont,text=Ink,text width=3.55cm] at (11.00,\y) {\umbral};
+  }
+  \node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Red,text width=6.0cm] at (8.92,1.18) {Exclusión explícita: no se certifica montaje HTP ni se sustituye inspección aeronáutica obligatoria.};
 \stopslide
 
 % 16
