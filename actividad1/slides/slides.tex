@@ -71,7 +71,7 @@
 \stopslide
 
 % 6
-\startslide{Requisitos}{Cuatro requisitos, cuatro pruebas de aceptación}{Teal}
+\startslide{Requisitos}{Criterios de aceptación conectados con el temario}{Teal}
   \foreach \x/\val/\lab/\col in {
     1.25/\(\geq 95\%\)/misiones completadas/Teal,
     4.95/\(\geq 98\%\)/registro completo/Green,
@@ -81,9 +81,16 @@
     \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Ink,text width=2.7cm] at (\x,5.32) {\lab};
     \draw[\col,line width=1.4pt] (\x,5.00) -- (\x+2.60,5.00);
   }
-  \draw[Line,line width=0.6pt] (1.00,3.62) -- (14.85,3.62);
-  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Navy] at (1.05,3.10) {respuesta técnica};
-  \node[anchor=west,font=\fontsize{8.2}{9.8}\selectfont,text=Ink,text width=13.0cm] at (1.05,2.42) {AMR omnidireccional con SLAM, LiDAR de navegación, escáner de seguridad, RGB-D, RFID/QR, HMI, base de datos de misiones y gestión progresiva de flota.};
+  \draw[Line,line width=0.6pt] (1.00,3.80) -- (14.85,3.80);
+  \node[anchor=west,font=\fontsize{9.2}{10.3}\selectfont\bfseries,text=Navy] at (1.05,3.30) {traducción técnica desde el curso};
+  \foreach \x/\ttl/\txt/\col in {
+    1.05/Locomoción/base mecanum-sueca con maniobra lateral/Green,
+    4.75/Percepción/LiDAR RGB-D RFID-QR y seguridad separada/Teal,
+    8.45/Navegación/SLAM A* Dijkstra y evitación local/Cyan,
+    12.15/Control/motores encoders límites de velocidad y E-stop/Red}{
+    \node[anchor=west,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=\col] at (\x,2.78) {\ttl};
+    \node[anchor=north west,font=\fontsize{6.0}{7.0}\selectfont,text=Ink,text width=3.1cm,align=left] at (\x,2.36) {\txt};
+  }
 \stopslide
 
 % 7
@@ -121,21 +128,21 @@
 \stopslide
 
 % 9
-\startslide{Arquitectura}{De sensores a evidencia auditable de planta}{Teal}
+\startslide{Arquitectura}{Sense-plan-act con registro de planta}{Teal}
   \foreach \x/\ttl/\sub/\col in {
-    1.05/Percepción/LiDAR RGB-D RFID-QR/Teal,
-    3.85/Localización/SLAM odometría IMU/Cyan,
-    6.65/Misiones/prioridad ruta ventana/Amber,
-    9.45/Control/base y seguridad/Green,
-    12.25/Planta/HMI BD MES-ERP/Violet}{
-    \fill[\col!12,rounded corners=5pt] (\x,4.58) rectangle ++(2.15,1.28);
-    \draw[\col,line width=0.5pt,rounded corners=5pt] (\x,4.58) rectangle ++(2.15,1.28);
+    1.05/Percepción/LiDAR RGB-D RFID/Teal,
+    3.85/Localización/SLAM IMU encoders/Cyan,
+    6.65/Planificación/A* Dijkstra DWA/Amber,
+    9.45/Control/motores seguridad/Green,
+    12.25/Integración/HMI BD MES/Violet}{
+    \fill[\col!12,rounded corners=5pt] (\x,4.34) rectangle ++(2.15,1.52);
+    \draw[\col,line width=0.5pt,rounded corners=5pt] (\x,4.34) rectangle ++(2.15,1.52);
     \node[anchor=north,font=\fontsize{7.4}{8.2}\selectfont\bfseries,text=\col,align=center,text width=1.8cm] at (\x+1.075,5.54) {\ttl};
-    \node[anchor=north,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,align=center,text width=1.85cm] at (\x+1.075,5.02) {\sub};
+    \node[anchor=north,font=\fontsize{5.6}{6.3}\selectfont,text=Ink,align=center,text width=1.85cm] at (\x+1.075,4.93) {\sub};
   }
   \foreach \x in {3.35,6.15,8.95,11.75}{\draw[Muted,arrow,line width=0.7pt] (\x,5.22) -- (\x+0.36,5.22);}
   \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Navy] at (1.08,2.80) {registro mínimo por misión};
-  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Ink,text width=12.6cm] at (1.08,2.18) {robot, kit, origen, destino, ruta ejecutada, hora de carga, hora de entrega, confirmación, incidencia y evidencia FOD si aplica.};
+  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Ink,text width=12.6cm] at (1.08,2.18) {robot, kit, origen, destino, ruta prevista, ruta ejecutada, lectura RFID/QR, parada de seguridad, confirmación e incidencia FOD si aplica.};
   \qrcode{13.92}{1.74}{0.72}
 \stopslide
 
@@ -163,10 +170,10 @@
 \startslide{CoppeliaSim}{La simulación reduce riesgo antes del piloto físico}{Violet}
   \floorgrid{0.95}{2.05}{1.72}{Violet}
   \node[anchor=west,font=\fontsize{16}{17}\selectfont\bfseries,text=Navy,text width=5.9cm] at (8.45,6.28) {cuatro pruebas antes de planta};
-  \signal{8.55}{5.22}{Entrega nominal a estación HTP.}{Violet}
-  \signal{8.55}{4.36}{Obstáculo temporal y replanificación.}{Teal}
-  \signal{8.55}{3.50}{Cruce con operario y parada segura.}{Red}
-  \signal{8.55}{2.64}{Ronda FOD con captura de evidencia.}{Amber}
+  \signal{8.55}{5.22}{SLAM + fusión: llegada nominal a estación HTP.}{Violet}
+  \signal{8.55}{4.36}{A* / Dijkstra: ruta alterna con pasillo bloqueado.}{Teal}
+  \signal{8.55}{3.50}{DWA / campos: cruce con operario y parada segura.}{Red}
+  \signal{8.55}{2.64}{RGB-D: ronda FOD con captura de evidencia.}{Amber}
   \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=5.6cm] at (8.55,1.38) {Criterio: detener el paso a piloto si la simulación muestra bloqueos, desvíos repetidos o eventos sin traza.};
 \stopslide
 
