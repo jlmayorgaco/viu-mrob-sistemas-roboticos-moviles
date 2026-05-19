@@ -1,4 +1,6 @@
-all: report slides
+.PHONY: all report slides pptx clean
+
+all: report slides pptx
 
 report:
 	pdflatex -interaction=nonstopmode -halt-on-error main.tex
@@ -9,6 +11,9 @@ report:
 slides:
 	cd slides && pdflatex -interaction=nonstopmode -halt-on-error slides.tex
 	cd slides && pdflatex -interaction=nonstopmode -halt-on-error slides.tex
+
+pptx:
+	cd slides && node build_editable_pptx.js
 
 clean:
 	-del /Q *.aux *.bbl *.blg *.log *.out *.toc *.lof *.lot 2>NUL

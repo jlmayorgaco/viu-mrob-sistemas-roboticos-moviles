@@ -5,7 +5,7 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 ## Estado
 
 - `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentacion PDF, PowerPoint editable, presupuesto y tablas auxiliares.
-- `actividad2/`: estructura separada para la segunda actividad, con fuentes y recursos de CoppeliaSim.
+- `actividad2/`: entrega separada con informe PDF, presentacion PDF/PPTX, escena CoppeliaSim final, scripts Lua/Python y validacion JSON.
 - `docs/enunciado/`: guias y archivos base proporcionados para la asignatura.
 - `docs/ppt/`: presentaciones y temas cubiertos en el curso.
 
@@ -27,9 +27,22 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 |   `-- README.md
 |-- actividad2/
 |   |-- main.tex
+|   |-- main.pdf
 |   |-- sections/
 |   |-- slides/
+|   |   |-- slides.tex
+|   |   |-- slides.pdf
+|   |   |-- build_editable_pptx.js
+|   |   `-- Actividad2_Pioneer_CoppeliaSim.pptx
 |   |-- coppeliasim/
+|   |   |-- Actividad2_1_Pioneer.ttt
+|   |   |-- Actividad2_2_Pioneer.ttt
+|   |   |-- Actividad2_Pioneer_Profesional_10_10.ttt
+|   |   |-- Actividad2_Pioneer_Profesional_10_10_validation.json
+|   |   |-- build_professional_scene.py
+|   |   |-- pioneer_professional_controller.lua
+|   |   |-- scenario_event_manager.lua
+|   |   `-- multi_robot_astar_manager.lua
 |   |-- references.bib
 |   `-- README.md
 `-- docs/
@@ -57,6 +70,7 @@ Entregables directos:
 - `actividad1/main.pdf`
 - `actividad1/slides/slides.pdf`
 - `actividad1/slides/Actividad1_AMR_FOD_Kitting.pptx`
+- `actividad1/slides/Actividad1_AMR_FOD_Kitting_editable.pptx`
 
 Compilacion completa:
 
@@ -77,16 +91,17 @@ python build_pptx.py
 
 La segunda actividad esta aislada en `actividad2/` para no mezclar entregables.
 
+Entregables directos:
+
+- `actividad2/main.pdf`
+- `actividad2/slides/slides.pdf`
+- `actividad2/slides/Actividad2_Pioneer_CoppeliaSim.pptx`
+- `actividad2/coppeliasim/Actividad2_Pioneer_Profesional_10_10.ttt`
+- `actividad2/coppeliasim/Actividad2_Pioneer_Profesional_10_10_validation.json`
+
 ```powershell
 cd actividad2
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-bibtex main
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-
-cd slides
-pdflatex -interaction=nonstopmode -halt-on-error slides.tex
-pdflatex -interaction=nonstopmode -halt-on-error slides.tex
+make all
 ```
 
 ## Limpieza

@@ -21,6 +21,11 @@
 build/
 previews/
 
+# Python / Node temporary artifacts
+__pycache__/
+*.py[cod]
+node_modules/
+
 # OS/editor noise
 .DS_Store
 Thumbs.db
