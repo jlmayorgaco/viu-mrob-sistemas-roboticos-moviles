@@ -1,0 +1,32 @@
+% Slide 05: interview findings as a requirements traceability diagram.
+% Included from actividad1/slides/slides.tex.
+
+\node[anchor=north west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Violet] at (0.88,6.82) {ACTA TÉCNICA};
+\node[anchor=north west,font=\fontsize{8.2}{9.4}\selectfont\bfseries,text=Navy] at (0.88,6.42) {Carlos Pérez};
+\node[anchor=north west,font=\fontsize{5.9}{6.8}\selectfont,text=Muted,text width=3.05cm] at (0.88,6.03) {+10 años de experiencia en Alestis Puerto Real.};
+
+\node[anchor=north west,font=\fontsize{11.0}{12.0}\selectfont\bfseries,text=Navy,text width=3.18cm,align=left] at (0.88,5.15) {El alcance correcto no es fabricar: es asegurar flujo, FOD y trazabilidad.};
+\draw[Violet,line width=0.9pt] (0.92,2.55) -- (3.35,2.55);
+\node[anchor=north west,font=\fontsize{6.05}{7.05}\selectfont,text=Muted,text width=3.15cm,align=left] at (0.88,2.22) {La entrevista se convierte en requisitos medibles y en decisiones de diseño defendibles.};
+
+\draw[Violet,line width=0.8pt] (4.08,1.08) -- (4.08,6.70);
+\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Muted] at (4.52,6.68) {HALLAZGO DE PLANTA};
+\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Muted] at (8.40,6.68) {REQUISITO};
+\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Muted] at (11.25,6.68) {DISEÑO AMR-FOD-KITTING};
+
+\foreach \y/\num/\col/\hallazgo/\req/\decision in {
+  5.68/01/Violet/{No fabricar ni montar el HTP.}/{Automatizar solo flujo auxiliar certificado.}/{Kitting, retorno de útiles y entregas trazadas.},
+  4.53/02/Teal/{Prioridades y pasillos cambian durante el turno.}/{Evitar rutas rígidas y paradas manuales.}/{AMR omnidireccional con SLAM y gestor de misiones.},
+  3.38/03/Amber/{FOD requiere evidencia revisable.}/{Registrar rondas, imágenes y excepciones.}/{RGB-D, RFID/QR y base de datos de eventos.},
+  2.23/04/Green/{La expansión debe depender de datos del piloto.}/{Medir seguridad, entrega y disponibilidad.}/{KPIs antes de pasar de 1 a 7 y 17 robots.}
+}{
+  \fill[\col!14,rounded corners=3pt] (4.48,\y-0.40) rectangle (15.08,\y+0.43);
+  \draw[\col,line width=0.42pt,rounded corners=3pt] (4.48,\y-0.40) rectangle (15.08,\y+0.43);
+  \draw[\col!55,line width=0.32pt] (8.18,\y-0.28) -- (8.18,\y+0.31);
+  \draw[\col!55,line width=0.32pt] (11.02,\y-0.28) -- (11.02,\y+0.31);
+  \fill[\col] (4.76,\y+0.02) circle (0.14);
+  \node[font=\fontsize{5.35}{6.0}\selectfont\bfseries,text=white] at (4.76,\y+0.02) {\num};
+  \node[anchor=west,font=\fontsize{5.85}{6.75}\selectfont\bfseries,text=Ink,text width=2.90cm,align=left] at (5.05,\y+0.05) {\hallazgo};
+  \node[anchor=west,font=\fontsize{5.75}{6.65}\selectfont,text=Ink,text width=2.30cm,align=left] at (8.38,\y+0.05) {\req};
+  \node[anchor=west,font=\fontsize{5.75}{6.65}\selectfont,text=Ink,text width=3.32cm,align=left] at (11.26,\y+0.05) {\decision};
+}
