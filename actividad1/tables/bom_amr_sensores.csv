@@ -1,0 +1,10 @@
+partida_por_amr,cantidad,importe_eur_estimado,base_calculo
+AMR 250 kg de referencia,1,44300,Precio publico MiR250 redondeado y contrastado con LD-250 KNAPP y rangos 2026
+Adaptacion omnidireccional y parametrizacion cinematica,1,1500,Parametrizacion de base mecanum/sueca objetivo y validacion de maniobra lateral
+Modulo kitting bandejas fijaciones proteccion carga,1,8500,Diseno mecanico ligero para kits herramientas consumibles y utiles moderados
+LiDAR de navegacion,1,1500,Referencia Hokuyo UST-10LX y accesorios de montaje
+Camara RGB-D FOD,1,300,Referencia Intel RealSense D435i
+RFID QR antenas etiquetas iniciales cableado,1,3200,Zebra FX9600 como referencia mas antenas QR y consumibles iniciales
+Escaner seguridad bumpers parada emergencia,1,7000,Referencia SICK microScan3 mas elementos de parada y validacion basica
+HMI tablet comunicaciones por robot,1,3500,Samsung Tab Active5 conectividad industrial cliente HMI y configuracion
+Paquete AMR-FOD-Kitting,1,69800,Total normalizado por robot sin IVA

@@ -1,10 +1,28 @@
 \chapter{Análisis económico y ROI}
 
-El ROI se calcula con una premisa conservadora: la robótica móvil no elimina puestos ni duplica por si sola la producción. Su valor aparece cuando reduce esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado aporta un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+El ROI se calcula con una premisa conservadora: la robótica móvil no elimina puestos ni duplica por sí sola la producción. Su valor aparece cuando reduce esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado aporta un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+
+Además del cálculo simple de horas recuperadas, se añade una lectura financiera a cinco años. Se usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año de beneficio parcial, porque el piloto y el arranque no capturan todo el potencial desde el primer mes. Estos supuestos son deliberadamente prudentes: el objetivo es saber qué tendría que ocurrir para que el proyecto sea defendible, no maquillar el retorno.
+
+\begin{longtable}{P{0.32\textwidth}P{0.50\textwidth}}
+\toprule
+\textbf{Supuesto financiero} & \textbf{Valor usado y justificación}\\
+\midrule
+\endhead
+Horizonte de evaluación & 5 años, coherente con amortización tecnológica de AMR, sensores, baterías y software.\\
+Tasa de descuento & 8\%, usada como coste de capital académico para comparar alternativas.\\
+Valor residual & 15\% del paquete AMR-FOD-Kitting, condicionado a reutilización de base, sensores y repuestos.\\
+Año 1 & 50\% del beneficio anual central, porque incluye levantamiento, simulación, piloto, ajuste y adopción.\\
+OPEX recurrente & Mantenimiento, soporte software, recalibraciones, rutas, consumibles y repuestos desde el año 2.\\
+Beneficio monetizado & Horas recuperadas, reducción de esperas, menor búsqueda de útiles, trazabilidad y eventos FOD evitados en escenario.\\
+\bottomrule
+\caption{Supuestos para análisis financiero ampliado.}
+\label{tab:supuestos-financieros}
+\end{longtable}
 
 \section{Recuperación de tiempo operativo}
 
-Las hipotesis se formulan como tiempo recuperado, no como ahorro de plantilla. Esto evita una lectura simplista del proyecto y encaja mejor con una línea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o más.
+Las hipótesis se formulan como tiempo recuperado, no como ahorro de plantilla. Esto evita una lectura simplista del proyecto y encaja mejor con una línea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o más.
 
 \begin{longtable}{P{0.18\textwidth}r r r r}
 \toprule
@@ -39,6 +57,42 @@ Para comprobar si la propuesta es realista, se anualiza el CAPEX a cinco años y
 \end{longtable}
 
 El escenario de 1 robot queda por debajo del punto de equilibrio financiero si se mira solo el tiempo recuperado. El de 7 robots se acerca más, pero aún requiere beneficios operativos adicionales. El de 17 robots exige una mejora de flujo global, no solo misiones de transporte. Esta lectura es deliberadamente prudente: una oferta profesional debe mostrar dónde está el límite del argumento económico.
+
+\section{Sensibilidad financiera a cinco años}
+
+El siguiente análisis diferencia tres niveles de beneficio anual. El escenario bajo monetiza casi únicamente horas recuperadas. El escenario central añade reducción de esperas, menos búsquedas y mejor trazabilidad operativa. El escenario alto incorpora que el sistema ayuda a sostener capacidad y reduce interrupciones relevantes, sin afirmar que el robot fabrique más HTP por sí solo. El VAN se calcula con los supuestos anteriores y no incluye IVA.
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{P{0.13\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.12\textwidth}P{0.12\textwidth}}
+\toprule
+\textbf{Escenario} & \textbf{Bajo} & \textbf{Central} & \textbf{Alto} & \textbf{OPEX} & \textbf{VAN central} & \textbf{Req. VAN 0}\\
+\midrule
+\endhead
+1 robot & 18.000 & 27.000 & 40.000 & 9.850 & -126.467 & 62.829\\
+7 robots & 120.000 & 190.000 & 285.000 & 85.450 & -446.261 & 316.429\\
+17 robots & 280.000 & 480.000 & 720.000 & 192.450 & -826.403 & 714.125\\
+\bottomrule
+\caption{Sensibilidad financiera a cinco años. Importes en euros; ``Benef. requerido'' es el beneficio anual bruto necesario para VAN aproximadamente cero.}
+\label{tab:roi-sensibilidad}
+\end{longtable}
+\endgroup
+
+\begin{longtable}{P{0.20\textwidth}P{0.64\textwidth}}
+\toprule
+\textbf{Escenario} & \textbf{Lectura ejecutiva}\\
+\midrule
+\endhead
+1 robot & No se compra por ROI financiero; se compra para medir rutas, seguridad, aceptación y calidad de datos. Su éxito se evalúa por KPIs, no por payback.\\
+7 robots & Es el primer escenario industrial defendible. Necesita demostrar beneficios anuales cercanos a 316.000 \texteuro{} para cerrar VAN, por lo que debe apoyarse en reducción de esperas y continuidad de flujo, no solo en tiempo de caminata.\\
+17 robots & Solo debe proponerse tras evidencia real. En escenario alto se aproxima a VAN positivo; por tanto, depende de que la flota proteja capacidad, reduzca interrupciones y estabilice el escalado hacia 80 HTP/mes.\\
+\bottomrule
+\caption{Interpretación de la sensibilidad financiera.}
+\label{tab:lectura-financiera}
+\end{longtable}
+
+La conclusión financiera es más fuerte que una promesa de ahorro: el piloto compra información; la expansión compra continuidad; el despliegue extendido compra resiliencia de flujo. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deberían sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
 
 \section{Beneficios no monetizados}
 

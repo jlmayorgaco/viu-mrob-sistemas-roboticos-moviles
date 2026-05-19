@@ -9,7 +9,7 @@ Proyecto LaTeX para la Actividad 1: oferta de automatización a planta industria
 - `slides/slides.tex`: presentación PDF en LaTeX, equivalente a PowerPoint.
 - `slides/build_pptx.py`: generador autocontenido de PowerPoint visual desde el PDF de LaTeX/TikZ.
 - `figures/tikz/`: fuentes TikZ reutilizables del informe y la presentación.
-- `tables/`: CSV auxiliares de presupuesto, KPIs, trazabilidad, referencias comerciales y supuestos ROI.
+- `tables/`: CSV auxiliares de modelos, sensores/BOM, presupuesto, KPIs, trazabilidad, referencias comerciales, supuestos ROI y sensibilidad financiera.
 - `references.bib`: bibliografia usada.
 - `figures/` y `tables/`: carpetas preparadas para anexar recursos.
 

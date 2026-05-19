@@ -1,12 +1,14 @@
 \chapter{Oferta comercial y presupuesto}
 
-El presupuesto se plantea como una oferta preliminar de integración, no como una compra aislada de robots. La cifra final combina equipos comerciales, adaptaciones mecánicas para kitting, sensores, seguridad, software, simulación, instalación, formación y soporte. Las referencias usadas son precios públicos o rangos de mercado consultados el 18 de mayo de 2026; por tanto, sirven para justificar el orden de magnitud académico, pero no sustituyen una cotización formal de fabricante o integrador.
+El presupuesto se plantea como una oferta preliminar de integración, no como una compra aislada de robots. La cifra final combina equipos comerciales, adaptaciones mecánicas para kitting, sensores, seguridad, software, simulación, instalación, formación y soporte. Las referencias usadas son precios públicos o rangos de mercado revisados entre el 18 y el 19 de mayo de 2026; por tanto, sirven para justificar el orden de magnitud académico, pero no sustituyen una cotización formal de fabricante o integrador.
 
 \section{Base de referencias comerciales}
 
 La plataforma seleccionada en la oferta técnica es omnidireccional. Para el presupuesto, sin embargo, se normaliza el coste contra AMR comerciales de 250 kg porque ofrecen precios públicos y sirven como referencia de orden de magnitud para carga, autonomía, dimensiones y software de flota. Esta normalización no significa que el MiR250 o el LD-250 sean el modelo final elegido ni que tengan la misma cinemática que una base mecanum/sueca; se usan como \textit{benchmark} comercial trazable y se reserva una partida de integración para adaptar la solución a una base omnidireccional industrial equivalente.
 
-El MiR250 aparece como referencia comercial con precio público de 44.284 \texteuro{}, dimensiones de 580 x 800 mm, carga útil de 250 kg y velocidad máxima de 2 m/s \cite{mekosrlMir250}. La ficha del fabricante confirma el uso para transporte interno de cargas pequeñas y medianas, carga máxima de 250 kg, superficie de carga de 800 x 580 mm, hasta 13 h de operación con carga máxima y uso interior \cite{mir250Specs}. Como contraste industrial se cita también el Omron LD-250, con carga máxima de 250 kg y arquitectura de AMR para transporte en fabricas y almacenes \cite{omronLd250}.
+El MiR250 aparece como referencia comercial con precio público de 44.284 \texteuro{}, dimensiones de 580 x 800 mm, carga útil de 250 kg y velocidad máxima de 2 m/s \cite{mekosrlMir250}. La ficha del fabricante confirma el uso para transporte interno de cargas pequeñas y medianas, carga máxima de 250 kg, superficie de carga de 800 x 580 mm, hasta 13 h de operación con carga máxima y uso interior \cite{mir250Specs}. Como contraste industrial se cita también el Omron LD-250, con carga máxima de 250 kg y arquitectura de AMR para transporte en fábricas y almacenes \cite{omronLd250}.
+
+Para no depender de un único precio, se contrastan además guías de mercado. Mesh Automation sitúa un AMR típico de 2026 entre USD 50.000 y más de USD 200.000 por unidad, con costes de proyecto superiores al incluir software, integración y soporte \cite{meshAmrCost2026}. KNAPP publica que un Open Shuttle parte de 45.000 \texteuro{} \cite{knappAmrRoi2026}. DNC Automation usa como ejemplo una flota media de 5 AMR: USD 350.000 en robots y USD 468.000 de coste total al sumar software de flota, estaciones de carga, integración WMS/MES, instalación y formación; además recomienda estimar el proyecto completo como 1,8--2,2 veces el coste de los vehículos \cite{dncAmrCost2026}. Esas referencias justifican que la propuesta no use solo precio de catálogo del robot.
 
 \begin{longtable}{P{0.24\textwidth}P{0.23\textwidth}P{0.18\textwidth}P{0.25\textwidth}}
 \toprule
@@ -16,6 +18,8 @@ El MiR250 aparece como referencia comercial con precio público de 44.284 \texte
 AMR 250 kg & MiR250 Base Robot & 44.284 \texteuro{} & Referencia de coste para transporte interior; no se toma como cinemática final.\\
 Benchmark AMR & Omron LD-250 & Sin precio público en la ficha oficial & Validación de carga útil industrial de 250 kg y rango de aplicación.\\
 Rango AMR 2026 & Mesh Automation & USD 50.000--200.000+ por unidad & Verificación de que el escenario cae en rango de mercado.\\
+AMR intralogístico & KNAPP Open Shuttle & Desde 45.000 \texteuro{} & Contraste europeo de coste de AMR industrial.\\
+Proyecto AMR 5 vehículos & DNC Automation & USD 468.000 como proyecto completo de ejemplo & Control de realismo para integración, infraestructura y servicios.\\
 Costes de flota & Novus Hi-Tech & USD 3.000--10.000 por robot en software; AMR de USD 30.000--150.000+ según tipo & Dimensionamiento de software, flota e integración.\\
 Cámara RGB-D & Intel RealSense D435i & USD 334 & Referencia de visión/depth e IMU auxiliar para FOD.\\
 LiDAR navegación & Hokuyo UST-10LX & 1.365--1.878 \texteuro{} según distribuidor & Referencia de LiDAR 2D compacto para SLAM/obstáculos.\\
@@ -27,6 +31,8 @@ WiFi industrial & Cisco Catalyst IW9165D & USD 1.952,99 & Referencia de conectiv
 \caption{Dataset de referencias comerciales usado para normalizar el presupuesto.}
 \label{tab:referencias-comerciales}
 \end{longtable}
+
+La partida de software y flota toma como referencia los rangos publicados por Novus Hi-Tech \cite{novusAmrCostGuide}. Las partidas de sensores, trazabilidad, HMI y comunicaciones se apoyan en precios públicos de Intel RealSense D435i, Hokuyo UST-10LX, SICK microScan3, Zebra FX9600, Samsung Galaxy Tab Active5 y Cisco Catalyst IW9165D \cite{intelD435i,hokuyoUst10lx,sickMicroscan3,zebraFx9600,samsungTabActive5,ciscoIw9165d}. En una compra real se sustituirían por ofertas vigentes de distribución europea, impuestos, transporte, garantía y soporte local.
 
 \section{Criterios de normalización}
 
@@ -47,6 +53,30 @@ HMI, comunicaciones y puesta en red por robot & 3.500 & Tablet, WiFi, identifica
 \bottomrule
 \caption{Coste normalizado por AMR de la solución AMR-FOD-Kitting, en euros sin IVA.}
 \label{tab:coste-robot-normalizado}
+\end{longtable}
+
+\section{Lista de materiales del paquete AMR-FOD-Kitting}
+
+El paquete normalizado por robot no es una suma directa de catálogo, porque incluye integración mecánica, cableado, soportes, validación, parametrización y margen de incertidumbre técnica. Aun así, conviene detallar qué compra el cliente dentro de cada AMR. La tabla siguiente desglosa el paquete de 69.800 \texteuro{} usado en los escenarios.
+
+\begin{longtable}{P{0.26\textwidth}r r P{0.30\textwidth}}
+\toprule
+\textbf{Partida por AMR} & \textbf{Cantidad} & \textbf{Importe estimado} & \textbf{Base de cálculo}\\
+\midrule
+\endhead
+AMR 250 kg de referencia & 1 & 44.300 & Precio público MiR250 redondeado; contrastado con LD-250, KNAPP y rangos 2026.\\
+Adaptación omnidireccional y parametrización cinemática & 1 & 1.500 & Parametrización de base mecanum/sueca objetivo y validación de maniobra lateral.\\
+Módulo kitting, bandejas, fijaciones y protección de carga & 1 & 8.500 & Diseño mecánico ligero para kits, herramientas, consumibles y útiles moderados.\\
+LiDAR de navegación & 1 & 1.500 & Referencia Hokuyo UST-10LX y accesorios de montaje.\\
+Cámara RGB-D/FOD & 1 & 300 & Referencia Intel RealSense D435i; se reserva integración en partida de visión/trazabilidad.\\
+RFID/QR, antenas, etiquetas iniciales y cableado & 1 & 3.200 & Zebra FX9600 como referencia de lector fijo más antenas, QR y consumibles iniciales.\\
+Escáner de seguridad, bumpers y parada de emergencia & 1 & 7.000 & Referencia SICK microScan3, elementos de parada y validación básica.\\
+HMI/tablet y comunicaciones por robot & 1 & 3.500 & Samsung Tab Active5, conectividad industrial, cliente HMI y configuración.\\
+\midrule
+\textbf{Paquete AMR-FOD-Kitting} &  & \textbf{69.800} & Total normalizado por robot, sin IVA.\\
+\bottomrule
+\caption{Lista de materiales normalizada por AMR, en euros sin IVA.}
+\label{tab:bom-amr}
 \end{longtable}
 
 \section{Presupuesto por escenarios}
@@ -74,7 +104,7 @@ Contingencia y margen comercial (12\%) & 21.288 & 96.936 & 219.816\\
 \label{tab:presupuesto}
 \end{longtable}
 
-\section{Interpretacion comercial}
+\section{Interpretación comercial}
 
 El escenario de 1 robot no se vende como solución final. Su función es medir rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD en un entorno controlado. El escenario de 7 robots cubre varias estaciones y permite probar gestión de flota con prioridades, retornos de útiles y rondas preventivas. El escenario de 17 robots solo es defendible si los datos de los dos primeros escenarios muestran que la planta necesita una cobertura más amplia para sostener el crecimiento hacia 80 HTP/mes o más.
 

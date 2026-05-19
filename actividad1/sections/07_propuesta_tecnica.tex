@@ -4,6 +4,27 @@
 
 La propuesta consiste en implantar un sistema de robots móviles autónomos para suministro coordinado, trazabilidad e inspección preventiva. El robot actúa como enlace entre zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. Su función principal es mover elementos correctos en el momento correcto y dejar evidencia digital de cada acción.
 
+\section{Modelo de robot y criterio de selección}
+
+La solución separa tres conceptos que conviene no mezclar: el modelo de simulación, la plataforma comercial de referencia y la plataforma objetivo de implantación. Para CoppeliaSim se propone una base tipo KUKA YouBot/KUKA Omnirob, porque permite representar una cinemática omnidireccional con ruedas mecanum/suecas y validar maniobras laterales cerca de estaciones. Para presupuesto se usan MiR250 y Omron LD-250 como referencias comerciales de AMR de 250 kg, porque publican datos de carga, autonomía, seguridad y uso intralogístico. Para la compra real se especificaría una plataforma omnidireccional industrial equivalente, con carga útil de 200--300 kg, módulo portakits y seguridad certificable.
+
+\begin{longtable}{P{0.20\textwidth}P{0.25\textwidth}P{0.27\textwidth}P{0.18\textwidth}}
+\toprule
+\textbf{Rol en la propuesta} & \textbf{Modelo/referencia} & \textbf{Dato técnico relevante} & \textbf{Uso}\\
+\midrule
+\endhead
+Simulación académica & KUKA YouBot / KUKA Omnirob o base mecanum equivalente & Ruedas mecanum/suecas, movimiento longitudinal, lateral y giro sobre el eje vertical. & Validar cinemática, rutas y aproximación a estación en CoppeliaSim.\\
+Benchmark comercial & MiR250 Base Robot & 250 kg de carga útil, hasta 2 m/s, uso interior y autonomía de turno según ficha del fabricante \cite{mir250Specs}. & Normalizar coste de AMR industrial compacto.\\
+Benchmark comercial & Omron LD-250 & 250 kg de carga útil, 1,2 m/s, SLAM, planificación de rutas, láseres de seguridad y E-stop \cite{omronLd250}. & Contrastar capacidad, seguridad y software de flota.\\
+Referencia industrial pesada & KUKA omniMove & Plataforma omnidireccional para cargas XXL; KUKA cita transporte de piezas aeronáuticas como caso de uso \cite{kukaOmniMove}. & Justificar que la omnidireccionalidad tiene sentido en aeronáutica, aunque aquí se use carga moderada.\\
+Plataforma objetivo & AMR omnidireccional 200--300 kg & Base eléctrica con 4 ruedas mecanum/suecas, BLDC/servomotores, encoders, batería industrial y módulo portakits. & Especificación final para licitación/integrador.\\
+\bottomrule
+\caption{Trazabilidad entre modelo de simulación, referencias comerciales y plataforma objetivo.}
+\label{tab:modelos-robot}
+\end{longtable}
+
+La elección no se basa en que el robot fabrique el HTP, sino en que pueda entrar y salir de estaciones sin grandes giros, mantenerse orientado hacia el punto de entrega, reducir maniobras en pasillos y compartir espacio con operarios. Este argumento conecta directamente con el temario: las ruedas omnidireccionales ofrecen más maniobrabilidad que una base diferencial, pero exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
+
 \section{Funciones principales}
 
 \begin{itemize}
@@ -32,6 +53,25 @@ HMI/tablet & Solicitud de misiones, confirmación de entregas y visualización d
 WiFi industrial & Comunicación con supervisor, gestor de flota y base de datos.\\
 Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, histórico FOD y auditoría operativa.\\
 \bottomrule
+\end{longtable}
+
+\section{Arquitectura sensorial por capas}
+
+Para evitar errores teóricos, la propuesta distingue entre sensores de navegación, sensores de seguridad y sensores de proceso. El LiDAR de navegación y la fusión encoders--IMU ayudan a localizar el AMR y mantener el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente orientada a parada segura; y la cámara RGB-D, RFID y QR sirven para FOD y trazabilidad. Esta separación es importante porque una cámara FOD no certifica calidad aeronáutica por sí sola, y un LiDAR de navegación no sustituye un sistema de seguridad funcional.
+
+\begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}P{0.22\textwidth}P{0.24\textwidth}}
+\toprule
+\textbf{Capa} & \textbf{Componentes} & \textbf{Variable medida} & \textbf{Decisión que habilita}\\
+\midrule
+\endhead
+Localización & Encoders, IMU, LiDAR 2D/3D & Odometría, orientación, nube/distancia a obstáculos. & Estimar pose, actualizar mapa y ejecutar SLAM.\\
+Planificación & Mapa, gestor de misiones, LiDAR & Ruta global, ruta local, zonas bloqueadas. & Usar A*/Dijkstra para ruta global y DWA/campos potenciales para evitación local.\\
+Seguridad & Escáner láser de seguridad, bumpers, E-stop & Invasión de campo protegido, contacto, alarma manual. & Reducir velocidad, parar, bloquear misión o retirar AMR.\\
+Proceso & RGB-D/industrial, RFID, QR, HMI & Evidencia visual, identificador de kit, punto de entrega y confirmación humana. & Registrar entrega, ronda FOD, excepción y trazabilidad.\\
+Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiempos, alarmas, KPIs. & Priorizar misiones, auditar eventos y decidir escalado.\\
+\bottomrule
+\caption{Capas sensoriales y decisiones operativas asociadas.}
+\label{tab:capas-sensores}
 \end{longtable}
 
 \section{Actuadores, motorización y control}

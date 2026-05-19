@@ -196,14 +196,19 @@
 
 % 14
 \startslide{ROI}{Capacidad recuperada, no reducción de plantilla}{Teal}
-  \node[anchor=west,font=\fontsize{22}{23}\selectfont\bfseries,text=Navy,text width=5.7cm] at (0.95,6.30) {No se promete\\reducir plantilla};
-  \node[anchor=west,font=\fontsize{8.4}{9.8}\selectfont,text=Muted,text width=5.6cm] at (1.00,4.70) {El salario de referencia 20.000--28.000 \texteuro{}/año se usa para valorar horas improductivas recuperadas, no despidos.};
-  \draw[Teal,line width=1pt] (7.15,1.45) -- (7.15,6.58);
-  \signal{7.78}{5.70}{menos búsquedas manuales por turno}{Teal}
-  \signal{7.78}{4.78}{menor espera por kits, herramientas y consumibles}{Green}
-  \signal{7.78}{3.86}{menor variabilidad y más datos de flujo}{Cyan}
-  \signal{7.78}{2.94}{menor exposición a incidencias FOD no documentadas}{Amber}
-  \signal{7.78}{2.02}{apoyo realista al paso de 40 a 80 HTP/mes}{Violet}
+  \node[anchor=west,font=\fontsize{20}{21}\selectfont\bfseries,text=Navy,text width=5.8cm] at (0.95,6.25) {ROI basado en datos de planta};
+  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Muted,text width=5.75cm] at (1.00,4.72) {El salario 20.000--28.000 \texteuro{}/año solo valora tiempo improductivo recuperado. La decisión real exige VAN, OPEX, riesgo FOD y continuidad de flujo.};
+  \draw[Teal,line width=1pt] (6.80,1.35) -- (6.80,6.58);
+  \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=Muted] at (7.35,6.42) {BENEFICIO ANUAL BRUTO REQUERIDO PARA VAN \(\approx 0\)};
+  \foreach \y/\esc/\req/\txt/\col in {
+    5.45/1 robot/62.829 \texteuro{} anuales/piloto: compra evidencia y no payback/Amber,
+    4.08/7 robots/316.429 \texteuro{} anuales/primer escalado industrial defendible/Teal,
+    2.71/17 robots/714.125 \texteuro{} anuales/solo si KPIs reales justifican flota/Green}{
+    \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=\col] at (7.35,\y) {\esc};
+    \node[anchor=west,font=\fontsize{12.8}{13.8}\selectfont\bfseries,text=Navy] at (9.35,\y+0.04) {\req};
+    \node[anchor=west,font=\fontsize{6.3}{7.3}\selectfont,text=Muted,text width=4.0cm] at (9.38,\y-0.50) {\txt};
+    \draw[\col,line width=0.75pt] (7.35,\y-0.78) -- (14.45,\y-0.78);
+  }
 \stopslide
 
 % 15
@@ -218,10 +223,12 @@
     \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=\col] at (1.02,\y) {\ttl};
     \node[anchor=west,font=\fontsize{7.0}{8.2}\selectfont,text=Ink,text width=6.7cm] at (4.55,\y) {\txt};
   }
-  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Amber] at (11.30,5.95) {12\%};
-  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=3.2cm] at (11.35,5.18) {contingencia y margen comercial declarado.};
-  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Teal] at (11.30,3.55) {3 años};
-  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=3.2cm] at (11.35,2.78) {TCO estimado para comparación completa.};
+  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Teal] at (11.18,6.10) {69.800 \texteuro{}};
+  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,5.45) {paquete AMR-FOD-Kitting por robot, con sensores y seguridad.};
+  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Amber] at (11.18,4.30) {12\%};
+  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,3.65) {contingencia y margen comercial declarado.};
+  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=Violet] at (11.18,2.50) {5 años};
+  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=3.55cm] at (11.23,1.85) {VAN y sensibilidad financiera para decidir escalado.};
 \stopslide
 
 % 16

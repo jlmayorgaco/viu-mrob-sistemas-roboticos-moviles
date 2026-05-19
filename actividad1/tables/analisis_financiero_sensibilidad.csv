@@ -1,0 +1,4 @@
+escenario,beneficio_bajo_anual,beneficio_central_anual,beneficio_alto_anual,opex_anual_desde_anio_2,van_central_5_anios,van_alto_5_anios,beneficio_anual_requerido_van_cero,payback_simple_central_anios
+1 robot,18000,27000,40000,9850,-126467,-80580,62829,11.8
+7 robots,120000,190000,285000,85450,-446261,-110935,316429,8.7
+17 robots,280000,480000,720000,192450,-826403,20736,714125,7.3
