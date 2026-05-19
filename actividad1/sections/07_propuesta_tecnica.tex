@@ -25,6 +25,30 @@ Plataforma objetivo & AMR omnidireccional 200--300 kg & Base eléctrica con 4 ru
 
 El robot se selecciona por la maniobra en estación, no por fabricación estructural. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
 
+\section{Especificación de plataforma objetivo}
+
+La plataforma objetivo se define por requisitos de operación, no por una marca cerrada. El integrador podría seleccionar un chasis industrial equivalente siempre que respete la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. Esta forma de especificar evita una debilidad habitual en ofertas académicas: confundir un robot disponible en simulador con el equipo que se compraría para una nave aeronáutica.
+
+\begin{longtable}{P{0.22\textwidth}P{0.33\textwidth}P{0.35\textwidth}}
+\toprule
+\textbf{Decisión de diseño} & \textbf{Especificación propuesta} & \textbf{Justificación técnica}\\
+\midrule
+\endhead
+Locomoción & Base holonómica con cuatro ruedas mecanum/suecas, control de \(v_x\), \(v_y\) y \(\omega\). & Permite aproximación lateral a estaciones, corrección fina sin reorientar la carga y menor ocupación de pasillo que una base diferencial.\\
+Carga y módulo & Clase 200--300 kg con bandeja portakits, puntos de amarre, balizas y posibilidad de cajones o estantería baja. & Cubre kits, herramientas, consumibles y útiles moderados sin plantear manipulación estructural del HTP.\\
+Motorización & Motores BLDC o servomotores eléctricos con reductora, encoder por rueda, supervisión de corriente y temperatura. & El temario de motores favorece accionamientos eléctricos compactos, eficientes y con realimentación para control de velocidad/posición.\\
+Control de bajo nivel & Conversión cinemática inversa de velocidad de cuerpo a velocidad de rueda; lazo cerrado por encoder; límites de aceleración. & La omnidireccionalidad mejora la maniobra, pero penaliza si no se controla el deslizamiento y la saturación de motores.\\
+Control de navegación & Fusión LiDAR--IMU--encoders para pose; SLAM/mapa; ruta global A*/Dijkstra; evitación local DWA o campos potenciales. & Alinea la propuesta con localización, planificación y anticolisión del curso sin vender un algoritmo como garantía universal.\\
+Seguridad funcional & Escáner láser de seguridad, bumpers, E-stop físico, campos de protección, reducción de velocidad por zona y estado seguro ante fallo. & La seguridad no depende del LiDAR de navegación ni de la cámara FOD; queda como capa independiente de parada.\\
+Energía y disponibilidad & Batería industrial con retorno automático a carga, reserva mínima operativa y mantenimiento preventivo de ruedas/sensores. & Los actuadores consumen batería y se degradan; el plan de flota debe considerar autonomía, carga y desgaste.\\
+Interfaz e integración & HMI/tablet, WiFi industrial, base de datos de misiones y conectores progresivos hacia MES/ERP. & La solución debe dejar evidencia operativa y poder crecer sin exigir integración total desde el piloto.\\
+\bottomrule
+\caption{Especificación técnica de la plataforma AMR omnidireccional objetivo.}
+\label{tab:especificacion-amr-objetivo}
+\end{longtable}
+
+La decisión clave es mantener tres niveles claros: \textit{YouBot/Omnirob} para simular cinemática, MiR250/LD-250 para acotar orden de magnitud comercial y AMR omnidireccional industrial como plataforma final. Con esa trazabilidad, el presupuesto no fuerza una compra incompatible con el criterio técnico: las referencias de 250 kg sirven para dimensionar coste y carga, mientras que la licitación exigiría base holonómica o mecanum equivalente.
+
 \section{Funciones principales}
 
 \begin{itemize}

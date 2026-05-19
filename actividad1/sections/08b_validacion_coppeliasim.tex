@@ -39,6 +39,28 @@ Multi-robot & Dos o más AMR comparten pasillo. & Sin interbloqueos; prioridad d
 
 Antes de pasar a piloto físico, el modelo debe demostrar que las rutas propuestas no invaden zonas restringidas, que el robot puede aproximarse a estaciones sin maniobras excesivas, que las paradas de seguridad no bloquean el flujo de forma recurrente y que las misiones generan registros completos. Los parámetros finales de simulación deben guardarse como anexo técnico: mapa, velocidad máxima, radios de seguridad, tolerancia de posición, zonas prohibidas y tiempos de misión. La aceptación final de seguridad debería realizarse en planta con procedimientos y responsables reales.
 
+\section{Criterios técnicos de aceptación}
+
+Los criterios siguientes convierten la teoría del curso en pruebas verificables. No sustituyen una validación industrial certificada, pero evitan que la simulación quede como una demostración visual sin valor de ingeniería.
+
+\begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
+\toprule
+\textbf{Aspecto} & \textbf{Criterio en simulación/piloto} & \textbf{Razón técnica}\\
+\midrule
+\endhead
+Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en piloto controlado; ajuste final con marcas físicas si la estación lo requiere. & La entrega de kits no exige precisión metrológica, pero sí posición repetible y segura.\\
+Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin invadir zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
+Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
+Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
+Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción documentada. & Una misión sin cierre no sirve para justificar productividad ni cumplimiento FOD.\\
+FOD preventivo & Todo positivo RGB-D genera evidencia visual y validación humana; los falsos positivos se registran. & La cámara apoya inspección preventiva, no sustituye calidad aeronáutica.\\
+Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
+Energía & No se asignan nuevas misiones por debajo de una reserva mínima operativa del 20\% de batería. & Los actuadores y sensores consumen energía; la planificación debe contemplar carga y disponibilidad.\\
+\bottomrule
+\caption{Criterios de aceptación para simulación y piloto físico controlado.}
+\label{tab:criterios-validacion}
+\end{longtable}
+
 \section{Relación con navegación y localización del curso}
 
 La validación usa los conceptos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM permite construir o actualizar el mapa de una nave cambiante; el planificador global genera una ruta hacia la estación; y el planificador local evita obstáculos dinámicos como operarios, carros o útiles. En una implantación real se seleccionaría el algoritmo concreto según el software del AMR, pero para la oferta académica se deja trazado el vínculo técnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.

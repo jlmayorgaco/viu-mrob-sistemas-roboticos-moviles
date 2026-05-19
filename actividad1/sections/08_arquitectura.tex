@@ -22,3 +22,25 @@ El planificador asigna misiones según prioridad, estado del robot, proximidad y
 \section{Base de datos de trazabilidad}
 
 Cada misión guarda identificador de kit, estación destino, hora de carga, hora de entrega, confirmación, ruta, incidencias, fotografía FOD si aplica y operador que valida. Con esos campos se audita el flujo y se miden cambios sin depender de impresiones subjetivas.
+
+\section{Arquitectura de control}
+
+El control se plantea como un ciclo \textit{sense--plan--act} con supervisión industrial. La capa de percepción no decide por sí sola: entrega datos filtrados y eventos. La capa de localización estima la pose del AMR con LiDAR, IMU y encoders. La planificación separa ruta global y evitación local. El control de bajo nivel traduce la consigna de movimiento holonómico a velocidades de rueda. La seguridad puede interrumpir cualquier misión y llevar el robot a estado detenido.
+
+\begin{longtable}{P{0.18\textwidth}P{0.24\textwidth}P{0.24\textwidth}P{0.24\textwidth}}
+\toprule
+\textbf{Capa} & \textbf{Entrada} & \textbf{Salida} & \textbf{Fallo previsto y mitigación}\\
+\midrule
+\endhead
+Percepción & LiDAR, RGB-D, RFID/QR, HMI y escáner de seguridad. & Obstáculos, lectura de kit, evento FOD, alarma de seguridad. & Lectura ruidosa o incompleta; se filtra, se repite lectura o se deriva a validación humana.\\
+Localización & Encoders, IMU, LiDAR y mapa vigente. & Pose estimada, incertidumbre y desviación respecto a ruta. & Deriva o mapa desactualizado; remapeo, reducción de velocidad y bloqueo de zonas dudosas.\\
+Planificación global & Misión, mapa, zonas prohibidas, prioridad y estado de flota. & Ruta nominal y alternativas por coste. & Pasillo cerrado; recálculo A*/Dijkstra o misión en espera.\\
+Planificación local & Obstáculos cercanos, velocidad actual y objetivo inmediato. & Consigna \(v_x\), \(v_y\), \(\omega\) limitada. & Obstáculo dinámico; DWA/campo potencial, parada controlada o retroceso seguro.\\
+Control motor & Consigna de cuerpo, estado de ruedas, batería y temperatura. & Velocidades de rueda y estado de actuadores. & Saturación, deslizamiento o sobrecorriente; limitación de par, parada y mantenimiento.\\
+Supervisión & Eventos, KPIs, confirmaciones y alarmas. & Dashboard, histórico, tickets y decisiones de escalado. & Datos incompletos; misión marcada como excepción y no usada para validar KPI positivo.\\
+\bottomrule
+\caption{Flujo de control y mitigación de fallos para el AMR-FOD-Kitting.}
+\label{tab:arquitectura-control}
+\end{longtable}
+
+La base de datos no es un añadido administrativo: cierra el lazo de control operativo. Si una misión no tiene lectura RFID/QR, confirmación de entrega o estado final, el sistema no debe contarla como entrega válida. Esto protege la trazabilidad y evita que una mejora aparente de productividad esconda pérdida de control documental.

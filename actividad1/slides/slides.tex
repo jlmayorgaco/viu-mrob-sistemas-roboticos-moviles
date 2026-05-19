@@ -108,7 +108,7 @@
 \stopslide
 
 % 8
-\startslide{Robot}{Una plataforma simple con sensores industriales, no un robot de ciencia ficción}{Green}
+\startslide{Robot}{AMR omnidireccional objetivo}{Green}
   \roboticon{4.25}{4.15}{2.35}
   \draw[Teal,arrow] (4.25,4.15) -- (2.70,5.88);
   \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Teal,fill=Paper,inner sep=1pt] at (2.46,5.92) {LiDAR};
@@ -120,20 +120,20 @@
   \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Cyan,fill=Paper,inner sep=1pt] at (5.25,1.90) {IMU + encoders};
   \draw[Red,arrow] (4.25,4.15) -- (2.36,3.17);
   \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Red,fill=Paper,inner sep=1pt] at (1.78,2.92) {E-stop + bumpers};
-  \node[anchor=north west,font=\fontsize{14.2}{15.4}\selectfont\bfseries,text=Navy,text width=5.2cm] at (9.10,6.48) {carga moderada, maniobra alta};
-  \node[anchor=north west,font=\fontsize{8.2}{9.6}\selectfont,text=Ink,text width=5.4cm] at (9.14,5.36) {Transporta kits, herramientas, consumibles y útiles ligeros o moderados. La inspección FOD es preventiva y documentada.};
-  \signal{9.22}{3.70}{Ruedas mecanum/suecas para aproximación lateral.}{Green}
-  \signal{9.22}{2.86}{Módulo portacargas y HMI para confirmación.}{Teal}
-  \signal{9.22}{2.02}{Velocidad y zonas limitadas por seguridad.}{Red}
+  \node[anchor=north west,font=\fontsize{13.6}{14.8}\selectfont\bfseries,text=Navy,text width=5.45cm] at (9.05,6.56) {tres niveles, una decisión};
+  \signal{9.18}{5.30}{Simulación: YouBot/Omnirob o base mecanum equivalente.}{Green}
+  \signal{9.18}{4.36}{Benchmark: MiR250 y LD-250 sólo para coste AMR 250 kg.}{Amber}
+  \signal{9.18}{3.42}{Implantación: plataforma holonómica 200--300 kg con portakits.}{Teal}
+  \node[anchor=north west,font=\fontsize{7.0}{8.2}\selectfont,text=Muted,text width=5.55cm] at (9.18,2.30) {La decisión técnica exige ruedas mecanum/suecas, control de \(v_x\), \(v_y\) y \(\omega\), seguridad independiente y registro de misión.};
 \stopslide
 
 % 9
-\startslide{Arquitectura}{Sense-plan-act con registro de planta}{Teal}
+\startslide{Arquitectura}{Control por capas: navegar, actuar y dejar evidencia}{Teal}
   \foreach \x/\ttl/\sub/\col in {
     1.05/Percepción/LiDAR RGB-D RFID/Teal,
     3.85/Localización/SLAM IMU encoders/Cyan,
     6.65/Planificación/A* Dijkstra DWA/Amber,
-    9.45/Control/motores seguridad/Green,
+    9.45/Control/\(v_x\) \(v_y\) \(\omega\) a ruedas/Green,
     12.25/Integración/HMI BD MES/Violet}{
     \fill[\col!12,rounded corners=5pt] (\x,4.34) rectangle ++(2.15,1.52);
     \draw[\col,line width=0.5pt,rounded corners=5pt] (\x,4.34) rectangle ++(2.15,1.52);
@@ -141,8 +141,10 @@
     \node[anchor=north,font=\fontsize{5.6}{6.3}\selectfont,text=Ink,align=center,text width=1.85cm] at (\x+1.075,4.93) {\sub};
   }
   \foreach \x in {3.35,6.15,8.95,11.75}{\draw[Muted,arrow,line width=0.7pt] (\x,5.22) -- (\x+0.36,5.22);}
-  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Navy] at (1.08,2.80) {registro mínimo por misión};
-  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Ink,text width=12.6cm] at (1.08,2.18) {robot, kit, origen, destino, ruta prevista, ruta ejecutada, lectura RFID/QR, parada de seguridad, confirmación e incidencia FOD si aplica.};
+  \draw[Red,line width=1.0pt] (1.05,3.46) -- (14.42,3.46);
+  \node[anchor=west,font=\fontsize{7.2}{8.1}\selectfont\bfseries,text=Red] at (1.12,3.07) {interrupción de seguridad: escáner, bumper o E-stop detienen cualquier misión};
+  \node[anchor=west,font=\fontsize{9.4}{10.4}\selectfont\bfseries,text=Navy] at (1.08,2.35) {registro mínimo por misión};
+  \node[anchor=west,font=\fontsize{7.6}{8.9}\selectfont,text=Ink,text width=12.6cm] at (1.08,1.78) {robot, kit, origen, destino, ruta prevista, ruta ejecutada, lectura RFID/QR, parada de seguridad, confirmación e incidencia FOD si aplica.};
   \qrcode{13.92}{1.74}{0.72}
 \stopslide
 
@@ -174,7 +176,7 @@
   \signal{8.55}{4.36}{A* / Dijkstra: ruta alterna con pasillo bloqueado.}{Teal}
   \signal{8.55}{3.50}{DWA / campos: cruce con operario y parada segura.}{Red}
   \signal{8.55}{2.64}{RGB-D: ronda FOD con captura de evidencia.}{Amber}
-  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=5.6cm] at (8.55,1.38) {Criterio: detener el paso a piloto si la simulación muestra bloqueos, desvíos repetidos o eventos sin traza.};
+  \node[anchor=west,font=\fontsize{7.0}{8.2}\selectfont,text=Muted,text width=5.75cm] at (8.55,1.42) {Gate: \(\leq 0,25\) m en entrega, cero contactos, 100\% de misiones cerradas y reserva de batería antes de asignar ruta.};
 \stopslide
 
 % 12
