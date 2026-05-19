@@ -1,6 +1,6 @@
 \chapter{Introducción}
 
-La robótica móvil industrial permite automatizar movimientos repetitivos dentro de planta sin exigir una infraestructura tan rígida como la de los AGV tradicionales. En sectores con alta exigencia de calidad, como el aeronáutico, su interés no se limita al transporte: también permite registrar entregas, controlar útiles, reducir interferencias con operarios y reforzar rutinas de prevención FOD.
+Los AMR industriales trasladan cargas repetitivas dentro de planta sin carriles físicos ni rutas tan rígidas como las de un AGV tradicional. En una nave aeronáutica, el interés no está solo en mover material: cada entrega puede quedar asociada a un kit, una estación, una hora, un operador y una incidencia FOD si aparece.
 
 En el caso planteado, Lunabotics actúa como empresa ficticia responsable de preparar una oferta para Alestis Puerto Real. El cliente trabaja con componentes estructurales del A320, entre ellos el HTP, elemento aerodinámico horizontal situado en la cola que contribuye a la estabilidad longitudinal de la aeronave. En torno a la sección 19.1 del avión convergen operaciones de estructura posterior, interfaces con elementos de cola, útiles de montaje, inspecciones y flujos de materiales que requieren coordinación fina entre estaciones.
 
@@ -12,7 +12,7 @@ Para esta oferta se asume una experiencia ficticia pero coherente con una empres
 
 La dificultad principal no reside en fabricar el HTP mediante un robot móvil, sino en sostener un flujo productivo exigente. Cuando un operario debe abandonar su estación para buscar herramientas, consumibles o documentación, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, útiles no localizados, entregas no registradas o inspecciones FOD tardías.
 
-El objetivo de este informe es presentar una oferta técnica y comercial creíble, basada en robots móviles autónomos, que apoye el crecimiento de capacidad de 40 HTP al mes hacia 80 HTP al mes o más. Para ello se propone una arquitectura AMR-FOD-Kitting, validable de forma teórica y simulable en CoppeliaSim antes de un piloto físico.
+El trabajo entrega una oferta técnica y comercial basada en robots móviles autónomos para apoyar el crecimiento de capacidad de 40 HTP al mes hacia 80 HTP al mes o más. La arquitectura AMR-FOD-Kitting se valida primero en el plano teórico y después en CoppeliaSim, antes de plantear un piloto físico.
 
 \section{Alcance de la propuesta}
 
@@ -22,8 +22,8 @@ La solución cubre transporte interno de kits, herramientas, consumibles y útil
 
 La propuesta asume una nave interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y disponibilidad de personal para carga/descarga del AMR. También asume que los kits y herramientas pueden etiquetarse mediante RFID, QR o una combinación de ambos.
 
-Se excluyen del presupuesto la obra civil, la certificación formal de procesos aeronáuticos, modificaciones estructurales de estaciones, integraciones ERP/MES altamente personalizadas no descritas en el alcance, y cualquier manipulación automática de piezas grandes del HTP. Estas exclusiones son deliberadas: evitan inflar promesas y delimitan una solución de robótica móvil defendible.
+Se excluyen del presupuesto la obra civil, la certificación formal de procesos aeronáuticos, modificaciones estructurales de estaciones, integraciones ERP/MES altamente personalizadas no descritas en el alcance, y cualquier manipulación automática de piezas grandes del HTP. Con esas exclusiones, el coste se concentra en robótica móvil, kitting, sensores, trazabilidad, seguridad y soporte operativo.
 
 \section{Criterio de realismo industrial}
 
-La propuesta se formula como apoyo a la operación existente. Un sistema AMR puede liberar tiempo operativo, mejorar trazabilidad y estabilizar el suministro a estaciones, pero no reemplaza la validación aeronáutica, la planificación de producción ni la responsabilidad del personal especializado. Este enfoque evita promesas poco defendibles y mantiene coherencia con los contenidos de Sistemas Robóticos Móviles \cite{siegwart2011,tzafestas2014,ollero2001}.
+La oferta apoya la operación existente. Un sistema AMR puede liberar tiempo operativo, mejorar trazabilidad y estabilizar el suministro a estaciones, pero no reemplaza la validación aeronáutica, la planificación de producción ni la responsabilidad del personal especializado. Así se mantiene el alcance dentro de una aplicación propia de Sistemas Robóticos Móviles \cite{siegwart2011,tzafestas2014,ollero2001}.

@@ -23,7 +23,7 @@ Plataforma objetivo & AMR omnidireccional 200--300 kg & Base eléctrica con 4 ru
 \label{tab:modelos-robot}
 \end{longtable}
 
-La elección no se basa en que el robot fabrique el HTP, sino en que pueda entrar y salir de estaciones sin grandes giros, mantenerse orientado hacia el punto de entrega, reducir maniobras en pasillos y compartir espacio con operarios. Este argumento conecta directamente con el temario: las ruedas omnidireccionales ofrecen más maniobrabilidad que una base diferencial, pero exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
+El robot se selecciona por la maniobra en estación, no por fabricación estructural. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
 
 \section{Funciones principales}
 
@@ -46,7 +46,7 @@ La elección no se basa en que el robot fabrique el HTP, sino en que pueda entra
 LiDAR 2D/3D & Navegación, SLAM y detección geométrica de obstáculos. No se trata como único elemento de seguridad funcional.\\
 Cámara RGB-D o industrial & Inspección FOD preventiva, verificación visual de zonas y evidencia fotográfica de incidencias, siempre con validación humana ante positivos.\\
 RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estación.\\
-IMU y encoders & Odometría y fusión sensorial para localización robusta.\\
+IMU y encoders & Odometría y fusión sensorial para estimar pose con menor deriva.\\
 Bumpers y escáner láser de seguridad & Capa separada de seguridad funcional: zonas de protección, reducción de velocidad y parada segura ante presencia humana.\\
 Parada de emergencia & Requisito básico de operación industrial y aceptación por seguridad.\\
 HMI/tablet & Solicitud de misiones, confirmación de entregas y visualización de estado.\\
@@ -57,7 +57,7 @@ Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, histórico 
 
 \section{Arquitectura sensorial por capas}
 
-Para evitar errores teóricos, la propuesta distingue entre sensores de navegación, sensores de seguridad y sensores de proceso. El LiDAR de navegación y la fusión encoders--IMU ayudan a localizar el AMR y mantener el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente orientada a parada segura; y la cámara RGB-D, RFID y QR sirven para FOD y trazabilidad. Esta separación es importante porque una cámara FOD no certifica calidad aeronáutica por sí sola, y un LiDAR de navegación no sustituye un sistema de seguridad funcional.
+La propuesta separa sensores de navegación, seguridad y proceso. El LiDAR de navegación y la fusión encoders--IMU localizan el AMR y mantienen el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente de parada segura; y la cámara RGB-D, RFID y QR cubren FOD y trazabilidad. Una cámara FOD no certifica calidad aeronáutica por sí sola, y un LiDAR de navegación no sustituye un sistema de seguridad funcional.
 
 \begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}P{0.22\textwidth}P{0.24\textwidth}}
 \toprule
@@ -78,7 +78,7 @@ Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiem
 
 La plataforma se concibe como un AMR eléctrico de ruedas omnidireccionales, coherente con los contenidos del curso sobre robots que ruedan, efectores, actuadores y controladores. Cada rueda mecanum/sueca se acciona mediante motor eléctrico con controlador de velocidad, realimentación por encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas de velocidad longitudinal, lateral y angular en velocidades de rueda, mientras que el nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. Esta base se selecciona por maniobrabilidad, no por capacidad de carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
 
-Los actuadores no se plantean para manipular piezas estructurales del HTP. Su función es mover la base, accionar elementos auxiliares simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar la solución y mantiene el alcance dentro de una aplicación realista de robótica móvil industrial.
+Los actuadores no se plantean para manipular piezas estructurales del HTP. Su función es mover la base, accionar elementos auxiliares simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar la solución y mantiene el alcance dentro de una aplicación acotada de robótica móvil industrial.
 
 \section{Modo de operación seguro}
 

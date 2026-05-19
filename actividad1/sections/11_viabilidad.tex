@@ -2,11 +2,11 @@
 
 \section{Seguridad}
 
-La viabilidad depende de que el sistema sea aceptable para seguridad industrial. Los AMR circularán con velocidades limitadas, zonas de protección configurables, escáner láser de seguridad, bumpers, parada de emergencia y protocolos de retirada manual. La validación debe incluir pruebas con peatones, obstáculos inesperados y estaciones ocupadas.
+La primera condición de viabilidad es la seguridad industrial. Los AMR circularán con velocidades limitadas, zonas de protección configurables, escáner láser de seguridad, bumpers, parada de emergencia y protocolos de retirada manual. La validación debe incluir pruebas con peatones, obstáculos inesperados y estaciones ocupadas.
 
 \section{Integración en planta existente}
 
-La integración puede realizarse por fases. En el piloto, las misiones se pueden cargar manualmente desde HMI y registrar en una base de datos local. En la expansión, el sistema debe intercambiar órdenes con un planificador o MES. En el despliegue extendido, se recomienda integración bidireccional con sistemas de producción, mantenimiento y calidad.
+La integración se divide por fases. En el piloto, las misiones se cargan manualmente desde HMI y se registran en una base de datos local. En la expansión, el sistema intercambia órdenes con un planificador o MES. En el despliegue extendido, la integración pasa a ser bidireccional con sistemas de producción, mantenimiento y calidad.
 
 \section{Limitaciones y riesgos}
 
@@ -24,4 +24,4 @@ Las mitigaciones incluyen piloto acotado, formación práctica, participación t
 
 \section{Escalabilidad}
 
-La propuesta es escalable porque separa robot, gestor de flota, base de datos y supervisión. El mismo modelo de misión puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. Esta arquitectura es coherente con la evolución hacia sistemas multi-robot descrita en la literatura de robótica móvil \cite{kagan2019}.
+El escalado se apoya en separar robot, gestor de flota, base de datos y supervisión. El mismo modelo de misión puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. Esta arquitectura coincide con la evolución hacia sistemas multi-robot descrita en la literatura de robótica móvil \cite{kagan2019}.
