@@ -1,0 +1,64 @@
+% Shared visual system for Actividad 1 slides.
+% Loaded from actividad1/slides/slides.tex.
+
+\definecolor{Ink}{HTML}{102033}
+\definecolor{Muted}{HTML}{516173}
+\definecolor{Line}{HTML}{D5DEE8}
+\definecolor{Paper}{HTML}{F7F9FC}
+\definecolor{Panel}{HTML}{FFFFFF}
+\definecolor{Navy}{HTML}{0A2342}
+\definecolor{Navy2}{HTML}{12385F}
+\definecolor{Teal}{HTML}{1F7A8C}
+\definecolor{Cyan}{HTML}{2DB7E5}
+\definecolor{Green}{HTML}{2A9D8F}
+\definecolor{Amber}{HTML}{F4A261}
+\definecolor{Red}{HTML}{B91C1C}
+\definecolor{Violet}{HTML}{6D5BD0}
+\definecolor{Warm}{HTML}{FFF2E4}
+\definecolor{Cool}{HTML}{E8F5F7}
+\definecolor{Blueprint}{HTML}{EAF1F8}
+
+\newcounter{slide}
+\newcommand{\totalSlides}{16}
+\newcommand{\smallcaps}[1]{{\fontsize{5.8}{6.6}\selectfont\bfseries\MakeUppercase{#1}}}
+
+\tikzset{
+  title/.style={font=\fontsize{14.5}{16}\selectfont\bfseries,text=Ink,align=left},
+  kicker/.style={font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=#1,align=left},
+  body/.style={font=\fontsize{7.3}{8.7}\selectfont,text=Ink,align=left},
+  smallbody/.style={font=\fontsize{6.3}{7.6}\selectfont,text=Ink,align=left},
+  tinybody/.style={font=\fontsize{5.4}{6.2}\selectfont,text=Muted,align=left},
+  caption/.style={font=\fontsize{5.3}{6.2}\selectfont,text=Muted,align=left},
+  label/.style={font=\fontsize{6.0}{6.9}\selectfont\bfseries,text=Ink,align=center},
+  data/.style={font=\fontsize{13.5}{14.5}\selectfont\bfseries,text=Ink,align=left},
+  arrow/.style={-{Latex[length=2mm,width=1.5mm]},line width=0.6pt}
+}
+
+\newcommand{\startslide}[3]{%
+  \ifnum\value{slide}>0\clearpage\fi
+  \stepcounter{slide}%
+  \begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm]
+  \begin{scope}[shift={(current page.south west)}]
+  \fill[Paper] (0,0) rectangle (16,9);
+  \fill[white] (0,8.74) rectangle (16,9);
+  \pgfmathsetmacro{\progress}{16*\value{slide}/\totalSlides}
+  \fill[#3] (0,8.91) rectangle (\progress,9);
+  \draw[Line] (0,8.74) -- (16,8.74);
+  \node[anchor=west,kicker=#3] at (0.72,8.50) {#1};
+  \node[anchor=west,title,text width=12.9cm] at (0.72,8.12) {#2};
+  \node[anchor=east,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Muted] at (15.24,8.46) {\theslide/\totalSlides};
+  \node[anchor=west,caption] at (0.72,0.24) {Actividad 1 \textbullet{} Sistemas Rob\'oticos M\'oviles};
+  \node[anchor=east,caption] at (15.24,0.24) {Lunabotics \textbullet{} Alestis Puerto Real \textbullet{} HTP A320};
+}
+
+\newcommand{\stopslide}{\end{scope}\end{tikzpicture}}
+
+\newcommand{\roundbox}[6]{%
+  \fill[#5,rounded corners=5pt] (#1,#2) rectangle ++(#3,#4);
+  \draw[#6,rounded corners=5pt,line width=0.35pt] (#1,#2) rectangle ++(#3,#4);
+}
+
+\newcommand{\metric}[5]{%
+  \node[anchor=west,font=\fontsize{15}{16}\selectfont\bfseries,text=#5] at (#1,#2) {#3};
+  \node[anchor=west,smallbody,text width=2.9cm] at (#1,#2-0.48) {#4};
+}

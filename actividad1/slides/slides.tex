@@ -1,217 +1,256 @@
 \documentclass[10pt]{article}
-\usepackage[paperwidth=16cm,paperheight=9cm,margin=0.65cm]{geometry}
+\usepackage[paperwidth=16cm,paperheight=9cm,margin=0cm]{geometry}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
 \usepackage{lmodern}
-\usepackage{booktabs,tabularx,array}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{arrows.meta,calc,positioning,shapes.geometric}
 \pagestyle{empty}
-
-\definecolor{UniPrimary}{HTML}{E8552D}
-\definecolor{UniPrimaryDeep}{HTML}{C44624}
-\definecolor{UniDark}{HTML}{1A1A1A}
-\definecolor{UniLight}{HTML}{F6F7F9}
-\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0.18cm}
 \renewcommand{\familydefault}{\sfdefault}
-\newcounter{slide}
-\newcommand{\slide}[2]{%
-  \ifnum\value{slide}>0\clearpage\fi
-  \stepcounter{slide}
-  \begin{tikzpicture}[remember picture,overlay]
-    \fill[UniPrimaryDeep] (current page.north west) rectangle ([yshift=-1.0cm]current page.north east);
-    \node[anchor=west,text=white,font=\bfseries\large] at ([xshift=0.65cm,yshift=-0.52cm]current page.north west) {#1};
-    \node[anchor=east,text=white,font=\small] at ([xshift=-0.65cm,yshift=-0.52cm]current page.north east) {\theslide};
-  \end{tikzpicture}
-  \vspace*{0.72cm}
-  #2
+\setlength{\parindent}{0pt}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+\input{../figures/tikz/slides_theme}
+\input{../figures/tikz/slides_icons}
+
+\newcommand{\signal}[4]{%
+  \fill[#4] (#1,#2) circle (0.075);
+  \node[anchor=west,font=\fontsize{7.6}{8.8}\selectfont,text=Ink,align=left,text width=4.7cm] at (#1+0.27,#2-0.02) {#3};
+}
+
+\newcommand{\scenario}[6]{%
+  \draw[#6,line width=1.1pt] (#1,1.70) -- (#1,5.20);
+  \fill[#6] (#1,5.20) circle (0.12);
+  \node[anchor=south,font=\fontsize{20}{21}\selectfont\bfseries,text=#6] at (#1,5.37) {#2};
+  \node[anchor=north,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=Ink,align=center,text width=3.0cm] at (#1,4.82) {#3};
+  \node[anchor=north,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=#6,align=center,text width=3.0cm] at (#1,4.18) {#4};
+  \node[anchor=north,font=\fontsize{6.3}{7.4}\selectfont,text=Muted,align=center,text width=3.2cm] at (#1,3.60) {#5};
 }
 
 \begin{document}
-\slide{Sistema AMR-FOD-Kitting para linea HTP A320}{
-{\Large Actividad 1: Oferta de automatizacion a planta industrial}\\
-{\normalsize Universidad Internacional de Valencia}\\[0.2cm]
-Autor: Jorge Luis Mayorga Taborda\\
-Profesor: Jose I. I\~niguez\\
-Entrega: 26 de mayo de 2026
-}
+\stepcounter{slide}
 
-\slide{Objetivo de la propuesta}{
-\textbf{Alcance:} mejorar logistica interna, trazabilidad e inspeccion FOD en el entorno HTP A320 y seccion 19.1 de Alestis Puerto Real.
-\begin{itemize}
-  \item No se propone fabricar el HTP con robots moviles.
-  \item Automatizacion de kitting, herramientas, consumibles, retorno de utiles y registros.
-  \item Apoyo al escalado desde 40 HTP/mes hacia 80 HTP/mes o mas.
-\end{itemize}
-}
+% 1
+\input{../figures/tikz/slide_01_cover}
 
-\slide{Presentacion de Lunabotics}{
-\begin{itemize}
-  \item Empresa ficticia joven de integracion de robotica movil industrial.
-  \item Capacidades: simulacion CoppeliaSim, AMR, sensores LiDAR/RGB-D/RFID, HMI y datos de planta.
-  \item Experiencia de referencia: pilotos intralogisticos, celdas con bases omnidireccionales y trazabilidad QR/RFID.
-  \item Enfoque comercial: piloto medible, expansion controlada y despliegue extendido solo con KPIs validados.
-\end{itemize}
-}
+% 2
+\startslide{Tesis}{La propuesta no robotiza el HTP: ordena el flujo que lo rodea}{Teal}
+  \node[anchor=north west,font=\fontsize{18.6}{20.2}\selectfont\bfseries,text=Navy,text width=6.2cm,align=left] at (0.90,6.92) {Menos espera.\\M\'as trazabilidad.\\Menos riesgo FOD.};
+  \node[anchor=north west,font=\fontsize{8.6}{10.0}\selectfont,text=Muted,text width=5.6cm,align=left] at (0.96,4.82) {La soluci\'on AMR-FOD-Kitting automatiza transporte, confirmaci\'on y evidencia; no invade procesos certificados de montaje aerona\'utico.};
+  \draw[Teal,line width=1pt] (7.35,1.45) -- (7.35,6.75);
+  \metric{8.15}{6.34}{40}{HTP/mes actuales aproximados}{Teal}
+  \metric{8.15}{4.70}{80+}{HTP/mes como objetivo futuro}{Amber}
+  \metric{8.15}{3.06}{0}{promesas de fabricacion robotizada directa}{Red}
+  \node[anchor=west,font=\fontsize{7.0}{8.2}\selectfont,text=Muted,text width=5.9cm] at (8.15,1.42) {El retorno se defiende por tiempo operativo recuperado, no por reduccion directa de plantilla.};
+\stopslide
 
-\slide{Contexto: Alestis, HTP y seccion 19.1}{
-\begin{itemize}
-  \item El HTP es el estabilizador horizontal de cola del A320.
-  \item La seccion 19.1 se asocia al entorno posterior e interfaces de cola.
-  \item El proceso requiere utiles, kits, herramientas, consumibles, inspecciones y registros.
-  \item La oportunidad esta en estabilizar el flujo operativo, no en cambiar el montaje certificado.
-\end{itemize}
-}
+% 3
+\startslide{Dolor operativo}{Las perdidas aparecen como microesperas, no como grandes paradas}{Amber}
+  \floorgrid{0.95}{2.02}{1.62}{Amber}
+  \draw[Red,line width=1.0pt,dashed,rounded corners=8pt,->] (2.08,2.75) -- (5.55,2.75) -- (5.55,5.38) -- (2.10,5.38) -- (2.10,3.60);
+  \node[anchor=west,font=\fontsize{6.4}{7.4}\selectfont\bfseries,text=Red] at (1.18,1.32) {ruta manual repetida};
+  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Amber] at (8.22,6.22) {friccion logistica};
+  \signal{8.32}{5.18}{Operarios abandonan estacion para buscar utiles o consumibles.}{Amber}
+  \signal{8.32}{4.30}{Kits incompletos bloquean trabajo sin quedar siempre visibles como parada.}{Teal}
+  \signal{8.32}{3.42}{FOD exige inspeccion, disciplina y evidencia documentada.}{Red}
+  \signal{8.32}{2.54}{La trazabilidad fina se pierde si la entrega no queda ligada a mision.}{Violet}
+\stopslide
 
-\slide{Informacion obtenida de la entrevista}{
-\small
-\begin{tabularx}{\textwidth}{Y Y}
-\toprule
-\textbf{Hallazgo} & \textbf{Implicacion}\\
-\midrule
-Microperdidas por busqueda de utiles. & Misiones AMR de entrega y retorno.\\
-Kits o herramientas incompletas bloquean estaciones. & RFID/QR y confirmacion digital.\\
-FOD es riesgo sensible. & Rondas con camara RGB-D y registro.\\
-Layout variable y zonas estrechas. & Base omnidireccional y SLAM.\\
-\bottomrule
-\end{tabularx}
-}
+% 4
+\startslide{Contexto}{HTP A320 y seccion 19.1: estructuras grandes, flujo auxiliar sensible}{Cyan}
+  \tailicon{0.95}{3.70}{2.70}
+  \node[anchor=west,font=\fontsize{8.0}{9.2}\selectfont,text=Muted,text width=5.8cm] at (1.05,1.40) {El valor del AMR esta en estabilizar suministro, retorno de utiles, inspeccion preventiva y registro; no en manipular estructuras grandes.};
+  \draw[Cyan,line width=1.0pt] (8.10,1.55) -- (8.10,6.75);
+  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Teal] at (8.75,6.25) {HTP};
+  \node[anchor=west,font=\fontsize{8.4}{9.8}\selectfont,text=Ink,text width=5.1cm] at (8.78,5.58) {estabilizador horizontal de cola del A320.};
+  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Amber] at (8.75,4.28) {19.1};
+  \node[anchor=west,font=\fontsize{8.4}{9.8}\selectfont,text=Ink,text width=5.1cm] at (8.78,3.62) {entorno posterior e interfaces de cola, con alta dependencia de kits, herramientas y documentacion.};
+  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=5.1cm] at (8.78,2.18) {Conclusion: automatizar flujo auxiliar, no el montaje certificado.};
+\stopslide
 
-\slide{Problemas detectados}{
-\begin{itemize}
-  \item Desplazamientos improductivos de operarios.
-  \item Esperas por kits, herramientas y consumibles.
-  \item Riesgo FOD en zonas de trabajo aeronautico.
-  \item Trazabilidad fina insuficiente.
-  \item Coordinacion manual entre estaciones y logistica.
-  \item Necesidad de escalar capacidad sin aumentar desorden operativo.
-\end{itemize}
-}
+% 5
+\startslide{Entrevista}{La voz de planta cambia el alcance de la solucion}{Violet}
+  \node[anchor=west,font=\fontsize{16}{18}\selectfont\bfseries,text=Navy,text width=7.2cm,align=left] at (0.95,6.25) {``El valor no es fabricar el HTP: es traer el material correcto y registrar la entrega.''};
+  \node[anchor=west,font=\fontsize{7.1}{8.2}\selectfont,text=Muted,text width=6.3cm] at (1.02,4.68) {Carlos Perez, trabajador con mas de 10 anos de experiencia en Alestis Puerto Real.};
+  \draw[Violet,line width=1.0pt] (8.15,1.62) -- (8.15,6.52);
+  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Violet] at (8.72,6.10) {hallazgos que mandan};
+  \signal{8.82}{5.18}{No tocar montaje certificado: apoyar logistica y trazabilidad.}{Violet}
+  \signal{8.82}{4.25}{Las rutas fijas pierden valor si cambian prioridades y pasillos.}{Teal}
+  \signal{8.82}{3.32}{FOD necesita registro revisable, no solo una ronda verbal.}{Amber}
+  \signal{8.82}{2.39}{El piloto debe medirse con KPIs antes de escalar flota.}{Green}
+\stopslide
 
-\slide{Requisitos, trazabilidad y KPIs}{
-\begin{tabularx}{\textwidth}{Y Y}
-\toprule
-\textbf{Problema / requisito} & \textbf{Respuesta / KPI}\\
-\midrule
-Desplazamientos improductivos. & Misiones AMR; minutos evitados por turno.\\
-Kits incompletos o tardios. & RFID/QR + HMI; entregas a tiempo.\\
-Riesgo FOD. & RGB-D + rondas; eventos registrados.\\
-Layout variable. & AMR omnidireccional; replanificaciones seguras.\\
-Escalado 40 a 80 HTP/mes. & Gestor de flota; disponibilidad y utilizacion.\\
-\bottomrule
-\end{tabularx}
-{\small Umbrales piloto: exito de mision \(\geq 95\%\), registro completo \(\geq 98\%\), incidentes con dano = 0.}
-}
+% 6
+\startslide{Requisitos}{Cuatro requisitos, cuatro pruebas de aceptacion}{Teal}
+  \foreach \x/\val/\lab/\col in {
+    1.25/\(\geq 95\%\)/misiones completadas/Teal,
+    4.95/\(\geq 98\%\)/registro completo/Green,
+    8.65/\(\geq 90\%\)/disponibilidad AMR/Cyan,
+    12.35/0/incidentes con dano/Red}{
+    \node[anchor=west,font=\fontsize{19}{20}\selectfont\bfseries,text=\col] at (\x,6.05) {\val};
+    \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Ink,text width=2.7cm] at (\x,5.32) {\lab};
+    \draw[\col,line width=1.4pt] (\x,5.00) -- (\x+2.60,5.00);
+  }
+  \draw[Line,line width=0.6pt] (1.00,3.62) -- (14.85,3.62);
+  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Navy] at (1.05,3.10) {respuesta tecnica};
+  \node[anchor=west,font=\fontsize{8.2}{9.8}\selectfont,text=Ink,text width=13.0cm] at (1.05,2.42) {AMR omnidireccional con SLAM, LiDAR, RGB-D, RFID/QR, HMI, parada de emergencia, base de datos de misiones y gestion progresiva de flota.};
+\stopslide
 
-\slide{Alternativas roboticas}{
-\small
-\begin{tabularx}{\textwidth}{l Y Y}
-\toprule
-\textbf{Opcion} & \textbf{Resultado} & \textbf{Motivo}\\
-\midrule
-AGV & No principal & Rutas demasiado rigidas.\\
-AMR diferencial & Viable & Menor maniobrabilidad lateral.\\
-AMR omnidireccional & Seleccionado & Mejor aproximacion a estaciones.\\
-Orugas & Descartado & Excesivo para pavimento industrial.\\
-Dron & Descartado & Riesgo y baja carga en interior.\\
-Patas & Descartado & Coste y complejidad innecesaria.\\
-\bottomrule
-\end{tabularx}
-}
+% 7
+\startslide{Alternativas}{Por que AMR omnidireccional y no una solucion mas exotica}{Cyan}
+  \node[anchor=west,font=\fontsize{21}{22}\selectfont\bfseries,text=Green] at (0.95,6.12) {Seleccionado};
+  \node[anchor=west,font=\fontsize{11}{12.5}\selectfont\bfseries,text=Navy,text width=5.7cm] at (0.98,5.22) {AMR omnidireccional representable en CoppeliaSim};
+  \roboticon{3.75}{3.05}{1.55}
+  \node[anchor=west,font=\fontsize{8.0}{9.2}\selectfont,text=Muted,text width=5.3cm] at (0.98,1.38) {Movimiento lateral sin reorientar carga: mejor cerca de utiles, estaciones y operarios.};
+  \draw[Line,line width=0.6pt] (7.20,1.35) -- (7.20,6.55);
+  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Muted] at (7.85,6.10) {descartes razonados};
+  \signal{7.95}{5.12}{AGV: robusto, pero demasiado rigido si cambian rutas.}{Muted}
+  \signal{7.95}{4.20}{Dron: baja carga y riesgo en interior industrial.}{Red}
+  \signal{7.95}{3.28}{Orugas: innecesarias sobre pavimento regular.}{Amber}
+  \signal{7.95}{2.36}{Patas: coste y complejidad sin ventaja operativa clara.}{Violet}
+\stopslide
 
-\slide{Robot seleccionado}{
-\textbf{AMR omnidireccional}: plataforma tipo KUKA YouBot, KUKA Omnirob o equivalente industrial representable en CoppeliaSim.
-\begin{itemize}
-  \item Ruedas mecanum/suecas: movimiento lateral sin cambiar orientacion.
-  \item Mejor maniobra cerca de estaciones, estructuras y operarios.
-  \item Mas flexible que un AGV de ruta fija.
-  \item Adecuado para validar navegacion, sensores, actuadores y misiones.
-\end{itemize}
-}
+% 8
+\startslide{Robot}{Una plataforma simple con sensores industriales, no un robot de ciencia ficcion}{Green}
+  \roboticon{4.25}{4.15}{2.35}
+  \draw[Teal,arrow] (4.25,4.15) -- (2.70,5.88);
+  \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Teal,fill=Paper,inner sep=1pt] at (2.46,5.92) {LiDAR};
+  \draw[Amber,arrow] (4.25,4.15) -- (5.64,5.92);
+  \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Amber,fill=Paper,inner sep=1pt] at (5.80,5.86) {RGB-D};
+  \draw[Violet,arrow] (4.25,4.15) -- (6.82,4.02);
+  \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Violet,fill=Paper,inner sep=1pt] at (6.96,3.92) {RFID-QR};
+  \draw[Cyan,arrow] (4.25,4.15) -- (4.95,2.16);
+  \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Cyan,fill=Paper,inner sep=1pt] at (5.25,1.90) {IMU + encoders};
+  \draw[Red,arrow] (4.25,4.15) -- (2.36,3.17);
+  \node[font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Red,fill=Paper,inner sep=1pt] at (1.78,2.92) {E-stop + bumpers};
+  \node[anchor=north west,font=\fontsize{14.2}{15.4}\selectfont\bfseries,text=Navy,text width=5.2cm] at (9.10,6.48) {carga moderada, maniobra alta};
+  \node[anchor=north west,font=\fontsize{8.2}{9.6}\selectfont,text=Ink,text width=5.4cm] at (9.14,5.36) {Transporta kits, herramientas, consumibles y utiles ligeros o moderados. La inspeccion FOD es preventiva y documentada.};
+  \signal{9.22}{3.70}{Base mecanum/sueca para aproximacion lateral.}{Green}
+  \signal{9.22}{2.86}{Modulo portacargas y HMI para confirmacion.}{Teal}
+  \signal{9.22}{2.02}{Velocidad y zonas limitadas por seguridad.}{Red}
+\stopslide
 
-\slide{Sensores y arquitectura}{
-\begin{itemize}
-  \item LiDAR 2D/3D para SLAM, obstaculos y seguridad.
-  \item Camara RGB-D para inspeccion FOD.
-  \item RFID/QR para kits, herramientas y entregas.
-  \item IMU, encoders, bumpers, escaner laser y E-stop.
-  \item Planificacion global A*/Dijkstra y evitacion local DWA/campos potenciales como referencia.
-  \item HMI, WiFi industrial, supervisor y base de datos.
-\end{itemize}
-}
+% 9
+\startslide{Arquitectura}{De sensores a evidencia auditable de planta}{Teal}
+  \foreach \x/\ttl/\sub/\col in {
+    1.05/Percepcion/LiDAR RGB-D RFID-QR/Teal,
+    3.85/Localizacion/SLAM odometria IMU/Cyan,
+    6.65/Misiones/prioridad ruta ventana/Amber,
+    9.45/Control/base y seguridad/Green,
+    12.25/Planta/HMI BD MES-ERP/Violet}{
+    \fill[\col!12,rounded corners=5pt] (\x,4.58) rectangle ++(2.15,1.28);
+    \draw[\col,line width=0.5pt,rounded corners=5pt] (\x,4.58) rectangle ++(2.15,1.28);
+    \node[anchor=north,font=\fontsize{7.4}{8.2}\selectfont\bfseries,text=\col,align=center,text width=1.8cm] at (\x+1.075,5.54) {\ttl};
+    \node[anchor=north,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,align=center,text width=1.85cm] at (\x+1.075,5.02) {\sub};
+  }
+  \foreach \x in {3.35,6.15,8.95,11.75}{\draw[Muted,arrow,line width=0.7pt] (\x,5.22) -- (\x+0.36,5.22);}
+  \node[anchor=west,font=\fontsize{10}{11}\selectfont\bfseries,text=Navy] at (1.08,2.80) {registro minimo por mision};
+  \node[anchor=west,font=\fontsize{8.0}{9.4}\selectfont,text=Ink,text width=12.6cm] at (1.08,2.18) {robot, kit, origen, destino, ruta ejecutada, hora de carga, hora de entrega, confirmacion, incidencia y evidencia FOD si aplica.};
+  \qrcode{13.92}{1.74}{0.72}
+\stopslide
 
-\slide{Flujo operativo}{
-\begin{enumerate}
-  \item Planificacion de mision.
-  \item Carga de kit o herramienta.
-  \item Lectura RFID/QR.
-  \item Navegacion hasta estacion.
-  \item Entrega y confirmacion.
-  \item Inspeccion FOD si aplica.
-  \item Retorno de utiles o nueva mision.
-\end{enumerate}
-}
+% 10
+\startslide{Operacion}{Un ciclo cerrado: pedir, mover, confirmar, registrar}{Cyan}
+  \draw[Cyan,line width=1.15pt,rounded corners=12pt,->] (1.20,4.75) -- (3.15,4.75) -- (3.15,3.28) -- (5.10,3.28) -- (5.10,4.75) -- (7.05,4.75) -- (7.05,3.28) -- (9.00,3.28) -- (9.00,4.75) -- (10.95,4.75) -- (10.95,3.28) -- (12.90,3.28);
+  \foreach \x/\y/\n/\ttl/\col in {
+    1.20/4.75/1/plan/Teal,
+    3.15/3.28/2/carga/Green,
+    5.10/4.75/3/lectura/Violet,
+    7.05/3.28/4/ruta/Cyan,
+    9.00/4.75/5/entrega/Amber,
+    10.95/3.28/6/FOD/Red,
+    12.90/3.28/7/retorno/Green}{
+    \fill[\col] (\x,\y) circle (0.32);
+    \node[font=\fontsize{7.4}{8}\selectfont\bfseries,text=white] at (\x,\y) {\n};
+    \node[anchor=north,font=\fontsize{6.8}{7.8}\selectfont\bfseries,text=\col,align=center,text width=1.35cm] at (\x,\y-0.47) {\ttl};
+  }
+  \roboticon{7.05}{6.05}{0.90}
+  \qrcode{4.65}{5.45}{0.70}
+  \node[anchor=west,font=\fontsize{8.6}{10.0}\selectfont,text=Ink,text width=12.7cm] at (1.05,1.42) {La mision termina cuando queda evidencia: entrega confirmada, ruta registrada y excepcion documentada.};
+\stopslide
 
-\slide{Escenario piloto: 1 robot}{
-\begin{itemize}
-  \item Objetivo: validar navegacion, seguridad, kitting e inspeccion FOD.
-  \item Alcance: zona acotada y estaciones seleccionadas.
-  \item Riesgos: aceptacion de usuarios, mapa incompleto, interferencias.
-  \item Criterios: 95\% de misiones completadas, cero incidentes, esperas reducidas.
-  \item Coste estimado: 198.700 \texteuro{}.
-\end{itemize}
-}
+% 11
+\startslide{CoppeliaSim}{La simulacion compra seguridad antes del piloto fisico}{Violet}
+  \floorgrid{0.95}{2.05}{1.72}{Violet}
+  \node[anchor=west,font=\fontsize{16}{17}\selectfont\bfseries,text=Navy,text width=5.9cm] at (8.45,6.28) {cuatro pruebas antes de planta};
+  \signal{8.55}{5.22}{Entrega nominal a estacion HTP.}{Violet}
+  \signal{8.55}{4.36}{Obstaculo temporal y replanificacion.}{Teal}
+  \signal{8.55}{3.50}{Cruce con operario y parada segura.}{Red}
+  \signal{8.55}{2.64}{Ronda FOD con captura de evidencia.}{Amber}
+  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=5.6cm] at (8.55,1.38) {Criterio: no pasar a piloto si las misiones simuladas no son estables, explicables y auditables.};
+\stopslide
 
-\slide{Escenarios de expansion: 7 y 17 robots}{
-\begin{tabularx}{\textwidth}{l Y Y}
-\toprule
-\textbf{Escenario} & \textbf{Alcance} & \textbf{Coste estimado}\\
-\midrule
-7 robots & Varias estaciones HTP, retornos de utiles, rondas FOD, gestor de flota. & 904.700 \texteuro{}\\
-17 robots & Cobertura extendida, integracion avanzada y soporte a 80 HTP/mes o mas. & 2.051.600 \texteuro{}\\
-\bottomrule
-\end{tabularx}
-}
+% 12
+\startslide{Despliegue}{No se vende una flota grande sin datos del piloto}{Green}
+  \scenario{2.25}{1}{Piloto}{198.688 \texteuro{}}{zona acotada, rutas, RFID/QR y FOD}{Teal}
+  \scenario{7.85}{7}{Expansion}{904.736 \texteuro{}}{varias estaciones, retornos y gestor de flota}{Amber}
+  \scenario{13.10}{17}{Extendido}{2.051.616 \texteuro{}}{cobertura amplia condicionada a KPIs}{Green}
+  \draw[Line,line width=0.6pt] (1.10,1.70) -- (14.10,1.70);
+  \node[anchor=west,font=\fontsize{8.2}{9.6}\selectfont,text=Ink,text width=13.1cm] at (1.15,0.92) {Escalado por evidencia: seguridad, disponibilidad, aceptacion operativa, entregas a tiempo y trazabilidad completa.};
+\stopslide
 
-\slide{Viabilidad y beneficios}{
-\begin{itemize}
-  \item Seguridad mediante sensores, zonas, velocidad limitada y E-stop.
-  \item Integracion gradual: HMI local, base de datos, despues MES/ERP.
-  \item Beneficios: menor espera, trazabilidad, datos de flujo y prevencion FOD.
-  \item Validacion previa en CoppeliaSim: rutas, obstaculos, aproximacion lateral y misiones trazadas.
-  \item Riesgos mitigados: aceptacion de operarios, mapa desactualizado, WiFi y lecturas RFID/QR.
-\end{itemize}
-}
+% 13
+\startslide{Presupuesto}{La oferta separa robot, software, ingenieria y soporte}{Amber}
+  \foreach \x/\total/\label/\col in {1.15/198.688/1 robot/Teal,5.65/904.736/7 robots/Amber,10.15/2.051.616/17 robots/Green}{
+    \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=\col] at (\x,6.25) {\total \texteuro{}};
+    \node[anchor=west,font=\fontsize{7.5}{8.7}\selectfont\bfseries,text=Ink] at (\x,5.58) {\label};
+    \draw[\col,line width=1.2pt] (\x,5.25) -- (\x+3.20,5.25);
+    \fill[Teal] (\x,2.18) rectangle ++(0.34,1.85);
+    \fill[Violet] (\x+0.48,2.18) rectangle ++(0.34,0.78);
+    \fill[Cyan] (\x+0.96,2.18) rectangle ++(0.34,1.10);
+    \fill[Green] (\x+1.44,2.18) rectangle ++(0.34,0.98);
+    \fill[Amber] (\x+1.92,2.18) rectangle ++(0.34,0.62);
+  }
+  \node[anchor=west,font=\fontsize{7.6}{8.8}\selectfont,text=Muted,text width=13.5cm] at (1.14,1.08) {Estimacion academica sin IVA. Basada en referencias comerciales publicas de AMR 250 kg, sensores, RFID, HMI, WiFi industrial y rangos de integracion.};
+\stopslide
 
-\slide{Presupuesto detallado}{
-\scriptsize
-\begin{tabularx}{\textwidth}{Y r r r}
-\toprule
-\textbf{Partida} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
-\midrule
-Paquetes AMR-FOD-Kitting completos & 69.800 & 488.600 & 1.186.600\\
-Software flota, trazabilidad y MES/ERP & 22.000 & 58.000 & 105.000\\
-Ingenieria, simulacion y configuracion & 42.000 & 112.000 & 215.000\\
-Instalacion, formacion, mantenimiento y logistica & 37.100 & 133.200 & 293.200\\
-Contingencia y margen 12\% & 21.288 & 96.936 & 219.816\\
-\midrule
-\textbf{Total estimado} & \textbf{198.688} & \textbf{904.736} & \textbf{2.051.616}\\
-\bottomrule
-\end{tabularx}
-{\tiny TCO 3 anos estimado: 242.388 / 1.075.636 / 2.436.516 \texteuro{}. Referencias comerciales publicas; no cotizacion vinculante.}
-}
+% 14
+\startslide{ROI}{El retorno defendible es capacidad operativa recuperada}{Teal}
+  \node[anchor=west,font=\fontsize{22}{23}\selectfont\bfseries,text=Navy,text width=5.7cm] at (0.95,6.30) {no se promete\\reducir plantilla};
+  \node[anchor=west,font=\fontsize{8.4}{9.8}\selectfont,text=Muted,text width=5.6cm] at (1.00,4.70) {El salario de referencia 20.000--28.000 \texteuro{}/ano se usa para valorar horas improductivas recuperadas, no despidos.};
+  \draw[Teal,line width=1pt] (7.15,1.45) -- (7.15,6.58);
+  \signal{7.78}{5.70}{menos busquedas manuales por turno}{Teal}
+  \signal{7.78}{4.78}{menor espera por kits, herramientas y consumibles}{Green}
+  \signal{7.78}{3.86}{menor variabilidad y mas datos de flujo}{Cyan}
+  \signal{7.78}{2.94}{menor exposicion a incidencias FOD no documentadas}{Amber}
+  \signal{7.78}{2.02}{apoyo realista al paso de 40 a 80 HTP/mes}{Violet}
+\stopslide
 
-\slide{Conclusion}{
-\textbf{Decision recomendada:} iniciar con piloto de 1 AMR omnidireccional, validado en CoppeliaSim y medido con KPIs de seguridad, entregas, trazabilidad, FOD y aceptacion operativa.
-\begin{itemize}
-  \item Solucion viable, escalable y realista.
-  \item Alineada con robotica movil industrial.
-  \item Apoya el aumento de capacidad sin prometer automatizacion imposible.
-\end{itemize}
-}
+% 15
+\startslide{Oferta comercial}{Partidas visibles, sin relleno ni promesas escondidas}{Amber}
+  \node[anchor=west,font=\fontsize{16}{17}\selectfont\bfseries,text=Navy] at (0.95,6.40) {que compra el cliente};
+  \foreach \y/\ttl/\txt/\col in {
+    5.42/AMR + sensores/base LiDAR RGB-D seguridad RFID-QR y HMI/Teal,
+    4.47/Software de flota/trazabilidad base de datos y conectores MES-ERP/Violet,
+    3.52/Ingenieria/levantamiento simulacion CoppeliaSim configuracion y pruebas/Cyan,
+    2.57/Implantacion/instalacion formacion mantenimiento logistica y soporte/Green,
+    1.62/Margen y riesgo/contingencia academica y margen comercial explicito/Amber}{
+    \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=\col] at (1.02,\y) {\ttl};
+    \node[anchor=west,font=\fontsize{7.0}{8.2}\selectfont,text=Ink,text width=6.7cm] at (4.55,\y) {\txt};
+  }
+  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Amber] at (11.30,5.95) {12\%};
+  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=3.2cm] at (11.35,5.18) {contingencia y margen comercial declarado.};
+  \node[anchor=west,font=\fontsize{18}{19}\selectfont\bfseries,text=Teal] at (11.30,3.55) {3 anos};
+  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=Muted,text width=3.2cm] at (11.35,2.78) {TCO estimado para comparacion completa.};
+\stopslide
+
+% 16
+\startslide{Cierre}{Recomendacion: piloto serio, medido y escalable}{Green}
+  \node[anchor=west,font=\fontsize{25}{26}\selectfont\bfseries,text=Green] at (0.95,6.22) {1 robot primero};
+  \node[anchor=west,font=\fontsize{9.2}{10.8}\selectfont,text=Ink,text width=5.6cm] at (1.02,5.20) {Validar rutas, seguridad, entregas, trazabilidad, FOD y aceptacion operativa. Escalar solo con datos.};
+  \draw[Green,arrow,line width=1.0pt] (6.70,5.65) -- (8.20,5.65);
+  \roboticon{8.95}{5.65}{1.05}
+  \draw[Green,arrow,line width=1.0pt] (9.75,5.65) -- (11.25,5.65);
+  \tailicon{11.55}{5.42}{0.82}
+  \draw[Line,line width=0.6pt] (1.05,2.65) -- (14.85,2.65);
+  \node[anchor=west,font=\fontsize{8.0}{9.3}\selectfont\bfseries,text=Teal] at (1.05,2.08) {tecnica viable};
+  \node[anchor=west,font=\fontsize{8.0}{9.3}\selectfont\bfseries,text=Amber] at (4.85,2.08) {operacion realista};
+  \node[anchor=west,font=\fontsize{8.0}{9.3}\selectfont\bfseries,text=Green] at (8.65,2.08) {presupuesto defendible};
+  \node[anchor=west,font=\fontsize{8.0}{9.3}\selectfont\bfseries,text=Violet] at (12.10,2.08) {alineado con SRM};
+\stopslide
+
 \end{document}

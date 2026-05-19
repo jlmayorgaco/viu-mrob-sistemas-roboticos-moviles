@@ -1,3 +1,5 @@
+.PHONY: all report slides pptx clean
+
 all: report slides pptx
 
 report:

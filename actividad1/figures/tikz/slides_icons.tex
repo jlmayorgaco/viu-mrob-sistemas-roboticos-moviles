@@ -1,0 +1,63 @@
+% Reusable TikZ icons and mini-figures for Actividad 1 slides.
+% Coordinates are local and intended for inclusion inside a 16 x 9 slide canvas.
+
+\newcommand{\roboticon}[3]{%
+  \begin{scope}[shift={(#1,#2)},scale=#3]
+    \fill[Navy!9,rounded corners=3pt] (-0.83,-0.56) rectangle (0.83,0.56);
+    \draw[Navy,line width=0.55pt,rounded corners=3pt] (-0.83,-0.56) rectangle (0.83,0.56);
+    \fill[Teal!28,rounded corners=2pt] (-0.48,-0.29) rectangle (0.48,0.29);
+    \draw[Teal,line width=0.35pt,rounded corners=2pt] (-0.48,-0.29) rectangle (0.48,0.29);
+    \fill[Cyan] (0,0) circle (0.13);
+    \draw[Cyan,line width=0.4pt] (0,0) circle (0.28);
+    \draw[Cyan!60,line width=0.35pt] (0,0) circle (0.42);
+    \foreach \x in {-0.68,0.68}{
+      \fill[Ink] (\x,-0.42) rectangle ++(0.22,0.13);
+      \fill[Ink] (\x,0.29) rectangle ++(0.22,0.13);
+    }
+    \draw[Amber,arrow] (-0.25,0.72) -- (0.45,0.72);
+    \draw[Green,arrow] (0.98,0.10) -- (0.98,-0.48);
+  \end{scope}
+}
+
+\newcommand{\tailicon}[3]{%
+  \begin{scope}[shift={(#1,#2)},scale=#3]
+    \draw[Navy,line width=1.0pt] (0,0) .. controls (1.4,0.32) and (3.1,0.22) .. (4.2,0);
+    \draw[Navy,line width=1.0pt] (0,-0.62) .. controls (1.4,-0.92) and (3.1,-0.82) .. (4.2,-0.62);
+    \draw[Navy,line width=0.7pt] (4.2,0) -- (4.2,-0.62);
+    \fill[Teal!22] (3.35,0.58) -- (4.35,1.0) -- (4.05,0.08) -- cycle;
+    \draw[Teal,line width=0.7pt] (3.35,0.58) -- (4.35,1.0) -- (4.05,0.08) -- cycle;
+    \fill[Amber!85] (2.72,0.16) rectangle (3.28,-0.78);
+    \node[font=\fontsize{4.7}{5.2}\selectfont\bfseries,text=Navy,align=center] at (3.0,-0.31) {19.1};
+    \fill[Green!75] (2.05,-0.02) -- (1.23,0.56) -- (2.43,0.27) -- cycle;
+    \fill[Green!75] (2.05,-0.60) -- (1.23,-1.18) -- (2.43,-0.88) -- cycle;
+    \node[font=\fontsize{5.2}{5.8}\selectfont\bfseries,text=Green] at (1.36,0.86) {HTP};
+  \end{scope}
+}
+
+\newcommand{\qrcode}[3]{%
+  \begin{scope}[shift={(#1,#2)},scale=#3]
+    \fill[white] (0,0) rectangle (0.8,0.8);
+    \draw[Ink,line width=0.35pt] (0,0) rectangle (0.8,0.8);
+    \foreach \x/\y in {0.08/0.08,0.52/0.08,0.08/0.52}{
+      \fill[Ink] (\x,\y) rectangle ++(0.20,0.20);
+      \fill[white] (\x+0.05,\y+0.05) rectangle ++(0.10,0.10);
+    }
+    \foreach \x/\y in {0.36/0.16,0.36/0.32,0.52/0.36,0.64/0.52,0.32/0.58,0.58/0.22}{
+      \fill[Ink] (\x,\y) rectangle ++(0.08,0.08);
+    }
+  \end{scope}
+}
+
+\newcommand{\floorgrid}[4]{%
+  \begin{scope}[shift={(#1,#2)},scale=#3]
+    \fill[Blueprint,rounded corners=5pt] (0,0) rectangle (4.6,3.0);
+    \foreach \x in {0.35,0.70,...,4.25}{\draw[white,line width=0.18pt] (\x,0.22) -- (\x,2.78);}
+    \foreach \y in {0.35,0.70,...,2.65}{\draw[white,line width=0.18pt] (0.22,\y) -- (4.38,\y);}
+    \foreach \x/\y/\w/\h in {0.35/0.35/1.1/0.52,2.95/0.35/1.1/0.52,0.35/2.15/1.1/0.52,2.95/2.15/1.1/0.52,1.75/1.25/1.1/0.52}{
+      \fill[white,rounded corners=2pt] (\x,\y) rectangle ++(\w,\h);
+      \draw[Line,rounded corners=2pt,line width=0.25pt] (\x,\y) rectangle ++(\w,\h);
+    }
+    \draw[#4,line width=1.1pt,rounded corners=6pt,->] (0.6,0.65) -- (2.2,0.65) -- (2.2,1.52) -- (3.5,1.52) -- (3.5,2.42);
+    \roboticon{3.5}{2.42}{0.55}
+  \end{scope}
+}

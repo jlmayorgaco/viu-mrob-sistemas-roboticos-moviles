@@ -1,0 +1,18 @@
+\begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm]
+\begin{scope}[shift={(current page.south west)}]
+  \fill[Navy] (0,0) rectangle (16,9);
+  \fill[Navy2] (9.7,0) -- (16,0) -- (16,9) -- (12.7,9) -- cycle;
+  \foreach \x in {-1,0.0,...,16}{\draw[white!4,line width=0.25pt] (\x,0) -- (\x+5,9);}
+  \foreach \y in {0.5,1.0,...,8.5}{\draw[white!5,line width=0.18pt] (9.5,\y) -- (16,\y);}
+  \node[anchor=west,font=\fontsize{7}{8}\selectfont\bfseries,text=Cyan] at (0.86,7.92) {LUNABOTICS \textbullet{} OFERTA T\'ECNICA Y COMERCIAL};
+  \node[anchor=west,font=\fontsize{26}{28}\selectfont\bfseries,text=white,text width=8.7cm,align=left] at (0.84,6.82) {Sistema AMR-FOD-Kitting};
+  \node[anchor=west,font=\fontsize{13}{15}\selectfont\bfseries,text=white!78,text width=7.8cm,align=left] at (0.90,5.46) {Automatizaci\'on intralog\'istica para la l\'inea HTP A320 y secci\'on 19.1};
+  \draw[Cyan,line width=1.2pt] (0.92,4.78) -- (4.7,4.78);
+  \node[anchor=west,font=\fontsize{7.2}{8.5}\selectfont,text=white!82,text width=7.3cm,align=left] at (0.92,3.92) {Actividad 1 \textbullet{} Sistemas Rob\'oticos M\'oviles\\Universidad Internacional de Valencia\\Profesor: Jose I. I\~niguez\\Autor: Jorge Luis Mayorga Taborda\\Entrega: 26 de mayo de 2026};
+  \floorgrid{10.15}{3.72}{1.06}{Cyan}
+  \tailicon{10.3}{1.75}{1.08}
+  \roboticon{13.55}{5.26}{1.05}
+  \node[anchor=center,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=white] at (13.58,6.43) {AMR omnidireccional};
+  \node[anchor=west,font=\fontsize{6.2}{7.3}\selectfont,text=white!70,text width=3.6cm,align=left] at (11.05,0.78) {No fabrica el HTP: coordina kits, herramientas, trazabilidad e inspecci\'on FOD.};
+\end{scope}
+\end{tikzpicture}
