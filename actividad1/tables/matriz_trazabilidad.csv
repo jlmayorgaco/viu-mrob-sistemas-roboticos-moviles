@@ -1,6 +1,6 @@
-problema,requisito,respuesta_tecnica,kpi
+problema,requisito,respuesta_técnica,kpi
 Desplazamientos de operarios,reducir desplazamientos improductivos,misiones AMR de entrega y retorno,minutos evitados por turno
-Kits incompletos,trazabilidad y confirmacion,RFID QR HMI y registro de recepcion,entregas a tiempo
-Riesgo FOD,inspeccion preventiva documentada,camara RGB-D y rondas FOD,eventos FOD detectados
-Layout variable,navegacion flexible y segura,AMR omnidireccional SLAM LiDAR,paradas de seguridad y replanificaciones
-Escalado 40 a 80 HTP mes,solucion multi-robot escalable,gestor de flota y base de datos,utilizacion y disponibilidad de flota
+Kits incompletos,trazabilidad y confirmación,RFID QR HMI y registro de recepción,entregas a tiempo
+Riesgo FOD,inspección preventiva documentada,cámara RGB-D y rondas FOD,eventos FOD detectados
+Layout variable,navegación flexible y segura,AMR omnidireccional SLAM LiDAR y escáner de seguridad,paradas de seguridad y replanificaciones
+Escalado 40 a 80 HTP mes,solución multi-robot escalable,gestor de flota y base de datos,utilización y disponibilidad de flota

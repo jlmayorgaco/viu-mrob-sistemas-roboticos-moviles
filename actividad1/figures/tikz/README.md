@@ -5,7 +5,7 @@ Esta carpeta concentra los dibujos TikZ reutilizables del informe y la presentac
 ## Archivos
 
 - `slides_theme.tex`: paleta, estilos tipograficos y marco comun de las diapositivas.
-- `slides_icons.tex`: iconos TikZ reutilizables para AMR, HTP/seccion 19.1, QR y layout de planta.
+- `slides_icons.tex`: iconos TikZ reutilizables para AMR, HTP/sección 19.1, QR y layout de planta.
 - `slide_01_cover.tex`: portada visual de la presentacion.
 - `report_architecture_diagram.tex`: diagrama de arquitectura usado por el informe.
 

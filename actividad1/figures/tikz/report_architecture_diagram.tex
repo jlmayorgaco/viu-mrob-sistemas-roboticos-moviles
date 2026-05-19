@@ -4,14 +4,14 @@
   core/.style={draw=UniPrimaryDeep,rounded corners=2mm,fill=UniPrimary!10,align=center,minimum height=13mm,text width=3.4cm,font=\small\bfseries},
   arr/.style={-{Latex[length=2.5mm]},thick,UniPrimaryDeep!80}
 ]
-\node[box] (per) {Percepcion\\LiDAR, RGB-D, RFID/QR};
-\node[box,right=of per] (loc) {Localizacion y navegacion\\SLAM, mapa, obstaculos};
-\node[core,right=of loc] (plan) {Planificacion de misiones\\prioridades y rutas};
+\node[box] (per) {Percepción\\LiDAR, RGB-D, RFID/QR};
+\node[box,right=of per] (loc) {Localización y navegación\\SLAM, mapa, obstáculos};
+\node[core,right=of loc] (plan) {Planificación de misiones\\prioridades y rutas};
 \node[box,below=of loc] (ctrl) {Control del robot\\base omnidireccional};
 \node[box,below=of plan] (safe) {Seguridad\\zonas, E-stop, bumpers};
-\node[box,above=of plan] (hmi) {Supervision/HMI\\operario y jefe de linea};
+\node[box,above=of plan] (hmi) {Supervisión/HMI\\operario y jefe de línea};
 \node[box,right=of plan] (db) {Base de datos\\misiones, FOD, trazabilidad};
-\node[box,right=of db] (plant) {Integracion planta\\MES/ERP\\planificador};
+\node[box,right=of db] (plant) {Integración planta\\MES/ERP\\planificador};
 
 \draw[arr] (per) -- (loc);
 \draw[arr] (loc) -- (plan);

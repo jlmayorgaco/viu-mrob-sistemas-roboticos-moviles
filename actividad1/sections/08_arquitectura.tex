@@ -1,6 +1,6 @@
 \chapter{Arquitectura del sistema}
 
-La arquitectura se divide en siete capas. Esta separacion permite validar primero la navegacion y la seguridad, y despues anadir trazabilidad, integracion y analitica de forma progresiva.
+La arquitectura se divide en siete capas. Esta separación permite validar primero la navegación y la seguridad, y después añadir trazabilidad, integración y analitica de forma progresiva.
 
 \begin{figure}[H]
 \centering
@@ -11,14 +11,14 @@ La arquitectura se divide en siete capas. Esta separacion permite validar primer
 \label{fig:arquitectura-amr}
 \end{figure}
 
-\section{Capa de percepcion}
+\section{Capa de percepción}
 
-La percepcion combina sensores de navegacion y sensores de proceso. El LiDAR proporciona deteccion geometrica y apoyo al mapa. La camara RGB-D permite inspeccion visual FOD y documentacion de incidencias. El sistema RFID/QR identifica bandejas, herramientas, ordenes y puntos de entrega.
+La percepción combina sensores de navegación y sensores de proceso. El LiDAR proporciona detección geométrica y apoyo al mapa; la seguridad funcional queda separada en el escáner láser certificado, bumpers y parada de emergencia. La cámara RGB-D permite inspección visual FOD y documentación de incidencias, pero sus positivos deben revisarse por un responsable de calidad. El sistema RFID/QR identifica bandejas, herramientas, órdenes y puntos de entrega.
 
-\section{Planificacion y supervision}
+\section{Planificación y supervisión}
 
-El planificador asigna misiones segun prioridad, estado del robot, proximidad y restricciones de zona. La HMI permite solicitar entregas, confirmar recepciones, cancelar misiones y consultar alarmas. La integracion con MES/ERP se plantea como fase progresiva: inicialmente puede bastar un importador/exportador de ordenes; en fases posteriores se habilita comunicacion mediante API.
+El planificador asigna misiones según prioridad, estado del robot, proximidad y restricciones de zona. La HMI permite solicitar entregas, confirmar recepciones, cancelar misiones y consultar alarmas. La integración con MES/ERP se plantea como fase progresiva: inicialmente puede bastar un importador/exportador de órdenes; en fases posteriores se habilita comunicación mediante API.
 
 \section{Base de datos de trazabilidad}
 
-Cada mision guarda identificador de kit, estacion destino, hora de carga, hora de entrega, confirmacion, ruta, incidencias, fotografia FOD si aplica y operador que valida. Esta informacion permite auditar el flujo y medir mejoras sin depender de impresiones subjetivas.
+Cada misión guarda identificador de kit, estación destino, hora de carga, hora de entrega, confirmación, ruta, incidencias, fotografía FOD si aplica y operador que valida. Esta información permite auditar el flujo y medir mejoras sin depender de impresiones subjetivas.

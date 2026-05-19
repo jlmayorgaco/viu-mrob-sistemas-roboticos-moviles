@@ -1,14 +1,14 @@
-\chapter{Analisis economico y ROI}
+\chapter{Análisis económico y ROI}
 
-El ROI se calcula con una premisa conservadora: la robotica movil no elimina puestos ni duplica por si sola la produccion. Su valor aparece cuando reduce esperas, desplazamientos, errores de suministro, busquedas de utiles y eventos FOD que interrumpen la operacion. El enunciado aporta un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el analisis se usa un salario central de 24.000 \texteuro{}/ano, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+El ROI se calcula con una premisa conservadora: la robótica móvil no elimina puestos ni duplica por si sola la producción. Su valor aparece cuando reduce esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado aporta un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
 
-\section{Recuperacion de tiempo operativo}
+\section{Recuperación de tiempo operativo}
 
-Las hipotesis se formulan como tiempo recuperado, no como ahorro de plantilla. Esto evita una lectura simplista del proyecto y encaja mejor con una linea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o mas.
+Las hipotesis se formulan como tiempo recuperado, no como ahorro de plantilla. Esto evita una lectura simplista del proyecto y encaja mejor con una línea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o más.
 
 \begin{longtable}{P{0.18\textwidth}r r r r}
 \toprule
-\textbf{Escenario} & \textbf{Operarios afectados} & \textbf{Min/dia recuperados} & \textbf{Horas/ano} & \textbf{Valor anual}\\
+\textbf{Escenario} & \textbf{Operarios afectados} & \textbf{Min/día recuperados} & \textbf{Horas/año} & \textbf{Valor anual}\\
 \midrule
 \endhead
 1 robot & 15 & 15 & 825 & 15.180 \texteuro{}\\
@@ -19,39 +19,39 @@ Las hipotesis se formulan como tiempo recuperado, no como ahorro de plantilla. E
 \label{tab:roi-tiempo}
 \end{longtable}
 
-La lectura importante es que el piloto no se justifica por ahorro financiero directo. Se justifica por aprendizaje medible: rutas reales, comportamiento de seguridad, aceptacion de operarios, calidad de lectura RFID/QR, tiempos de entrega y utilidad de las rondas FOD. En cambio, los escenarios de 7 y 17 robots empiezan a tener sentido industrial si el tiempo recuperado se convierte en menos esperas entre estaciones y mayor continuidad de trabajo.
+La lectura importante es que el piloto no se justifica por ahorro financiero directo. Se justifica por aprendizaje medible: rutas reales, comportamiento de seguridad, aceptación de operarios, calidad de lectura RFID/QR, tiempos de entrega y utilidad de las rondas FOD. En cambio, los escenarios de 7 y 17 robots empiezan a tener sentido industrial si el tiempo recuperado se convierte en menos esperas entre estaciones y mayor continuidad de trabajo.
 
 \section{Horas de equilibrio}
 
-Para comprobar si la propuesta es realista, se anualiza el CAPEX a cinco anos y se compara con las horas que tendrian que recuperarse solo para cubrir la inversion. Esta prueba muestra una conclusion clave: el caso de negocio no debe venderse como simple ahorro de mano de obra.
+Para comprobar si la propuesta es realista, se anualiza el CAPEX a cinco años y se compara con las horas que tendrían que recuperarse solo para cubrir la inversión. Esta prueba muestra una conclusión clave: el caso de negocio no debe venderse como simple ahorro de mano de obra.
 
 \begin{longtable}{P{0.18\textwidth}r r r}
 \toprule
-\textbf{Escenario} & \textbf{CAPEX} & \textbf{CAPEX anualizado a 5 anos} & \textbf{Horas/ano de equilibrio}\\
+\textbf{Escenario} & \textbf{CAPEX} & \textbf{CAPEX anualizado a 5 años} & \textbf{Horas/año de equilibrio}\\
 \midrule
 \endhead
 1 robot & 198.688 & 39.738 & 2.160\\
 7 robots & 904.736 & 180.947 & 9.834\\
 17 robots & 2.051.616 & 410.323 & 22.300\\
 \bottomrule
-\caption{Horas anuales necesarias para cubrir la inversion si solo se considerara tiempo operativo.}
+\caption{Horas anuales necesarias para cubrir la inversión si solo se considerara tiempo operativo.}
 \label{tab:roi-break-even}
 \end{longtable}
 
-El escenario de 1 robot queda por debajo del punto de equilibrio financiero si se mira solo el tiempo recuperado. El de 7 robots se acerca mas, pero aun requiere beneficios operativos adicionales. El de 17 robots exige una mejora de flujo global, no solo misiones de transporte. Esta lectura es deliberadamente prudente: una oferta profesional debe mostrar donde esta el limite del argumento economico.
+El escenario de 1 robot queda por debajo del punto de equilibrio financiero si se mira solo el tiempo recuperado. El de 7 robots se acerca más, pero aún requiere beneficios operativos adicionales. El de 17 robots exige una mejora de flujo global, no solo misiones de transporte. Esta lectura es deliberadamente prudente: una oferta profesional debe mostrar dónde está el límite del argumento económico.
 
 \section{Beneficios no monetizados}
 
-El retorno completo incluye beneficios que no se deben convertir de forma artificial a euros si no hay datos historicos de la planta. Para Alestis Puerto Real tendrian peso especifico:
+El retorno completo incluye beneficios que no se deben convertir de forma artificial a euros si no hay datos históricos de la planta. Para Alestis Puerto Real tendrían peso específico:
 
 \begin{itemize}
-  \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estacion.
-  \item Evidencia de trazabilidad de entrega: robot, kit, estacion, hora, lector RFID/QR y confirmacion humana.
-  \item Menor exposicion a incidencias FOD mediante rondas preventivas con registro visual y de eventos.
-  \item Mejor dimensionamiento de recursos logisticos al disponer de datos de misiones, colas, rutas y tiempos.
+  \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estación.
+  \item Evidencia de trazabilidad de entrega: robot, kit, estación, hora, lector RFID/QR y confirmación humana.
+  \item Menor exposición a incidencias FOD mediante rondas preventivas con registro visual y de eventos.
+  \item Mejor dimensionamiento de recursos logísticos al disponer de datos de misiones, colas, rutas y tiempos.
   \item Mayor capacidad para absorber el crecimiento de 40 a 80 HTP/mes sin duplicar movimientos manuales de soporte.
 \end{itemize}
 
 \section{Lectura del retorno}
 
-El ROI defendible no es una promesa de reduccion de plantilla. Es una combinacion de tres efectos: recuperacion de tiempo improductivo, reduccion de variabilidad logistica y control documentado de trazabilidad/FOD. Por eso la recomendacion comercial es escalonada. Primero se compra informacion fiable con el piloto. Luego se decide si 7 robots cubren el cuello de botella logistico. Solo despues tendria sentido estudiar 17 robots, siempre condicionado a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilizacion de flota.
+El ROI defendible no es una promesa de reducción de plantilla. Es una combinación de tres efectos: recuperación de tiempo improductivo, reducción de variabilidad logística y control documentado de trazabilidad/FOD. Por eso la recomendación comercial es escalonada. Primero se compra información fiable con el piloto. Luego se decide si 7 robots cubren el cuello de botella logístico. Solo después tendría sentido estudiar 17 robots, siempre condicionado a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.

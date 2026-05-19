@@ -1,23 +1,23 @@
 \chapter{Alternativas consideradas}
 
-Se compararon seis familias de robots o vehiculos moviles. La comparacion se centra en la idoneidad para una nave aeronautica interior con operarios, utiles grandes, estaciones cambiantes y necesidad de trazabilidad.
+Se compararon seis familias de robots o vehículos móviles. La comparación se centra en la idoneidad para una nave aeronáutica interior con operarios, útiles grandes, estaciones cambiantes y necesidad de trazabilidad.
 
 \begin{longtable}{P{0.20\textwidth}P{0.30\textwidth}P{0.18\textwidth}P{0.22\textwidth}}
 \toprule
 \textbf{Alternativa} & \textbf{Ventajas} & \textbf{Limitaciones} & \textbf{Decision}\\
 \midrule
 \endhead
-AGV & Robusto para rutas repetitivas, tecnologia madura, coste predecible. & Menor flexibilidad, dependencia de rutas fijas o infraestructura, dificil adaptacion a cambios de layout. & Descartado como opcion principal; valido solo para corredores muy estables.\\
-AMR diferencial & Navegacion flexible, buena disponibilidad comercial, integracion con flota. & Maniobra peor en espacios estrechos que una base omnidireccional. & Alternativa viable, pero no optima para estaciones congestionadas.\\
-AMR omnidireccional & Movimiento lateral, alta maniobrabilidad, buena convivencia con estaciones y utiles grandes. & Mayor coste y complejidad mecanica que una base diferencial sencilla. & \textbf{Seleccionado}.\\
-Robot con orugas & Buen contacto en terrenos irregulares y capacidad de superar obstaculos. & Excesivo para suelo industrial interior, peor higiene, posible daño al pavimento, maniobra poco fina. & Descartado.\\
-Dron & Rapido para inspeccion visual en altura. & Riesgo de seguridad, ruido, autonomia limitada, restricciones en interior industrial y carga practicamente nula. & Descartado para logistica y FOD en estaciones.\\
-Robot con patas & Alta movilidad teorica en entornos complejos. & Coste alto, complejidad, riesgo de aceptacion, innecesario en nave con pavimento regular. & Descartado.\\
+AGV & Robusto para rutas repetitivas, tecnologia madura, coste predecible. & Menor flexibilidad, dependencia de rutas fijas o infraestructura, dificil adaptación a cambios de layout. & Descartado como opcion principal; valido solo para corredores muy estables.\\
+AMR diferencial & Navegación flexible, buena disponibilidad comercial, integración con flota. & Maniobra peor en espacios estrechos que una base omnidireccional. & Alternativa viable, pero no óptima para estaciones congestionadas.\\
+AMR omnidireccional & Movimiento lateral, alta maniobrabilidad, buena convivencia con estaciones y útiles grandes. & Mayor coste y complejidad mecánica que una base diferencial sencilla. & \textbf{Seleccionado}.\\
+Robot con orugas & Buen contacto en terrenos irregulares y capacidad de superar obstáculos. & Excesivo para suelo industrial interior, peor higiene, posible daño al pavimento, maniobra poco fina. & Descartado.\\
+Dron & Rápido para inspección visual en altura. & Riesgo de seguridad, ruido, autonomía limitada, restricciones en interior industrial y carga prácticamente nula. & Descartado para logística y FOD en estaciones.\\
+Robot con patas & Alta movilidad teórica en entornos complejos. & Coste alto, complejidad, riesgo de aceptación, innecesario en nave con pavimento regular. & Descartado.\\
 \bottomrule
 \end{longtable}
 
 \section{Robot seleccionado}
 
-La solucion adopta una \textbf{plataforma AMR omnidireccional}, representable en CoppeliaSim mediante KUKA YouBot, KUKA Omnirob o una base holonomica equivalente. Esta eleccion es coherente con la asignatura porque permite trabajar con modelos de robot movil, sensores de navegacion, planificacion de trayectorias y validacion en simulador antes de proponer un despliegue fisico.
+La solución adopta una \textbf{plataforma AMR omnidireccional}, representable en CoppeliaSim mediante KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. Esta elección es coherente con la asignatura porque permite trabajar con modelos de robot móvil, sensores de navegación, planificación de trayectorias y validación en simulador antes de proponer un despliegue físico.
 
-La base omnidireccional aporta tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posicion al aproximarse a utiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronautico interior, estas ventajas pesan mas que la simplicidad de un AGV de ruta fija.
+La base omnidireccional aporta tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posición al aproximarse a útiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronáutico interior, estas ventajas pesan más que la simplicidad de un AGV de ruta fija.

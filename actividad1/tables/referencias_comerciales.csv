@@ -1,11 +1,11 @@
-categoria,referencia,precio_publico,moneda,precio_eur_estimado,fuente,uso_en_presupuesto
-AMR 250 kg,MiR250 Base Robot,44284,EUR,44284,https://www.mekosrl.it/product-page/mir250,Referencia base de plataforma AMR
-AMR 250 kg benchmark,Omron LD-250,no publicado,NA,NA,https://robotics.omron.com/products/mobile-robots/ld-series/ld-250/,Benchmark tecnico de carga util
-Rango AMR 2026,Mesh Automation AMR cost guide,50000-200000,USD,43000-172000,https://meshautomationinc.com/amr-cost-2026/,Validacion de rango de mercado
+categoria,referencia,precio_público,moneda,precio_eur_estimado,fuente,uso_en_presupuesto
+AMR 250 kg,MiR250 Base Robot,44284,EUR,44284,https://www.mekosrl.it/product-page/mir250,Benchmark de coste/carga para AMR de transporte; no cinemática final
+AMR 250 kg benchmark,Omron LD-250,no publicado,NA,NA,https://robotics.omron.com/products/mobile-robots/ld-series/ld-250/,Benchmark técnico de carga útil y aplicación industrial
+Rango AMR 2026,Mesh Automation AMR cost guide,50000-200000,USD,43000-172000,https://meshautomationinc.com/amr-cost-2026/,Validación de rango de mercado
 Software/fleet,Novus Hi-Tech AGV/AMR cost guide,3000-10000 por robot,USD,2580-8600,https://novushitech.com/agv-amr-cost-guide/,Dimensionamiento software flota
-Camara RGB-D,Intel RealSense D435i,334,USD,287,https://store.realsenseai.com/buy-intel-realsense-depth-camera-d435i.html,Vision FOD e IMU auxiliar
-LiDAR 2D,Hokuyo UST-10LX,1365,EUR,1365,https://www.roscomponents.com/product/ust-10lx/,Navegacion SLAM y deteccion
-Escaner seguridad,SICK microScan3 Core I/O,5695,USD,4898,https://www.doigcorp.com/SICK-microScan-1083078-MICS3-AAAZ40BZ1P01,Seguridad perimetral
-RFID fijo,Zebra FX9600,1980.91,USD,1704,https://www.shi.com/product/44861768/FX9600-FIXED-RFID-READER-8-PORT-NO-USB-HUB-US,Trazabilidad kits y utiles
+Cámara RGB-D,Intel RealSense D435i,334,USD,287,https://store.realsenseai.com/buy-intel-realsense-depth-camera-d435i.html,Visión FOD e IMU auxiliar
+LiDAR 2D,Hokuyo UST-10LX,1365,EUR,1365,https://www.roscomponents.com/product/ust-10lx/,Navegación SLAM y detección
+Escáner seguridad,SICK microScan3 Core I/O,5695,USD,4898,https://www.doigcorp.com/SICK-microScan-1083078-MICS3-AAAZ40BZ1P01,Seguridad perimetral
+RFID fijo,Zebra FX9600,1980.91,USD,1704,https://www.shi.com/product/44861768/FX9600-FIXED-RFID-READER-8-PORT-NO-USB-HUB-US,Trazabilidad kits y útiles
 HMI rugged,Samsung Galaxy Tab Active5,499.99,USD,430,https://www.samsung.com/us/business/tablets/galaxy-tab-active/buy/galaxy-tab-active5-128gb-wi-fi-sku-sm-x300nzgan20/,HMI operador/supervisor
 WiFi industrial,Cisco Catalyst IW9165D,1952.99,USD,1680,https://www.cdw.com/product/cisco-iw9165d-heavy-duty-access-point/7526317,Conectividad industrial

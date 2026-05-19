@@ -1,45 +1,45 @@
-\chapter{Propuesta tecnica}
+\chapter{Propuesta técnica}
 
-\section{Sistema AMR-FOD-Kitting para linea HTP A320}
+\section{Sistema AMR-FOD-Kitting para línea HTP A320}
 
-La propuesta consiste en implantar un sistema de robots moviles autonomos para suministro coordinado, trazabilidad e inspeccion preventiva. El robot actua como enlace entre zonas de preparacion, estaciones del HTP A320, areas de retorno de utiles y puntos de supervision. Su funcion principal es mover elementos correctos en el momento correcto y dejar evidencia digital de cada accion.
+La propuesta consiste en implantar un sistema de robots móviles autónomos para suministro coordinado, trazabilidad e inspección preventiva. El robot actúa como enlace entre zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. Su función principal es mover elementos correctos en el momento correcto y dejar evidencia digital de cada acción.
 
 \section{Funciones principales}
 
 \begin{itemize}
-  \item Transporte interno de kits, herramientas, consumibles y utiles de carga moderada.
-  \item Lectura RFID/QR de bandejas, herramientas, ordenes y puntos de entrega.
-  \item Entrega confirmada mediante HMI, tablet de estacion o escaneo de operario autorizado.
-  \item Inspeccion preventiva FOD en rutas o zonas definidas.
-  \item Retorno de utiles usados y aviso de incidencias de material.
-  \item Registro de misiones, eventos, tiempos y excepciones para analisis posterior.
+  \item Transporte interno de kits, herramientas, consumibles y útiles de carga moderada.
+  \item Lectura RFID/QR de bandejas, herramientas, órdenes y puntos de entrega.
+  \item Entrega confirmada mediante HMI, tablet de estación o escaneo de operario autorizado.
+  \item Inspección preventiva FOD en rutas o zonas definidas.
+  \item Retorno de útiles usados y aviso de incidencias de material.
+  \item Registro de misiones, eventos, tiempos y excepciones para análisis posterior.
 \end{itemize}
 
 \section{Sensores y componentes}
 
 \begin{longtable}{P{0.28\textwidth}P{0.62\textwidth}}
 \toprule
-\textbf{Elemento} & \textbf{Justificacion}\\
+\textbf{Elemento} & \textbf{Justificación}\\
 \midrule
 \endhead
-LiDAR 2D/3D & Navegacion, SLAM, deteccion de obstaculos y apoyo a zonas de seguridad.\\
-Camara RGB-D o industrial & Inspeccion FOD, verificacion visual de zonas y evidencia fotografica de incidencias.\\
-RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estacion.\\
-IMU y encoders & Odometria y fusion sensorial para localizacion robusta.\\
-Bumpers y escaner laser de seguridad & Reduccion de riesgo en contacto accidental y parada segura ante presencia humana.\\
-Parada de emergencia & Requisito basico de operacion industrial y aceptacion por seguridad.\\
-HMI/tablet & Solicitud de misiones, confirmacion de entregas y visualizacion de estado.\\
-WiFi industrial & Comunicacion con supervisor, gestor de flota y base de datos.\\
-Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, historico FOD y auditoria operativa.\\
+LiDAR 2D/3D & Navegación, SLAM y detección geométrica de obstáculos. No se trata como único elemento de seguridad funcional.\\
+Cámara RGB-D o industrial & Inspección FOD preventiva, verificación visual de zonas y evidencia fotográfica de incidencias, siempre con validación humana ante positivos.\\
+RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estación.\\
+IMU y encoders & Odometría y fusión sensorial para localización robusta.\\
+Bumpers y escáner láser de seguridad & Capa separada de seguridad funcional: zonas de protección, reducción de velocidad y parada segura ante presencia humana.\\
+Parada de emergencia & Requisito básico de operación industrial y aceptación por seguridad.\\
+HMI/tablet & Solicitud de misiones, confirmación de entregas y visualización de estado.\\
+WiFi industrial & Comunicación con supervisor, gestor de flota y base de datos.\\
+Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, histórico FOD y auditoría operativa.\\
 \bottomrule
 \end{longtable}
 
-\section{Actuadores, motorizacion y control}
+\section{Actuadores, motorización y control}
 
-La plataforma se concibe como un AMR electrico de ruedas omnidireccionales, coherente con los contenidos del curso sobre robots que ruedan, efectores, actuadores y controladores. Cada rueda mecanum/sueca se acciona mediante motor electrico con controlador de velocidad, realimentacion por encoder y supervision de corriente/temperatura. El control de bajo nivel convierte consignas de velocidad longitudinal, lateral y angular en velocidades de rueda, mientras que el nivel de navegacion limita aceleraciones, radios de seguridad y velocidades maximas por zona.
+La plataforma se concibe como un AMR eléctrico de ruedas omnidireccionales, coherente con los contenidos del curso sobre robots que ruedan, efectores, actuadores y controladores. Cada rueda mecanum/sueca se acciona mediante motor eléctrico con controlador de velocidad, realimentación por encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas de velocidad longitudinal, lateral y angular en velocidades de rueda, mientras que el nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. Esta base se selecciona por maniobrabilidad, no por capacidad de carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
 
-Los actuadores no se plantean para manipular piezas estructurales del HTP. Su funcion es mover la base, accionar elementos auxiliares simples del modulo portacargas si se incorporan, activar señales luminosas/acusticas y ejecutar parada segura. Esta separacion entre locomocion, seguridad y proceso evita sobredimensionar la solucion y mantiene el alcance dentro de una aplicacion realista de robotica movil industrial.
+Los actuadores no se plantean para manipular piezas estructurales del HTP. Su función es mover la base, accionar elementos auxiliares simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar la solución y mantiene el alcance dentro de una aplicación realista de robótica móvil industrial.
 
-\section{Modo de operacion seguro}
+\section{Modo de operación seguro}
 
-El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de proteccion configurables y ejecuta parada segura si se invade el campo de seguridad. Las rutas se validan en CoppeliaSim y posteriormente en planta con pruebas controladas. La supervision permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.
+El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de protección configurables y ejecuta parada segura si se invade el campo de seguridad. Las rutas se validan en CoppeliaSim y posteriormente en planta con pruebas controladas. La supervisión permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.

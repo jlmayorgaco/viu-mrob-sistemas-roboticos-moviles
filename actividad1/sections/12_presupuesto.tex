@@ -1,49 +1,51 @@
 \chapter{Oferta comercial y presupuesto}
 
-El presupuesto se plantea como una oferta preliminar de integracion, no como una compra aislada de robots. La cifra final combina equipos comerciales, adaptaciones mecanicas para kitting, sensores, seguridad, software, simulacion, instalacion, formacion y soporte. Las referencias usadas son precios publicos o rangos de mercado consultados el 18 de mayo de 2026; por tanto, sirven para justificar el orden de magnitud academico, pero no sustituyen una cotizacion formal de fabricante o integrador.
+El presupuesto se plantea como una oferta preliminar de integración, no como una compra aislada de robots. La cifra final combina equipos comerciales, adaptaciones mecánicas para kitting, sensores, seguridad, software, simulación, instalación, formación y soporte. Las referencias usadas son precios públicos o rangos de mercado consultados el 18 de mayo de 2026; por tanto, sirven para justificar el orden de magnitud académico, pero no sustituyen una cotización formal de fabricante o integrador.
 
 \section{Base de referencias comerciales}
 
-La plataforma de referencia se ha normalizado contra un AMR de 250 kg porque encaja con el tipo de misiones propuestas: transporte de kits, utiles, consumibles y herramientas, no fabricacion directa del HTP. El MiR250 aparece como referencia comercial con precio publico de 44.284 \texteuro{}, dimensiones de 580 x 800 mm, carga util de 250 kg y velocidad maxima de 2 m/s \cite{mekosrlMir250}. La ficha del fabricante confirma el uso para transporte interno de cargas pequenas y medianas, carga maxima de 250 kg, superficie de carga de 800 x 580 mm, hasta 13 h de operacion con carga maxima y uso interior \cite{mir250Specs}. Como contraste industrial se cita tambien el Omron LD-250, con carga maxima de 250 kg y arquitectura de AMR para transporte en fabricas y almacenes \cite{omronLd250}.
+La plataforma seleccionada en la oferta técnica es omnidireccional. Para el presupuesto, sin embargo, se normaliza el coste contra AMR comerciales de 250 kg porque ofrecen precios públicos y sirven como referencia de orden de magnitud para carga, autonomía, dimensiones y software de flota. Esta normalización no significa que el MiR250 o el LD-250 sean el modelo final elegido ni que tengan la misma cinemática que una base mecanum/sueca; se usan como \textit{benchmark} comercial trazable y se reserva una partida de integración para adaptar la solución a una base omnidireccional industrial equivalente.
+
+El MiR250 aparece como referencia comercial con precio público de 44.284 \texteuro{}, dimensiones de 580 x 800 mm, carga útil de 250 kg y velocidad máxima de 2 m/s \cite{mekosrlMir250}. La ficha del fabricante confirma el uso para transporte interno de cargas pequeñas y medianas, carga máxima de 250 kg, superficie de carga de 800 x 580 mm, hasta 13 h de operación con carga máxima y uso interior \cite{mir250Specs}. Como contraste industrial se cita también el Omron LD-250, con carga máxima de 250 kg y arquitectura de AMR para transporte en fabricas y almacenes \cite{omronLd250}.
 
 \begin{longtable}{P{0.24\textwidth}P{0.23\textwidth}P{0.18\textwidth}P{0.25\textwidth}}
 \toprule
-\textbf{Bloque} & \textbf{Referencia usada} & \textbf{Precio publico} & \textbf{Uso en el presupuesto}\\
+\textbf{Bloque} & \textbf{Referencia usada} & \textbf{Precio público} & \textbf{Uso en el presupuesto}\\
 \midrule
 \endhead
-AMR 250 kg & MiR250 Base Robot & 44.284 \texteuro{} & Referencia base para robot de transporte interior.\\
-Benchmark AMR & Omron LD-250 & Sin precio publico en la ficha oficial & Validacion de carga util industrial de 250 kg.\\
-Rango AMR 2026 & Mesh Automation & USD 50.000--200.000+ por unidad & Verificacion de que el escenario cae en rango de mercado.\\
-Costes de flota & Novus Hi-Tech & USD 3.000--10.000 por robot en software; AMR de USD 30.000--150.000+ segun tipo & Dimensionamiento de software, flota e integracion.\\
-Camara RGB-D & Intel RealSense D435i & USD 334 & Referencia de vision/depth e IMU auxiliar para FOD.\\
-LiDAR navegacion & Hokuyo UST-10LX & 1.365--1.878 \texteuro{} segun distribuidor & Referencia de LiDAR 2D compacto para SLAM/obstaculos.\\
-Escaner seguridad & SICK microScan3 Core I/O & USD 5.695 & Base para seguridad funcional perimetral.\\
-RFID fijo & Zebra FX9600 & USD 1.980,91 & Lectura de kits, utiles y puntos de entrega.\\
+AMR 250 kg & MiR250 Base Robot & 44.284 \texteuro{} & Referencia de coste para transporte interior; no se toma como cinemática final.\\
+Benchmark AMR & Omron LD-250 & Sin precio público en la ficha oficial & Validación de carga útil industrial de 250 kg y rango de aplicación.\\
+Rango AMR 2026 & Mesh Automation & USD 50.000--200.000+ por unidad & Verificación de que el escenario cae en rango de mercado.\\
+Costes de flota & Novus Hi-Tech & USD 3.000--10.000 por robot en software; AMR de USD 30.000--150.000+ según tipo & Dimensionamiento de software, flota e integración.\\
+Cámara RGB-D & Intel RealSense D435i & USD 334 & Referencia de visión/depth e IMU auxiliar para FOD.\\
+LiDAR navegación & Hokuyo UST-10LX & 1.365--1.878 \texteuro{} según distribuidor & Referencia de LiDAR 2D compacto para SLAM/obstáculos.\\
+Escáner seguridad & SICK microScan3 Core I/O & USD 5.695 & Base para seguridad funcional perimetral.\\
+RFID fijo & Zebra FX9600 & USD 1.980,91 & Lectura de kits, útiles y puntos de entrega.\\
 HMI industrial & Samsung Galaxy Tab Active5 & USD 499,99 & Tablet rugerizada para supervisor/operador.\\
-WiFi industrial & Cisco Catalyst IW9165D & USD 1.952,99 & Referencia de conectividad industrial para activos moviles.\\
+WiFi industrial & Cisco Catalyst IW9165D & USD 1.952,99 & Referencia de conectividad industrial para activos móviles.\\
 \bottomrule
 \caption{Dataset de referencias comerciales usado para normalizar el presupuesto.}
 \label{tab:referencias-comerciales}
 \end{longtable}
 
-\section{Criterios de normalizacion}
+\section{Criterios de normalización}
 
-Para no inflar la oferta, se separa el coste del robot base del coste de integrarlo en una aplicacion aeronautica. La conversion operativa adoptada para partidas en dolares es 1 USD = 0,86 \texteuro{}; en una oferta real se actualizaria con el tipo de cambio y condiciones de importacion del dia de compra. Sobre el precio del MiR250 se anaden utiles portacargas, sensores de FOD/trazabilidad, seguridad, HMI y comunicaciones. El paquete por robot queda asi:
+Para no inflar la oferta, se separa el coste del robot base del coste de integrarlo en una aplicación aeronáutica. La conversión operativa adoptada para partidas en dólares es 1 USD = 0,86 \texteuro{}; en una oferta real se actualizaría con el tipo de cambio y condiciones de importación del día de compra. Sobre el precio de referencia se añaden útiles portacargas, sensores de FOD/trazabilidad, seguridad, HMI, comunicaciones y adaptación a una plataforma omnidireccional equivalente. El paquete por robot queda así:
 
 \begin{longtable}{P{0.46\textwidth}rP{0.32\textwidth}}
 \toprule
-\textbf{Componente por robot} & \textbf{Importe} & \textbf{Justificacion}\\
+\textbf{Componente por robot} & \textbf{Importe} & \textbf{Justificación}\\
 \midrule
 \endhead
-AMR 250 kg equivalente MiR250/LD-250 & 44.300 & Precio publico MiR250 redondeado y benchmark LD-250.\\
-Modulo kitting, bandejas, fijaciones y proteccion de carga & 8.500 & Utillaje mecanico para kits, consumibles y herramientas.\\
-Paquete FOD/trazabilidad: RGB-D, QR/RFID, iluminacion y soporte & 6.500 & Incluye camara, lector, antenas, cableado e integracion.\\
-Seguridad: escaner, bumpers, E-stop y validacion basica & 7.000 & Referencia SICK microScan3 mas accesorios.\\
-HMI, comunicaciones y puesta en red por robot & 3.500 & Tablet, WiFi, identificacion y licencias cliente.\\
+AMR 250 kg de referencia comercial & 44.300 & Precio público MiR250 redondeado y benchmark LD-250 para orden de magnitud.\\
+Módulo kitting, bandejas, fijaciones y protección de carga & 8.500 & Utillaje mecánico para kits, consumibles y herramientas.\\
+Paquete FOD/trazabilidad: RGB-D, QR/RFID, iluminación y soporte & 6.500 & Incluye cámara, lector, antenas, cableado e integración.\\
+Seguridad: escáner, bumpers, E-stop y validación básica & 7.000 & Referencia SICK microScan3 más accesorios.\\
+HMI, comunicaciones y puesta en red por robot & 3.500 & Tablet, WiFi, identificación y licencias cliente.\\
 \midrule
-\textbf{Paquete normalizado por robot} & \textbf{69.800} & Base comun para escenarios 1, 7 y 17.\\
+\textbf{Paquete normalizado por robot} & \textbf{69.800} & Base común para escenarios 1, 7 y 17.\\
 \bottomrule
-\caption{Coste normalizado por AMR de la solucion AMR-FOD-Kitting, en euros sin IVA.}
+\caption{Coste normalizado por AMR de la solución AMR-FOD-Kitting, en euros sin IVA.}
 \label{tab:coste-robot-normalizado}
 \end{longtable}
 
@@ -56,12 +58,12 @@ HMI, comunicaciones y puesta en red por robot & 3.500 & Tablet, WiFi, identifica
 \endhead
 Paquetes AMR-FOD-Kitting completos & 69.800 & 488.600 & 1.186.600\\
 Software de flota, trazabilidad y conectores MES/ERP & 22.000 & 58.000 & 105.000\\
-Ingenieria, simulacion en CoppeliaSim y configuracion & 42.000 & 112.000 & 215.000\\
-Instalacion, mapeo, pruebas y puesta en marcha & 18.000 & 52.000 & 120.000\\
-Formacion y gestion del cambio operativo & 8.500 & 24.000 & 42.000\\
-Mantenimiento preventivo del primer ano & 5.600 & 39.200 & 95.200\\
-Desplazamientos, logistica y medios auxiliares & 5.000 & 18.000 & 36.000\\
-Ciberseguridad, documentacion y aceptacion & 6.500 & 16.000 & 32.000\\
+Ingeniería, simulación en CoppeliaSim y configuración & 42.000 & 112.000 & 215.000\\
+Instalación, mapeo, pruebas y puesta en marcha & 18.000 & 52.000 & 120.000\\
+Formación y gestión del cambio operativo & 8.500 & 24.000 & 42.000\\
+Mantenimiento preventivo del primer año & 5.600 & 39.200 & 95.200\\
+Desplazamientos, logística y medios auxiliares & 5.000 & 18.000 & 36.000\\
+Ciberseguridad, documentación y aceptación & 6.500 & 16.000 & 32.000\\
 \midrule
 \textbf{Subtotal antes de contingencia/margen} & \textbf{177.400} & \textbf{807.800} & \textbf{1.831.800}\\
 Contingencia y margen comercial (12\%) & 21.288 & 96.936 & 219.816\\
@@ -74,31 +76,31 @@ Contingencia y margen comercial (12\%) & 21.288 & 96.936 & 219.816\\
 
 \section{Interpretacion comercial}
 
-El escenario de 1 robot no se vende como solucion final. Su funcion es medir rutas, aceptacion de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD en un entorno controlado. El escenario de 7 robots cubre varias estaciones y permite probar gestion de flota con prioridades, retornos de utiles y rondas preventivas. El escenario de 17 robots solo es defendible si los datos de los dos primeros escenarios muestran que la planta necesita una cobertura mas amplia para sostener el crecimiento hacia 80 HTP/mes o mas.
+El escenario de 1 robot no se vende como solución final. Su función es medir rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD en un entorno controlado. El escenario de 7 robots cubre varias estaciones y permite probar gestión de flota con prioridades, retornos de útiles y rondas preventivas. El escenario de 17 robots solo es defendible si los datos de los dos primeros escenarios muestran que la planta necesita una cobertura más amplia para sostener el crecimiento hacia 80 HTP/mes o más.
 
-El presupuesto reduce la parte especulativa: el robot base se apoya en precios publicos, los sensores se apoyan en componentes comerciales identificables y el software/servicios se dimensiona con rangos de integracion publicados para AMR. Las partidas de ingenieria no son relleno; cubren levantamiento de planta, mapa, zonas seguras, reglas de trafico, simulacion, pruebas, aceptacion y documentacion de seguridad.
+El presupuesto reduce la parte especulativa: el robot base se apoya en precios públicos, los sensores se apoyan en componentes comerciales identificables y el software/servicios se dimensiona con rangos de integración publicados para AMR. Las partidas de ingeniería no son relleno; cubren levantamiento de planta, mapa, zonas seguras, reglas de tráfico, simulación, pruebas, aceptación y documentación de seguridad.
 
 \section{Coste total de propiedad}
 
-El coste total de propiedad a tres anos incluye soporte posterior al arranque. No incluye cambios mayores de layout, ampliaciones no previstas de MES/ERP ni certificaciones externas completas, que requeririan alcance contractual propio.
+El coste total de propiedad a tres años incluye soporte posterior al arranque. No incluye cambios mayores de layout, ampliaciones no previstas de MES/ERP ni certificaciones externas completas, que requerirían alcance contractual propio.
 
 \begin{longtable}{P{0.36\textwidth}r r r}
 \toprule
-\textbf{Concepto TCO 3 anos} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+\textbf{Concepto TCO 3 años} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
 \midrule
 \endhead
-Inversion inicial estimada & 198.688 & 904.736 & 2.051.616\\
-Mantenimiento anos 2 y 3 & 11.200 & 78.400 & 190.400\\
-Soporte software anos 2 y 3 & 24.000 & 48.000 & 90.000\\
+Inversión inicial estimada & 198.688 & 904.736 & 2.051.616\\
+Mantenimiento años 2 y 3 & 11.200 & 78.400 & 190.400\\
+Soporte software años 2 y 3 & 24.000 & 48.000 & 90.000\\
 Recalibraciones, rutas y cambios menores & 5.000 & 20.000 & 45.000\\
-Baterias, consumibles y pequenos repuestos & 3.500 & 24.500 & 59.500\\
+Baterías, consumibles y pequeños repuestos & 3.500 & 24.500 & 59.500\\
 \midrule
-\textbf{TCO 3 anos estimado} & \textbf{242.388} & \textbf{1.075.636} & \textbf{2.436.516}\\
+\textbf{TCO 3 años estimado} & \textbf{242.388} & \textbf{1.075.636} & \textbf{2.436.516}\\
 \bottomrule
-\caption{Coste total de propiedad estimado a tres anos, en euros sin IVA.}
+\caption{Coste total de propiedad estimado a tres años, en euros sin IVA.}
 \label{tab:tco}
 \end{longtable}
 
-\section{Condiciones comerciales academicas}
+\section{Condiciones comerciales académicas}
 
-Se propone un pago por hitos: 30\% al inicio de ingenieria y simulacion, 40\% tras entrega del piloto instalado, 20\% tras validacion de KPIs y 10\% al cierre documental y formacion. En contrato real, estos hitos deberian acompanarse de criterios de aceptacion, matriz de responsabilidades, plan de soporte, clausulas de ciberseguridad, tratamiento de datos y procedimiento de gestion de cambios.
+Se propone un pago por hitos: 30\% al inicio de ingeniería y simulación, 40\% tras entrega del piloto instalado, 20\% tras validación de KPIs y 10\% al cierre documental y formación. En contrato real, estos hitos deberían acompañarse de criterios de aceptación, matriz de responsabilidades, plan de soporte, cláusulas de ciberseguridad, tratamiento de datos y procedimiento de gestión de cambios.

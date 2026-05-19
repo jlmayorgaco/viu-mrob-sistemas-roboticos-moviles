@@ -1,14 +1,14 @@
-# Actividad 1 - Sistemas Roboticos Moviles
+# Actividad 1 - Sistemas Robóticos Móviles
 
-Proyecto LaTeX para la Actividad 1: oferta de automatizacion a planta industrial.
+Proyecto LaTeX para la Actividad 1: oferta de automatización a planta industrial.
 
 ## Contenido
 
 - `main.tex`: informe principal.
-- `sections/`: capitulos del informe.
-- `slides/slides.tex`: presentacion PDF en LaTeX, equivalente a PowerPoint.
+- `sections/`: capítulos del informe.
+- `slides/slides.tex`: presentación PDF en LaTeX, equivalente a PowerPoint.
 - `slides/build_pptx.py`: generador autocontenido de PowerPoint visual desde el PDF de LaTeX/TikZ.
-- `figures/tikz/`: fuentes TikZ reutilizables del informe y la presentacion.
+- `figures/tikz/`: fuentes TikZ reutilizables del informe y la presentación.
 - `tables/`: CSV auxiliares de presupuesto, KPIs, trazabilidad, referencias comerciales y supuestos ROI.
 - `references.bib`: bibliografia usada.
 - `figures/` y `tables/`: carpetas preparadas para anexar recursos.
@@ -24,7 +24,7 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 ```
 
-## Compilar presentacion
+## Compilar presentación
 
 ```powershell
 cd slides
@@ -39,7 +39,7 @@ cd slides
 python build_pptx.py
 ```
 
-El PPTX conserva el diseno final de `slides.pdf` como diapositivas visuales. La fuente editable de la presentacion es `slides/slides.tex`.
+El PPTX conserva el diseno final de `slides.pdf` como diapositivas visuales. La fuente editable de la presentación es `slides/slides.tex`.
 
 ## Limpieza
 

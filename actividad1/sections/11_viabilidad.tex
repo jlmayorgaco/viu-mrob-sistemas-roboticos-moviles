@@ -1,27 +1,27 @@
-\chapter{Viabilidad tecnica}
+\chapter{Viabilidad técnica}
 
 \section{Seguridad}
 
-La viabilidad depende de que el sistema sea aceptable para seguridad industrial. Los AMR circularan con velocidades limitadas, zonas de proteccion configurables, escaner laser de seguridad, bumpers, parada de emergencia y protocolos de retirada manual. La validacion debe incluir pruebas con peatones, obstaculos inesperados y estaciones ocupadas.
+La viabilidad depende de que el sistema sea aceptable para seguridad industrial. Los AMR circularán con velocidades limitadas, zonas de protección configurables, escáner láser de seguridad, bumpers, parada de emergencia y protocolos de retirada manual. La validación debe incluir pruebas con peatones, obstáculos inesperados y estaciones ocupadas.
 
-\section{Integracion en planta existente}
+\section{Integración en planta existente}
 
-La integracion puede realizarse por fases. En el piloto, las misiones se pueden cargar manualmente desde HMI y registrar en una base de datos local. En la expansion, el sistema debe intercambiar ordenes con un planificador o MES. En el despliegue extendido, se recomienda integracion bidireccional con sistemas de produccion, mantenimiento y calidad.
+La integración puede realizarse por fases. En el piloto, las misiones se pueden cargar manualmente desde HMI y registrar en una base de datos local. En la expansión, el sistema debe intercambiar órdenes con un planificador o MES. En el despliegue extendido, se recomienda integración bidireccional con sistemas de producción, mantenimiento y calidad.
 
 \section{Limitaciones y riesgos}
 
 \begin{itemize}
-  \item El AMR no elimina la necesidad de planificacion de materiales ni de disciplina operacional.
-  \item La inspeccion FOD con camara es preventiva y complementaria; no sustituye procedimientos certificados.
+  \item El AMR no elimina la necesidad de planificación de materiales ni de disciplina operacional.
+  \item La inspección FOD con cámara es preventiva y complementaria; no sustituye procedimientos certificados.
   \item La red WiFi industrial y la calidad del mapa condicionan la disponibilidad.
-  \item La flota requiere mantenimiento de baterias, ruedas, sensores y calibraciones.
-  \item La aceptacion de los operarios puede caer si el sistema se percibe como obstaculo o carga administrativa.
+  \item La flota requiere mantenimiento de baterías, ruedas, sensores y calibraciones.
+  \item La aceptación de los operarios puede caer si el sistema se percibe como obstáculo o carga administrativa.
 \end{itemize}
 
 \section{Mitigaciones}
 
-Las mitigaciones incluyen piloto acotado, formacion practica, participacion temprana de operarios, rutas validadas en CoppeliaSim, pruebas de seguridad, mantenimiento preventivo y despliegue por etapas. Para no depender de una integracion compleja desde el primer dia, el sistema se diseña con una base de datos propia y conectores progresivos hacia MES/ERP.
+Las mitigaciones incluyen piloto acotado, formación práctica, participación temprana de operarios, rutas validadas en CoppeliaSim, pruebas de seguridad, mantenimiento preventivo y despliegue por etapas. Para no depender de una integración compleja desde el primer día, el sistema se diseña con una base de datos propia y conectores progresivos hacia MES/ERP.
 
 \section{Escalabilidad}
 
-La propuesta es escalable porque separa robot, gestor de flota, base de datos y supervision. El mismo modelo de mision puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. Esta arquitectura es coherente con la evolucion hacia sistemas multi-robot descrita en la literatura de robotica movil \cite{kagan2019}.
+La propuesta es escalable porque separa robot, gestor de flota, base de datos y supervisión. El mismo modelo de misión puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. Esta arquitectura es coherente con la evolución hacia sistemas multi-robot descrita en la literatura de robótica móvil \cite{kagan2019}.

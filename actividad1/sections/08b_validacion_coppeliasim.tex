@@ -1,8 +1,8 @@
-\chapter{Plan de validacion en CoppeliaSim}
+\chapter{Plan de validación en CoppeliaSim}
 
-El uso de CoppeliaSim se plantea como una fase de reduccion de riesgo antes de cualquier prueba fisica. La simulacion no certifica la seguridad industrial, pero permite comprobar coherencia de rutas, maniobrabilidad, aproximacion a estaciones, evitacion de obstaculos y logica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
+El uso de CoppeliaSim se plantea como una fase de reducción de riesgo antes de cualquier prueba física. La simulación no certifica la seguridad industrial, pero permite comprobar coherencia de rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
 
-\section{Modelo de simulacion}
+\section{Modelo de simulación}
 
 \begin{longtable}{P{0.24\textwidth}P{0.62\textwidth}}
 \toprule
@@ -10,11 +10,11 @@ El uso de CoppeliaSim se plantea como una fase de reduccion de riesgo antes de c
 \midrule
 \endhead
 Robot & Base omnidireccional con volumen equivalente a AMR industrial ligero, velocidad limitada y sensores virtuales.\\
-Mapa de planta & Pasillos, estaciones de HTP, zona de preparacion de kits, punto de carga y zona de retorno.\\
-Obstaculos & Utiles, carros, estructuras, operarios simulados como objetos dinamicos y zonas temporalmente bloqueadas.\\
-Sensores & LiDAR 2D/3D para obstaculos, camara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validacion.\\
-Misiones & Entrega de kit, entrega de herramienta, retorno de util, ronda FOD y mision cancelada por obstaculo persistente.\\
-Algoritmos & Localizacion por SLAM/fusion sensorial, planificador global tipo A*/Dijkstra y evitacion local mediante DWA o campos potenciales como referencia conceptual.\\
+Mapa de planta & Pasillos, estaciones de HTP, zona de preparación de kits, punto de carga y zona de retorno.\\
+Obstáculos & Útiles, carros, estructuras, operarios simulados como objetos dinámicos y zonas temporalmente bloqueadas.\\
+Sensores & LiDAR 2D/3D para obstáculos, cámara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validación.\\
+Misiones & Entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y misión cancelada por obstáculo persistente.\\
+Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local mediante DWA o campos potenciales como referencia conceptual. La simulación verifica coherencia de comportamiento, no certificación de seguridad.\\
 \bottomrule
 \end{longtable}
 
@@ -25,20 +25,20 @@ Algoritmos & Localizacion por SLAM/fusion sensorial, planificador global tipo A*
 \textbf{Escenario} & \textbf{Prueba} & \textbf{Resultado esperado}\\
 \midrule
 \endhead
-Navegacion base & Ruta desde preparacion de kits hasta estacion HTP. & Llegada dentro de tolerancia sin colision.\\
-Aproximacion lateral & Entrada a estacion con maniobra omnidireccional. & Posicionamiento sin giros amplios ni bloqueo de pasillo.\\
-Obstaculo dinamico & Operario o carro cruza la trayectoria. & Reduccion de velocidad, parada o replanificacion.\\
-Ruta bloqueada & Pasillo cerrado por util temporal. & Recalculo de ruta o mision en espera.\\
-Entrega trazada & Lectura RFID/QR en carga y destino. & Registro completo de kit, estacion y hora.\\
-Ronda FOD & Captura conceptual de zona antes/despues de entrega. & Evento registrado con imagen o marca de inspeccion.\\
-Multi-robot & Dos o mas AMR comparten pasillo. & Sin interbloqueos; prioridad definida por gestor de flota.\\
+Navegación base & Ruta desde preparación de kits hasta estación HTP. & Llegada dentro de tolerancia sin colisión.\\
+Aproximación lateral & Entrada a estación con maniobra omnidireccional. & Posicionamiento sin giros amplios ni bloqueo de pasillo.\\
+Obstáculo dinamico & Operario o carro cruza la trayectoria. & Reducción de velocidad, parada o replanificación.\\
+Ruta bloqueada & Pasillo cerrado por útil temporal. & Recalculo de ruta o misión en espera.\\
+Entrega trazada & Lectura RFID/QR en carga y destino. & Registro completo de kit, estación y hora.\\
+Ronda FOD & Captura conceptual de zona antes/después de entrega. & Evento registrado con imagen o marca de inspección.\\
+Multi-robot & Dos o más AMR comparten pasillo. & Sin interbloqueos; prioridad definida por gestor de flota.\\
 \bottomrule
 \end{longtable}
 
-\section{Criterios de salida de simulacion}
+\section{Criterios de salida de simulación}
 
-Antes de pasar a piloto fisico, el modelo debe demostrar que las rutas propuestas no invaden zonas restringidas, que el robot puede aproximarse a estaciones sin maniobras excesivas, que las paradas de seguridad no bloquean el flujo de forma recurrente y que las misiones generan registros completos. Los parametros finales de simulacion deben guardarse como anexo tecnico: mapa, velocidad maxima, radios de seguridad, tolerancia de posicion, zonas prohibidas y tiempos de mision.
+Antes de pasar a piloto físico, el modelo debe demostrar que las rutas propuestas no invaden zonas restringidas, que el robot puede aproximarse a estaciones sin maniobras excesivas, que las paradas de seguridad no bloquean el flujo de forma recurrente y que las misiones generan registros completos. Los parámetros finales de simulación deben guardarse como anexo técnico: mapa, velocidad máxima, radios de seguridad, tolerancia de posición, zonas prohibidas y tiempos de misión. La aceptación final de seguridad debería realizarse en planta con procedimientos y responsables reales.
 
-\section{Relacion con navegacion y localizacion del curso}
+\section{Relación con navegación y localización del curso}
 
-La validacion usa los conceptos de localizacion, planificacion y anticolision estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimacion de pose; el SLAM permite construir o actualizar el mapa de una nave cambiante; el planificador global genera una ruta hacia la estacion; y el planificador local evita obstaculos dinamicos como operarios, carros o utiles. En una implantacion real se seleccionaria el algoritmo concreto segun el software del AMR, pero para la oferta academica se deja trazado el vinculo tecnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.
+La validación usa los conceptos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM permite construir o actualizar el mapa de una nave cambiante; el planificador global genera una ruta hacia la estación; y el planificador local evita obstáculos dinámicos como operarios, carros o útiles. En una implantación real se seleccionaría el algoritmo concreto según el software del AMR, pero para la oferta académica se deja trazado el vínculo técnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.

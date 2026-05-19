@@ -1,82 +1,82 @@
 \chapter{Entrevista simulada con experto}
 
-La guia oficial de la Actividad 1 solicita obtener informacion de primera mano mediante una conversacion con un experto de planta. Para cumplir ese bloque, se simula una entrevista con Carlos Pérez, trabajador con mas de diez años de experiencia en Alestis Puerto Real. El objetivo no es crear una transcripcion extensa, sino extraer informacion util para justificar una oferta tecnica y comercial de robotica movil.
+La guía oficial de la Actividad 1 solicita obtener información de primera mano mediante una conversación con un experto de planta. Para cumplir ese bloque, se simula una entrevista con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. El objetivo no es crear una transcripción extensa, sino extraer información útil para justificar una oferta técnica y comercial de robótica móvil.
 
 \begin{interviewbrief}
 \textbf{Ficha de la entrevista simulada}
 
 \begin{tabularx}{\textwidth}{@{}P{0.28\textwidth}Y@{}}
-\textbf{Entrevistado} & Carlos Pérez, operario/tecnico con experiencia en operaciones de Alestis Puerto Real.\\
-\textbf{Rol en la actividad} & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatizacion.\\
-\textbf{Temas tratados} & HTP del A320, seccion 19.1, flujo de kits y herramientas, FOD, trazabilidad, transporte interno, esperas, restricciones de seguridad y despliegue piloto.\\
-\textbf{Uso de la evidencia} & Los hallazgos se traducen en requisitos tecnicos, seleccion del robot, sensores, arquitectura, presupuesto y KPIs.\\
-\textbf{Evidencia} & La conversacion queda documentada mediante acta tecnica completa, registro textual en este capitulo y resumen de evidencias en anexos.\\
+\textbf{Entrevistado} & Carlos Pérez, operario/técnico con experiencia en operaciones de Alestis Puerto Real.\\
+\textbf{Rol en la actividad} & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatización.\\
+\textbf{Temas tratados} & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, trazabilidad, transporte interno, esperas, restricciones de seguridad y despliegue piloto.\\
+\textbf{Uso de la evidencia} & Los hallazgos se traducen en requisitos técnicos, selección del robot, sensores, arquitectura, presupuesto y KPIs.\\
+\textbf{Evidencia} & La conversación queda documentada mediante acta técnica completa, registro textual en este capítulo y resumen de evidencias en anexos.\\
 \end{tabularx}
 \end{interviewbrief}
 
-\section{Conversacion simulada}
+\section{Conversación simulada}
 
-\begin{interviewtranscript}[Acta tecnica de entrevista con Carlos Pérez]
+\begin{interviewtranscript}[Acta técnica de entrevista con Carlos Pérez]
 \InterviewExchange
-{Carlos, gracias por atendernos. La guia de la actividad nos pide centrarnos en procesos reales de Alestis Puerto Real. Si aparece algun detalle personal o de la vida en Cadiz lo dejamos para otro momento; nos interesa entender que ocurre alrededor del HTP del A320 y la seccion 19.1.}
-{De acuerdo. El HTP es el estabilizador horizontal de cola del A320 y en planta se trabaja con estructuras grandes, utiles especificos, documentacion, inspecciones y mucho material auxiliar. La seccion 19.1 esta asociada al entorno posterior del avion y a interfaces de cola, por lo que la coordinacion entre estaciones es critica.}
-
-\InterviewExchange
-{Desde el punto de vista de produccion, ¿que materiales o recursos se mueven con mas frecuencia alrededor de esas estaciones?}
-{No se mueve solo una pieza principal. Hay kits de fijaciones, consumibles, herramientas calibradas, utiles de posicionamiento, documentacion de orden, embalajes, carros auxiliares y elementos que vuelven a almacen o a metrologia. Algunos movimientos son pequeños, pero se repiten muchas veces durante el turno.}
+{Carlos, gracias por atendernos. La guía de la actividad nos pide centrarnos en procesos reales de Alestis Puerto Real. Si aparece algún detalle personal o de la vida en Cádiz lo dejamos para otro momento; nos interesa entender qué ocurre alrededor del HTP del A320 y la sección 19.1.}
+{De acuerdo. El HTP es el estabilizador horizontal de cola del A320 y en planta se trabaja con estructuras grandes, útiles específicos, documentación, inspecciones y mucho material auxiliar. La sección 19.1 está asociada al entorno posterior del avión y a interfaces de cola, por lo que la coordinación entre estaciones es crítica.}
 
 \InterviewExchange
-{¿Donde aparecen las perdidas de tiempo que no siempre se ven como una parada formal?}
-{Lo habitual son microesperas: un kit que no ha llegado, una herramienta que no aparece, un util que esta en otra estacion, o una comprobacion manual para saber si un material corresponde a la orden correcta. Diez minutos aqui y otros diez alli acaban afectando al ritmo de trabajo.}
+{Desde el punto de vista de producción, ¿Qué materiales o recursos se mueven con más frecuencia alrededor de esas estaciones?}
+{No se mueve solo una pieza principal. Hay kits de fijaciones, consumibles, herramientas calibradas, útiles de posicionamiento, documentación de orden, embalajes, carros auxiliares y elementos que vuelven a almacén o a metrología. Algunos movimientos son pequeños, pero se repiten muchas veces durante el turno.}
 
 \InterviewExchange
-{¿Seria realista plantear que un robot movil fabrique o monte directamente el HTP?}
-{No lo veo realista. El montaje estructural tiene procedimientos, personal cualificado y controles de calidad. Donde si veo valor es en que un AMR traiga el material correcto, registre entregas, devuelva utiles usados, haga rondas preventivas y avise cuando algo no cuadra. Eso ayuda sin tocar el proceso certificado.}
+{¿Dónde aparecen las pérdidas de tiempo que no siempre se ven como una parada formal?}
+{Lo habitual son microesperas: un kit que no ha llegado, una herramienta que no aparece, un útil que está en otra estación, o una comprobacion manual para saber si un material corresponde a la orden correcta. Diez minutos aquí y otros diez allí acaban afectando al ritmo de trabajo.}
 
 \InterviewExchange
-{La guia nos pide identificar posibles problemas internos. ¿Que problemas concretos destacaria en transporte y localizacion de materiales?}
-{El primer problema es saber donde esta cada cosa en el momento exacto. A veces el sistema dice que el material existe, pero no esta junto a la estacion. Tambien ocurre que una herramienta se presta entre equipos y la trazabilidad queda incompleta. Si el robot valida RFID o QR al recoger y entregar, se reduce esa incertidumbre.}
+{¿Sería realista plantear que un robot móvil fabrique o monte directamente el HTP?}
+{No lo veo realista. El montaje estructural tiene procedimientos, personal cualificado y controles de calidad. Donde sí veo valor es en que un AMR traiga el material correcto, registre entregas, devuelva útiles usados, haga rondas preventivas y avise cuando algo no cuadra. Eso ayuda sin tocar el proceso certificado.}
 
 \InterviewExchange
-{¿Que peso tiene el riesgo FOD en este entorno?}
-{Mucho. En aeronautica un objeto extraño puede convertirse en una incidencia seria. Ya existen rutinas de orden y limpieza, pero una ronda documentada con camara ayudaria a reforzar la disciplina: zona revisada, hora, fotografia si aparece algo y aviso al responsable. No sustituye al control de calidad, lo complementa.}
+{La guía nos pide identificar posibles problemas internos. ¿Qué problemas concretos destacaría en transporte y localización de materiales?}
+{El primer problema es saber dónde está cada cosa en el momento exacto. A veces el sistema dice que el material existe, pero no está junto a la estación. También ocurre que una herramienta se presta entre equipos y la trazabilidad queda incompleta. Si el robot valida RFID o QR al recoger y entregar, se reduce esa incertidumbre.}
 
 \InterviewExchange
-{¿Que restricciones deberia cumplir un robot movil para convivir con operarios, estructuras grandes y utiles de montaje?}
-{Debe moverse despacio, detectar personas, parar de forma segura y no bloquear pasillos. Tambien debe maniobrar cerca de estaciones sin tener que girar todo el cuerpo del robot. Por eso una base omnidireccional tiene sentido: puede aproximarse lateralmente y corregir posicion con menos maniobras.}
+{¿Qué peso tiene el riesgo FOD en este entorno?}
+{Mucho. En aeronáutica un objeto extraño puede convertirse en una incidencia seria. Ya existen rutinas de orden y limpieza, pero una ronda documentada con cámara ayudaría a reforzar la disciplina: zona revisada, hora, fotografía si aparece algo y aviso al responsable. No sustituye al control de calidad, lo complementa.}
 
 \InterviewExchange
-{¿Un AGV de ruta fija resolveria el problema o haria falta algo mas flexible?}
-{Un AGV puede servir en recorridos muy estables, pero la planta cambia: zonas temporalmente ocupadas, carros, utiles, operarios, prioridades de produccion. Para este caso preferiria un AMR con mapa, sensores y capacidad de recalcular ruta. Las rutas fijas pierden utilidad cuando el entorno se mueve.}
+{¿Qué restricciones debería cumplir un robot móvil para convivir con operarios, estructuras grandes y útiles de montaje?}
+{Debe moverse despacio, detectar personas, parar de forma segura y no bloquear pasillos. También debe maniobrar cerca de estaciones sin tener que girar todo el cuerpo del robot. Por eso una base omnidireccional tiene sentido: puede aproximarse lateralmente y corregir posición con menos maniobras.}
 
 \InterviewExchange
-{La actividad da como referencia una produccion actual de unos 40 HTP al mes y un objetivo futuro de 80 o mas. ¿Como deberiamos interpretar esa meta?}
-{No diria que los robots duplican la produccion. Lo razonable es decir que ayudan a quitar friccion: menos paseos, menos esperas, entregas mas fiables, mejor registro y menos incidencias por material mal ubicado. Eso contribuye al escalado, pero junto con planificacion, personal, calidad y capacidad de planta.}
+{¿Un AGV de ruta fija resolvería el problema o haría falta algo más flexible?}
+{Un AGV puede servir en recorridos muy estables, pero la planta cambia: zonas temporalmente ocupadas, carros, útiles, operarios, prioridades de producción. Para este caso preferiría un AMR con mapa, sensores y capacidad de recalcular ruta. Las rutas fijas pierden utilidad cuando el entorno se mueve.}
 
 \InterviewExchange
-{Si Lunabotics propusiera un piloto, ¿que mediria para decidir si tiene sentido ampliar a 7 o incluso 17 robots?}
-{Empezaria con un robot en una zona acotada. Mediria misiones completadas, entregas a tiempo, incidencias de kit, paradas de seguridad, aceptacion de operarios, disponibilidad del robot y eventos FOD registrados. Si esos datos son buenos, entonces tendria sentido ampliar por estaciones y despues pensar en una flota mayor.}
+{La actividad da como referencia una producción actual de unos 40 HTP al mes y un objetivo futuro de 80 o más. ¿Cómo deberíamos interpretar esa meta?}
+{No diría que los robots duplican la producción. Lo razonable es decir que ayudan a quitar fricción: menos paseos, menos esperas, entregas más fiables, mejor registro y menos incidencias por material mal ubicado. Eso contribuye al escalado, pero junto con planificación, personal, calidad y capacidad de planta.}
+
+\InterviewExchange
+{Si Lunabotics propusiera un piloto, ¿Qué mediría para decidir si tiene sentido ampliar a 7 o incluso 17 robots?}
+{Empezaría con un robot en una zona acotada. Mediría misiones completadas, entregas a tiempo, incidencias de kit, paradas de seguridad, aceptación de operarios, disponibilidad del robot y eventos FOD registrados. Si esos datos son buenos, entonces tendría sentido ampliar por estaciones y después pensar en una flota mayor.}
 \end{interviewtranscript}
 
 \section{Hallazgos e implicaciones}
 
 \begin{longtable}{P{0.40\textwidth}P{0.52\textwidth}}
 \toprule
-\textbf{Hallazgo de la entrevista} & \textbf{Implicacion para la solucion robotica}\\
+\textbf{Hallazgo de la entrevista} & \textbf{Implicación para la solución robótica}\\
 \midrule
 \endhead
-El HTP del A320 y la seccion 19.1 implican estructuras grandes, utiles especificos, documentacion e interfaces de cola. & La propuesta debe centrarse en apoyo logistico y trazabilidad, no en manipulacion estructural pesada ni montaje certificado.\\
-Los movimientos mas frecuentes afectan a kits, fijaciones, consumibles, herramientas calibradas, utiles y retornos. & El modulo portacargas debe admitir bandejas, cajon seguro, etiquetado RFID/QR y misiones de entrega/retorno.\\
-Las perdidas aparecen como microesperas y desplazamientos repetidos que no siempre se registran como parada. & Los KPIs deben medir tiempo recuperado, entregas a tiempo, misiones completadas y reduccion de busquedas manuales.\\
-La localizacion de herramientas y materiales puede ser incompleta en el momento operativo. & Se requiere trazabilidad fina con lectura RFID/QR en origen, destino y retorno, asociada a orden, estacion y hora.\\
-FOD es un riesgo sensible y debe tratarse con evidencia documentada. & Integrar camara RGB-D o industrial, rondas preventivas, registro fotografico y notificacion de incidencias.\\
-El robot debe convivir con operarios, pasillos compartidos, utiles y estructuras de gran tamaño. & Incorporar LiDAR 2D/3D, escaner laser de seguridad, bumpers, parada de emergencia, limites de velocidad y zonas de proteccion.\\
-Las rutas fijas pierden valor cuando cambia la distribucion de planta. & Seleccionar AMR omnidireccional con SLAM y planificacion flexible frente a AGV rigido.\\
-El objetivo de pasar de 40 a 80 HTP/mes no puede atribuirse solo a los robots. & Presentar el ROI como recuperacion de tiempo operativo y reduccion de friccion, no como duplicacion automatica de produccion.\\
-El despliegue debe empezar con evidencia medible. & Recomendar piloto de 1 robot, expansion a 7 robots y despliegue extendido de 17 robots solo si se cumplen criterios de seguridad, disponibilidad y aceptacion.\\
+El HTP del A320 y la sección 19.1 implican estructuras grandes, útiles específicos, documentación e interfaces de cola. & La propuesta debe centrarse en apoyo logístico y trazabilidad, no en manipulación estructural pesada ni montaje certificado.\\
+Los movimientos más frecuentes afectan a kits, fijaciones, consumibles, herramientas calibradas, útiles y retornos. & El módulo portacargas debe admitir bandejas, cajón seguro, etiquetado RFID/QR y misiones de entrega/retorno.\\
+Las pérdidas aparecen como microesperas y desplazamientos repetidos que no siempre se registran como parada. & Los KPIs deben medir tiempo recuperado, entregas a tiempo, misiones completadas y reducción de búsquedas manuales.\\
+La localización de herramientas y materiales puede ser incompleta en el momento operativo. & Se requiere trazabilidad fina con lectura RFID/QR en origen, destino y retorno, asociada a orden, estación y hora.\\
+FOD es un riesgo sensible y debe tratarse con evidencia documentada. & Integrar cámara RGB-D o industrial, rondas preventivas, registro fotográfico y notificación de incidencias.\\
+El robot debe convivir con operarios, pasillos compartidos, útiles y estructuras de gran tamaño. & Incorporar LiDAR 2D/3D, escáner láser de seguridad, bumpers, parada de emergencia, límites de velocidad y zonas de protección.\\
+Las rutas fijas pierden valor cuando cambia la distribución de planta. & Seleccionar AMR omnidireccional con SLAM y planificación flexible frente a AGV rígido.\\
+El objetivo de pasar de 40 a 80 HTP/mes no puede atribuirse solo a los robots. & Presentar el ROI como recuperación de tiempo operativo y reducción de fricción, no como duplicación automática de producción.\\
+El despliegue debe empezar con evidencia medible. & Recomendar piloto de 1 robot, expansión a 7 robots y despliegue extendido de 17 robots solo si se cumplen criterios de seguridad, disponibilidad y aceptación.\\
 \bottomrule
 \end{longtable}
 
 \section{Resultado para el diseño}
 
-La entrevista confirma que la oportunidad de automatizacion esta en el flujo auxiliar de planta. Por tanto, la solucion propuesta debe mover y registrar kits, herramientas, consumibles y utiles; reforzar la inspeccion FOD; reducir desplazamientos improductivos; y generar datos suficientes para justificar una oferta comercial gradual. Esta conclusion conecta directamente con los requisitos tecnicos, la arquitectura AMR-FOD-Kitting y los escenarios de presupuesto desarrollados en los capitulos posteriores.
+La entrevista confirma que la oportunidad de automatización está en el flujo auxiliar de planta. Por tanto, la solución propuesta debe mover y registrar kits, herramientas, consumibles y útiles; reforzar la inspección FOD; reducir desplazamientos improductivos; y generar datos suficientes para justificar una oferta comercial gradual. Esta conclusión conecta directamente con los requisitos técnicos, la arquitectura AMR-FOD-Kitting y los escenarios de presupuesto desarrollados en los capítulos posteriores.

@@ -1,8 +1,8 @@
 kpi,criterio,umbral
-Exito de mision,misiones finalizadas sobre misiones lanzadas,>=95 por ciento
+Éxito de misión,misiones finalizadas sobre misiones lanzadas,>=95 por ciento
 Disponibilidad AMR,tiempo operativo sobre tiempo planificado,>=90 por ciento
 Entrega a tiempo,entregas dentro de ventana sobre entregas totales,>=90 por ciento
-Registro completo,misiones con kit destino hora y confirmacion,>=98 por ciento
-Incidentes de seguridad,eventos con contacto o parada no controlada,0 incidentes con dano
-Aceptacion de operarios,encuesta breve de utilidad y carga operativa,>=4 sobre 5
-Tiempo improductivo recuperado,horas estimadas antes menos despues,tendencia positiva documentada
+Registro completo,misiones con kit destino hora y confirmación,>=98 por ciento
+Incidentes de seguridad,eventos con contacto o parada no controlada,0 incidentes con daño
+Aceptación de operarios,encuesta breve de utilidad y carga operativa,>=4 sobre 5
+Tiempo improductivo recuperado,horas estimadas antes menos después,tendencia positiva documentada
