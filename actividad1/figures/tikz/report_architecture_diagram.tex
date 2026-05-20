@@ -1,25 +1,35 @@
 \begin{tikzpicture}[
-  node distance=7mm and 9mm,
-  box/.style={draw=UniPrimaryDeep!80,rounded corners=2mm,fill=UniLight,align=center,minimum height=12mm,text width=3.2cm,font=\small},
-  core/.style={draw=UniPrimaryDeep,rounded corners=2mm,fill=UniPrimary!10,align=center,minimum height=13mm,text width=3.4cm,font=\small\bfseries},
-  arr/.style={-{Latex[length=2.5mm]},thick,UniPrimaryDeep!80}
+  x=1cm,y=1cm,
+  block/.style={draw=UniPrimaryDeep!60,fill=white,rounded corners=2mm,align=left,font=\footnotesize,text width=2.45cm,minimum height=1.02cm,inner sep=4pt},
+  core/.style={draw=UniPrimaryDeep,fill=UniPrimary!10,rounded corners=2mm,align=center,font=\footnotesize\bfseries,text width=2.60cm,minimum height=1.05cm,inner sep=4pt},
+  safe/.style={draw=WarnAmber!85!black,fill=WarnAmber!10,rounded corners=2mm,align=left,font=\footnotesize,text width=2.45cm,minimum height=1.02cm,inner sep=4pt},
+  arr/.style={-{Latex[length=2.3mm,width=1.6mm]},line width=0.75pt,draw=UniPrimaryDeep!75},
+  dat/.style={<->,line width=0.7pt,draw=UniPrimary!80}
 ]
-\node[box] (per) {Percepción\\LiDAR, RGB-D, RFID/QR};
-\node[box,right=of per] (loc) {Localización y navegación\\SLAM, mapa, obstáculos};
-\node[core,right=of loc] (plan) {Planificación de misiones\\prioridades y rutas};
-\node[box,below=of loc] (ctrl) {Control del robot\\base omnidireccional};
-\node[box,below=of plan] (safe) {Seguridad\\zonas, E-stop, bumpers};
-\node[box,above=of plan] (hmi) {Supervisión/HMI\\operario y jefe de línea};
-\node[box,right=of plan] (db) {Base de datos\\misiones, FOD, trazabilidad};
-\node[box,right=of db] (plant) {Integración planta\\MES/ERP\\planificador};
+
+\fill[UniLight] (-0.15,-0.15) rectangle (12.85,5.25);
+
+\node[block] (per) at (1.35,4.15) {\textbf{Percepci\'on}\\LiDAR, RGB-D, RFID/QR};
+\node[block] (loc) at (4.35,4.15) {\textbf{Localizaci\'on}\\SLAM, IMU, encoders};
+\node[core] (plan) at (7.35,4.15) {Planificador\\de misiones};
+\node[block] (db) at (10.35,4.15) {\textbf{BD trazable}\\misiones, FOD, entregas};
+
+\node[safe] (seg) at (1.35,2.20) {\textbf{Seguridad}\\esc\'aner, bumpers, E-stop};
+\node[block] (ctrl) at (4.35,2.20) {\textbf{Control}\\base omnidireccional};
+\node[block] (hmi) at (7.35,2.20) {\textbf{HMI y flota}\\avisos, bater\'ia, prioridad};
+\node[block] (mes) at (10.35,2.20) {\textbf{MES/ERP}\\orden, kit y estaci\'on};
 
 \draw[arr] (per) -- (loc);
 \draw[arr] (loc) -- (plan);
-\draw[arr] (plan) -- (ctrl);
-\draw[arr] (safe) -- (ctrl);
-\draw[arr] (hmi) -- (plan);
-\draw[arr] (plan) -- (db);
-\draw[arr] (db) -- (plant);
-\draw[arr] (plant) -- (db);
-\draw[arr] (db) -- (hmi);
+\draw[dat] (plan) -- (db);
+\draw[arr] (seg) -- (ctrl);
+\draw[arr] (ctrl) -- (hmi);
+\draw[dat] (hmi) -- (mes);
+\draw[arr] (plan.south) -- (hmi.north);
+\draw[arr] (seg.north) -- ++(0,0.45) -| (ctrl.north);
+\draw[arr] (db.south) -- (mes.north);
+
+\draw[WarnAmber!80!black,line width=0.95pt] (0.35,1.05) -- (11.40,1.05);
+\node[anchor=west,font=\scriptsize\bfseries,text=WarnAmber!80!black] at (0.42,0.70)
+{la capa de seguridad interrumpe cualquier misi\'on; la base de datos solo acepta misiones cerradas};
 \end{tikzpicture}

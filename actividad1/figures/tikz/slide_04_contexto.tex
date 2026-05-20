@@ -1,39 +1,41 @@
-% Slide 04: integrated context map for HTP A320 / section 19.1.
+% Slide 04: cleaner context map for HTP A320 / section 19.1.
 
-\fill[Cyan!8,rounded corners=10pt] (0.92,1.12) rectangle (15.08,6.92);
-\draw[Cyan!35,rounded corners=10pt,line width=0.4pt] (0.92,1.12) rectangle (15.08,6.92);
+\fill[Cyan!7,rounded corners=10pt] (0.92,1.08) rectangle (15.08,6.92);
+\draw[Cyan!32,rounded corners=10pt,line width=0.45pt] (0.92,1.08) rectangle (15.08,6.92);
 
-\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Cyan] at (1.26,6.54) {CONTEXTO DE PLANTA};
-\node[anchor=west,font=\fontsize{15.0}{16.2}\selectfont\bfseries,text=Navy,text width=5.9cm,align=left] at (1.26,5.84) {Estructura grande;\\soporte logístico fino.};
-\node[anchor=west,font=\fontsize{6.7}{7.8}\selectfont,text=Muted,text width=5.65cm,align=left] at (1.30,4.70) {El AMR no toca montaje certificado: estabiliza entregas, retorno de útiles, FOD y trazabilidad alrededor de la estaci\'on.};
+\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Cyan] at (1.30,6.50) {CONTEXTO DE PLANTA};
+\node[anchor=west,font=\fontsize{14.5}{15.8}\selectfont\bfseries,text=Navy,text width=5.7cm,align=left] at (1.30,5.78) {HTP grande; flujo auxiliar delicado.};
+\node[anchor=west,font=\fontsize{6.7}{7.8}\selectfont,text=Muted,text width=5.65cm,align=left] at (1.32,4.72) {La secci\'on 19.1 concentra dependencias de kits, \'utiles, documentaci\'on y disciplina FOD. El AMR act\'ua alrededor de la estaci\'on.};
 
-\begin{scope}[shift={(1.18,2.75)},scale=1.42]
-  \draw[Navy,line width=1.15pt] (0,0) .. controls (1.35,0.32) and (3.75,0.24) .. (5.25,0.02);
-  \draw[Navy,line width=1.15pt] (0,-0.62) .. controls (1.35,-0.92) and (3.75,-0.84) .. (5.25,-0.63);
-  \draw[Navy,line width=0.75pt] (5.25,0.02) -- (5.25,-0.63);
-  \fill[Teal!72] (2.02,0.04) -- (1.02,0.68) -- (2.56,0.34) -- cycle;
-  \fill[Teal!72] (2.02,-0.64) -- (1.02,-1.28) -- (2.56,-0.94) -- cycle;
-  \fill[Amber!82] (3.36,0.20) rectangle (4.03,-0.82);
-  \node[font=\fontsize{5.2}{5.8}\selectfont\bfseries,text=white] at (3.70,-0.30) {19.1};
-  \node[anchor=west,font=\fontsize{5.6}{6.2}\selectfont\bfseries,text=Teal] at (0.88,0.97) {HTP};
+\begin{scope}[shift={(1.30,2.42)},scale=1.38]
+  \draw[Navy,line width=1.10pt] (0,0) .. controls (1.28,0.34) and (3.56,0.25) .. (5.00,0.02);
+  \draw[Navy,line width=1.10pt] (0,-0.68) .. controls (1.28,-0.98) and (3.56,-0.90) .. (5.00,-0.66);
+  \draw[Navy,line width=0.75pt] (5.00,0.02) -- (5.00,-0.66);
+  \fill[Teal!68] (1.95,0.03) -- (0.95,0.70) -- (2.50,0.33) -- cycle;
+  \fill[Teal!68] (1.95,-0.67) -- (0.95,-1.34) -- (2.50,-0.96) -- cycle;
+  \fill[Amber!88] (3.18,0.19) rectangle (3.84,-0.86);
+  \node[font=\fontsize{5.3}{5.9}\selectfont\bfseries,text=white] at (3.51,-0.33) {19.1};
+  \node[anchor=west,font=\fontsize{5.7}{6.3}\selectfont\bfseries,text=Teal] at (0.83,0.96) {HTP};
 \end{scope}
 
-\draw[Line,line width=0.6pt] (7.40,1.56) -- (7.40,6.46);
+\draw[Line,line width=0.6pt] (7.20,1.52) -- (7.20,6.42);
 
-\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Cyan] at (7.86,6.54) {FLUJO QUE SE AUTOMATIZA};
-\node[anchor=west,font=\fontsize{11.2}{12.4}\selectfont\bfseries,text=Ink,text width=7.15cm,align=left] at (7.86,5.92) {Kit \(\rightarrow\) entrega \(\rightarrow\) registro \(\rightarrow\) retorno};
+\node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Cyan] at (7.70,6.50) {FLUJO AUTOMATIZABLE};
+\node[anchor=west,font=\fontsize{11.2}{12.4}\selectfont\bfseries,text=Ink,text width=6.8cm,align=left] at (7.70,5.92) {La propuesta no fabrica; mueve, confirma y devuelve.};
 
-\foreach \x/\lab/\sub/\col in {
-  8.05/Kit validado/RFID--QR/Teal,
-  10.72/Estaci\'on HTP/entrega trazada/Amber,
-  13.38/Retorno + FOD/evidencia digital/Green} {
-  \fill[\col!16,rounded corners=5pt] (\x,3.24) rectangle ++(1.78,1.02);
-  \draw[\col,line width=0.5pt,rounded corners=5pt] (\x,3.24) rectangle ++(1.78,1.02);
-  \node[anchor=center,font=\fontsize{6.5}{7.4}\selectfont\bfseries,text=Ink,align=center,text width=1.55cm] at (\x+0.89,3.91) {\lab};
-  \node[anchor=center,font=\fontsize{5.2}{6.0}\selectfont,text=Muted,align=center,text width=1.55cm] at (\x+0.89,3.49) {\sub};
+\foreach \x/\num/\lab/\sub/\col in {
+  7.78/1/{Kit validado}/{RFID--QR}/Teal,
+  9.62/2/{Entrega HTP}/{punto trazado}/Amber,
+  11.46/3/{Registro}/{misi\'on cerrada}/Violet,
+  13.30/4/{Retorno\\FOD}/{evidencia}/Green} {
+  \fill[\col!14,rounded corners=5pt] (\x,3.54) rectangle ++(1.36,1.12);
+  \draw[\col,line width=0.48pt,rounded corners=5pt] (\x,3.54) rectangle ++(1.36,1.12);
+  \fill[\col] (\x+0.20,4.44) circle (0.12);
+  \node[font=\fontsize{5.3}{5.9}\selectfont\bfseries,text=white] at (\x+0.20,4.44) {\num};
+  \node[font=\fontsize{6.35}{7.2}\selectfont\bfseries,text=Ink,align=center,text width=1.18cm] at (\x+0.68,4.10) {\lab};
+  \node[font=\fontsize{5.0}{5.8}\selectfont,text=Muted,align=center,text width=1.14cm] at (\x+0.68,3.73) {\sub};
 }
-\draw[Cyan,arrow,line width=0.8pt] (9.95,3.75) -- (10.55,3.75);
-\draw[Cyan,arrow,line width=0.8pt] (12.62,3.75) -- (13.20,3.75);
+\foreach \x in {9.18,11.02,12.86}{\draw[Cyan,arrow,line width=0.8pt] (\x,4.10) -- (\x+0.32,4.10);}
 
-\node[anchor=west,font=\fontsize{7.4}{8.6}\selectfont\bfseries,text=Navy,text width=6.4cm,align=left] at (7.88,2.35) {Lectura clave de planta};
-\node[anchor=west,font=\fontsize{6.6}{7.7}\selectfont,text=Muted,text width=6.5cm,align=left] at (7.88,1.78) {La secci\'on 19.1 concentra dependencia de kits, herramientas, documentaci\'on y disciplina FOD. Ah\'i el AMR reduce esperas y deja trazas, sin fabricar el HTP.};
+\node[anchor=west,font=\fontsize{7.3}{8.4}\selectfont\bfseries,text=Navy,text width=6.45cm,align=left] at (7.72,2.55) {Lectura para la oferta};
+\node[anchor=west,font=\fontsize{6.6}{7.7}\selectfont,text=Muted,text width=6.75cm,align=left] at (7.72,1.92) {El valor est\'a en reducir esperas, cerrar trazabilidad y aportar evidencia FOD sin interferir con montaje certificado.};

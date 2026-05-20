@@ -1,27 +1,37 @@
 \begin{tikzpicture}[
-  scale=0.9,
-  test/.style={draw=UniPrimaryDeep!55,fill=white,rounded corners=2pt,minimum width=3.0cm,minimum height=1.0cm,align=center,font=\small\bfseries},
-  note/.style={font=\footnotesize,text=UniMuted,align=center,text width=2.8cm},
-  arr/.style={-Latex,line width=0.9pt,draw=UniPrimary}
+  x=1cm,y=1cm,
+  card/.style={draw=UniPrimaryDeep!45,fill=white,rounded corners=2mm,minimum width=5.55cm,minimum height=1.55cm,align=left,inner sep=5pt},
+  num/.style={circle,fill=UniPrimary,text=white,font=\small\bfseries,minimum size=0.55cm},
+  arr/.style={-{Latex[length=2.4mm,width=1.6mm]},line width=0.75pt,draw=UniPrimaryDeep!70}
 ]
-\fill[UniLight] (-0.6,-0.7) rectangle (12.8,4.2);
-\node[test] (t1) at (1.2,2.8) {1. Ruta base};
-\node[test] (t2) at (4.4,2.8) {2. Pasillo\\bloqueado};
-\node[test] (t3) at (7.6,2.8) {3. Cruce con\\operario};
-\node[test] (t4) at (10.8,2.8) {4. Ronda FOD};
 
-\draw[arr] (t1) -- (t2);
-\draw[arr] (t2) -- (t3);
-\draw[arr] (t3) -- (t4);
+\fill[UniLight] (-0.2,-0.2) rectangle (12.5,5.6);
 
-\node[note] at (1.2,1.45) {SLAM + fusión\\llegada a estación};
-\node[note] at (4.4,1.45) {A*/Dijkstra\\ruta alternativa};
-\node[note] at (7.6,1.45) {DWA/campos\\parada o rodeo};
-\node[note] at (10.8,1.45) {RGB-D\\imagen revisable};
+\node[card] (r1) at (3.05,4.20) {};
+\node[num] at (0.55,4.70) {1};
+\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (0.95,4.82) {Ruta base};
+\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (0.95,4.32) {Llegada nominal a estaci\'on con SLAM, IMU y encoders.};
 
-\draw[UniPrimaryDeep!35,line width=0.9pt] (0.1,0.45) -- (11.9,0.45);
-\foreach \x/\lab in {0.5/mapa,3.6/misión,6.7/evento,9.8/registro} {
-  \fill[GoodGreen] (\x,0.45) circle (0.08);
-  \node[anchor=north,font=\scriptsize,text=UniDark] at (\x,0.28) {\lab};
-}
+\node[card] (r2) at (9.25,4.20) {};
+\node[num,fill=WarnAmber!85!black] at (6.75,4.70) {2};
+\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (7.15,4.82) {Pasillo bloqueado};
+\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (7.15,4.32) {A*/Dijkstra recalcula ruta sin invadir zona restringida.};
+
+\node[card] (r3) at (3.05,1.85) {};
+\node[num,fill=GoodGreen!70!black] at (0.55,2.35) {3};
+\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (0.95,2.47) {Cruce con operario};
+\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (0.95,1.97) {Evitaci\'on local o parada segura en zona compartida.};
+
+\node[card] (r4) at (9.25,1.85) {};
+\node[num,fill=UniPrimaryDeep] at (6.75,2.35) {4};
+\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (7.15,2.47) {Ronda FOD};
+\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (7.15,1.97) {Captura RGB-D, evento trazado y revisi\'on humana.};
+
+\draw[arr] (5.92,4.20) -- (6.38,4.20);
+\draw[arr] (9.25,3.33) -- (9.25,2.70);
+\draw[arr] (6.38,1.85) -- (5.92,1.85);
+\draw[arr] (3.05,2.72) -- (3.05,3.35);
+
+\node[anchor=west,font=\footnotesize\bfseries,text=UniMuted] at (0.55,0.45)
+{Gate: error de llegada \(\leq 0{,}25\) m, cero contactos, 100\% de misiones cerradas y reserva de bater\'ia.};
 \end{tikzpicture}

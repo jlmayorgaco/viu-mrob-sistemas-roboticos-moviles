@@ -1,37 +1,37 @@
 \begin{tikzpicture}[
-  scale=0.94,
-  call/.style={font=\footnotesize,align=left,text=UniDark},
-  arr/.style={-Latex,line width=0.8pt,draw=UniPrimaryDeep}
+  x=1cm,y=1cm,
+  call/.style={draw=UniPrimaryDeep!40,fill=white,rounded corners=2mm,align=left,font=\footnotesize,text=UniDark,text width=2.8cm,inner sep=4pt},
+  arr/.style={-{Latex[length=2.2mm,width=1.6mm]},line width=0.75pt,draw=UniPrimaryDeep!75},
+  sensor/.style={draw=UniPrimaryDeep!65,fill=UniPrimary!10,rounded corners=1.2mm,align=center,font=\scriptsize\bfseries,text=UniPrimaryDeep}
 ]
-\fill[UniLight] (-0.4,-0.7) rectangle (12.2,4.4);
-\draw[rounded corners=8pt,fill=white,draw=UniPrimaryDeep!55,line width=1pt] (3.2,0.6) rectangle (8.5,3.2);
-\draw[fill=UniPrimary!10,draw=UniPrimaryDeep!70,line width=0.9pt] (4.0,1.1) rectangle (7.7,2.8);
-\node[font=\small\bfseries,text=UniPrimaryDeep] at (5.85,2.55) {Módulo portakits};
-\node[font=\scriptsize,text=UniMuted,align=center] at (5.85,2.05) {bandejas + cajón\\herramientas calibradas};
-\foreach \x in {3.55,8.15} {
-  \foreach \y in {0.95,2.85} {
-    \draw[fill=UniDark!80,draw=UniDark] (\x,\y) circle (0.22);
-    \draw[white,line width=0.5pt] (\x-0.14,\y-0.14) -- (\x+0.14,\y+0.14);
+
+\fill[UniLight] (-0.25,-0.25) rectangle (12.8,5.7);
+\draw[rounded corners=8pt,fill=white,draw=UniPrimaryDeep!55,line width=1pt] (4.05,1.20) rectangle (8.70,4.20);
+\draw[fill=UniPrimary!9,draw=UniPrimaryDeep!70,line width=0.8pt,rounded corners=3pt] (4.70,1.72) rectangle (8.05,3.70);
+\node[font=\small\bfseries,text=UniPrimaryDeep] at (6.38,3.35) {m\'odulo portakits};
+\node[font=\scriptsize,text=UniMuted,align=center] at (6.38,2.72) {bandejas normalizadas\\herramientas calibradas};
+
+\foreach \x in {4.38,8.37} {
+  \foreach \y in {1.55,3.85} {
+    \draw[fill=UniDark!85,draw=UniDark] (\x,\y) circle (0.23);
+    \draw[white,line width=0.55pt] (\x-0.13,\y-0.13) -- (\x+0.13,\y+0.13);
   }
 }
-\draw[fill=GoodGreen!18,draw=GoodGreen!70!black] (5.25,3.05) rectangle (6.45,3.42);
-\node[font=\scriptsize\bfseries,text=GoodGreen!45!black] at (5.85,3.25) {RFID/QR};
-\draw[fill=UniPrimary!12,draw=UniPrimaryDeep!70] (2.8,1.35) rectangle (3.2,2.45);
-\node[font=\scriptsize,text=UniPrimaryDeep,rotate=90] at (3.0,1.90) {E-stop};
-\draw[fill=UniPrimary!18,draw=UniPrimaryDeep] (8.5,1.35) rectangle (8.95,2.45);
-\node[font=\scriptsize,text=UniPrimaryDeep,rotate=90] at (8.72,1.90) {LiDAR};
-\draw[fill=WarnAmber!25,draw=WarnAmber!80!black] (5.45,0.28) rectangle (6.25,0.62);
-\node[font=\scriptsize,text=WarnAmber!70!black] at (5.85,0.45) {RGB-D};
-\draw[dashed,draw=UniPrimaryDeep!60,line width=0.9pt] (2.55,0.25) rectangle (9.25,3.55);
-\node[font=\scriptsize,text=UniPrimaryDeep] at (8.65,3.77) {campo de seguridad};
 
-\node[call,text width=2.7cm] (a) at (0.9,3.55) {\textbf{Seguridad}\\escáner, bumpers y E-stop independientes del mapa};
-\node[call,text width=2.6cm] (b) at (10.9,3.25) {\textbf{Navegación}\\SLAM con LiDAR, IMU y encoders};
-\node[call,text width=2.9cm] (c) at (0.95,0.30) {\textbf{Proceso}\\lectura de kit, destino y devolución};
-\node[call,text width=2.8cm] (d) at (10.75,0.35) {\textbf{FOD}\\imagen revisable al cerrar ronda};
+\node[sensor,minimum width=1.10cm,minimum height=0.35cm,fill=GoodGreen!14,draw=GoodGreen!70!black,text=GoodGreen!45!black] (rfid) at (6.38,4.45) {RFID/QR};
+\node[sensor,minimum width=0.86cm,minimum height=0.36cm,fill=WarnAmber!20,draw=WarnAmber!80!black,text=WarnAmber!65!black] (rgbd) at (6.38,0.82) {RGB-D};
+\node[sensor,minimum width=0.40cm,minimum height=1.05cm] (estop) at (3.72,2.70) {E\\stop};
+\node[sensor,minimum width=0.54cm,minimum height=1.05cm] (lidar) at (9.03,2.70) {LiDAR};
+\draw[dashed,draw=UniPrimaryDeep!55,line width=0.9pt,rounded corners=4pt] (3.50,0.92) rectangle (9.25,4.62);
+\node[font=\scriptsize,text=UniPrimaryDeep,fill=UniLight,inner sep=1pt] at (8.28,4.84) {campo de seguridad};
 
-\draw[arr] (a.east) -- (2.65,2.7);
-\draw[arr] (b.west) -- (8.95,2.05);
-\draw[arr] (c.east) -- (5.25,3.20);
-\draw[arr] (d.west) -- (6.25,0.45);
+\node[call] (seg) at (1.55,4.45) {\textbf{Seguridad}\\esc\'aner certificado, bumpers y parada f\'isica.};
+\node[call] (nav) at (11.10,4.35) {\textbf{Navegaci\'on}\\SLAM con LiDAR, IMU y encoders.};
+\node[call] (trace) at (1.55,0.95) {\textbf{Trazabilidad}\\kit, destino, entrega y devoluci\'on.};
+\node[call] (fod) at (11.10,0.95) {\textbf{FOD}\\imagen revisable al cerrar ronda.};
+
+\draw[arr] (seg.east) -- (estop.west);
+\draw[arr] (nav.west) -- (lidar.east);
+\draw[arr] (trace.east) -- (rfid.west);
+\draw[arr] (fod.west) -- (rgbd.east);
 \end{tikzpicture}
