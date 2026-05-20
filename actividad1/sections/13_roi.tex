@@ -48,9 +48,9 @@ Para comprobar el caso financiero, se anualiza el CAPEX a cinco años y se compa
 \textbf{Escenario} & \textbf{CAPEX} & \textbf{CAPEX anualizado a 5 años} & \textbf{Horas/año de equilibrio}\\
 \midrule
 \endhead
-1 robot & 198.688 & 39.738 & 2.160\\
-7 robots & 904.736 & 180.947 & 9.834\\
-17 robots & 2.051.616 & 410.323 & 22.300\\
+1 robot & 219.856 & 43.971 & 2.390\\
+7 robots & 1.018.752 & 203.750 & 11.073\\
+17 robots & 2.310.896 & 462.179 & 25.118\\
 \bottomrule
 \caption{Horas anuales necesarias para cubrir la inversión si solo se considerara tiempo operativo.}
 \label{tab:roi-break-even}
@@ -70,9 +70,9 @@ El siguiente análisis diferencia tres niveles de beneficio anual. El escenario 
 \textbf{Escenario} & \textbf{Bajo} & \textbf{Central} & \textbf{Alto} & \textbf{OPEX} & \textbf{VAN central} & \textbf{Req. VAN 0}\\
 \midrule
 \endhead
-1 robot & 18.000 & 27.000 & 40.000 & 9.850 & -126.467 & 62.829\\
-7 robots & 120.000 & 190.000 & 285.000 & 85.450 & -446.261 & 316.429\\
-17 robots & 280.000 & 480.000 & 720.000 & 192.450 & -826.403 & 714.125\\
+1 robot & 22.000 & 42.000 & 90.000 & 23.300 & -135.049 & 80.260\\
+7 robots & 135.000 & 245.000 & 380.000 & 99.600 & -403.319 & 359.263\\
+17 robots & 330.000 & 610.000 & 850.000 & 227.800 & -720.128 & 814.017\\
 \bottomrule
 \caption{Sensibilidad financiera a cinco años. Importes en euros; ``Benef. requerido'' es el beneficio anual bruto necesario para VAN aproximadamente cero.}
 \label{tab:roi-sensibilidad}
@@ -85,14 +85,34 @@ El siguiente análisis diferencia tres niveles de beneficio anual. El escenario 
 \midrule
 \endhead
 1 robot & Compra datos de rutas, seguridad, aceptación y calidad de lectura. Su éxito se evalúa por KPIs, no por payback.\\
-7 robots & Primer escalado industrial. Necesita beneficios anuales cercanos a 316.000 \texteuro{} para cerrar VAN, por lo que debe apoyarse en reducción de esperas y continuidad de flujo, no solo en tiempo de caminata.\\
-17 robots & Requiere evidencia previa. En escenario alto se aproxima a VAN positivo; por tanto, depende de que la flota proteja capacidad, reduzca interrupciones y estabilice el escalado hacia 80 HTP/mes.\\
+7 robots & Primer escalado industrial. Necesita beneficios anuales cercanos a 359.000 \texteuro{} para cerrar VAN, por lo que debe apoyarse en reducción de esperas, continuidad de flujo y menor variabilidad logística, no solo en tiempo de caminata.\\
+17 robots & Requiere evidencia previa. Con beneficio alto puede cerrar VAN, pero solo si la flota protege capacidad, reduce interrupciones y estabiliza el escalado hacia 80 HTP/mes.\\
 \bottomrule
 \caption{Interpretación de la sensibilidad financiera.}
 \label{tab:lectura-financiera}
 \end{longtable}
 
 La lectura financiera queda así: el piloto compra información; la expansión compra continuidad; el despliegue extendido compra resiliencia de flujo. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deberían sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
+
+\section{Gates de decisión antes de escalar}
+
+La propuesta comercial no recomienda comprar 7 o 17 robots por intuición. Cada salto se condiciona a datos del escenario anterior. Estos gates son útiles porque conectan la oferta técnica, la oferta comercial y la guía de evaluación: el presupuesto de expansión solo se defiende si el piloto demuestra utilidad medible.
+
+\begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.26\textwidth}P{0.10\textwidth}}
+\toprule
+\textbf{Gate} & \textbf{Métrica} & \textbf{Criterio de paso} & \textbf{Fase}\\
+\midrule
+\endhead
+Seguridad operativa & Contactos, paradas no controladas, invasiones de campo protegido. & Cero incidentes con daño y trazabilidad completa de paradas. & 1--7\\
+Calidad de entrega & Misiones completadas y entregas dentro de ventana. & \(\geq 95\%\) misiones completadas y \(\geq 90\%\) entregas a tiempo. & 1--7\\
+Trazabilidad & Misiones con robot, kit, destino, hora, lector y confirmación. & \(\geq 98\%\) de registros completos. & 1--7\\
+Utilidad FOD & Eventos detectados, falsos positivos y tiempo de revisión. & Evidencia revisable sin sobrecargar al supervisor. & 1--7\\
+Saturación de flota & Utilización, colas, esperas de misión y recargas. & Utilización suficiente para justificar robots adicionales sin congestión. & 7--17\\
+Economía de flujo & Beneficio anual recalculado con datos reales de planta. & Escalar solo si el beneficio se aproxima al umbral de VAN cero. & 7--17\\
+\bottomrule
+\caption{Gates de decisión para pasar del piloto a la expansión y de la expansión al despliegue extendido.}
+\label{tab:gates-escalado}
+\end{longtable}
 
 \section{Beneficios no monetizados}
 

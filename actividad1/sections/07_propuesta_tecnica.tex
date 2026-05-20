@@ -6,24 +6,43 @@ La propuesta consiste en implantar un sistema de robots móviles autónomos para
 
 \section{Modelo de robot y criterio de selección}
 
-La solución separa tres conceptos que conviene no mezclar: el modelo de simulación, la plataforma comercial de referencia y la plataforma objetivo de implantación. Para CoppeliaSim se propone una base tipo KUKA YouBot/KUKA Omnirob, porque permite representar una cinemática omnidireccional con ruedas mecanum/suecas y validar maniobras laterales cerca de estaciones. Para presupuesto se usan MiR250 y Omron LD-250 como referencias comerciales de AMR de 250 kg, porque publican datos de carga, autonomía, seguridad y uso intralogístico. Para la compra real se especificaría una plataforma omnidireccional industrial equivalente, con carga útil de 200--300 kg, módulo portakits y seguridad certificable.
+La solución separa cuatro conceptos que conviene no mezclar: modelo de simulación, modelo técnico seleccionado, benchmarks de mercado y plataforma final de compra. Para CoppeliaSim se propone una base tipo KUKA YouBot/KUKA Omnirob, porque permite representar una cinemática omnidireccional con ruedas mecanum/suecas y validar maniobras laterales cerca de estaciones. Como referencia técnica de implantación se adopta una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}: es un AMR interior omnidireccional, con arquitectura ROS 2 y carga útil de hasta 250 kg según la ficha técnica del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística para dollies, con accionamiento omnidireccional, 300 kg de carga y velocidad máxima de 1,4 m/s \cite{agiloxOdm}.
 
-\begin{longtable}{P{0.20\textwidth}P{0.25\textwidth}P{0.27\textwidth}P{0.18\textwidth}}
+MiR250 y Omron LD-250 no se presentan como la compra final, sino como benchmarks de AMR de 250 kg. El MiR250 publica 250 kg de carga, hasta 2 m/s, uso interior y superficie de carga compacta \cite{mir250Specs}; el Omron LD-250 publica 250 kg, 1,2 m/s, navegación natural, sensores de seguridad y E-stop \cite{omronLd250}. Sirven para acotar coste, madurez y capacidades de mercado, pero no sustituyen el requisito de maniobra lateral de la plataforma objetivo.
+
+\begin{longtable}{P{0.18\textwidth}P{0.25\textwidth}P{0.31\textwidth}P{0.16\textwidth}}
 \toprule
 \textbf{Rol en la propuesta} & \textbf{Modelo/referencia} & \textbf{Dato técnico relevante} & \textbf{Uso}\\
 \midrule
 \endhead
 Simulación académica & KUKA YouBot / KUKA Omnirob o base mecanum equivalente & Ruedas mecanum/suecas, movimiento longitudinal, lateral y giro sobre el eje vertical. & Validar cinemática, rutas y aproximación a estación en CoppeliaSim.\\
-Benchmark comercial & MiR250 Base Robot & 250 kg de carga útil, hasta 2 m/s, uso interior y autonomía de turno según ficha del fabricante \cite{mir250Specs}. & Normalizar coste de AMR industrial compacto.\\
+Selección técnica & Robotnik RB-KAIROS / RB-KAIROS+ class & AMR interior omnidireccional, ROS 2, SLAM, 1,5 m/s, hasta 250 kg con ruedas mecanum fuertes, safety pack opcional \cite{robotnikRbKairosDatasheet}. & Referencia principal de plataforma objetivo.\\
+Alternativa comercial & AGILOX ODM & AMR omnidireccional para dollies, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}. & Opción de compra si se prioriza solución empaquetada de intralogística.\\
+Benchmark comercial & MiR250 Base Robot & 250 kg de carga útil, hasta 2 m/s, uso interior y autonomía de turno según ficha del fabricante \cite{mir250Specs}. & Normalizar orden de magnitud de coste AMR.\\
 Benchmark comercial & Omron LD-250 & 250 kg de carga útil, 1,2 m/s, SLAM, planificación de rutas, láseres de seguridad y E-stop \cite{omronLd250}. & Contrastar capacidad, seguridad y software de flota.\\
-Referencia industrial pesada & KUKA omniMove & Plataforma omnidireccional para cargas XXL; KUKA cita transporte de piezas aeronáuticas como caso de uso \cite{kukaOmniMove}. & Justificar que la omnidireccionalidad tiene sentido en aeronáutica, aunque aquí se use carga moderada.\\
-Plataforma objetivo & AMR omnidireccional 200--300 kg & Base eléctrica con 4 ruedas mecanum/suecas, BLDC/servomotores, encoders, batería industrial y módulo portakits. & Especificación final para licitación/integrador.\\
+Referencia industrial pesada & KUKA omniMove & Plataforma omnidireccional para cargas XXL; KUKA cita transporte de piezas aeronáuticas como caso de uso \cite{kukaOmniMove}. & Justificar omnidireccionalidad en aeronáutica; se descarta por sobredimensionada.\\
 \bottomrule
 \caption{Trazabilidad entre modelo de simulación, referencias comerciales y plataforma objetivo.}
 \label{tab:modelos-robot}
 \end{longtable}
 
 El robot se selecciona por la maniobra en estación, no por fabricación estructural. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
+
+\section{Opciones de compra y decisión de ingeniería}
+
+\begin{longtable}{P{0.22\textwidth}P{0.23\textwidth}P{0.25\textwidth}P{0.20\textwidth}}
+\toprule
+\textbf{Opción} & \textbf{Fortaleza} & \textbf{Riesgo/condición} & \textbf{Decisión}\\
+\midrule
+\endhead
+RB-KAIROS-class & Coincide con cinemática omnidireccional, ROS 2, SLAM y carga de 250 kg. & Requiere cotización formal, safety pack y adaptación portakits. & \textbf{Base técnica recomendada}.\\
+AGILOX ODM-class & Producto intralogístico maduro, omnidireccional y orientado a dollies. & Menos abierto para experimentación académica; integración depende de proveedor. & Alternativa comercial seria.\\
+MiR250 / Omron LD-250 & Muy buenos benchmarks de AMR 250 kg y flota. & No resuelven igual el acoplamiento lateral si la estación exige orientación fija. & Referencia de coste/capacidad, no selección final.\\
+KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y sobredimensionamiento para kits, herramientas y consumibles. & No recomendado para este alcance.\\
+\bottomrule
+\caption{Opciones comerciales y decisión de ingeniería para la plataforma móvil.}
+\label{tab:opciones-compra}
+\end{longtable}
 
 \section{Especificación de plataforma objetivo}
 

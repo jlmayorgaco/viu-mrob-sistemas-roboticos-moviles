@@ -1,6 +1,8 @@
 rol,modelo_referencia,dato_tecnico_relevante,uso_en_propuesta
 Simulacion academica,KUKA YouBot / KUKA Omnirob o base mecanum equivalente,Ruedas mecanum/suecas y movimiento longitudinal lateral y angular,Validar cinematica rutas y aproximacion a estacion en CoppeliaSim
-Benchmark comercial,MiR250 Base Robot,250 kg de carga util hasta 2 m/s y autonomia de turno,Normalizar coste de AMR industrial compacto
-Benchmark comercial,Omron LD-250,250 kg de carga util 1.2 m/s SLAM seguridad y E-stop,Contrastar capacidad seguridad y software de flota
-Referencia industrial pesada,KUKA omniMove,Plataforma omnidireccional para cargas XXL con uso aeronautico documentado,Justificar omnidireccionalidad en entorno aeronautico
-Plataforma objetivo,AMR omnidireccional 200-300 kg,Base electrica con ruedas mecanum/suecas BLDC encoders bateria industrial y modulo portakits,Especificacion final para integrador
+Seleccion tecnica,Robotnik RB-KAIROS / RB-KAIROS+ class,AMR indoor omnidireccional ROS 2 payload hasta 250 kg velocidad 1.5 m/s,Referencia principal para plataforma objetivo por cinematica holonomica y afinidad con simulacion ROS
+Alternativa intralogistica,AGILOX ODM,AMR omnidireccional para dollies payload 300 kg velocidad 1.4 m/s,Alternativa de compra si se prioriza solucion intralogistica empaquetada y soporte comercial
+Benchmark comercial,MiR250 Base Robot,250 kg de carga util hasta 2 m/s y autonomia de turno,Normalizar orden de magnitud de coste para AMR industrial compacto
+Benchmark comercial,Omron LD-250,250 kg de carga util 1.2 m/s SLAM seguridad y E-stop,Contrastar capacidad seguridad y software de flota en AMR diferencial
+Referencia industrial pesada,KUKA omniMove,Plataforma omnidireccional para cargas XXL con uso aeronautico documentado,Justificar omnidireccionalidad en entorno aeronautico aunque queda sobredimensionada para kits
+Plataforma objetivo,AMR omnidireccional 200-300 kg,Base electrica con ruedas mecanum/suecas BLDC encoders bateria industrial modulo portakits y safety pack,Especificacion final para licitacion/integrador
