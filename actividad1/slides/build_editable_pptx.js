@@ -327,41 +327,61 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 7
 {
-  const s = slideBase("Por que AMR omnidireccional", "Alternativas", 7, C.cyan);
-  label(s, "Seleccionado", 0.9, 1.35, 3.2, 0.35, { size: 19, bold: true, color: C.teal });
-  label(s, "AMR omnidireccional representable en CoppeliaSim", 0.92, 1.86, 3.5, 0.38, { size: 8.4, bold: true, color: C.navy });
-  drawAmr(s, 1.38, 2.85, 1.25, C.cyan);
-  label(s, "Movimiento lateral sin reorientar carga; mejor cerca de utiles, estaciones y operarios.", 0.92, 4.45, 3.6, 0.55, { size: 7.6, color: C.muted });
-  const rejects = [
-    ["AGV", "fiable, pero rigido si cambian rutas."],
-    ["Dron", "baja carga y riesgo en interior industrial."],
-    ["Orugas", "innecesarias sobre pavimento regular."],
-    ["Patas", "coste y complejidad sin ventaja operativa clara."],
+  const s = slideBase("Matriz de decision, no seleccion por intuicion", "Alternativas", 7, C.cyan);
+  label(s, "PUNTUACION PONDERADA SOBRE 5", 0.85, 1.10, 2.7, 0.17, { size: 6.5, bold: true, color: C.muted });
+  label(s, "4,25", 0.85, 1.42, 1.25, 0.36, { size: 23, bold: true, color: C.green });
+  label(s, "AMR omnidireccional\nRB-KAIROS/AGILOX-class", 2.55, 1.38, 3.7, 0.50, { size: 8.7, bold: true, color: C.navy });
+  label(s, "Gana por maniobra en estacion y representabilidad en CoppeliaSim; no por ser la opcion mas barata.", 0.88, 2.08, 5.1, 0.42, { size: 6.4, color: C.muted });
+  const rows = [
+    ["AMR omnidireccional", "4,25", 3.85, C.green],
+    ["AMR diferencial MiR/Omron", "3,85", 3.50, C.teal],
+    ["AGV", "3,05", 2.78, C.amber],
+    ["robot con patas", "1,85", 1.66, C.violet],
+    ["dron", "1,75", 1.58, C.red],
+    ["orugas", "1,45", 1.30, C.muted],
   ];
-  rejects.forEach(([a, b], i) => {
-    s.addShape(pptx.ShapeType.rect, { x: 6.2, y: 1.55 + i * 0.72, w: 0.12, h: 0.12, fill: { color: [C.teal, C.amber, C.red, C.violet][i] }, line: { color: [C.teal, C.amber, C.red, C.violet][i] } });
-    label(s, `${a}: ${b}`, 6.48, 1.42 + i * 0.72, 4.9, 0.36, { size: 8.2, color: C.ink });
+  rows.forEach(([name, score, w, col], i) => {
+    const y = 2.88 + i * 0.46;
+    label(s, name, 0.90, y, 2.55, 0.18, { size: 6.6, bold: true, color: C.ink });
+    s.addShape(pptx.ShapeType.rect, { x: 3.82, y: y + 0.04, w: 4.1, h: 0.14, fill: { color: "E8EEF4" }, line: { color: "E8EEF4" } });
+    s.addShape(pptx.ShapeType.rect, { x: 3.82, y: y + 0.04, w, h: 0.14, fill: { color: col }, line: { color: col } });
+    label(s, score, 8.15, y - 0.01, 0.42, 0.18, { size: 6.6, bold: true, color: col });
+  });
+  label(s, "criterios con peso", 9.15, 1.35, 2.4, 0.25, { size: 9.5, bold: true, color: C.navy });
+  [
+    ["25 %", "maniobra en estacion", C.green],
+    ["20 %", "seguridad con operarios", C.red],
+    ["15 %", "trazabilidad e integracion", C.violet],
+    ["15 %", "madurez comercial", C.teal],
+    ["15 %", "coste/riesgo de integracion", C.amber],
+  ].forEach(([pct, txtv, col], i) => {
+    const y = 1.90 + i * 0.66;
+    s.addShape(pptx.ShapeType.ellipse, { x: 9.20, y: y + 0.04, w: 0.12, h: 0.12, fill: { color: col }, line: { color: col } });
+    label(s, `${pct} ${txtv}`, 9.45, y - 0.02, 2.8, 0.20, { size: 7.1, bold: true, color: C.ink });
   });
 }
 
 // 8
 {
-  const s = slideBase("AMR omnidireccional objetivo", "Robot", 8, C.green);
+  const s = slideBase("Modelo elegido y opciones reales de compra", "Robot", 8, C.green);
   drawAmr(s, 1.0, 1.55, 1.85, C.cyan);
   label(s, "LiDAR", 1.0, 1.18, 0.8, 0.18, { size: 6.5, color: C.teal, bold: true });
   label(s, "RGB-D", 3.05, 1.18, 0.8, 0.18, { size: 6.5, color: C.amber, bold: true });
   label(s, "E-stop + bumpers", 1.0, 3.75, 1.45, 0.18, { size: 6.5, color: C.red, bold: true });
   label(s, "IMU + encoders", 3.15, 3.75, 1.4, 0.18, { size: 6.5, color: C.cyan, bold: true });
-  label(s, "tres niveles, una decision", 7.0, 1.35, 4.0, 0.35, { size: 16, bold: true, color: C.navy });
+  label(s, "shortlist defendible", 7.0, 1.35, 4.0, 0.35, { size: 15.0, bold: true, color: C.navy });
   const levels = [
-    ["Simulacion", "YouBot/Omnirob o base mecanum equivalente."],
-    ["Benchmark", "MiR250 y LD-250 solo para coste AMR 250 kg."],
-    ["Implantacion", "plataforma holonomica 200-300 kg con portakits."],
+    ["Recomendado", "RB-KAIROS-class: 250 kg, 1,5 m/s, ROS 2, omni."],
+    ["Alternativa", "AGILOX ODM: 300 kg, 1,4 m/s, intralogistica."],
+    ["Benchmark", "MiR250 y LD-250 solo para coste/carga AMR 250 kg."],
+    ["Descartado", "KUKA omniMove: XXL y caro para kits."],
   ];
   levels.forEach(([a, b], i) => {
-    s.addShape(pptx.ShapeType.ellipse, { x: 7.05, y: 2.1 + i * 0.75, w: 0.14, h: 0.14, fill: { color: [C.teal, C.amber, C.green][i] }, line: { color: [C.teal, C.amber, C.green][i] } });
-    label(s, `${a}: ${b}`, 7.35, 1.96 + i * 0.75, 4.6, 0.36, { size: 8, color: C.ink });
+    const col = [C.green, C.teal, C.amber, C.red][i];
+    s.addShape(pptx.ShapeType.ellipse, { x: 7.05, y: 2.05 + i * 0.62, w: 0.14, h: 0.14, fill: { color: col }, line: { color: col } });
+    label(s, `${a}: ${b}`, 7.35, 1.91 + i * 0.62, 4.9, 0.32, { size: 7.5, color: C.ink });
   });
+  label(s, "La licitacion exige base holonomica, safety pack, portakits, vx/vy/w, trazabilidad y pruebas FAT/SAT.", 7.02, 4.92, 5.1, 0.48, { size: 6.5, color: C.muted });
 }
 
 // 9
@@ -427,9 +447,9 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 {
   const s = slideBase("Tres fases con entregables y criterio de paso", "Despliegue", 12, C.teal);
   const phases = [
-    ["1", "Piloto controlado", "198.688 € CAPEX", "Zona acotada y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
-    ["7", "Expansion", "904.736 € CAPEX", "Varias estaciones y gestor de flota.", "Retorno de utiles y tablero de incidencias.", "Riesgo: pasillos y baterias.", "Pasa: disponibilidad >= 90 %.", C.amber],
-    ["17", "Cobertura extendida", "2.051.616 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: comprar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
+    ["1", "Piloto controlado", "219.856 € CAPEX", "Zona acotada y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
+    ["7", "Expansion", "1.018.752 € CAPEX", "Varias estaciones y gestor de flota.", "Retorno de utiles y tablero de incidencias.", "Riesgo: pasillos y baterias.", "Pasa: disponibilidad >= 90 %.", C.amber],
+    ["17", "Cobertura extendida", "2.310.896 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: comprar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
   ];
   phases.forEach(([n, name, cost, scope1, scope2, risk, gate, col], i) => {
     const x = 0.85 + i * 4.15;
@@ -450,7 +470,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 {
   const s = slideBase("Partidas por escenario, sin caja negra", "Presupuesto", 13, C.amber);
   label(s, "CAPEX estimado sin IVA", 0.85, 1.14, 2.2, 0.18, { size: 6.4, bold: true, color: C.muted });
-  [["198.688 €", "1 robot", C.teal], ["904.736 €", "7 robots", C.amber], ["2.051.616 €", "17 robots", C.green]].forEach(([v, t, col], i) => {
+  [["219.856 €", "1 robot", C.teal], ["1.018.752 €", "7 robots", C.amber], ["2.310.896 €", "17 robots", C.green]].forEach(([v, t, col], i) => {
     label(s, v, 0.85 + i * 3.55, 1.48, 2.25, 0.3, { size: 13.8, bold: true, color: col });
     label(s, t, 0.88 + i * 3.55, 1.86, 1.1, 0.16, { size: 6.3, bold: true, color: C.muted });
   });
@@ -460,14 +480,14 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   label(s, "7 robots", 8.42, 2.55, 0.95, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
   label(s, "17 robots", 11.1, 2.55, 1.0, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
   const rows = [
-    ["AMR + sensores + portakits", "69.800", "488.600", "1.186.600", C.teal],
-    ["Software flota + trazabilidad", "22.000", "58.000", "105.000", C.violet],
-    ["Ingenieria + CoppeliaSim", "42.000", "112.000", "215.000", C.cyan],
-    ["Instalacion + mapeo + SAT", "18.000", "52.000", "120.000", C.green],
-    ["Formacion + cambio operativo", "8.500", "24.000", "42.000", C.amber],
-    ["Mantenimiento ano 1", "5.600", "39.200", "95.200", C.teal],
-    ["Logistica + ciber + docs", "11.500", "34.000", "68.000", C.violet],
-    ["Contingencia + margen 12 %", "21.288", "96.936", "219.816", C.red],
+    ["AMR omni + sensores + portakits", "78.500", "549.500", "1.334.500", C.teal],
+    ["Software flota + trazabilidad", "24.000", "65.000", "120.000", C.violet],
+    ["Ingenieria + CoppeliaSim", "46.000", "126.000", "245.000", C.cyan],
+    ["Instalacion + mapeo + SAT", "20.000", "60.000", "135.000", C.green],
+    ["Formacion + cambio operativo", "9.500", "27.000", "46.000", C.amber],
+    ["Mantenimiento ano 1", "6.300", "44.100", "106.800", C.teal],
+    ["Logistica + ciber + docs", "12.000", "38.000", "76.000", C.violet],
+    ["Contingencia + margen 12 %", "23.556", "109.152", "247.596", C.red],
   ];
   rows.forEach(([part, one, seven, seventeen, col], i) => {
     const y = 2.95 + i * 0.31;
@@ -477,7 +497,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, seven, 8.08, y, 1.3, 0.16, { size: 5.8, color: C.ink, align: "right" });
     label(s, seventeen, 10.72, y, 1.4, 0.16, { size: 5.8, color: C.ink, align: "right" });
   });
-  label(s, "Referencias publicas: MiR250, LD-250, Hokuyo, Intel RealSense y Zebra.", 0.88, 6.05, 7.2, 0.18, { size: 6.4, color: C.muted });
+  label(s, "Referencias publicas: RB-KAIROS/AGILOX, MiR250/LD-250, Hokuyo, Intel, Zebra y SICK.", 0.88, 6.05, 7.2, 0.18, { size: 6.4, color: C.muted });
   label(s, "No es cotizacion vinculante.", 8.2, 6.05, 2.3, 0.18, { size: 6.4, bold: true, color: C.muted });
 }
 
@@ -496,9 +516,9 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   label(s, "horas recuperadas", 5.05, 1.78, 1.6, 0.16, { size: 5.7, color: C.teal });
   label(s, "umbral VAN cero", 7.05, 1.78, 1.5, 0.16, { size: 5.7, color: C.amber });
   const roiRows = [
-    ["1 robot", "825 h/ano", "15.180 €", "62.829 €", 0.32, 1.16, C.amber],
-    ["7 robots", "5.940 h/ano", "109.296 €", "316.429 €", 2.02, 3.15, C.teal],
-    ["17 robots", "14.000 h/ano", "257.600 €", "714.125 €", 3.35, 4.55, C.green],
+    ["1 robot", "825 h/ano", "15.180 €", "80.260 €", 0.32, 1.16, C.amber],
+    ["7 robots", "5.940 h/ano", "109.296 €", "359.263 €", 2.02, 3.30, C.teal],
+    ["17 robots", "14.000 h/ano", "257.600 €", "814.017 €", 3.35, 4.80, C.green],
   ];
   roiRows.forEach(([esc, hrs, val, req, vw, rw, col], i) => {
     const y = 2.45 + i * 1.05;
