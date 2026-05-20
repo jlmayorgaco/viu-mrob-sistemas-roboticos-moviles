@@ -1,6 +1,6 @@
 \chapter{Entrevista con experto}
 
-La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Se presenta una síntesis de la conversación usada para extraer requisitos: tono informal, alguna duda razonable, desvíos puntuales hacia Cádiz y vuelta al proceso productivo. Las capturas reales de la conversación deben incorporarse en el Anexo A antes de subir la entrega al campus.
+La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Se presenta una síntesis de la conversación usada para extraer requisitos: tono informal, alguna duda razonable, referencias puntuales a Cádiz y foco principal en el proceso productivo. Las capturas reales de la conversación deben incorporarse en el Anexo A antes de subir la entrega al campus.
 
 \begin{interviewbrief}
 \textbf{Ficha de la entrevista}
@@ -42,20 +42,20 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 {Fabricarlo entero, yo diría que no. Al menos ahora mismo. En el montaje hay procedimientos muy estrictos, gente cualificada y mucho ajuste fino. A veces el operario nota a tacto si una pieza asienta bien, si un borde está raro o si el sellante no quedó como debía. Un robot necesitaría una barbaridad de sensores y aun así tendría limitaciones. Donde sí lo veo es alrededor: mover carros, llevar herramientas o consumibles, hacer una ronda visual básica, escanear FOD, registrar entregas. Pero montaje completo del HTP, complicado.}
 
 \InterviewExchange
-{El prompt decía que le gusta hablar de Cádiz. Le dejo desviarse un momento: ¿la gente de fuera entiende bien cómo trabaja una planta así?}
-{Qué va. Viene gente de visita y se sorprende de la cantidad de trabajo manual que sigue habiendo en una industria tan avanzada. Luego salen a Cádiz, se comen un pescaito y dicen que lo mejor del viaje fue la Bahía y no los aviones. Tampoco les culpo mucho, la verdad. Pero volviendo a la planta: por eso hay que proponer robots con cuidado. Si vendes que van a hacerlo todo, nadie te cree. Si dices que van a quitar paseos, ordenar entregas y dejar registro, eso ya suena más real.}
+{¿El entorno de Cádiz influye en cómo se trabaja y se convive en planta?}
+{Sí, se nota. Hay mucha cultura de oficio en la Bahía, mucha gente que viene de astilleros, metal, aeronáutica o de familias que llevan años en esto. El trato suele ser cercano, con bastante compañerismo, aunque cuando toca auditoría o FOD la gente se pone seria. También pasa que viene gente de visita, ve una industria muy avanzada y se sorprende de cuánto trabajo manual sigue habiendo. Luego salen a Cádiz, se comen un pescaito y dicen que lo mejor fue la Bahía. Tampoco les culpo. Para el robot eso importa: si vendes que va a hacerlo todo, nadie te cree; si dices que va a quitar paseos, ordenar entregas y dejar registro, suena más real.}
 
 \InterviewExchange
 {Si el robot se queda en tareas de soporte, ¿qué requisitos mínimos tendría que cumplir?}
-{Primero, no estorbar. Velocidad baja, parada de emergencia visible, escáner de seguridad y rutas que no bloqueen el paso. Segundo, maniobrar fino. Si tiene que girar como un carro largo, mal asunto. Una base omnidireccional me cuadra más porque puede corregir de lado junto a una estación. Y tercero, que registre lo que hace: qué recogió, dónde lo dejó, a qué hora y quién confirmó la entrega.}
+{Bastantes más de lo que parece. No es como meterlo en un almacén con pasillos amplios y cajas iguales. En la 19.1 hay útiles enormes, plataformas, gente trabajando alrededor y material temporal. El AMR tendría que ir despacio, detectar personas agachadas, herramientas fuera de sitio y obstáculos raros. También debería cuidar no generar FOD: ruedas, piezas sueltas, vibraciones, mantenimiento. Y, por supuesto, registrar qué recogió, dónde lo dejó, a qué hora y quién confirmó la entrega.}
 
 \InterviewExchange
 {¿Un AGV de ruta fija bastaría?}
-{Para un pasillo que no cambia, puede valer. Pero en montaje cambian prioridades, carros, útiles y zonas ocupadas. Yo preferiría uno de esos robots que llevan su propio mapa y, si el pasillo está ocupado, buscan otro camino. Ojo, si está bloqueado de verdad, esperará o avisará. Milagros no hace.}
+{Depende de lo que quieras resolver. Para logística muy perimetral o rutas controladas puede servir. Pero en montaje se queda corto rápido: cambian carros, útiles, plataformas, inspecciones que bloquean accesos. Una ruta fija se vuelve rígida. Yo preferiría un robot con mapa, zonas restringidas y capacidad de buscar alternativa. Si el pasillo está bloqueado de verdad, esperará o avisará; milagros no hace.}
 
 \InterviewExchange
 {¿Cree que la aceptación de operarios depende de cómo se presente el proyecto?}
-{Sí. Aquí la gente es directa. Si llegas diciendo que el robot arregla toda la planta, mal. Si dices ``vamos a probarlo en esta zona, medimos si quita paseos y corregimos'', eso entra mejor. Y luego hablamos de la Caleta o de carnavales, pero primero que el robot no estorbe.}
+{Muchísimo. Si se presenta como ``esto viene a sustituir tareas'' o como si la gente trabajara lento, la reacción será defensiva. Si se plantea como apoyo, menos paseos, menos búsqueda de carros y menos estrés logístico, cambia bastante. También importa quién lo presenta. No es lo mismo alguien de producción que pisa planta todos los días que un equipo externo que llega con un PowerPoint. Si el operario ve que le facilita el turno, lo adopta; si añade pasos o burocracia, lo cumple lo mínimo.}
 
 \InterviewExchange
 {La actividad habla de pasar de unos 40 HTP al mes a 80 o más. ¿Cómo se debe leer esa meta?}
