@@ -11,19 +11,9 @@ CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico
 
 \section{Modelo de simulación}
 
-\begin{longtable}{P{0.24\textwidth}P{0.62\textwidth}}
-\toprule
-\textbf{Elemento simulado} & \textbf{Descripción}\\
-\midrule
-\endhead
-Robot & Base omnidireccional con volumen equivalente a AMR industrial ligero, velocidad limitada y sensores virtuales.\\
-Mapa de planta & Pasillos, estaciones de HTP, zona de preparación de kits, punto de carga y zona de retorno.\\
-Obstáculos & Útiles, carros, estructuras, operarios simulados como objetos dinámicos y zonas temporalmente bloqueadas.\\
-Sensores & LiDAR 2D/3D para obstáculos, cámara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validación.\\
-Misiones & Entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y misión cancelada por obstáculo persistente.\\
-Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual.\\
-\bottomrule
-\end{longtable}
+El modelo representa una base omnidireccional con volumen equivalente a un AMR industrial ligero, velocidad limitada y sensores virtuales. El mapa incluye pasillos, estaciones HTP, preparación de kits, punto de carga y zona de retorno. Para que la prueba no sea demasiado limpia, se incorporan carros, útiles y operarios simulados como obstáculos dinámicos, además de zonas temporalmente bloqueadas.
+
+Los sensores virtuales cubren LiDAR 2D/3D para obstáculos, una cámara RGB-D conceptual para FOD y puntos de validación que representan lecturas RFID/QR. Las misiones ensayadas son entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y cancelación por obstáculo persistente. La lógica de navegación combina SLAM/fusión sensorial, ruta global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual.
 
 \section{Escenarios de prueba}
 
@@ -59,7 +49,7 @@ Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en 
 Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin ocupar la zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
 Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
 Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
-Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
+Registro & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
 FOD preventivo & Todo positivo RGB-D genera evidencia visual y revisión humana; los falsos positivos se registran. & La cámara aporta una prueba visual útil para rondas preventivas.\\
 Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
 Energía & No se asignan nuevas misiones por debajo de una reserva mínima operativa del 20\% de batería. & Los actuadores y sensores consumen energía; la planificación debe contemplar carga y disponibilidad.\\

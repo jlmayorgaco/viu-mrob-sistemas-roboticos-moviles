@@ -56,7 +56,7 @@ Para comprobar el caso financiero, se anualiza el CAPEX a cinco años y se compa
 \label{tab:roi-break-even}
 \end{longtable}
 
-Con solo tiempo recuperado, el piloto queda por debajo del equilibrio financiero. Siete robots se acercan más, aunque todavía necesitan beneficios operativos adicionales. Diecisiete robots exigen una mejora global del flujo, no solo más misiones de transporte. La tabla marca el punto en el que el argumento de horas recuperadas deja de bastar.
+Con solo tiempo recuperado, el piloto queda por debajo del equilibrio financiero. Siete robots se acercan más, aunque todavía necesitan beneficios operativos adicionales. Diecisiete robots exigen una mejora global del flujo. A partir de ahí, el ahorro en horas no alcanza por sí solo para justificar la inversión.
 
 \section{Sensibilidad financiera a cinco años}
 
@@ -92,11 +92,11 @@ La tabla muestra tres escenarios de beneficio anual y el umbral para que el VAN 
 \label{tab:lectura-financiera}
 \end{longtable}
 
-El análisis financiero avanza por escalones: el piloto mide, la expansión estabiliza y el despliegue extendido protege capacidad. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deben sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
+La idea es que el piloto aporte datos, la expansión estabilice el servicio y el despliegue grande solo se plantee si los números lo justifican. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deben sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
 
 \section{Gates de decisión antes de escalar}
 
-La oferta no recomienda comprar 7 o 17 robots por intuición. Cada salto depende de datos del escenario anterior. Los gates conectan la decisión técnica con la comercial: el presupuesto de expansión solo se defiende si el piloto demuestra utilidad medible.
+Cada salto depende de datos del escenario anterior. Los gates conectan la decisión técnica con la comercial: el presupuesto de expansión solo se defiende si el piloto demuestra utilidad medible.
 
 \begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.26\textwidth}P{0.10\textwidth}}
 \toprule
@@ -105,7 +105,7 @@ La oferta no recomienda comprar 7 o 17 robots por intuición. Cada salto depende
 \endhead
 Seguridad operativa & Contactos, paradas no controladas, invasiones de campo protegido. & Cero incidentes con daño y registro completo de paradas. & 1--7\\
 Calidad de entrega & Misiones completadas y entregas dentro de ventana. & \(\geq 95\%\) misiones completadas y \(\geq 90\%\) entregas a tiempo. & 1--7\\
-Trazabilidad & Misiones con robot, kit, destino, hora, lector y confirmación. & \(\geq 98\%\) de registros completos. & 1--7\\
+Registro de entrega & Misiones con robot, kit, destino, hora, lector y confirmación. & \(\geq 98\%\) de registros completos. & 1--7\\
 Utilidad FOD & Eventos detectados, falsos positivos y tiempo de revisión. & Evidencia revisable sin sobrecargar al supervisor. & 1--7\\
 Saturación de flota & Utilización, colas, esperas de misión y recargas. & Utilización suficiente para justificar robots adicionales sin congestión. & 7--17\\
 Economía de flujo & Beneficio anual recalculado con datos reales de planta. & Escalar solo si el beneficio se aproxima al umbral de VAN cero. & 7--17\\
@@ -116,15 +116,7 @@ Economía de flujo & Beneficio anual recalculado con datos reales de planta. & E
 
 \section{Beneficios no monetizados}
 
-Hay beneficios que no se pueden poner en euros sin datos reales de la planta, pero que igualmente pesan en la decisión. Para Alestis Puerto Real tendrían peso específico:
-
-\begin{itemize}
-  \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estación.
-  \item Evidencia de entrega: robot, kit, estación, hora, lector RFID/QR y confirmación humana.
-  \item Menor exposición a incidencias FOD con rondas preventivas, registro visual y eventos trazados.
-  \item Mejor dimensionamiento de recursos logísticos al disponer de datos de misiones, colas, rutas y tiempos.
-  \item Mayor capacidad para absorber el crecimiento de 40 a 80 HTP/mes sin duplicar movimientos manuales de soporte.
-\end{itemize}
+Hay beneficios que no se pueden poner en euros sin datos reales de la planta, pero que igualmente pesan en la decisión. El primero es operativo: menos interrupciones por kits, consumibles o herramientas no disponibles en estación. También importa la evidencia de entrega, con robot, kit, estación, hora, lector RFID/QR y confirmación humana. En FOD, el valor está en dejar registro visual de rondas preventivas y eventos trazados. Para planificar el crecimiento, los datos de misiones, colas, rutas y tiempos ayudan a dimensionar recursos logísticos antes de duplicar movimientos manuales de soporte.
 
 \section{Lectura del retorno}
 
