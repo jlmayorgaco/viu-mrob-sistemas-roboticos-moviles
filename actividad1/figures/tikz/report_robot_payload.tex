@@ -1,0 +1,37 @@
+\begin{tikzpicture}[
+  scale=0.94,
+  call/.style={font=\footnotesize,align=left,text=UniDark},
+  arr/.style={-Latex,line width=0.8pt,draw=UniPrimaryDeep}
+]
+\fill[UniLight] (-0.4,-0.7) rectangle (12.2,4.4);
+\draw[rounded corners=8pt,fill=white,draw=UniPrimaryDeep!55,line width=1pt] (3.2,0.6) rectangle (8.5,3.2);
+\draw[fill=UniPrimary!10,draw=UniPrimaryDeep!70,line width=0.9pt] (4.0,1.1) rectangle (7.7,2.8);
+\node[font=\small\bfseries,text=UniPrimaryDeep] at (5.85,2.55) {Módulo portakits};
+\node[font=\scriptsize,text=UniMuted,align=center] at (5.85,2.05) {bandejas + cajón\\herramientas calibradas};
+\foreach \x in {3.55,8.15} {
+  \foreach \y in {0.95,2.85} {
+    \draw[fill=UniDark!80,draw=UniDark] (\x,\y) circle (0.22);
+    \draw[white,line width=0.5pt] (\x-0.14,\y-0.14) -- (\x+0.14,\y+0.14);
+  }
+}
+\draw[fill=GoodGreen!18,draw=GoodGreen!70!black] (5.25,3.05) rectangle (6.45,3.42);
+\node[font=\scriptsize\bfseries,text=GoodGreen!45!black] at (5.85,3.25) {RFID/QR};
+\draw[fill=UniPrimary!12,draw=UniPrimaryDeep!70] (2.8,1.35) rectangle (3.2,2.45);
+\node[font=\scriptsize,text=UniPrimaryDeep,rotate=90] at (3.0,1.90) {E-stop};
+\draw[fill=UniPrimary!18,draw=UniPrimaryDeep] (8.5,1.35) rectangle (8.95,2.45);
+\node[font=\scriptsize,text=UniPrimaryDeep,rotate=90] at (8.72,1.90) {LiDAR};
+\draw[fill=WarnAmber!25,draw=WarnAmber!80!black] (5.45,0.28) rectangle (6.25,0.62);
+\node[font=\scriptsize,text=WarnAmber!70!black] at (5.85,0.45) {RGB-D};
+\draw[dashed,draw=UniPrimaryDeep!60,line width=0.9pt] (2.55,0.25) rectangle (9.25,3.55);
+\node[font=\scriptsize,text=UniPrimaryDeep] at (8.65,3.77) {campo de seguridad};
+
+\node[call,text width=2.7cm] (a) at (0.9,3.55) {\textbf{Seguridad}\\escáner, bumpers y E-stop independientes del mapa};
+\node[call,text width=2.6cm] (b) at (10.9,3.25) {\textbf{Navegación}\\SLAM con LiDAR, IMU y encoders};
+\node[call,text width=2.9cm] (c) at (0.95,0.30) {\textbf{Proceso}\\lectura de kit, destino y devolución};
+\node[call,text width=2.8cm] (d) at (10.75,0.35) {\textbf{FOD}\\imagen revisable al cerrar ronda};
+
+\draw[arr] (a.east) -- (2.65,2.7);
+\draw[arr] (b.west) -- (8.95,2.05);
+\draw[arr] (c.east) -- (5.25,3.20);
+\draw[arr] (d.west) -- (6.25,0.45);
+\end{tikzpicture}

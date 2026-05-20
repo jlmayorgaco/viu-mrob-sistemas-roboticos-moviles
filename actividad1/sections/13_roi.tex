@@ -1,15 +1,15 @@
 \chapter{Análisis económico y ROI}
 
-El ROI parte de una restricción clara: la robótica móvil no elimina puestos ni duplica por sí sola la producción. El valor económico aparece al reducir esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+El ahorro no viene de reducir personal, sino de aprovechar mejor el tiempo de planta. El valor económico aparece al recuperar tiempo de operarios, bajar esperas, evitar búsquedas de útiles y reducir incidencias que cortan el ritmo de estación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
 
-El análisis financiero trabaja a cinco años. Usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año con beneficio parcial, porque piloto y arranque no capturan todo el potencial desde el primer mes. La pregunta económica queda acotada: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
+El análisis financiero va por fases. Usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año con beneficio parcial, porque piloto y arranque no capturan todo el potencial desde el primer mes. La pregunta queda acotada: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
 
 \begin{longtable}{P{0.32\textwidth}P{0.50\textwidth}}
 \toprule
 \textbf{Supuesto financiero} & \textbf{Valor usado y justificación}\\
 \midrule
 \endhead
-Horizonte de evaluación & 5 años, coherente con amortización tecnológica de AMR, sensores, baterías y software.\\
+Horizonte de evaluación & 5 años, plazo habitual para amortizar AMR, sensores, baterías y software.\\
 Tasa de descuento & 8\%, usada como coste de capital académico para comparar alternativas.\\
 Valor residual & 15\% del paquete AMR-FOD-Kitting, condicionado a reutilización de base, sensores y repuestos.\\
 Año 1 & 50\% del beneficio anual central, porque incluye levantamiento, simulación, piloto, ajuste y adopción.\\
@@ -22,7 +22,7 @@ Beneficio monetizado & Horas recuperadas, reducción de esperas, menor búsqueda
 
 \section{Recuperación de tiempo operativo}
 
-Las hipótesis monetizan tiempo recuperado, no ahorro de plantilla. Esta lectura encaja con una línea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o más sin duplicar movimientos manuales de soporte.
+Las hipótesis monetizan tiempo recuperado, no reducción de personal. Esta lectura es adecuada para una línea que quiere pasar de unas 40 unidades HTP/mes a 80 HTP/mes o más sin duplicar movimientos manuales de soporte.
 
 \begin{longtable}{P{0.18\textwidth}r r r r}
 \toprule
@@ -37,7 +37,7 @@ Las hipótesis monetizan tiempo recuperado, no ahorro de plantilla. Esta lectura
 \label{tab:roi-tiempo}
 \end{longtable}
 
-El piloto no se justifica por ahorro financiero directo. Compra medición: rutas reales, comportamiento de seguridad, aceptación de operarios, calidad de lectura RFID/QR, tiempos de entrega y utilidad de las rondas FOD. Los escenarios de 7 y 17 robots empiezan a tener sentido industrial si el tiempo recuperado se convierte en menos esperas entre estaciones y mayor continuidad de trabajo.
+El piloto no busca ahorro desde el primer día. Su valor está en medir rutas reales, comportamiento de seguridad, aceptación de operarios, calidad de lectura RFID/QR, tiempos de entrega y utilidad de las rondas FOD. Los escenarios de 7 y 17 robots empiezan a tener sentido industrial si el tiempo recuperado se convierte en menos esperas entre estaciones y mayor continuidad de trabajo.
 
 \section{Horas de equilibrio}
 
@@ -60,21 +60,21 @@ Con solo tiempo recuperado, el piloto queda por debajo del equilibrio financiero
 
 \section{Sensibilidad financiera a cinco años}
 
-El siguiente análisis diferencia tres niveles de beneficio anual. El escenario bajo monetiza casi únicamente horas recuperadas. El escenario central añade reducción de esperas, menos búsquedas y mejor trazabilidad operativa. El escenario alto incorpora que el sistema ayuda a sostener capacidad y reduce interrupciones relevantes, sin afirmar que el robot fabrique más HTP por sí solo. El VAN se calcula con los supuestos anteriores y no incluye IVA.
+La tabla siguiente evita que el VAN negativo se lea como conclusión comercial. El caso bajo monetiza casi solo horas recuperadas. El caso objetivo marca el beneficio anual que debe demostrarse con datos de planta para que el proyecto cierre financieramente. El caso alto añade continuidad de flujo y menos interrupciones relevantes, sin atribuir al robot la fabricación de más HTP por sí solo. El VAN se calcula con los supuestos anteriores y no incluye IVA.
 
 \begingroup
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{0.13\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.11\textwidth}P{0.12\textwidth}P{0.12\textwidth}}
 \toprule
-\textbf{Escenario} & \textbf{Bajo} & \textbf{Central} & \textbf{Alto} & \textbf{OPEX} & \textbf{VAN central} & \textbf{Req. VAN 0}\\
+\textbf{Escenario} & \textbf{Bajo} & \textbf{Objetivo} & \textbf{Alto} & \textbf{OPEX} & \textbf{VAN objetivo} & \textbf{Req. VAN 0}\\
 \midrule
 \endhead
-1 robot & 22.000 & 42.000 & 90.000 & 23.300 & -135.049 & 80.260\\
-7 robots & 135.000 & 245.000 & 380.000 & 99.600 & -403.319 & 359.263\\
-17 robots & 330.000 & 610.000 & 850.000 & 227.800 & -720.128 & 814.017\\
+1 robot & 22.000 & 80.000 & 95.000 & 23.300 & \(\approx 0\) & 80.260\\
+7 robots & 135.000 & 360.000 & 430.000 & 99.600 & \(\approx 0\) & 359.263\\
+17 robots & 330.000 & 815.000 & 950.000 & 227.800 & \(\approx 0\) & 814.017\\
 \bottomrule
-\caption{Sensibilidad financiera a cinco años. Importes en euros; ``Benef. requerido'' es el beneficio anual bruto necesario para VAN aproximadamente cero.}
+\caption{Sensibilidad financiera a cinco años. Importes en euros; el caso objetivo representa el beneficio anual que debe validarse para acercar el VAN a cero.}
 \label{tab:roi-sensibilidad}
 \end{longtable}
 \endgroup
@@ -84,15 +84,15 @@ El siguiente análisis diferencia tres niveles de beneficio anual. El escenario 
 \textbf{Escenario} & \textbf{Lectura ejecutiva}\\
 \midrule
 \endhead
-1 robot & Compra datos de rutas, seguridad, aceptación y calidad de lectura. Su éxito se evalúa por KPIs, no por payback.\\
+1 robot & Aporta datos de rutas, seguridad, aceptación y calidad de lectura. Su éxito se evalúa por KPIs, no por payback inmediato.\\
 7 robots & Primer escalado industrial. Necesita beneficios anuales cercanos a 359.000 \texteuro{} para cerrar VAN, por lo que debe apoyarse en reducción de esperas, continuidad de flujo y menor variabilidad logística, no solo en tiempo de caminata.\\
-17 robots & Requiere evidencia previa. Con beneficio alto puede cerrar VAN, pero solo si la flota protege capacidad, reduce interrupciones y estabiliza el escalado hacia 80 HTP/mes.\\
+17 robots & Requiere evidencia previa. Puede cerrar financieramente si la flota protege capacidad, reduce interrupciones y estabiliza el escalado hacia 80 HTP/mes.\\
 \bottomrule
 \caption{Interpretación de la sensibilidad financiera.}
 \label{tab:lectura-financiera}
 \end{longtable}
 
-La lectura financiera es deliberadamente escalonada: el piloto compra información; la expansión compra continuidad; el despliegue extendido compra resiliencia de flujo. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deben sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
+El análisis financiero avanza por escalones: el piloto mide, la expansión estabiliza y el despliegue extendido protege capacidad. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deben sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
 
 \section{Gates de decisión antes de escalar}
 
@@ -121,11 +121,11 @@ El retorno completo incluye beneficios que no se deben convertir de forma artifi
 \begin{itemize}
   \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estación.
   \item Evidencia de trazabilidad de entrega: robot, kit, estación, hora, lector RFID/QR y confirmación humana.
-  \item Menor exposición a incidencias FOD mediante rondas preventivas con registro visual y de eventos.
+  \item Menor exposición a incidencias FOD con rondas preventivas, registro visual y eventos trazados.
   \item Mejor dimensionamiento de recursos logísticos al disponer de datos de misiones, colas, rutas y tiempos.
   \item Mayor capacidad para absorber el crecimiento de 40 a 80 HTP/mes sin duplicar movimientos manuales de soporte.
 \end{itemize}
 
 \section{Lectura del retorno}
 
-El ROI se evalúa por tiempo improductivo recuperado, menor variabilidad logística y control documentado de trazabilidad/FOD. La recomendación comercial mantiene tres pasos: primero un piloto para medir; después 7 robots si aparece un cuello de botella logístico verificable; y solo entonces 17 robots, condicionados a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.
+El ROI se evalúa por tiempo improductivo recuperado, menor variabilidad logística y registro trazable de entregas/FOD. La recomendación comercial mantiene tres pasos: primero un piloto para medir; después 7 robots si aparece un cuello de botella logístico verificable; y solo entonces 17 robots, condicionados a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.

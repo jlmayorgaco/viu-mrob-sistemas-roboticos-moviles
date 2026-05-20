@@ -1,0 +1,27 @@
+\begin{tikzpicture}[
+  scale=0.9,
+  test/.style={draw=UniPrimaryDeep!55,fill=white,rounded corners=2pt,minimum width=3.0cm,minimum height=1.0cm,align=center,font=\small\bfseries},
+  note/.style={font=\footnotesize,text=UniMuted,align=center,text width=2.8cm},
+  arr/.style={-Latex,line width=0.9pt,draw=UniPrimary}
+]
+\fill[UniLight] (-0.6,-0.7) rectangle (12.8,4.2);
+\node[test] (t1) at (1.2,2.8) {1. Ruta base};
+\node[test] (t2) at (4.4,2.8) {2. Pasillo\\bloqueado};
+\node[test] (t3) at (7.6,2.8) {3. Cruce con\\operario};
+\node[test] (t4) at (10.8,2.8) {4. Ronda FOD};
+
+\draw[arr] (t1) -- (t2);
+\draw[arr] (t2) -- (t3);
+\draw[arr] (t3) -- (t4);
+
+\node[note] at (1.2,1.45) {SLAM + fusión\\llegada a estación};
+\node[note] at (4.4,1.45) {A*/Dijkstra\\ruta alternativa};
+\node[note] at (7.6,1.45) {DWA/campos\\parada o rodeo};
+\node[note] at (10.8,1.45) {RGB-D\\imagen revisable};
+
+\draw[UniPrimaryDeep!35,line width=0.9pt] (0.1,0.45) -- (11.9,0.45);
+\foreach \x/\lab in {0.5/mapa,3.6/misión,6.7/evento,9.8/registro} {
+  \fill[GoodGreen] (\x,0.45) circle (0.08);
+  \node[anchor=north,font=\scriptsize,text=UniDark] at (\x,0.28) {\lab};
+}
+\end{tikzpicture}

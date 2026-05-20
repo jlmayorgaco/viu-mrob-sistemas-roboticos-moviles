@@ -1,74 +1,60 @@
 \chapter{Anexos}
 
-\section{Prompt usado para entrevista simulada}
+\section{Prompt usado para la entrevista}
 
 \begin{summarybox}
-Actúa como Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Lunabotics necesita preparar una oferta técnica y comercial de robótica móvil para mejorar procesos relacionados con el HTP del A320 y la sección 19.1. Responde como experto de planta: explica qué ocurre en esa zona, qué materiales o herramientas se mueven, qué problemas recurrentes aparecen, si hay retrasos por componentes o útiles no localizados, qué papel tiene FOD y qué restricciones tendría un robot móvil. Si la conversación se desvía hacia temas personales, Cádiz o cultura local, redirige de forma natural hacia el proceso productivo. No propongas que el robot fabrique directamente el HTP; enfócate en transporte interno, kitting, retorno de útiles, trazabilidad RFID/QR, inspección preventiva y datos útiles para una oferta comercial.
+Actúa como Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Responde como experto de planta para ayudar a Lunabotics a preparar una oferta técnica y comercial de robótica móvil sobre el HTP del A320 y la sección 19.1. Explica qué ocurre en esa zona, qué materiales o herramientas se mueven, qué problemas aparecen, cómo afectan FOD y la trazabilidad, y qué restricciones tendría un robot móvil en una nave aeronáutica. Puedes cometer errores, olvidar algún detalle o no dar toda la información en la primera respuesta. Cada cinco o seis respuestas intenta desviarte hacia lo bonita que es Cádiz, su bahía, su cultura o sus carnavales, y vuelve después al proceso productivo. No propongas que un robot fabrique directamente el HTP; céntrate en transporte interno, kitting, retorno de útiles, trazabilidad RFID/QR, inspección preventiva y datos de operación para justificar una oferta.
 \end{summarybox}
 
-\section{Evidencia textual de entrevista}
+\section{Capturas de pantalla de la entrevista}
 
-La guía de la actividad recomienda conservar evidencia de la conversación con el experto. En esta entrega se incorpora la entrevista completa como acta técnica en el Capítulo 3 y se resume aquí en tres bloques verificables, equivalentes al contenido que se mostraría en capturas de pantalla.
+La guía solicita capturas de pantalla de la conversación con ChatGPT. Para no mezclar una transcripción reconstruida con evidencia visual, el informe deja preparadas cuatro posiciones de captura. Antes de subir la entrega al campus deben sustituirse por los PNG/JPG reales exportados de la conversación.
 
-\begin{summarybox}
-\textbf{Evidencia 1: enfoque de la conversación.} Lunabotics solicita información sobre procesos reales de Alestis Puerto Real, evitando desviaciones personales. Carlos Pérez identifica el HTP del A320, la sección 19.1, las interfaces de cola y la necesidad de coordinar útiles, documentación, inspecciones y materiales auxiliares.
-\end{summarybox}
+\begin{figure}[H]
+\centering
+\IfFileExists{figures/entrevista/captura_01.png}{%
+  \includegraphics[width=0.92\textwidth]{figures/entrevista/captura_01.png}%
+}{%
+  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 1 pendiente: prompt oficial introducido en ChatGPT.}}%
+}
+\caption{Captura 1 de la entrevista con Carlos Pérez.}
+\end{figure}
 
-\begin{summarybox}
-\textbf{Evidencia 2: problemas operativos detectados.} La conversación recoge microesperas por kits, herramientas o útiles no localizados; préstamos informales de herramientas; falta de trazabilidad fina en el momento de entrega; y movimientos repetitivos que reducen capacidad real aunque no siempre aparezcan como parada formal.
-\end{summarybox}
+\begin{figure}[H]
+\centering
+\IfFileExists{figures/entrevista/captura_02.png}{%
+  \includegraphics[width=0.92\textwidth]{figures/entrevista/captura_02.png}%
+}{%
+  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 2 pendiente: primeras respuestas sobre HTP, sección 19.1 y flujo de materiales.}}%
+}
+\caption{Captura 2 de la entrevista con Carlos Pérez.}
+\end{figure}
 
-\begin{summarybox}
-\textbf{Evidencia 3: implicaciones robóticas.} El experto descarta fabricar el HTP con un robot móvil y centra el alcance en AMR para kitting, retorno de útiles, inspección preventiva FOD, registro RFID/QR, navegación segura con operarios y despliegue piloto medido con KPIs.
-\end{summarybox}
+\begin{figure}[H]
+\centering
+\IfFileExists{figures/entrevista/captura_03.png}{%
+  \includegraphics[width=0.92\textwidth]{figures/entrevista/captura_03.png}%
+}{%
+  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 3 pendiente: desviación hacia Cádiz y vuelta al proceso productivo.}}%
+}
+\caption{Captura 3 de la entrevista con Carlos Pérez.}
+\end{figure}
 
-\section{Matriz de cumplimiento contra la guía oficial}
-
-\begin{longtable}{P{0.32\textwidth}P{0.46\textwidth}P{0.14\textwidth}}
-\toprule
-\textbf{Exigencia de la guía} & \textbf{Evidencia en el documento} & \textbf{Estado}\\
-\midrule
-\endhead
-Actividad 1 de Sistemas Robóticos Móviles, con entrega el 26 de mayo de 2026 antes de las 23:59. & Portada, metadatos del informe y metodología. & Cumplido\\
-Diseño teórico de un sistema robótico para una aplicación industrial concreta. & Propuesta AMR-FOD-Kitting para Alestis Puerto Real, HTP A320 y sección 19.1. & Cumplido\\
-Parte 1: entrevista con un experto. & Capítulo de entrevista con ficha, acta técnica, conversación simulada, hallazgos e implicaciones. & Cumplido\\
-Parte 2: oferta técnica basada en robótica móvil. & Identificación del problema, requisitos, alternativas, robot seleccionado, sensores, arquitectura, operación y validación en CoppeliaSim. & Cumplido\\
-Parte 3: oferta comercial de la misma solución. & Presupuesto por partidas, escenarios 1/7/17 robots, TCO, ROI y condiciones comerciales académicas. & Cumplido\\
-Introducción a Lunabotics, capacidades, experiencia y resultados de referencia. & Perfil de Lunabotics en la introducción y diapositiva específica de presentación. & Cumplido\\
-Identificación del problema en Alestis Puerto Real. & Capítulos de entrevista, problema, requisitos y matriz de trazabilidad. & Cumplido\\
-Propuesta de solución con robot móvil disponible en CoppeliaSim. & AMR omnidireccional tipo KUKA YouBot/Omnirob en simulación y clase RB-KAIROS/AGILOX para implantación. & Cumplido\\
-Viabilidad técnica y comercial, incluyendo beneficios y retorno. & Capítulos de viabilidad, riesgos, presupuesto y ROI. & Cumplido\\
-Datos clave: 40 HTP/mes, objetivo 80 HTP/mes o más, salario 20.000--28.000 euros/año. & Metodología, despliegue y análisis económico. & Cumplido\\
-Añadir una diapositiva extra detallando presupuesto. & Diapositiva \textit{Presupuesto detallado} incluida en el informe, presentación PDF y PPTX. & Cumplido\\
-Incluir tipo de robot y sensores adicionales. & Capítulo de propuesta técnica, arquitectura, anexos y slides. & Cumplido\\
-Especificar cada partida presupuestaria. & Tabla de presupuesto por partidas y CSV auxiliar. & Cumplido\\
-\bottomrule
-\end{longtable}
-
-\section{Trazabilidad con los temas del curso}
-
-\begin{longtable}{P{0.24\textwidth}P{0.38\textwidth}P{0.28\textwidth}}
-\toprule
-\textbf{Material del curso} & \textbf{Contenido aplicado} & \textbf{Evidencia en la Actividad 1}\\
-\midrule
-\endhead
-Tema 1: Robótica móvil & Concepto de robot móvil, sensores, actuadores, entorno y robots que ruedan como solución práctica. & Selección de AMR terrestre, sensores LiDAR/RGB-D/RFID, actuadores eléctricos y operación en nave industrial.\\
-Tema 1.2: Robots móviles con ruedas & Locomoción por ruedas, estabilidad, odometría y utilidad de plataformas rodantes. & Justificación de robot terrestre frente a soluciones aéreas o con patas; uso de encoders e IMU para odometría.\\
-Tema 1.3: Otros tipos de robots & Comparación de ruedas mecanum/suecas, orugas, drones y otras morfologías. & Tabla de alternativas: AGV, AMR, omnidireccional, orugas, drones y patas; selección de base omnidireccional.\\
-Tema 2: Diseño y arquitectura & Sensores con ruido/rango/resolución limitados, actuadores, controladores, efectores, comunicaciones y arquitectura por capas. & Arquitectura de percepción, localización, misiones, control, HMI, WiFi, base de datos, trazabilidad y separación entre navegación, seguridad y proceso.\\
-Tema 2: Motores & Relación entre motores, controladores, efectores, energía, baterías y limitaciones prácticas. & Sección de actuadores, motorización y control; limitación de velocidades, supervisión de corriente/temperatura, seguridad y no manipulación estructural.\\
-Tema 3: Control y navegación & Planificación de trayectorias y comportamiento de navegación en robótica móvil. & Validación de rutas, aproximación lateral, replanificación ante obstáculos y flujo operativo de misiones.\\
-Tema 4: Localización, SLAM y anticolisión & Kalman/Montecarlo, SLAM, DWA, campos potenciales, A*/Dijkstra y pruebas simuladas. & Plan de validación en CoppeliaSim con SLAM/fusión sensorial, planificador global, evitación local y escenarios dinámicos.\\
-\bottomrule
-\end{longtable}
+\begin{figure}[H]
+\centering
+\IfFileExists{figures/entrevista/captura_04.png}{%
+  \includegraphics[width=0.92\textwidth]{figures/entrevista/captura_04.png}%
+}{%
+  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 4 pendiente: conclusiones sobre AMR, FOD, trazabilidad y piloto.}}%
+}
+\caption{Captura 4 de la entrevista con Carlos Pérez.}
+\end{figure}
 
 \section{Tabla completa de presupuesto}
 
-La Tabla~\ref{tab:presupuesto} contiene la versión completa del presupuesto por partidas para 1, 7 y 17 robots. Esta tabla se replica de forma resumida en la diapositiva extra de presupuesto de la presentación. Los CSV \texttt{tables/referencias\_comerciales.csv}, \texttt{tables/presupuesto\_detallado.csv} y \texttt{tables/dataset\_roi\_supuestos.csv} dejan trazabilidad entre fuentes, supuestos y totales.
+La Tabla~\ref{tab:presupuesto} contiene el presupuesto por partidas para 1, 7 y 17 robots. La misma información aparece resumida en la diapositiva extra de presupuesto. Los CSV de la carpeta \texttt{tables/} conservan el detalle de referencias comerciales, supuestos de ROI y sensibilidad financiera.
 
 \section{Diapositiva extra de presupuesto}
-
-La siguiente caja reproduce dentro del PDF del informe la diapositiva extra solicitada por la guía. La misma información aparece en la presentación PDF, en el PowerPoint visual y en la versión PowerPoint nativa editable; la fuente principal de la presentación sigue siendo \texttt{slides/slides.tex}.
 
 \begin{tcolorbox}[
   enhanced,
@@ -82,7 +68,7 @@ La siguiente caja reproduce dentro del PDF del informe la diapositiva extra soli
   arc=1.5mm,
   boxrule=0.8pt
 ]
-\textbf{Sistema AMR-FOD-Kitting para línea HTP A320.} Estimación preliminar sin IVA, basada en referencias comerciales públicas y no vinculante.
+\textbf{Sistema AMR-FOD-Kitting para línea HTP A320.} Estimación preliminar sin IVA, basada en referencias comerciales públicas.
 
 \begin{tabularx}{\textwidth}{Y r r r}
 \toprule
@@ -101,47 +87,13 @@ La siguiente caja reproduce dentro del PDF del informe la diapositiva extra soli
 \section{Lista de sensores}
 
 \begin{itemize}
-  \item LiDAR 2D/3D para SLAM y obstáculos; la seguridad funcional se reserva al escáner láser de seguridad.
-  \item Cámara RGB-D o industrial para inspección FOD preventiva con validación humana.
-  \item Lector RFID/QR para trazabilidad.
+  \item LiDAR 2D/3D para SLAM y obstáculos; la seguridad funcional usa escáner láser certificado.
+  \item Cámara RGB-D o industrial para rondas FOD con imagen revisable.
+  \item RFID/QR para trazabilidad de kits, herramientas, útiles y puntos de entrega.
   \item IMU y encoders para odometría.
-  \item Bumpers, escáner láser de seguridad y parada de emergencia.
-  \item HMI/tablet y comunicación WiFi industrial.
+  \item Bumpers, escáner de seguridad y parada de emergencia.
+  \item HMI/tablet, WiFi industrial y base de datos de misiones.
 \end{itemize}
-
-\section{Checklist de cumplimiento de la actividad}
-
-\begin{longtable}{P{0.68\textwidth}P{0.22\textwidth}}
-\toprule
-\textbf{Criterio} & \textbf{Estado}\\
-\midrule
-\endhead
-Portada con asignatura, actividad, profesor y fecha correcta. & Cumplido\\
-Mención de Alestis Puerto Real, HTP, sección 19.1 y A320. & Cumplido\\
-Entrevista simulada con formato dedicado y tabla de hallazgos. & Cumplido\\
-Oferta técnica clara basada en robótica móvil. & Cumplido\\
-Oferta comercial con presupuesto por partidas. & Cumplido\\
-Escenarios de 1, 7 y 17 robots. & Cumplido\\
-Robot seleccionado, modelos de referencia y sensores adicionales. & Cumplido\\
-Uso de CoppeliaSim como marco de validación. & Cumplido\\
-Presentación PDF, PPTX visual equivalente y PPTX nativo editable. & Cumplido\\
-Diapositiva extra de presupuesto dentro del informe y la presentación. & Cumplido\\
-Eliminación de contenido ajeno al alcance de la Actividad 1. & Cumplido\\
-\bottomrule
-\end{longtable}
-
-\section{Checklist por ponderación}
-
-\begin{longtable}{P{0.18\textwidth}P{0.50\textwidth}P{0.22\textwidth}}
-\toprule
-\textbf{Bloque} & \textbf{Evidencia incluida} & \textbf{Cobertura}\\
-\midrule
-\endhead
-Entrevista 20\% & Ficha, acta técnica, conversación simulada con Carlos Pérez, hallazgos e implicaciones directas para el diseño robótico. & Completa\\
-Oferta técnica 60\% & Problema, requisitos, alternativas, matriz de modelos, robot seleccionado, sensores, arquitectura, operación, CoppeliaSim, escenarios, riesgos y KPIs. & Completa\\
-Oferta comercial 20\% & Presupuesto por partidas para 1, 7 y 17 robots, BOM por AMR, TCO, VAN, sensibilidad financiera y condiciones comerciales académicas. & Completa\\
-\bottomrule
-\end{longtable}
 
 \section{Artefactos de entrega}
 
@@ -149,7 +101,7 @@ Oferta comercial 20\% & Presupuesto por partidas para 1, 7 y 17 robots, BOM por 
   \item Informe PDF: \texttt{actividad1/main.pdf}.
   \item Presentación PDF: \texttt{actividad1/slides/slides.pdf}.
   \item Presentación PowerPoint visual: \path{actividad1/slides/Actividad1_AMR_FOD_Kitting.pptx}.
-  \item Fuente editable principal: \path{actividad1/slides/slides.tex}.
   \item Presentación PowerPoint nativa editable: \path{actividad1/slides/Actividad1_AMR_FOD_Kitting_editable.pptx}.
-  \item Tablas auxiliares: carpeta \texttt{actividad1/tables/}, con modelos, sensores/BOM, presupuesto, referencias comerciales, KPIs, supuestos ROI y sensibilidad financiera.
+  \item Fuente principal de la presentación: \path{actividad1/slides/slides.tex}.
+  \item Tablas auxiliares: \texttt{actividad1/tables/}.
 \end{itemize}

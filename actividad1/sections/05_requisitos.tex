@@ -1,6 +1,6 @@
 \chapter{Requisitos técnicos}
 
-La tabla siguiente convierte los problemas observados en requisitos técnicos verificables. Estos requisitos guían la selección del robot, los sensores y la arquitectura de supervisión.
+Los requisitos salen de la entrevista y del flujo observado. Se mantienen pocos, medibles y ligados a una prueba de aceptación; así la oferta no se queda en una lista de prestaciones del fabricante.
 
 \begin{longtable}{P{0.24\textwidth}P{0.34\textwidth}P{0.32\textwidth}}
 \toprule
@@ -20,5 +20,7 @@ Mantenimiento sencillo & Evitar dependencia excesiva de perfiles especializados.
 \end{longtable}
 
 \begin{decisionbox}
-El requisito dominante es la seguridad operativa. Si el robot no puede convivir con operarios y útiles en movimiento, los beneficios de trazabilidad o kitting quedan subordinados. Por ello, la propuesta incluye sensores redundantes de percepción y seguridad desde el escenario piloto.
+El requisito dominante es la seguridad operativa. Si el robot no puede convivir con operarios y útiles en movimiento, la trazabilidad o el kitting pierden valor. Por eso el piloto incluye desde el inicio escáner de seguridad, bumpers, parada de emergencia y reglas de velocidad por zona.
 \end{decisionbox}
+
+El piloto debe salir con cuatro KPIs principales: al menos \(95\%\) de misiones completadas, \(98\%\) de registros RFID/QR completos, cero contactos no previstos y aceptación media de operarios igual o superior a 4 sobre 5. Los demás indicadores se revisan como diagnóstico, no como condición automática de compra.

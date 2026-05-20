@@ -2,7 +2,7 @@
 
 \section{Sistema AMR-FOD-Kitting para línea HTP A320}
 
-El sistema implanta robots móviles autónomos para suministro coordinado, trazabilidad e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. Su trabajo diario es simple de enunciar y exigente de ejecutar: llevar el elemento correcto al punto correcto y dejar evidencia digital de la misión.
+Lunabotics oferta un sistema de robots móviles autónomos para suministro coordinado, trazabilidad e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. Su trabajo diario es simple de enunciar y exigente de ejecutar: llevar el elemento correcto al punto correcto y dejar rastro digital de la misión.
 
 \section{Modelo de robot y criterio de selección}
 
@@ -44,6 +44,13 @@ KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y
 \label{tab:opciones-compra}
 \end{longtable}
 
+\begin{figure}[H]
+\centering
+\input{figures/tikz/report_robot_payload}
+\caption{Configuración propuesta del AMR-FOD-Kitting.}
+\label{fig:robot-payload}
+\end{figure}
+
 \section{Especificación de plataforma objetivo}
 
 La plataforma objetivo se especifica por requisitos de operación, no por marca cerrada. El integrador podría seleccionar un chasis industrial equivalente si respeta la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. Así no se confunde el robot usado en simulación con el equipo que se compraría para una nave aeronáutica.
@@ -57,8 +64,8 @@ Locomoción & Base holonómica con cuatro ruedas mecanum/suecas, control de \(v_
 Carga y módulo & Clase 200--300 kg con bandeja portakits, puntos de amarre, balizas y posibilidad de cajones o estantería baja. & Cubre kits, herramientas, consumibles y útiles moderados sin plantear manipulación estructural del HTP.\\
 Motorización & Motores BLDC o servomotores eléctricos con reductora, encoder por rueda, supervisión de corriente y temperatura. & El temario de motores favorece accionamientos eléctricos compactos, eficientes y con realimentación para control de velocidad/posición.\\
 Control de bajo nivel & Conversión cinemática inversa de velocidad de cuerpo a velocidad de rueda; lazo cerrado por encoder; límites de aceleración. & La omnidireccionalidad mejora la maniobra, pero penaliza si no se controla el deslizamiento y la saturación de motores.\\
-Control de navegación & Fusión LiDAR--IMU--encoders para pose; SLAM/mapa; ruta global A*/Dijkstra; evitación local DWA o campos potenciales. & Conecta la arquitectura con localización, planificación y anticolisión del curso sin vender un algoritmo como garantía universal.\\
-Seguridad funcional & Escáner láser de seguridad, bumpers, E-stop físico, campos de protección, reducción de velocidad por zona y estado seguro ante fallo. & La seguridad no depende del LiDAR de navegación ni de la cámara FOD; queda como capa independiente de parada.\\
+Control de navegación & Fusión LiDAR--IMU--encoders para pose; SLAM/mapa; ruta global A*/Dijkstra; evitación local DWA o campos potenciales. & Conecta la arquitectura con localización, planificación y anticolisión del curso.\\
+Seguridad funcional & Escáner láser de seguridad, bumpers, E-stop físico, campos de protección, reducción de velocidad por zona y estado seguro ante fallo. & La parada de seguridad se implementa aparte del LiDAR de navegación y de la cámara FOD.\\
 Energía y disponibilidad & Batería industrial con retorno automático a carga, reserva mínima operativa y mantenimiento preventivo de ruedas/sensores. & Los actuadores consumen batería y se degradan; el plan de flota debe considerar autonomía, carga y desgaste.\\
 Interfaz e integración & HMI/tablet, WiFi industrial, base de datos de misiones y conectores progresivos hacia MES/ERP. & El piloto debe dejar evidencia operativa y preparar el crecimiento sin exigir integración total desde el primer día.\\
 \bottomrule
@@ -73,7 +80,7 @@ La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simula
 \begin{itemize}
   \item Transporte interno de kits, herramientas, consumibles y útiles de carga moderada.
   \item Lectura RFID/QR de bandejas, herramientas, órdenes y puntos de entrega.
-  \item Entrega confirmada mediante HMI, tablet de estación o escaneo de operario autorizado.
+  \item Entrega confirmada con HMI, tablet de estación o escaneo de operario autorizado.
   \item Inspección preventiva FOD en rutas o zonas definidas.
   \item Retorno de útiles usados y aviso de incidencias de material.
   \item Registro de misiones, eventos, tiempos y excepciones para análisis posterior.
@@ -86,8 +93,8 @@ La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simula
 \textbf{Elemento} & \textbf{Justificación}\\
 \midrule
 \endhead
-LiDAR 2D/3D & Navegación, SLAM y detección geométrica de obstáculos. No se trata como único elemento de seguridad funcional.\\
-Cámara RGB-D o industrial & Inspección FOD preventiva, verificación visual de zonas y evidencia fotográfica de incidencias, siempre con validación humana ante positivos.\\
+LiDAR 2D/3D & Navegación, SLAM y detección geométrica de obstáculos. La seguridad funcional depende de escáner certificado, bumpers y parada de emergencia.\\
+Cámara RGB-D o industrial & Inspección FOD preventiva, verificación visual de zonas y evidencia fotográfica de incidencias, siempre con revisión humana ante positivos.\\
 RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estación.\\
 IMU y encoders & Odometría y fusión sensorial para estimar pose con menor deriva.\\
 Bumpers y escáner láser de seguridad & Capa separada de seguridad funcional: zonas de protección, reducción de velocidad y parada segura ante presencia humana.\\
@@ -119,7 +126,7 @@ Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiem
 
 \section{Actuadores, motorización y control}
 
-La plataforma se concibe como un AMR eléctrico de ruedas omnidireccionales, coherente con los contenidos del curso sobre robots que ruedan, efectores, actuadores y controladores. Cada rueda mecanum/sueca se acciona mediante motor eléctrico con controlador de velocidad, realimentación por encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas de velocidad longitudinal, lateral y angular en velocidades de rueda, mientras que el nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. Esta base se selecciona por maniobrabilidad, no por capacidad de carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
+La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La base se elige por maniobrabilidad, no por carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
 
 Los actuadores no están previstos para manipular piezas estructurales del HTP. Su función es mover la base, accionar elementos auxiliares simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar el sistema y mantiene el alcance dentro de una aplicación acotada de robótica móvil industrial.
 

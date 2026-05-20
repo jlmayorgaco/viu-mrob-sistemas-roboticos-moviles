@@ -40,10 +40,10 @@ Robot con patas & 2 & 2 & 2 & 2 & 1 & 2 & 1,85\\
 \end{longtable}
 \endgroup
 
-En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-KAIROS/AGILOX-class. Un AMR diferencial como MiR250 u Omron LD-250 sigue siendo una opción industrial fuerte, pero pierde ventaja cuando la entrega exige acoplamiento lateral. El dron y el robot con patas quedan fuera por seguridad, carga y aceptación. Las orugas tampoco encajan: el suelo es regular y el mantenimiento sería más difícil sin aportar capacidad útil.
+En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-KAIROS/AGILOX-class. Un AMR diferencial como MiR250 u Omron LD-250 sigue siendo una opción industrial fuerte, pero pierde ventaja cuando la entrega exige acoplamiento lateral. El dron y el robot con patas se descartan por seguridad, carga y aceptación. Las orugas tampoco aportan valor en una nave con suelo regular y mantenimiento controlado.
 
 \section{Robot seleccionado}
 
-La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim mediante KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg documentada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM queda como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
+La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim con KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg documentada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
 
 La base omnidireccional da tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posición al aproximarse a útiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronáutico interior, estas ventajas pesan más que la simplicidad de un AGV de ruta fija o una base diferencial de compra más directa.

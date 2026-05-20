@@ -1,0 +1,26 @@
+\begin{tikzpicture}[
+  scale=0.92,
+  station/.style={draw=UniPrimaryDeep!55,fill=UniLight,rounded corners=2pt,minimum width=2.8cm,minimum height=1.0cm,align=center,font=\small\bfseries},
+  area/.style={draw=UniMuted!45,fill=white,rounded corners=2pt,minimum width=2.7cm,minimum height=0.9cm,align=center,font=\small},
+  flow/.style={-Latex,line width=1.0pt,draw=UniPrimary},
+  risk/.style={draw=UniPrimaryDeep!70,fill=UniPrimary!7,rounded corners=2pt,align=center,font=\footnotesize}
+]
+\node[area] (prep) at (0,2.4) {Preparación\\kits y útiles};
+\node[station] (s1) at (4.0,3.2) {Estación HTP\\trabajo 1};
+\node[station] (s2) at (7.8,2.2) {Estación HTP\\trabajo 2};
+\node[area] (ret) at (11.4,3.0) {Retorno\\útiles usados};
+\node[area] (met) at (11.4,1.1) {Metrología\\almacén};
+\node[risk,text width=3.1cm] (risk) at (4.2,0.6) {Riesgo actual:\\búsquedas, esperas, FOD sin evidencia fina};
+\node[draw=GoodGreen!70!black,fill=GoodGreen!8,rounded corners=2pt,align=center,font=\footnotesize\bfseries,text width=2.9cm] (amr) at (7.7,0.55) {AMR-FOD-Kitting\\entrega + registro};
+
+\draw[flow] (prep) -- node[above,font=\scriptsize]{kit + QR/RFID} (s1);
+\draw[flow] (s1) -- node[above,font=\scriptsize]{reposición} (s2);
+\draw[flow] (s2) -- node[above,font=\scriptsize]{útiles usados} (ret);
+\draw[flow] (ret) -- node[right,font=\scriptsize]{calibración} (met);
+\draw[flow,GoodGreen!70!black] (amr) -- (s1);
+\draw[flow,GoodGreen!70!black] (amr) -- (s2);
+\draw[flow,GoodGreen!70!black,dashed] (amr) -- node[below,font=\scriptsize]{ronda FOD} (risk);
+
+\draw[UniMuted!35,line width=4pt] (-0.8,1.55) -- (12.4,1.55);
+\node[anchor=west,font=\scriptsize,text=UniMuted] at (-0.7,1.78) {pasillo compartido con operarios y carros};
+\end{tikzpicture}

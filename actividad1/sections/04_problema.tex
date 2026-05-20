@@ -8,15 +8,17 @@ En un turno típico, el flujo operativo pasa por preparación de kits, traslado 
 
 \section{Problemas típicos detectados}
 
-\begin{itemize}
-  \item \textbf{Desplazamientos de operarios.} Parte del tiempo se dedica a buscar, recoger o devolver útiles y consumibles en lugar de ejecutar tareas de valor directo.
-  \item \textbf{Esperas por kits o herramientas.} Un kit incompleto o una herramienta no localizada bloquea la secuencia aunque la estación esté disponible.
-  \item \textbf{Riesgo FOD.} Restos, tornillería, embalajes o elementos no controlados pueden generar incidencias de calidad y seguridad.
-  \item \textbf{Trazabilidad fina insuficiente.} Saber que un lote existe no siempre equivale a conocer en tiempo real dónde está, quién lo recibió y para qué orden se usó.
-  \item \textbf{Coordinación entre estaciones.} Las prioridades cambian durante el turno y el suministro manual puede reaccionar tarde.
-  \item \textbf{Escalado de capacidad.} Pasar de 40 HTP al mes a 80 HTP al mes o más exige reducir fricciones operativas; no basta con duplicar recursos sin mejorar el flujo.
-\end{itemize}
+El primer problema son los desplazamientos de operarios. Parte del turno se dedica a buscar, recoger o devolver útiles y consumibles en lugar de ejecutar tareas de valor directo. A eso se suman las esperas por kits incompletos o herramientas no localizadas: la estación puede estar lista, pero la secuencia se bloquea por un recurso auxiliar.
+
+El riesgo FOD aparece con restos, tornillería, embalajes o elementos no controlados. En paralelo, la trazabilidad fina no siempre llega al momento operativo: saber que un lote existe no equivale a saber dónde está, quién lo recibió y para qué orden se usó. Cuando la planta intenta pasar de unas 40 unidades HTP al mes a 80 o más, duplicar recursos no sirve si el flujo auxiliar sigue igual.
 
 \section{Oportunidad de automatización}
 
-La automatización útil está en el movimiento y el registro. Un AMR puede ejecutar misiones recurrentes, entregar kits en una ventana horaria, verificar identificaciones RFID/QR, registrar confirmaciones, inspeccionar zonas definidas y devolver útiles usados. El efecto esperado es menos variabilidad logística cuando la planta opera cerca de su límite de capacidad.
+La automatización útil está en el movimiento y el registro. Un AMR puede ejecutar misiones recurrentes, entregar kits en una ventana horaria, verificar identificaciones RFID/QR, registrar confirmaciones, inspeccionar zonas definidas y devolver útiles usados. Con esto debería reducirse la variabilidad logística cuando la planta opera cerca de su límite de capacidad.
+
+\begin{figure}[H]
+\centering
+\input{figures/tikz/report_layout_concept}
+\caption{Lectura operativa del flujo auxiliar alrededor de estaciones HTP.}
+\label{fig:layout-concept}
+\end{figure}

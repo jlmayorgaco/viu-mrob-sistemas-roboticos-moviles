@@ -1,26 +1,26 @@
 \chapter{Introducción}
 
-En una nave aeronáutica, mover material no basta. Cada entrega debe poder asociarse a un kit, una estación, una hora, un operador y, si aparece, una incidencia FOD. Ahí encaja un AMR industrial: transporta cargas repetitivas sin carriles físicos y con más margen de adaptación que un AGV de ruta fija.
+En una nave aeronáutica no es solo cuestión de mover material. Cada entrega debe asociarse a un kit, una estación, una hora, un operador y, si aparece, una incidencia FOD. Un AMR industrial resuelve esa parte del problema: transporta cargas repetitivas sin carriles físicos y se adapta mejor que un AGV de ruta fija.
 
 En el caso planteado, Lunabotics actúa como empresa ficticia responsable de preparar una oferta para Alestis Puerto Real. El cliente trabaja con componentes estructurales del A320, entre ellos el HTP, elemento aerodinámico horizontal situado en la cola que contribuye a la estabilidad longitudinal de la aeronave. En torno a la sección 19.1 del avión convergen operaciones de estructura posterior, interfaces con elementos de cola, útiles de montaje, inspecciones y flujos de materiales que requieren coordinación fina entre estaciones.
 
 \section{Perfil de Lunabotics}
 
-Lunabotics se define como una integradora joven de robótica móvil industrial, con perfiles de automatización, simulación y datos de planta. Su trabajo cubre análisis de flujos intralogísticos, modelado de rutas en CoppeliaSim, selección de plataformas AMR, integración de sensores LiDAR/RGB-D/RFID, diseño de HMI de supervisión y definición de indicadores de aceptación.
+Lunabotics es una integradora joven de robótica móvil industrial, con perfiles de automatización, simulación y datos de planta. Su trabajo cubre análisis de flujos intralogísticos, modelado de rutas en CoppeliaSim, selección de plataformas AMR, integración de sensores LiDAR/RGB-D/RFID, diseño de HMI de supervisión y definición de indicadores de aceptación.
 
-Para esta oferta se atribuye a Lunabotics una experiencia ficticia, pero razonable para una empresa de reciente creación: pilotos de transporte interno en entornos de montaje, celdas de ensayo con bases omnidireccionales y proyectos académico-industriales de trazabilidad mediante QR/RFID. Esos antecedentes no son una garantía contractual. Funcionan como carta técnica inicial: misiones autónomas repetibles, registro digital de entregas, menos búsquedas manuales y validación en simulador antes del despliegue físico.
+Para esta oferta se atribuye a Lunabotics una experiencia ficticia, pero razonable para una empresa de reciente creación: pilotos de transporte interno en entornos de montaje, celdas de ensayo con bases omnidireccionales y proyectos académico-industriales de trazabilidad con QR/RFID. Esos antecedentes funcionan como carta técnica inicial: misiones autónomas repetibles, registro digital de entregas, menos búsquedas manuales y validación en simulador antes del despliegue físico.
 
-La dificultad principal no reside en fabricar el HTP mediante un robot móvil, sino en sostener un flujo productivo exigente. Cuando un operario debe abandonar su estación para buscar herramientas, consumibles o documentación, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, útiles no localizados, entregas no registradas o inspecciones FOD tardías.
+El reto no es fabricar el HTP con un robot móvil. Es sostener el flujo cuando la planta trabaja cerca de su límite. Cuando un operario debe abandonar su estación para buscar herramientas, consumibles o documentación, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, útiles no localizados, entregas no registradas o inspecciones FOD tardías.
 
 El informe desarrolla una oferta técnica y comercial con robots móviles autónomos para acompañar el crecimiento de 40 HTP al mes hacia 80 HTP al mes o más. La arquitectura AMR-FOD-Kitting se revisa primero a nivel de diseño y después en CoppeliaSim, antes de plantear un piloto físico.
 
 \section{Alcance de la propuesta}
 
-El alcance cubre transporte interno de kits, herramientas, consumibles y útiles ligeros o moderados; inspección preventiva FOD con cámara; trazabilidad mediante RFID/QR; retorno de útiles usados; supervisión de misiones; y registro de eventos. Quedan fuera la fabricación directa de piezas aeronáuticas, la manipulación estructural pesada del HTP y la sustitución de procesos certificados de calidad.
+El alcance cubre transporte interno de kits, herramientas, consumibles y útiles ligeros o moderados. También incluye inspección preventiva FOD con cámara, trazabilidad RFID/QR, retorno de útiles usados, supervisión de misiones y registro de eventos. Se excluyen la fabricación directa de piezas aeronáuticas, la manipulación estructural pesada del HTP y la sustitución de procesos certificados de calidad.
 
 \section{Supuestos y exclusiones}
 
-El caso asume una nave interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y personal disponible para carga/descarga del AMR. Los kits y herramientas se etiquetarían mediante RFID, QR o una combinación de ambos.
+El caso asume una nave interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y personal disponible para carga/descarga del AMR. Los kits y herramientas se etiquetarían con RFID, QR o una combinación de ambos.
 
 Se excluyen del presupuesto la obra civil, la certificación formal de procesos aeronáuticos, modificaciones estructurales de estaciones, integraciones ERP/MES altamente personalizadas no descritas en el alcance, y cualquier manipulación automática de piezas grandes del HTP. Con esas exclusiones, el coste se concentra en robótica móvil, kitting, sensores, trazabilidad, seguridad y soporte operativo.
 

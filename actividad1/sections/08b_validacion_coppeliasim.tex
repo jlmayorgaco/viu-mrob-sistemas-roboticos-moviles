@@ -2,6 +2,13 @@
 
 CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico. La simulación no certifica la seguridad industrial; comprueba rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
 
+\begin{figure}[H]
+\centering
+\input{figures/tikz/report_coppeliasim_validation}
+\caption{Pruebas mínimas previstas en CoppeliaSim antes del piloto físico.}
+\label{fig:coppeliasim-validation}
+\end{figure}
+
 \section{Modelo de simulación}
 
 \begin{longtable}{P{0.24\textwidth}P{0.62\textwidth}}
@@ -14,7 +21,7 @@ Mapa de planta & Pasillos, estaciones de HTP, zona de preparación de kits, punt
 Obstáculos & Útiles, carros, estructuras, operarios simulados como objetos dinámicos y zonas temporalmente bloqueadas.\\
 Sensores & LiDAR 2D/3D para obstáculos, cámara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validación.\\
 Misiones & Entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y misión cancelada por obstáculo persistente.\\
-Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local mediante DWA o campos potenciales como referencia conceptual. La simulación verifica coherencia de comportamiento, no certificación de seguridad.\\
+Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual. La simulación verifica comportamiento, no certificación de seguridad.\\
 \bottomrule
 \end{longtable}
 
@@ -52,8 +59,8 @@ Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en 
 Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin invadir zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
 Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
 Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
-Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción documentada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
-FOD preventivo & Todo positivo RGB-D genera evidencia visual y validación humana; los falsos positivos se registran. & La cámara apoya inspección preventiva, no sustituye calidad aeronáutica.\\
+Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
+FOD preventivo & Todo positivo RGB-D genera evidencia visual y revisión humana; los falsos positivos se registran. & La cámara apoya inspección preventiva, no sustituye calidad aeronáutica.\\
 Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
 Energía & No se asignan nuevas misiones por debajo de una reserva mínima operativa del 20\% de batería. & Los actuadores y sensores consumen energía; la planificación debe contemplar carga y disponibilidad.\\
 \bottomrule
@@ -63,19 +70,6 @@ Energía & No se asignan nuevas misiones por debajo de una reserva mínima opera
 
 \section{Relación con navegación y localización del curso}
 
-La validación conecta la oferta con los contenidos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM construye o actualiza el mapa de una nave cambiante; el planificador global calcula la ruta hacia la estación; y el planificador local resuelve obstáculos dinámicos como operarios, carros o útiles. En una implantación real se escogería el algoritmo concreto según el software del AMR, pero la oferta académica deja explícito el vínculo técnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.
+La validación conecta la oferta con los contenidos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM construye o actualiza el mapa de una nave cambiante; el planificador global calcula la ruta hacia la estación; y el planificador local resuelve obstáculos dinámicos como operarios, carros o útiles.
 
-\begin{longtable}{P{0.25\textwidth}P{0.33\textwidth}P{0.32\textwidth}}
-\toprule
-\textbf{Concepto de las presentaciones} & \textbf{Uso en AMR-FOD-Kitting} & \textbf{Prueba concreta}\\
-\midrule
-\endhead
-Ruedas mecanum/suecas y locomoción omnidireccional & Aproximación lateral a estaciones sin reorientar la carga. & Medir maniobras, tiempo de aproximación y ocupación de pasillo.\\
-Sensores con ruido, rango y resolución limitados & Separar navegación, seguridad funcional y proceso FOD/trazabilidad. & Inyectar obstáculos, lecturas fallidas y falsos positivos FOD en simulación.\\
-Controladores, efectores y actuadores & Convertir consignas longitudinales, laterales y angulares en velocidades de rueda. & Verificar límites de velocidad, aceleración, parada y recuperación de misión.\\
-SLAM y fusión sensorial & Actualizar mapa y estimar pose con LiDAR, encoders e IMU. & Comparar ruta prevista, ruta ejecutada y error de llegada a estación.\\
-Planificación A*/Dijkstra & Calcular ruta global con costes por distancia, zonas bloqueadas y prioridad. & Recalcular misión ante cierre temporal de pasillo.\\
-DWA/campos potenciales & Resolver obstáculos locales sin perder el objetivo global. & Probar cruce con operario y carro detenido en zona de paso.\\
-Sistemas multi-robot & Evitar interbloqueos y definir prioridades de misión. & Simular dos AMR compartiendo pasillo y zona de entrega.\\
-\bottomrule
-\end{longtable}
+En una implantación real se escogería el algoritmo según el software del AMR. Para esta oferta académica basta con dejar claro qué se probaría: maniobra lateral con ruedas mecanum/suecas, error de llegada con fusión sensorial, ruta alternativa con A*/Dijkstra, cruce con operario usando DWA o campos potenciales y misión compartida entre dos robots sin bloqueo mutuo.

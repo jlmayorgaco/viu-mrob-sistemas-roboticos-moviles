@@ -249,7 +249,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const issues = [
     ["Operarios abandonan estacion para buscar utiles o consumibles.", C.amber],
     ["Kits incompletos bloquean trabajo sin quedar siempre visibles como parada.", C.red],
-    ["FOD exige inspeccion, disciplina y evidencia documentada.", C.violet],
+    ["FOD exige inspeccion, disciplina y evidencia revisable.", C.violet],
     ["La trazabilidad fina se pierde si la entrega no queda ligada a mision.", C.teal],
   ];
   issues.forEach(([t, c], i) => {
@@ -423,7 +423,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     if (i < steps.length - 1) arrow(s, x + 0.36, 3.36 + (i % 2) * 0.55, x + 1.18, 3.36 + ((i + 1) % 2) * 0.55, C.cyan);
   });
   label(s, "Cierre con evidencia:", 2.5, 5.52, 3.0, 0.22, { size: 8, bold: true, color: C.navy, align: "center" });
-  label(s, "entrega confirmada + ruta registrada + excepcion documentada.", 5.35, 5.52, 5.4, 0.22, { size: 8, color: C.muted, align: "center" });
+  label(s, "entrega confirmada + ruta registrada + excepcion justificada.", 5.35, 5.52, 5.4, 0.22, { size: 8, color: C.muted, align: "center" });
 }
 
 // 11
@@ -449,7 +449,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const phases = [
     ["1", "Piloto controlado", "219.856 € CAPEX", "Zona acotada y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
     ["7", "Expansion", "1.018.752 € CAPEX", "Varias estaciones y gestor de flota.", "Retorno de utiles y tablero de incidencias.", "Riesgo: pasillos y baterias.", "Pasa: disponibilidad >= 90 %.", C.amber],
-    ["17", "Cobertura extendida", "2.310.896 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: comprar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
+    ["17", "Cobertura extendida", "2.310.896 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: ampliar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
   ];
   phases.forEach(([n, name, cost, scope1, scope2, risk, gate, col], i) => {
     const x = 0.85 + i * 4.15;
@@ -498,7 +498,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, seventeen, 10.72, y, 1.4, 0.16, { size: 5.8, color: C.ink, align: "right" });
   });
   label(s, "Referencias publicas: RB-KAIROS/AGILOX, MiR250/LD-250, Hokuyo, Intel, Zebra y SICK.", 0.88, 6.05, 7.2, 0.18, { size: 6.4, color: C.muted });
-  label(s, "No es cotizacion vinculante.", 8.2, 6.05, 2.3, 0.18, { size: 6.4, bold: true, color: C.muted });
+  label(s, "Estimacion preliminar.", 8.2, 6.05, 2.3, 0.18, { size: 6.4, bold: true, color: C.muted });
 }
 
 // 14
@@ -510,7 +510,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   label(s, "Caso central: 24.000 €.", 1.06, 2.62, 2.4, 0.20, { size: 7.0, color: C.ink });
   label(s, "Coste empresa 1,35; 1.760 h/ano.", 1.06, 2.94, 2.9, 0.20, { size: 7.0, color: C.ink });
   label(s, "18,4 €/h", 1.05, 3.55, 2.3, 0.34, { size: 18, bold: true, color: C.teal });
-  label(s, "Se monetiza tiempo improductivo; no reduccion de plantilla.", 1.08, 4.28, 2.8, 0.32, { size: 6.7, bold: true, color: C.red });
+  label(s, "Se monetiza tiempo recuperado y continuidad de flujo.", 1.08, 4.28, 2.8, 0.32, { size: 6.7, bold: true, color: C.red });
 
   label(s, "Beneficio anual: recuperado vs VAN cero", 5.05, 1.42, 4.4, 0.22, { size: 8, bold: true, color: C.muted });
   label(s, "horas recuperadas", 5.05, 1.78, 1.6, 0.16, { size: 5.7, color: C.teal });
@@ -529,7 +529,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, val, 7.5 + vw, y - 0.1, 0.95, 0.16, { size: 5.5, color: C.ink });
     label(s, req, 7.5 + rw, y + 0.13, 0.95, 0.16, { size: 5.5, color: C.ink });
   });
-  label(s, "Lectura financiera: las horas recuperadas no venden por si solas 7 o 17 robots.", 5.05, 5.72, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
+  label(s, "Lectura financiera: las horas recuperadas abren el caso de 7 o 17 robots.", 5.05, 5.72, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
   label(s, "La ampliacion exige datos de espera, continuidad de flujo y riesgo FOD.", 5.05, 5.98, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
   label(s, "La decision final debe usar datos reales hacia 80 HTP/mes.", 5.05, 6.24, 5.3, 0.18, { size: 6.3, bold: true, color: C.navy });
 }
@@ -542,7 +542,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     ["Mapa operativo", "rutas, zonas lentas, carga y entrega", C.teal],
     ["Configuracion AMR", "misiones, prioridades y reglas de bateria", C.green],
     ["Trazabilidad", "BD, RFID-QR, HMI y excepciones", C.violet],
-    ["FOD preventivo", "rondas con imagen y validacion humana", C.red],
+    ["FOD preventivo", "rondas con imagen y revision humana", C.red],
     ["Validacion CoppeliaSim", "SLAM, ruta bloqueada, cruce y FOD", C.cyan],
     ["Formacion", "operarios, supervisores y mantenimiento", C.amber],
   ];

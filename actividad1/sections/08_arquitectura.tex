@@ -1,6 +1,6 @@
 \chapter{Arquitectura del sistema}
 
-La arquitectura se divide en siete capas. Primero se valida navegación y seguridad; después se añaden trazabilidad, integración y analítica por fases.
+La arquitectura separa lo que debe reaccionar en tiempo real de lo que puede resolverse en supervisión. Primero se valida navegación y seguridad; después se añaden trazabilidad, integración y analítica por fases.
 
 \begin{figure}[H]
 \centering
@@ -13,11 +13,11 @@ La arquitectura se divide en siete capas. Primero se valida navegación y seguri
 
 \section{Capa de percepción}
 
-La percepción combina sensores de navegación y sensores de proceso. El LiDAR proporciona detección geométrica y apoyo al mapa; la seguridad funcional queda separada en el escáner láser certificado, bumpers y parada de emergencia. La cámara RGB-D registra posibles FOD y documenta incidencias, pero sus positivos deben revisarse por un responsable de calidad. El sistema RFID/QR identifica bandejas, herramientas, órdenes y puntos de entrega.
+La percepción combina sensores de navegación y sensores de proceso. El LiDAR proporciona detección geométrica y apoyo al mapa. La seguridad funcional se implementa aparte, con escáner láser certificado, bumpers y parada de emergencia. La cámara RGB-D registra posibles FOD y deja imagen para revisión. El sistema RFID/QR identifica bandejas, herramientas, órdenes y puntos de entrega.
 
 \section{Planificación y supervisión}
 
-El planificador asigna misiones según prioridad, estado del robot, proximidad y restricciones de zona. La HMI concentra solicitudes de entrega, confirmaciones, cancelaciones y alarmas. La integración con MES/ERP empieza con importación y exportación de órdenes; en fases posteriores se habilita comunicación mediante API.
+El planificador asigna misiones según prioridad, estado del robot, proximidad y restricciones de zona. La HMI concentra solicitudes de entrega, confirmaciones, cancelaciones y alarmas. La integración con MES/ERP empieza con importación y exportación de órdenes; en fases posteriores se habilita comunicación por API.
 
 \section{Base de datos de trazabilidad}
 
@@ -32,7 +32,7 @@ El control opera como un ciclo \textit{sense--plan--act} con supervisión indust
 \textbf{Capa} & \textbf{Entrada} & \textbf{Salida} & \textbf{Fallo previsto y mitigación}\\
 \midrule
 \endhead
-Percepción & LiDAR, RGB-D, RFID/QR, HMI y escáner de seguridad. & Obstáculos, lectura de kit, evento FOD, alarma de seguridad. & Lectura ruidosa o incompleta; se filtra, se repite lectura o se deriva a validación humana.\\
+Percepción & LiDAR, RGB-D, RFID/QR, HMI y escáner de seguridad. & Obstáculos, lectura de kit, evento FOD, alarma de seguridad. & Lectura ruidosa o incompleta; se filtra, se repite lectura o se deriva a revisión humana.\\
 Localización & Encoders, IMU, LiDAR y mapa vigente. & Pose estimada, incertidumbre y desviación respecto a ruta. & Deriva o mapa desactualizado; remapeo, reducción de velocidad y bloqueo de zonas dudosas.\\
 Planificación global & Misión, mapa, zonas prohibidas, prioridad y estado de flota. & Ruta nominal y alternativas por coste. & Pasillo cerrado; recálculo A*/Dijkstra o misión en espera.\\
 Planificación local & Obstáculos cercanos, velocidad actual y objetivo inmediato. & Consigna \(v_x\), \(v_y\), \(\omega\) limitada. & Obstáculo dinámico; DWA/campo potencial, parada controlada o retroceso seguro.\\
@@ -43,4 +43,4 @@ Supervisión & Eventos, KPIs, confirmaciones y alarmas. & Dashboard, histórico,
 \label{tab:arquitectura-control}
 \end{longtable}
 
-La base de datos no es un añadido administrativo: cierra el lazo de control operativo. Si una misión no tiene lectura RFID/QR, confirmación de entrega o estado final, el sistema no debe contarla como entrega válida. Esto protege la trazabilidad y evita que una mejora aparente de productividad esconda pérdida de control documental.
+Sin base de datos no se puede verificar la entrega. Si una misión no tiene lectura RFID/QR, confirmación o estado final, el sistema no debe contarla como válida. Esto evita que una mejora aparente de productividad esconda pérdida de control documental.
