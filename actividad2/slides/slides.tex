@@ -1,5 +1,5 @@
 \documentclass[10pt]{article}
-\usepackage[paperwidth=16cm,paperheight=9cm,margin=0.65cm]{geometry}
+\usepackage[paperwidth=16cm,paperheight=9cm,margin=0cm]{geometry}
 \usepackage[spanish,es-noshorthands]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -8,178 +8,437 @@
 \usepackage{booktabs,tabularx,array}
 \usepackage{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{arrows.meta,positioning,calc}
 \pagestyle{empty}
-
-\definecolor{UniPrimary}{HTML}{E8552D}
-\definecolor{UniPrimaryDeep}{HTML}{C44624}
-\definecolor{UniLight}{HTML}{F6F7F9}
-\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0.18cm}
 \renewcommand{\familydefault}{\sfdefault}
+\setlength{\parindent}{0pt}
+
+\definecolor{Deep}{HTML}{0B1F33}
+\definecolor{Ink}{HTML}{17202A}
+\definecolor{Muted}{HTML}{65717F}
+\definecolor{Paper}{HTML}{F7F8FA}
+\definecolor{Rule}{HTML}{D8DEE6}
+\definecolor{Copper}{HTML}{C44624}
+\definecolor{Orange}{HTML}{E8552D}
+\definecolor{Teal}{HTML}{168B8F}
+\definecolor{Blue}{HTML}{2B6CB0}
+\definecolor{Green}{HTML}{2D8A4E}
+\definecolor{Amber}{HTML}{B7791F}
+\definecolor{Red}{HTML}{B83232}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcounter{slide}
-\newcommand{\slide}[2]{%
+
+\newcommand{\Footer}{%
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (0.55,0.22) {Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim/Lua};
+  \node[anchor=east,font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (15.45,0.22) {\theslide/15};
+}
+
+\newcommand{\DeckSlide}[3]{%
   \ifnum\value{slide}>0\clearpage\fi
   \stepcounter{slide}
-  \begin{tikzpicture}[remember picture,overlay]
-    \fill[UniPrimaryDeep] (current page.north west) rectangle ([yshift=-1.0cm]current page.north east);
-    \node[anchor=west,text=white,font=\bfseries\large] at ([xshift=0.65cm,yshift=-0.52cm]current page.north west) {#1};
-    \node[anchor=east,text=white,font=\small] at ([xshift=-0.65cm,yshift=-0.52cm]current page.north east) {\theslide};
-  \end{tikzpicture}
-  \vspace*{0.72cm}
-  #2
+  \begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm]
+    \begin{scope}[shift={(current page.south west)}]
+    \fill[white] (0,0) rectangle (16,9);
+    \fill[Paper] (0,8.34) rectangle (16,9);
+    \draw[Rule,line width=0.35pt] (0,8.34) -- (16,8.34);
+    \node[anchor=west,font=\fontsize{4.9}{5.6}\selectfont\bfseries,text=Copper] at (0.55,8.73) {#2};
+    \node[anchor=west,font=\fontsize{13.8}{15.0}\selectfont\bfseries,text=Deep] at (0.55,8.02) {#1};
+    #3
+    \Footer
+    \end{scope}
+  \end{tikzpicture}%
+}
+
+\newcommand{\Metric}[5]{%
+  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=#5] at (#1,#2) {#3};
+  \node[anchor=west,font=\fontsize{5.3}{6.1}\selectfont,text=Muted,text width=2.5cm,align=left] at (#1,#2-0.38) {#4};
+}
+
+\newcommand{\Tag}[4]{%
+  \fill[#4!12,rounded corners=2.5pt] (#1,#2) rectangle ++(2.0,0.46);
+  \draw[#4!75,line width=0.35pt,rounded corners=2.5pt] (#1,#2) rectangle ++(2.0,0.46);
+  \node[font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=#4] at (#1+1.0,#2+0.23) {#3};
+}
+
+\newcommand{\Robot}[3]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \fill[#3!10,rounded corners=3pt] (-0.34,-0.22) rectangle (0.34,0.22);
+    \draw[#3,line width=0.8pt,rounded corners=3pt] (-0.34,-0.22) rectangle (0.34,0.22);
+    \fill[#3!25] (-0.18,-0.10) rectangle (0.18,0.10);
+    \draw[#3,line width=0.5pt] (0.34,0) -- (0.62,0);
+    \draw[#3!55,line width=0.45pt] (0,0) circle (0.54);
+    \draw[#3!55,line width=0.45pt] (0,0) circle (0.83);
+  \end{scope}
+}
+
+\newcommand{\TinyRobot}[3]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \fill[#3!12,rounded corners=2pt] (-0.22,-0.15) rectangle (0.22,0.15);
+    \draw[#3,line width=0.55pt,rounded corners=2pt] (-0.22,-0.15) rectangle (0.22,0.15);
+    \draw[#3,line width=0.45pt] (0.22,0) -- (0.40,0);
+  \end{scope}
 }
 
 \begin{document}
-\slide{Programacion y control de un robot Pioneer}{
-{\Large Actividad 2 - CoppeliaSim/Lua}\\
-Universidad Internacional de Valencia\\[0.2cm]
-Autor: Jorge Luis Mayorga Taborda\\
-Profesor: Jose I. Iniguez\\
-Entrega: 26 de mayo de 2026
+
+\DeckSlide{Programación y control de un Pioneer P3DX}{Actividad 2 · entrega técnica}{
+  \fill[Deep] (0,0) rectangle (16,9);
+  \foreach \x in {0,0.55,...,16} \draw[white,opacity=0.045,line width=0.2pt] (\x,0) -- (\x,9);
+  \foreach \y in {0,0.55,...,9} \draw[white,opacity=0.045,line width=0.2pt] (0,\y) -- (16,\y);
+  \node[anchor=west,font=\fontsize{5.4}{6.2}\selectfont\bfseries,text=Orange] at (0.72,8.15) {UNIVERSIDAD INTERNACIONAL DE VALENCIA};
+  \node[anchor=west,font=\fontsize{24}{26}\selectfont\bfseries,text=white,text width=7.6cm,align=left] at (0.72,6.72) {Pioneer P3DX en CoppeliaSim/Lua};
+  \node[anchor=west,font=\fontsize{8.2}{9.4}\selectfont,text=white!78,text width=6.9cm,align=left] at (0.76,5.38) {Campos potenciales, anticolisión, integración en celda, batería simulada y extensión multi-robot con A* cooperativo.};
+  \node[anchor=west,font=\fontsize{6.2}{7.3}\selectfont,text=white!72,text width=6.6cm,align=left] at (0.76,2.28) {Autor: Jorge Luis Mayorga Taborda\\Profesor: Jose I. Iñiguez\\Entrega: 26 de mayo de 2026};
+  \begin{scope}[shift={(8.55,1.20)}]
+    \fill[white,opacity=0.92,rounded corners=8pt] (0,0) rectangle (6.5,6.15);
+    \draw[Rule,line width=0.5pt,rounded corners=8pt] (0,0) rectangle (6.5,6.15);
+    \foreach \x in {0.55,1.10,...,5.95} \draw[Rule,line width=0.22pt] (\x,0.35) -- (\x,5.80);
+    \foreach \y in {0.55,1.10,...,5.60} \draw[Rule,line width=0.22pt] (0.35,\y) -- (6.15,\y);
+    \fill[Blue!10] (0.65,3.86) rectangle (2.08,4.80);
+    \fill[Amber!14] (3.88,4.12) rectangle (5.58,5.20);
+    \fill[Green!12] (4.05,0.82) rectangle (5.72,1.70);
+    \draw[Orange,line width=1.1pt,-{Latex[length=2.1mm]}] (1.02,1.12) -- (2.35,1.12) -- (2.35,3.08) -- (4.78,3.08) -- (4.78,4.58);
+    \Robot{1.02}{1.12}{Teal}
+    \node[font=\fontsize{5.2}{5.8}\selectfont\bfseries,text=Deep] at (1.35,5.28) {celda robotizada};
+    \node[font=\fontsize{4.9}{5.5}\selectfont,text=Muted] at (4.85,5.48) {objetivo};
+    \node[font=\fontsize{4.9}{5.5}\selectfont,text=Muted] at (5.00,0.55) {carga};
+  \end{scope}
 }
 
-\slide{Objetivo}{
-\begin{itemize}
-  \item Programar un Pioneer P3DX en CoppeliaSim.
-  \item Parte 1: desplazamiento hacia un objetivo mediante campos potenciales.
-  \item Parte 2: evitacion reactiva de obstaculos.
-  \item Integracion del robot en una celda robotizada.
-\end{itemize}
+\DeckSlide{Qué tiene que demostrar la entrega}{lectura de la guía}{
+  \node[anchor=west,font=\fontsize{7.5}{8.5}\selectfont,text=Muted,text width=13.7cm,align=left] at (0.70,7.12)
+    {La presentación deja claro lo obligatorio y separa la mejora profesional de lo que exige estrictamente el enunciado.};
+  \foreach \x/\num/\tit/\txt/\col in {
+    0.82/1/Pioneer programado/{Script Lua embebido, lectura de objetivo, velocidad de ruedas y telemetría.}/Teal,
+    5.48/2/Campos potenciales/{Atracción a mannequin, repulsión de obstáculos y saturaciones para evitar oscilación.}/Orange,
+    10.14/3/Celda y validación/{Integración industrial, escenarios S1--S8, batería y evidencia JSON reproducible.}/Green} {
+    \fill[\col!9,rounded corners=6pt] (\x,2.15) rectangle ++(3.82,4.35);
+    \draw[\col!70,line width=0.55pt,rounded corners=6pt] (\x,2.15) rectangle ++(3.82,4.35);
+    \node[anchor=west,font=\fontsize{18}{18}\selectfont\bfseries,text=\col] at (\x+0.28,5.72) {\num};
+    \node[anchor=west,font=\fontsize{9.7}{10.7}\selectfont\bfseries,text=Deep,text width=3.18cm,align=left] at (\x+0.28,4.93) {\tit};
+    \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=3.10cm,align=left] at (\x+0.30,3.82) {\txt};
+  }
+  \draw[Rule,line width=0.5pt] (0.82,1.42) -- (14.35,1.42);
+  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont\bfseries,text=Copper] at (0.82,1.08) {No se vende como robot industrial real: se defiende como simulación rigurosa y trazable del temario.};
 }
 
-\slide{Trazabilidad 5/5}{
-\begin{tabularx}{\textwidth}{Y Y}
-\toprule
-\textbf{Guia y temas} & \textbf{Implementacion final}\\
-\midrule
-Pioneer en CoppeliaSim/Lua & Script Lua embebido en PioneerP3DX.\\
-Campos potenciales & Atraccion a mannequin con saturacion de velocidad.\\
-Anticolision & 16 ultrasonidos + 6 sensores virtuales.\\
-Celda robotizada & Docking/carga, HMI, transportadores, palets, vallas y eventos.\\
-Bateria y robustez & Zonas de velocidad, sensor degradado y telemetria industrial.\\
-A* cooperativo & 3 AMR auxiliares con reservas temporales, bateria y recarga.\\
-PPTs de clase & Modelo diferencial, sensores, FSM, navegacion y validacion.\\
-\bottomrule
-\end{tabularx}
+\DeckSlide{De dos escenas base a una demo defendible}{pipeline de trabajo}{
+  \foreach \x/\lab/\sub/\col in {
+    0.82/Escenas base/{Actividad2\_1 y Actividad2\_2}/Blue,
+    4.10/Generador Python/{construye celda, rutas y overlays}/Teal,
+    7.38/Scripts Lua/{Pioneer, eventos y flota A*}/Orange,
+    10.66/Evidencia final/{PDF, PPTX, JSON y .ttt}/Green} {
+    \fill[\col!10,rounded corners=4pt] (\x,5.02) rectangle ++(2.42,1.25);
+    \draw[\col!75,line width=0.45pt,rounded corners=4pt] (\x,5.02) rectangle ++(2.42,1.25);
+    \node[font=\fontsize{7.1}{8.0}\selectfont\bfseries,text=Deep,text width=2.10cm,align=center] at (\x+1.21,5.82) {\lab};
+    \node[font=\fontsize{4.9}{5.6}\selectfont,text=Muted,text width=2.10cm,align=center] at (\x+1.21,5.28) {\sub};
+  }
+  \foreach \x in {3.48,6.76,10.04} \draw[Copper,line width=0.8pt,-{Latex[length=2mm]}] (\x,5.64) -- ++(0.42,0);
+  \node[anchor=west,font=\fontsize{7.5}{8.7}\selectfont\bfseries,text=Deep] at (0.84,3.96) {Criterios de calidad};
+  \foreach \y/\txt in {
+    3.32/{El robot llega a objetivo y publica estado ARRIVED.},
+    2.78/{Los obstáculos activan reducción de velocidad y recuperación.},
+    2.24/{La celda tiene HMI, estación de carga, carriles y zonas de seguridad.},
+    1.70/{La flota auxiliar resuelve rutas A* sin reservas conflictivas.}} {
+    \fill[Copper] (0.92,\y+0.06) circle (0.045);
+    \node[anchor=west,font=\fontsize{6.4}{7.3}\selectfont,text=Ink] at (1.10,\y) {\txt};
+  }
+  \Metric{11.10}{3.45}{22}{sensores activos}{Teal}
+  \Metric{11.10}{2.35}{8}{escenarios S1--S8}{Orange}
+  \Metric{11.10}{1.25}{3/3}{AMR recargados}{Green}
 }
 
-\slide{Entorno de simulacion}{
-\begin{itemize}
-  \item CoppeliaSim con scripts Lua embebidos.
-  \item Escenas base: Actividad2\_1\_Pioneer.ttt y Actividad2\_2\_Pioneer.ttt.
-  \item Escena final: Actividad2\_Pioneer\_Profesional\_10\_10.ttt.
-  \item Objetivos posibles: mannequin, Bill o dummy de estacion.
-  \item 16 ultrasonidos + 6 sensores virtuales de seguridad.
-  \item Escenarios: pallet movil, parada, objetivo dinamico, pasillo estrecho, sensor degradado y bateria baja.
-\end{itemize}
+\DeckSlide{Celda CoppeliaSim: geometría y misión}{plano de operación}{
+  \begin{scope}[shift={(0.82,1.05)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.25,6.20);
+    \draw[Rule,line width=0.45pt,rounded corners=6pt] (0,0) rectangle (8.25,6.20);
+    \foreach \x in {0.55,1.10,...,7.70} \draw[Rule,line width=0.18pt] (\x,0.38) -- (\x,5.82);
+    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.18pt] (0.38,\y) -- (7.86,\y);
+    \fill[Blue!10,rounded corners=3pt] (0.58,4.25) rectangle (2.10,5.35);
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Blue] at (1.34,5.58) {transportador};
+    \fill[Amber!13,rounded corners=3pt] (3.62,4.38) rectangle (5.82,5.46);
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Amber] at (4.72,5.72) {zona robotizada};
+    \fill[Green!12,rounded corners=3pt] (6.18,0.68) rectangle (7.62,1.48);
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Green] at (6.90,0.46) {carga};
+    \fill[Red!9] (2.80,2.58) rectangle (3.65,3.32);
+    \fill[Red!9] (5.10,2.42) rectangle (5.88,3.20);
+    \draw[Orange,line width=1.0pt,-{Latex[length=2.2mm]}] (1.00,1.06) -- (2.30,1.06) -- (2.30,2.88) -- (4.60,2.88) -- (4.60,4.76);
+    \draw[Orange,line width=0.7pt,dashed] (4.60,4.76) -- (6.86,4.76) -- (6.86,1.10);
+    \Robot{1.00}{1.06}{Teal}
+    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (1.00,0.60) {inicio};
+    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (4.58,5.04) {mannequin};
+    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (3.22,3.55) {pallet};
+    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (5.48,3.43) {obstáculo};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (9.65,6.73) {Qué ve el profesor};
+  \foreach \y/\txt/\col in {
+    5.96/{Ruta nominal y retorno a carga}/Teal,
+    5.24/{Zonas de seguridad y carriles}/Orange,
+    4.52/{Obstáculos móviles y pasillo estrecho}/Red,
+    3.80/{HMI con estado, batería y fallo sensorial}/Blue,
+    3.08/{Cámaras nombradas para inspección rápida}/Green} {
+    \fill[\col] (9.72,\y+0.07) circle (0.055);
+    \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=4.6cm,align=left] at (9.95,\y) {\txt};
+  }
 }
 
-\slide{Modelo Pioneer P3DX}{
-\[
-v_L = v - \frac{L}{2}\omega,\qquad
-v_R = v + \frac{L}{2}\omega
-\]
-\[
-\omega_L = \frac{v_L}{r},\qquad
-\omega_R = \frac{v_R}{r}
-\]
-Robot diferencial con control por velocidad de ruedas y sensores de proximidad.
+\DeckSlide{Modelo cinemático: Pioneer diferencial}{control de ruedas}{
+  \begin{scope}[shift={(0.95,1.42)}]
+    \fill[Paper,rounded corners=5pt] (0,0) rectangle (6.45,5.65);
+    \draw[Rule,rounded corners=5pt] (0,0) rectangle (6.45,5.65);
+    \draw[Deep,line width=1.0pt,rounded corners=7pt] (2.55,2.20) rectangle (4.05,3.38);
+    \fill[Deep!8] (2.72,2.38) rectangle (3.88,3.18);
+    \draw[Deep,line width=1.0pt] (2.34,2.20) -- (2.34,3.38);
+    \draw[Deep,line width=1.0pt] (4.26,2.20) -- (4.26,3.38);
+    \draw[Teal,line width=0.9pt,-{Latex[length=2mm]}] (3.30,2.79) -- ++(1.55,0);
+    \draw[Orange,line width=0.8pt,-{Latex[length=2mm]}] (3.30,2.79) arc[start angle=0,end angle=48,radius=1.0];
+    \node[font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Teal] at (5.05,2.98) {$v$};
+    \node[font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Orange] at (4.05,3.92) {$\omega$};
+    \draw[Muted,line width=0.5pt,<->] (2.34,1.74) -- (4.26,1.74);
+    \node[font=\fontsize{5.2}{5.8}\selectfont,text=Muted] at (3.30,1.50) {distancia entre ruedas \(L\)};
+    \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Deep] at (0.48,4.92) {base diferencial};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{11}{12}\selectfont\bfseries,text=Deep] at (8.15,5.92) {$v_L = v - \frac{L}{2}\omega$};
+  \node[anchor=west,font=\fontsize{11}{12}\selectfont\bfseries,text=Deep] at (8.15,4.96) {$v_R = v + \frac{L}{2}\omega$};
+  \node[anchor=west,font=\fontsize{8.5}{9.5}\selectfont\bfseries,text=Copper] at (8.15,3.82) {Implicación de control};
+  \node[anchor=west,font=\fontsize{6.3}{7.3}\selectfont,text=Ink,text width=5.5cm,align=left] at (8.15,3.15)
+    {El controlador calcula velocidad lineal y angular, limita ambas magnitudes y las traduce a comandos de rueda para evitar giros bruscos en la celda.};
 }
 
-\slide{Parte 1: campos potenciales}{
-\[
-\vec{F}_{att}=k_{att}
-\begin{bmatrix}
-x_g-x_r\\
-y_g-y_r
-\end{bmatrix}
-\]
-\begin{itemize}
-  \item Calcular vector robot-objetivo.
-  \item Obtener rumbo deseado con atan2.
-  \item Regular avance y giro con saturacion.
-  \item Detener al entrar en tolerancia.
-\end{itemize}
+\DeckSlide{Campos potenciales: atracción y repulsión}{navegación local}{
+  \begin{scope}[shift={(0.85,1.00)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.4,6.25);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (8.4,6.25);
+    \foreach \x in {0.55,1.10,...,7.85} \draw[Rule,line width=0.18pt] (\x,0.40) -- (\x,5.85);
+    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.18pt] (0.40,\y) -- (8.00,\y);
+    \Robot{1.40}{1.20}{Teal}
+    \fill[Green] (6.65,4.85) circle (0.13);
+    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (6.65,5.20) {objetivo};
+    \fill[Red!16] (3.25,2.85) circle (0.45);
+    \draw[Red,line width=0.65pt] (3.25,2.85) circle (0.45);
+    \fill[Red!16] (4.55,3.95) circle (0.38);
+    \draw[Red,line width=0.65pt] (4.55,3.95) circle (0.38);
+    \draw[Green,line width=1.0pt,-{Latex[length=2.2mm]}] (1.40,1.20) -- (6.30,4.65);
+    \draw[Red,line width=0.85pt,-{Latex[length=1.9mm]}] (3.25,2.85) -- ++(-1.02,-0.52);
+    \draw[Red,line width=0.85pt,-{Latex[length=1.9mm]}] (4.55,3.95) -- ++(-0.80,-0.62);
+    \draw[Orange,line width=1.1pt,-{Latex[length=2.2mm]}] (1.40,1.20) .. controls (2.18,2.24) and (3.95,2.28) .. (6.35,4.55);
+    \node[font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=Orange] at (4.42,2.18) {rumbo resultante};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.72,6.45) {Ley usada};
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (9.72,5.66) {$\vec F = \vec F_{att} + \sum_i \vec F_{rep,i}$};
+  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=4.8cm,align=left] at (9.72,4.67)
+    {No se dibuja un camino mágico: cada ciclo recalcula rumbo desde objetivo, sensores y saturación de \(v,\omega\).};
+  \Tag{9.72}{2.82}{saturación}{Orange}
+  \Tag{9.72}{2.20}{tolerancia}{Green}
+  \Tag{9.72}{1.58}{recuperación}{Red}
 }
 
-\slide{Parte 2: anticolisiones}{
-\begin{itemize}
-  \item Cada sensor cercano genera fuerza repulsiva.
-  \item La direccion final combina atraccion y repulsion.
-  \item El robot reduce velocidad cuando hay obstaculos cerca.
-  \item Se prueban obstaculos frontales, laterales, objetivo movil, ruido y fallo intermitente de sensor.
-\end{itemize}
+\DeckSlide{Anticolisión: sensores y zonas de velocidad}{seguridad reactiva}{
+  \begin{scope}[shift={(0.90,1.10)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (7.65,6.05);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (7.65,6.05);
+    \Robot{3.20}{2.90}{Teal}
+    \foreach \ang/\col in {0/Red,25/Orange,50/Amber,-25/Orange,-50/Amber,90/Blue,-90/Blue,180/Muted} {
+      \draw[\col!65,line width=0.55pt,-{Latex[length=1.5mm]}] (3.20,2.90) -- ++(\ang:2.18);
+    }
+    \draw[Red!65,line width=0.45pt,dashed] (3.20,2.90) circle (1.08);
+    \draw[Orange!65,line width=0.45pt,dashed] (3.20,2.90) circle (1.72);
+    \draw[Green!65,line width=0.45pt,dashed] (3.20,2.90) circle (2.34);
+    \fill[Red!12] (5.05,2.45) rectangle (5.82,3.18);
+    \node[font=\fontsize{5.0}{5.6}\selectfont,text=Muted] at (5.48,3.42) {pallet};
+    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Red] at (4.14,4.10) {frenar};
+    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Orange] at (4.66,1.38) {reducir};
+    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Green] at (1.16,1.00) {nominal};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.05,6.35) {Implementado};
+  \foreach \y/\txt/\col in {
+    5.54/{16 ultrasonidos Pioneer + 6 sensores virtuales}/Teal,
+    4.82/{ruido determinista y fallo intermitente}/Orange,
+    4.10/{distancia mínima validada: 0,191 m}/Red,
+    3.38/{estado RECOVERY si el riesgo permanece alto}/Blue} {
+    \fill[\col] (9.10,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont,text=Ink,text width=5.0cm,align=left] at (9.34,\y) {\txt};
+  }
+  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted,text width=5.0cm,align=left] at (9.10,1.85)
+    {La seguridad se presenta como comportamiento de simulación: reducción de velocidad, evasión local y parada controlada.};
 }
 
-\slide{Flujo de control}{
-\begin{tikzpicture}[node distance=8mm,box/.style={draw=UniPrimaryDeep,rounded corners,fill=UniLight,align=center,text width=2.7cm,minimum height=10mm},arr/.style={-{Latex},UniPrimaryDeep,thick}]
-\node[box] (read) {Leer objetivo, ruta y sensores};
-\node[box,right=of read] (force) {FSM + campos potenciales};
-\node[box,right=of force] (cmd) {Saturar v, omega};
-\node[box,below=of force] (wheels) {Enviar velocidades de rueda};
-\draw[arr] (read)--(force);
-\draw[arr] (force)--(cmd);
-\draw[arr] (cmd)--(wheels);
-\draw[arr] (wheels.west)--++(-1.7,0)|-(read.south);
-\end{tikzpicture}
+\DeckSlide{Máquina de estados del Pioneer}{arquitectura de control}{
+  \foreach \x/\y/\name/\col in {
+    1.20/4.90/ROUTE/Teal,
+    4.20/4.90/AVOIDING/Orange,
+    7.45/4.90/RECOVERY/Red,
+    4.20/2.50/HOLD/Blue,
+    10.65/4.90/ARRIVED/Green} {
+    \fill[\col!10,rounded corners=4pt] (\x,\y) rectangle ++(2.18,0.88);
+    \draw[\col!75,line width=0.55pt,rounded corners=4pt] (\x,\y) rectangle ++(2.18,0.88);
+    \node[font=\fontsize{7.3}{8.0}\selectfont\bfseries,text=\col] at (\x+1.09,\y+0.44) {\name};
+  }
+  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (3.38,5.34) -- (4.12,5.34);
+  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (6.38,5.34) -- (7.34,5.34);
+  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (9.63,5.34) -- (10.55,5.34);
+  \draw[Blue,line width=0.75pt,-{Latex[length=2mm]}] (5.30,4.90) -- (5.30,3.38);
+  \draw[Green,line width=0.75pt,-{Latex[length=2mm]}] (5.30,2.50) -- (5.30,1.65) -- (11.74,1.65) -- (11.74,4.90);
+  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (1.22,3.92) {riesgo bajo};
+  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (4.24,3.92) {obstáculo};
+  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (7.48,3.92) {bloqueo};
+  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (10.68,3.92) {tolerancia};
+  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=12.8cm,align=left] at (1.20,0.95)
+    {La FSM evita una demo opaca: cada transición puede defenderse con señales internas, telemetría y eventos visibles en CoppeliaSim.};
 }
 
-\slide{Integracion en celda}{
-\begin{itemize}
-  \item Zona segura de espera.
-  \item Mision hacia Bill, mannequin o punto de estacion.
-  \item Evitacion de obstaculos de la celda.
-  \item Senales internas: missionReady, pioneerArrived, pioneerState y pioneerScenario.
-  \item Celda con transportadores, palets, vallas, eventos, estacion objetivo y estacion de carga.
-\end{itemize}
+\DeckSlide{Integración en celda: módulos y señales}{sistema completo}{
+  \foreach \x/\name/\txt/\col in {
+    0.80/Pioneer Controller/{FSM, campos potenciales, ruedas, batería}/Teal,
+    4.52/Scenario Manager/{S1--S8, obstáculos, parada y objetivo móvil}/Orange,
+    8.24/MultiRobot A* Manager/{rutas, reservas, carga y flota auxiliar}/Blue,
+    11.96/Demo Overlay/{labels, cámaras y lectura rápida}/Green} {
+    \fill[\col!9,rounded corners=5pt] (\x,4.66) rectangle ++(3.05,1.62);
+    \draw[\col!75,line width=0.5pt,rounded corners=5pt] (\x,4.66) rectangle ++(3.05,1.62);
+    \node[font=\fontsize{6.8}{7.7}\selectfont\bfseries,text=Deep,text width=2.70cm,align=center] at (\x+1.53,5.82) {\name};
+    \node[font=\fontsize{5.2}{6.0}\selectfont,text=Muted,text width=2.65cm,align=center] at (\x+1.53,5.18) {\txt};
+  }
+  \foreach \x in {3.90,7.62,11.34} \draw[Copper,line width=0.75pt,-{Latex[length=1.9mm]}] (\x,5.47) -- ++(0.45,0);
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (0.90,3.42) {Señales de coordinación};
+  \foreach \x/\txt/\col in {
+    0.90/missionReady/Teal,
+    3.55/pioneerState/Orange,
+    6.20/pioneerBatteryLevel/Blue,
+    9.25/fleetAllComplete/Green,
+    12.15/demoOverlayLabels/Copper} {
+    \Tag{\x}{2.58}{\txt}{\col}
+  }
+  \node[anchor=west,font=\fontsize{6.1}{7.1}\selectfont,text=Ink,text width=13.4cm,align=left] at (0.90,1.55)
+    {La defensa no depende de “mirar si se mueve”: los módulos publican estados, eventos y métricas que quedan registrados en JSON.};
 }
 
-\slide{Extensiones robustas}{
-\begin{itemize}
-  \item Bateria simulada con modos NORMAL, LOW y CHARGING.
-  \item Zonas de velocidad: docking, carril de aproximacion y zona por defecto.
-  \item Filtro de ruido y fallo intermitente en sensores fronto-laterales.
-  \item HMI visual con bateria, estado, zona activa, carga y fallo sensorial.
-  \item Flota auxiliar de 3 AMR con A* cooperativo y retorno a estaciones de carga.
-\end{itemize}
+\DeckSlide{Escenarios S1--S8: pruebas con degradación}{validación secuencial}{
+  \draw[Rule,line width=0.55pt] (1.05,4.52) -- (14.60,4.52);
+  \foreach \x/\n/\txt/\col in {
+    1.05/S1/ruta nominal/Teal,
+    2.98/S2/pallet móvil/Orange,
+    4.91/S3/parada/Blue,
+    6.84/S4/objetivo móvil/Green,
+    8.77/S5/pasillo estrecho/Amber,
+    10.70/S6/fallo sensor/Red,
+    12.63/S7/batería baja/Blue,
+    14.56/S8/llegada/Green} {
+    \fill[\col!12] (\x,4.52) circle (0.34);
+    \draw[\col,line width=0.55pt] (\x,4.52) circle (0.34);
+    \node[font=\fontsize{5.4}{6.0}\selectfont\bfseries,text=\col] at (\x,4.52) {\n};
+    \node[font=\fontsize{5.1}{5.8}\selectfont,text=Ink,text width=1.45cm,align=center] at (\x,3.62) {\txt};
+  }
+  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (1.05,6.30) {La demo cubre condiciones normales, interacción con celda y fallos};
+  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Muted,text width=13.1cm,align=left] at (1.05,5.65)
+    {El profesor puede ejecutar Play y observar una secuencia ordenada: no es una escena estática ni un recorrido único idealizado.};
+  \Metric{1.05}{1.65}{4,328 m}{distancia inicial}{Teal}
+  \Metric{4.55}{1.65}{0,739 m}{distancia final}{Green}
+  \Metric{8.05}{1.65}{ARRIVED}{estado final}{Orange}
+  \Metric{11.55}{1.65}{0,191 m}{mínimo a obstáculo}{Red}
 }
 
-\slide{Flota A* cooperativa}{
-\begin{itemize}
-  \item 3 robots AMR auxiliares sobre una grilla de celda.
-  \item A* con reservas celda-tiempo y arista-tiempo para evitar ocupaciones simultaneas y cruces opuestos.
-  \item Bateria con descarga, retorno autonomo a estacion de carga y recarga hasta READY.
-  \item Resultado validado: 16 planes A*, 8 conflictos evitados, 4 eventos de carga y 3/3 robots recargados.
-\end{itemize}
+\DeckSlide{Extensión multi-robot: A* cooperativo}{flota auxiliar}{
+  \begin{scope}[shift={(0.82,1.00)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.35,6.25);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (8.35,6.25);
+    \foreach \x in {0.60,1.15,...,7.70} \draw[Rule,line width=0.22pt] (\x,0.55) -- (\x,5.72);
+    \foreach \y in {0.60,1.15,...,5.70} \draw[Rule,line width=0.22pt] (0.55,\y) -- (7.82,\y);
+    \TinyRobot{1.05}{1.05}{Teal}
+    \TinyRobot{1.05}{5.15}{Orange}
+    \TinyRobot{6.95}{1.05}{Blue}
+    \draw[Teal,line width=1.0pt,-{Latex[length=2mm]}] (1.05,1.05) -- (2.70,1.05) -- (2.70,3.25) -- (6.70,3.25);
+    \draw[Orange,line width=1.0pt,-{Latex[length=2mm]}] (1.05,5.15) -- (3.25,5.15) -- (3.25,4.05) -- (6.70,4.05);
+    \draw[Blue,line width=1.0pt,-{Latex[length=2mm]}] (6.95,1.05) -- (5.30,1.05) -- (5.30,2.20) -- (2.05,2.20);
+    \fill[Red!12] (3.05,2.85) rectangle (3.60,3.40);
+    \fill[Red!12] (5.12,3.82) rectangle (5.67,4.37);
+    \node[font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=Red] at (4.38,5.76) {reservas celda-tiempo};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.62,6.48) {Resultado validado};
+  \Metric{9.62}{5.48}{16}{planes A* generados}{Blue}
+  \Metric{9.62}{4.36}{8}{conflictos evitados}{Orange}
+  \Metric{9.62}{3.24}{4}{eventos de carga}{Teal}
+  \Metric{9.62}{2.12}{3/3}{robots READY}{Green}
 }
 
-\slide{Validacion}{
-\begin{tabularx}{\textwidth}{Y Y}
-\toprule
-\textbf{Prueba} & \textbf{Criterio}\\
-\midrule
-Atraccion & Distancia al objetivo decrece.\\
-Llegada & Parada dentro de tolerancia.\\
-Obstaculo frontal & Rodeo sin colision.\\
-Objetivo movil & Seguimiento estable.\\
-Celda & No invadir zonas de otros equipos.\\
-Flota A* & 3 robots completan mision y recarga.\\
-\bottomrule
-\end{tabularx}
-
-\vspace{0.25cm}
-Validacion headless final: 4,328 m $\rightarrow$ 0,739 m, estado ARRIVED, 22 sensores activos, 8 escenarios observados y distancia minima a obstaculo 0,191 m. Flota: 16 planes A*, 8 conflictos evitados, 4 cargas y 3/3 robots READY.
+\DeckSlide{Validación: indicadores que sí sostienen la defensa}{evidencia cuantitativa}{
+  \begin{scope}[shift={(0.80,1.05)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (14.45,6.20);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (14.45,6.20);
+    \foreach \x/\v/\lab/\col in {
+      0.62/4.328/inicial/Muted,
+      3.10/0.739/final/Green,
+      5.58/22/sensores/Teal,
+      8.06/8/escenarios/Orange,
+      10.54/3/AMR READY/Blue,
+      13.02/0.191/mín. obstáculo/Red} {
+      \node[font=\fontsize{16}{17}\selectfont\bfseries,text=\col] at (\x+0.62,4.98) {\v};
+      \node[font=\fontsize{5.2}{5.8}\selectfont,text=Muted,text width=1.36cm,align=center] at (\x+0.62,4.32) {\lab};
+    }
+    \draw[Rule,line width=0.5pt] (0.65,3.65) -- (13.85,3.65);
+    \foreach \y/\p/\c in {2.85/{Pioneer reduce distancia y termina en ARRIVED.}/Green,2.26/{Sensores cubren proximidad, ruido y fallo intermitente.}/Teal,1.67/{La flota auxiliar completa rutas y recarga.}/Blue,1.08/{El JSON permite reproducir la evidencia sin depender de una captura.}/Orange} {
+      \fill[\c] (0.82,\y+0.06) circle (0.055);
+      \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Ink] at (1.06,\y) {\p};
+    }
+  \end{scope}
 }
 
-\slide{Conclusiones}{
-\begin{itemize}
-  \item Campos potenciales: solucion sencilla y didactica.
-  \item La evitacion reactiva mejora seguridad de navegacion.
-  \item La flota A* demuestra coordinacion multi-robot y gestion de bateria.
-  \item CoppeliaSim permite ajustar parametros antes de la demostracion.
-  \item Limitacion: posibles minimos locales y oscilaciones.
-\end{itemize}
+\DeckSlide{Entregables y cómo defenderlos en 3 minutos}{guion de presentación}{
+  \node[anchor=west,font=\fontsize{7.3}{8.3}\selectfont\bfseries,text=Deep] at (0.82,6.85) {Archivos principales};
+  \foreach \y/\name/\desc/\col in {
+    6.08/{Actividad2\_Pioneer\_Profesional\_10\_10.ttt}/{escena final para abrir y ejecutar en CoppeliaSim}/Teal,
+    5.28/{Actividad2\_Pioneer\_Profesional\_10\_10\_validation.json}/{evidencia reproducible de resultados}/Orange,
+    4.48/{main.pdf}/{informe técnico con trazabilidad y validación}/Blue,
+    3.68/{Actividad2\_Pioneer\_CoppeliaSim.pptx}/{presentación editable profesional}/Green} {
+    \fill[\col!10,rounded corners=3pt] (0.90,\y-0.22) rectangle (7.60,\y+0.35);
+    \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=\col] at (1.12,\y+0.11) {\name};
+    \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont,text=Muted] at (1.12,\y-0.11) {\desc};
+  }
+  \node[anchor=west,font=\fontsize{7.3}{8.3}\selectfont\bfseries,text=Deep] at (9.15,6.85) {Orden recomendado};
+  \foreach \y/\n/\txt in {
+    6.08/1/{Explicar guía: Pioneer, campos potenciales, anticolisión.},
+    5.28/2/{Mostrar celda: ruta, sensores, HMI y batería.},
+    4.48/3/{Ejecutar o enseñar validación: S1--S8 y ARRIVED.},
+    3.68/4/{Cerrar con extensión A*: flota, reservas y carga.}} {
+    \fill[Copper] (9.23,\y+0.02) circle (0.13);
+    \node[font=\fontsize{4.8}{5.3}\selectfont\bfseries,text=white] at (9.23,\y+0.02) {\n};
+    \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont,text=Ink,text width=4.9cm,align=left] at (9.54,\y-0.06) {\txt};
+  }
 }
+
+\DeckSlide{Limitaciones reconocidas y mitigación}{criterio técnico}{
+  \foreach \x/\tit/\risk/\mit/\col in {
+    0.85/Mínimos locales/{Campo potencial puede oscilar o bloquearse.}/{FSM RECOVERY y ruta por waypoints.}/Orange,
+    5.45/Sensor imperfecto/{Ruido o fallo intermitente en proximidad.}/{Filtro, degradación simulada y margen de seguridad.}/Red,
+    10.05/Simulación vs planta/{La escena no equivale a certificación industrial.}/{Validar primero en CoppeliaSim y documentar supuestos.}/Blue} {
+    \fill[\col!9,rounded corners=5pt] (\x,2.25) rectangle ++(3.85,4.18);
+    \draw[\col!75,line width=0.5pt,rounded corners=5pt] (\x,2.25) rectangle ++(3.85,4.18);
+    \node[anchor=west,font=\fontsize{7.5}{8.4}\selectfont\bfseries,text=\col] at (\x+0.28,5.72) {\tit};
+    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,4.75) {Riesgo};
+    \node[anchor=west,font=\fontsize{5.6}{6.5}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,4.28) {\risk};
+    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,3.27) {Mitigación};
+    \node[anchor=west,font=\fontsize{5.6}{6.5}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,2.80) {\mit};
+  }
+}
+
+\DeckSlide{Conclusión: una entrega defendible, no decorativa}{cierre}{
+  \node[anchor=west,font=\fontsize{13.2}{14.3}\selectfont\bfseries,text=Deep,text width=8.2cm,align=left] at (0.88,6.42)
+    {La mejora visual sirve a la evaluación: cada diagrama apunta a un requisito, un módulo o una prueba.};
+  \node[anchor=west,font=\fontsize{6.6}{7.7}\selectfont,text=Ink,text width=8.0cm,align=left] at (0.92,4.78)
+    {La escena final muestra el Pioneer moviéndose con campos potenciales, evitando obstáculos, publicando estado, operando dentro de una celda y extendiéndose a una flota auxiliar con A* cooperativo.};
+  \begin{scope}[shift={(10.05,1.75)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (4.45,4.75);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (4.45,4.75);
+    \Robot{1.00}{1.12}{Teal}
+    \draw[Orange,line width=1.0pt,-{Latex[length=2mm]}] (1.00,1.12) -- (2.14,1.12) -- (2.14,2.86) -- (3.50,2.86);
+    \fill[Green] (3.50,2.86) circle (0.11);
+    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (3.52,3.22) {ARRIVED};
+    \Tag{0.52}{3.88}{JSON passed}{Green}
+    \Tag{0.52}{3.28}{22 sensores}{Teal}
+    \Tag{0.52}{2.68}{S1--S8}{Orange}
+  \end{scope}
+  \draw[Copper,line width=0.7pt] (0.90,2.00) -- (8.40,2.00);
+  \node[anchor=west,font=\fontsize{6.5}{7.4}\selectfont\bfseries,text=Copper] at (0.92,1.55)
+    {Mensaje de defensa: obligatorio resuelto, mejora profesional justificada y evidencia reproducible.};
+}
+
 \end{document}
