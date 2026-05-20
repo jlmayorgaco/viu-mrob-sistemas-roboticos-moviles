@@ -8,7 +8,7 @@ Lunabotics oferta un sistema de robots móviles autónomos para suministro coord
 
 El diseño distingue cuatro niveles: modelo de simulación, modelo técnico seleccionado, benchmarks de mercado y plataforma final de compra. En CoppeliaSim se trabaja con una base tipo KUKA YouBot/KUKA Omnirob, suficiente para representar una cinemática omnidireccional con ruedas mecanum/suecas y ensayar maniobras laterales cerca de estaciones. Como referencia técnica de implantación se adopta una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}: AMR interior omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg según la ficha técnica del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se conserva como alternativa comercial de intralogística para dollies, con accionamiento omnidireccional, 300 kg de carga y velocidad máxima de 1,4 m/s \cite{agiloxOdm}.
 
-MiR250 y Omron LD-250 no se presentan como la compra final, sino como benchmarks de AMR de 250 kg. El MiR250 publica 250 kg de carga, hasta 2 m/s, uso interior y superficie de carga compacta \cite{mir250Specs}; el Omron LD-250 publica 250 kg, 1,2 m/s, navegación natural, sensores de seguridad y E-stop \cite{omronLd250}. Esas referencias acotan coste, madurez y capacidades de mercado, pero no sustituyen el requisito de maniobra lateral de la plataforma objetivo.
+MiR250 y Omron LD-250 se usan como benchmarks de AMR de 250 kg. El MiR250 publica 250 kg de carga, hasta 2 m/s, uso interior y superficie de carga compacta \cite{mir250Specs}; el Omron LD-250 publica 250 kg, 1,2 m/s, navegación natural, sensores de seguridad y E-stop \cite{omronLd250}. Esas referencias acotan coste, madurez y capacidades de mercado. El requisito que manda en esta oferta sigue siendo la maniobra lateral cerca de estación.
 
 \begin{longtable}{P{0.18\textwidth}P{0.25\textwidth}P{0.31\textwidth}P{0.16\textwidth}}
 \toprule
@@ -88,26 +88,13 @@ La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simula
 
 \section{Sensores y componentes}
 
-\begin{longtable}{P{0.28\textwidth}P{0.62\textwidth}}
-\toprule
-\textbf{Elemento} & \textbf{Justificación}\\
-\midrule
-\endhead
-LiDAR 2D/3D & Navegación, SLAM y detección geométrica de obstáculos. La seguridad funcional depende de escáner certificado, bumpers y parada de emergencia.\\
-Cámara RGB-D o industrial & Inspección FOD preventiva, verificación visual de zonas y evidencia fotográfica de incidencias, siempre con revisión humana ante positivos.\\
-RFID/QR & Trazabilidad de kits, herramientas, entregas, devoluciones y puntos de estación.\\
-IMU y encoders & Odometría y fusión sensorial para estimar pose con menor deriva.\\
-Bumpers y escáner láser de seguridad & Capa separada de seguridad funcional: zonas de protección, reducción de velocidad y parada segura ante presencia humana.\\
-Parada de emergencia & Requisito básico de operación industrial y aceptación por seguridad.\\
-HMI/tablet & Solicitud de misiones, confirmación de entregas y visualización de estado.\\
-WiFi industrial & Comunicación con supervisor, gestor de flota y base de datos.\\
-Base de datos de misiones & Registro de eventos, trazabilidad, KPIs, histórico FOD y auditoría operativa.\\
-\bottomrule
-\end{longtable}
+El paquete sensorial se divide en tres grupos. Para navegación se usan LiDAR 2D/3D, IMU y encoders: con ellos el AMR estima pose, actualiza mapa y evita obstáculos geométricos. Para seguridad se reservan escáner láser certificado, bumpers y parada de emergencia, con campos de protección y reducción de velocidad por zona. Para proceso se integran cámara RGB-D o cámara industrial, lectura RFID/QR, HMI/tablet y base de datos de misiones.
+
+La cámara aporta evidencia visual de rondas FOD y el lector RFID/QR cierra la entrega en origen y destino. La HMI permite solicitar misiones, aceptar entregas y consultar estado. La WiFi industrial une robot, supervisor, gestor de flota y base de datos. La decisión práctica es separar lo que sirve para navegar, lo que sirve para parar con seguridad y lo que sirve para demostrar trazabilidad.
 
 \section{Arquitectura sensorial por capas}
 
-La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de navegación y la fusión encoders--IMU localizan el AMR y mantienen el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente de parada segura; la cámara RGB-D, RFID y QR cubren FOD y trazabilidad. Una cámara FOD no certifica calidad aeronáutica por sí sola. Un LiDAR de navegación tampoco sustituye un sistema de seguridad funcional.
+La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de navegación y la fusión encoders--IMU localizan el AMR y mantienen el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente de parada segura; la cámara RGB-D, RFID y QR cubren FOD y trazabilidad.
 
 \begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}P{0.22\textwidth}P{0.24\textwidth}}
 \toprule
@@ -128,7 +115,7 @@ Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiem
 
 La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La base se elige por maniobrabilidad, no por carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
 
-Los actuadores no están previstos para manipular piezas estructurales del HTP. Su función es mover la base, accionar elementos auxiliares simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar el sistema y mantiene el alcance dentro de una aplicación acotada de robótica móvil industrial.
+Los actuadores se concentran en locomoción y servicio auxiliar: mover la base, accionar elementos simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar el sistema.
 
 \section{Modo de operación seguro}
 

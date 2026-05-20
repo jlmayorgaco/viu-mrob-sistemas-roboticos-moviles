@@ -16,6 +16,17 @@ Proyecto LaTeX para la Actividad 1: oferta de automatización a planta industria
 
 Los enunciados originales están en `../docs/enunciado/`.
 
+## Evidencia de entrevista
+
+La guía de la Actividad 1 pide capturas de pantalla de la conversación con ChatGPT. Antes de entregar en el campus, guarda las capturas reales en:
+
+- `figures/entrevista/captura_01.png`
+- `figures/entrevista/captura_02.png`
+- `figures/entrevista/captura_03.png`
+- `figures/entrevista/captura_04.png`
+
+El informe las inserta automáticamente en el Anexo A. Si esos archivos no existen, el PDF compila, pero la entrega no debe considerarse final.
+
 ## Compilar informe
 
 ```powershell

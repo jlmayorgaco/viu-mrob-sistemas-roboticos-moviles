@@ -283,7 +283,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 5
 {
-  const s = slideBase("De conversacion simulada a requisitos trazables", "Entrevista", 5, C.violet);
+  const s = slideBase("De conversacion guiada a requisitos trazables", "Entrevista", 5, C.violet);
   label(s, "ACTA TECNICA\nCarlos Perez\n+10 anos de experiencia en Alestis Puerto Real.", 0.75, 1.45, 1.85, 0.92, { size: 8.2, bold: true, color: C.violet });
   label(s, "El alcance correcto no es fabricar: es asegurar flujo, FOD y trazabilidad.", 0.78, 2.7, 2.15, 1.1, { face: "Aptos Display", size: 17.5, bold: true, color: C.navy });
   const rows = [

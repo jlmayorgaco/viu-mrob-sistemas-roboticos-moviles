@@ -1,6 +1,6 @@
 \chapter{Entrevista con experto}
 
-La guía pide simular en ChatGPT una conversación con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Para que la entrevista no parezca una ficha perfecta escrita desde fuera, se mantiene el formato de conversación: Carlos responde con dudas, vuelve a temas de planta y, tal como indica el enunciado, se desvía alguna vez hacia Cádiz.
+La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. La transcripción de trabajo que se resume aquí mantiene ese enfoque: conversación informal, respuestas imperfectas, desvíos puntuales hacia Cádiz y vuelta al proceso productivo. Las capturas reales de la conversación deben incorporarse en el Anexo A antes de subir la entrega al campus.
 
 \begin{interviewbrief}
 \textbf{Ficha de la entrevista}
@@ -10,60 +10,60 @@ La guía pide simular en ChatGPT una conversación con Carlos Pérez, trabajador
 \textbf{Rol en la actividad} & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatización.\\
 \textbf{Temas tratados} & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, trazabilidad, transporte interno, esperas y restricciones de seguridad.\\
 \textbf{Uso de la evidencia} & Las respuestas se usan para definir requisitos, selección de robot, sensores, arquitectura, presupuesto y KPIs.\\
-\textbf{Capturas} & La entrega final al campus debe incorporar las capturas reales de la conversación de ChatGPT. En el Anexo A se deja el hueco exacto para insertarlas.\\
+\textbf{Capturas} & El Anexo A carga automáticamente las imágenes \texttt{captura\_01.png} a \texttt{captura\_04.png} cuando se guarden en \path{figures/entrevista/}.\\
 \end{tabularx}
 \end{interviewbrief}
 
-\section{Conversación simulada}
+\section{Transcripción de la entrevista}
 
 \begin{interviewtranscript}[Transcripción de trabajo con Carlos Pérez]
 \InterviewExchange
 {Carlos, para empezar: ¿qué debo entender por HTP y por la sección 19.1 en el caso de Alestis Puerto Real?}
-{El HTP es el estabilizador horizontal de cola del A320. En planta no se vive como una definición de libro; se vive como una estructura grande, con útiles, documentación, inspecciones y bastante material auxiliar alrededor. La sección 19.1 está en la zona posterior del avión, cerca de interfaces de cola. Ahí cualquier espera se nota porque hay mucha coordinación entre puestos.}
+{El HTP es el estabilizador horizontal de cola del A320. Dicho en planta: una estructura grande, con útiles, papeleo, inspecciones y mucho material pequeño alrededor. Lo de la 19.1 va por la zona posterior, cerca de interfaces de cola. Si ahí falta algo, no siempre se para la línea, pero el puesto se queda esperando.}
 
 \InterviewExchange
 {¿Qué se mueve realmente durante el turno? No me refiero a la pieza principal, sino al trabajo de soporte.}
-{Kits de fijaciones, consumibles, herramientas calibradas, útiles de posicionamiento, documentación de orden, protecciones, carros auxiliares y material que vuelve a almacén o metrología. Muchas cosas son pequeñas, pero van y vienen todo el día. Si falta una caja o una herramienta, el operario acaba saliendo de su zona.}
+{Pues de todo un poco: cajas de fijaciones, consumibles, herramientas calibradas, algún útil, protecciones, documentación de orden y carros que vuelven a almacén o a metrología. Muchas piezas son pequeñas, pero van y vienen todo el día. Si falta una caja o una llave concreta, alguien acaba saliendo de su puesto.}
 
 \InterviewExchange
 {¿Dónde se pierde más tiempo?}
-{No siempre hay una parada oficial. A veces son diez minutos buscando una herramienta, otros diez esperando un kit, o alguien preguntando si ese material corresponde a esa orden. Visto desde fuera parece poca cosa, pero al final del turno pesa.}
+{En los ratos pequeños. Diez minutos buscando una herramienta, otros diez esperando un kit, otro rato preguntando si esa bandeja era para esa orden o para otra. No sale siempre como incidencia grande, pero al final del turno se nota.}
 
 \InterviewExchange
 {¿Tendría sentido que un robot móvil fabricara o montara directamente el HTP?}
-{No, eso no lo veo. El montaje estructural tiene procedimientos, personal cualificado y controles. El robot móvil puede ayudar alrededor: traer el kit correcto, registrar la entrega, devolver útiles usados y avisar si detecta algo raro. Fabricar el HTP con un AMR sería vender humo.}
+{No, eso no lo veo. El montaje estructural lo hace gente formada, con procedimiento y control. Un robot móvil puede ayudar alrededor: traer el kit, registrar la entrega, devolver útiles y avisar si ve algo raro. Pero poner un AMR a fabricar el HTP sería vender humo.}
 
 \InterviewExchange
 {La guía de la actividad dice que usted puede desviarse de vez en cuando. Si nos vamos un momento a Cádiz: ¿esa cultura de planta tiene algo que ver con el entorno?}
-{Bueno, Cádiz engancha, eso es verdad. La bahía tiene mucha historia naval, astilleros, gente acostumbrada a trabajar con estructuras grandes. Pero vuelvo al tema: esa experiencia también hace que la gente de planta sea práctica. Si el robot estorba, no lo van a querer. Si ahorra paseos y no complica el trabajo, lo aceptan antes.}
+{Hombre, Cádiz engancha, claro. La bahía tiene historia naval, astilleros, oficio de estructuras grandes. Pero volviendo al tajo: aquí la gente es práctica. Si el robot estorba, lo apartan. Si quita paseos y no complica el turno, entonces empieza a ganar sitio.}
 
 \InterviewExchange
 {En localización de herramientas y materiales, ¿qué falla con más frecuencia?}
-{A veces el sistema dice que el material existe, pero no está junto al puesto. O una herramienta se presta un momento y luego nadie sabe dónde quedó. No digo que sea un caos, no lo es, pero falta trazabilidad fina en el momento exacto de la entrega. Ahí una lectura RFID o QR en origen y destino ayudaría.}
+{A veces el sistema dice que el material está, pero no está al lado del puesto. O se presta una herramienta “un momento” y luego toca preguntar. No digo que sea un desastre, porque no lo es. Falta saber el momento exacto: quién recogió, dónde dejó y para qué orden. Ahí un QR o RFID en origen y destino ayudaría bastante.}
 
 \InterviewExchange
 {¿Qué papel tiene FOD en esta propuesta?}
-{FOD es serio. Tornillería, restos de embalaje, bridas, cualquier cosa pequeña puede dar un problema. Ya hay rutinas de orden y limpieza. El robot no sustituye al responsable de calidad, pero puede hacer una ronda, tomar una imagen, dejar hora y zona, y avisar para que alguien revise.}
+{FOD es serio. Un tornillo, una brida, un trozo de embalaje, cualquier cosa pequeña. Ya hay orden y limpieza, claro, pero una ronda con cámara puede dejar foto, hora y zona. Luego lo revisa una persona; el robot solo avisa y deja evidencia.}
 
 \InterviewExchange
 {¿Qué restricciones tendría que cumplir el AMR para moverse entre operarios y estructuras grandes?}
-{Velocidad baja, zonas de seguridad, parada de emergencia visible y un escáner que pare antes de tocar a nadie. También conviene que maniobre bien cerca de la estación. Si tiene que girar como un carrito largo, molesta. Una base omnidireccional tiene más sentido porque corrige lateralmente.}
+{Velocidad baja, zonas de seguridad, parada de emergencia a la vista y un escáner que lo pare antes de tocar a nadie. Y que maniobre fino. Si tiene que girar como un carro largo, molesta. Una base omnidireccional me cuadra más porque puede corregir de lado.}
 
 \InterviewExchange
 {¿Un AGV de ruta fija bastaría?}
-{Para un pasillo muy estable, puede valer. Pero en una nave de montaje cambian prioridades, carros, útiles y zonas ocupadas. Yo preferiría un AMR con mapa y capacidad de recalcular. Ojo, tampoco hace magia: si el pasillo está bloqueado de verdad, tendrá que esperar o avisar.}
+{Para un pasillo que no cambia, puede valer. Pero en montaje cambian prioridades, carros, útiles y zonas ocupadas. Yo tiraría por un AMR que tenga mapa y recalcule. Ojo, si el pasillo está bloqueado de verdad, esperará o avisará. Milagros no hace.}
 
 \InterviewExchange
 {Vuelvo a Cádiz un segundo. ¿Cree que la aceptación de operarios depende también de cómo se presente el proyecto?}
-{Sí. Aquí la gente es directa. Si llegas vendiendo que un robot va a arreglar toda la planta, mal. Si dices: vamos a probarlo en una zona, medimos si evita paseos y si no funciona lo ajustamos, eso entra mejor. Y luego, si sobra un rato, hablamos de la Caleta o de los carnavales, pero primero que el robot no moleste.}
+{Sí. Aquí la gente es directa. Si llegas diciendo que el robot arregla toda la planta, mal. Si dices “vamos a probarlo en esta zona, medimos si quita paseos y corregimos”, eso entra mejor. Y luego hablamos de la Caleta o de carnavales, pero primero que el robot no estorbe.}
 
 \InterviewExchange
 {La actividad habla de pasar de unos 40 HTP al mes a 80 o más. ¿Cómo se debe leer esa meta?}
-{No diría que los robots duplican la producción. Eso sería exagerar. Ayudan a quitar fricción: menos esperas, menos búsquedas, entregas más fiables, mejor registro. Para llegar a 80 hacen falta más cosas: planificación, personal, calidad, capacidad de estación. El AMR aporta una parte.}
+{No diría que el robot duplica producción. Eso sería pasarse. Ayuda a quitar fricción: menos esperas, menos búsquedas, entregas más fiables y mejor registro. Para llegar a 80 hacen falta planificación, gente, calidad y capacidad de estación. El AMR aporta una parte, no toda la solución.}
 
 \InterviewExchange
 {Si Lunabotics empieza con un piloto, ¿qué mediría antes de comprar 7 o 17 robots?}
-{Misiones completadas, entregas a tiempo, paradas de seguridad, lecturas RFID/QR correctas, aceptación de operarios, disponibilidad del robot y eventos FOD revisados. También mediría si el operario de verdad camina menos. Si esos datos no salen bien, no escalaría.}
+{Misiones completadas, entregas a tiempo, paradas de seguridad, lecturas QR/RFID correctas, disponibilidad y eventos FOD revisados. Y algo muy simple: si el operario camina menos de verdad. Si eso no sale, yo no compraría siete robots.}
 \end{interviewtranscript}
 
 \section{Hallazgos para diseño}

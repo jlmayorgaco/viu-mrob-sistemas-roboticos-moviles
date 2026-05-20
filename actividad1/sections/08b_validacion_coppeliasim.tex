@@ -1,6 +1,6 @@
 \chapter{Plan de validación en CoppeliaSim}
 
-CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico. La simulación no certifica la seguridad industrial; comprueba rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
+CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico. El modelo comprueba rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
 
 \begin{figure}[H]
 \centering
@@ -21,7 +21,7 @@ Mapa de planta & Pasillos, estaciones de HTP, zona de preparación de kits, punt
 Obstáculos & Útiles, carros, estructuras, operarios simulados como objetos dinámicos y zonas temporalmente bloqueadas.\\
 Sensores & LiDAR 2D/3D para obstáculos, cámara RGB-D conceptual para FOD y lectores RFID/QR representados por puntos de validación.\\
 Misiones & Entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y misión cancelada por obstáculo persistente.\\
-Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual. La simulación verifica comportamiento, no certificación de seguridad.\\
+Algoritmos & Localización por SLAM/fusión sensorial, planificador global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual.\\
 \bottomrule
 \end{longtable}
 
@@ -48,7 +48,7 @@ Antes de pasar a piloto físico, el modelo debe demostrar que las rutas propuest
 
 \section{Criterios técnicos de aceptación}
 
-Los criterios siguientes convierten la teoría del curso en pruebas verificables. No sustituyen una validación industrial certificada, pero evitan que la simulación quede como una demostración visual sin valor de ingeniería.
+Los criterios siguientes convierten la teoría del curso en pruebas verificables y evitan que la simulación quede como una demostración visual sin valor de ingeniería.
 
 \begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
 \toprule
@@ -60,7 +60,7 @@ Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin in
 Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
 Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
 Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
-FOD preventivo & Todo positivo RGB-D genera evidencia visual y revisión humana; los falsos positivos se registran. & La cámara apoya inspección preventiva, no sustituye calidad aeronáutica.\\
+FOD preventivo & Todo positivo RGB-D genera evidencia visual y revisión humana; los falsos positivos se registran. & La cámara aporta una prueba visual útil para rondas preventivas.\\
 Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
 Energía & No se asignan nuevas misiones por debajo de una reserva mínima operativa del 20\% de batería. & Los actuadores y sensores consumen energía; la planificación debe contemplar carga y disponibilidad.\\
 \bottomrule
