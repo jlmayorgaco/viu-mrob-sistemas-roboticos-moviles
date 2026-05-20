@@ -227,8 +227,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 2
 {
-  const s = slideBase("No se robotiza el HTP; se estabiliza el flujo que lo rodea", "Tesis", 2, C.teal);
-  label(s, "Menos espera.\nMas trazabilidad.\nMenos riesgo FOD.", 0.78, 1.48, 4.5, 1.3, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
+  const s = slideBase("Estabilizar el flujo que rodea al HTP", "Tesis", 2, C.teal);
+  label(s, "Menos espera.\nMejor registro.\nMenos riesgo FOD.", 0.78, 1.48, 4.5, 1.3, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
   label(s, "Cubre transporte, confirmacion y evidencia.", 0.84, 3.02, 4.2, 0.28, { size: 9, color: C.muted });
   label(s, "No toca montaje aeronautico certificado.", 0.84, 3.38, 4.2, 0.28, { size: 9, bold: true, color: C.navy });
   s.addShape(pptx.ShapeType.line, { x: 7.15, y: 1.25, w: 0, h: 4.4, line: { color: C.teal, width: 1.2 } });
@@ -250,7 +250,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     ["Operarios abandonan estacion para buscar utiles o consumibles.", C.amber],
     ["Kits incompletos bloquean trabajo sin quedar siempre visibles como parada.", C.red],
     ["FOD exige inspeccion, disciplina y evidencia revisable.", C.violet],
-    ["La trazabilidad fina se pierde si la entrega no queda ligada a mision.", C.teal],
+    ["El registro se pierde si la entrega no queda ligada a una mision.", C.teal],
   ];
   issues.forEach(([t, c], i) => {
     s.addShape(pptx.ShapeType.rect, { x: 7.05, y: 1.35 + i * 0.92, w: 0.13, h: 0.42, fill: { color: c }, line: { color: c } });
@@ -264,8 +264,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const s = slideBase("Flujo auxiliar en HTP A320 y seccion 19.1", "Contexto", 4, C.cyan);
   card(s, 0.85, 1.35, 11.75, 4.75, { fill: "EAF7FB", line: "9DDDEF" });
   label(s, "Estructura grande;\nsoporte logistico fino.", 1.2, 1.65, 4.3, 0.82, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
-  label(s, "El AMR no toca montaje certificado.", 1.22, 2.66, 4.25, 0.24, { size: 8.4, bold: true, color: C.navy });
-  label(s, "Estabiliza entregas, retornos, FOD y trazabilidad.", 1.22, 2.98, 4.25, 0.24, { size: 8.1, color: C.muted });
+  label(s, "El AMR trabaja en logistica auxiliar.", 1.22, 2.66, 4.25, 0.24, { size: 8.4, bold: true, color: C.navy });
+  label(s, "Estabiliza entregas, retornos, FOD y registro.", 1.22, 2.98, 4.25, 0.24, { size: 8.1, color: C.muted });
   s.addShape(pptx.ShapeType.arc, { x: 1.1, y: 3.55, w: 5.5, h: 1.1, line: { color: C.navy, width: 1.5 }, adjustPoint: 0.3 });
   s.addShape(pptx.ShapeType.triangle, { x: 2.2, y: 3.15, w: 1.15, h: 0.85, rotate: 20, fill: { color: "6FB7C6" }, line: { color: "6FB7C6" } });
   s.addShape(pptx.ShapeType.rect, { x: 4.22, y: 3.46, w: 0.72, h: 1.05, fill: { color: "F3B37A" }, line: { color: "F3B37A" } });
@@ -278,14 +278,14 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   pill(s, "Retorno + FOD\nevidencia digital", 11.22, 3.35, 1.25, C.green);
   label(s, "Lectura clave de planta", 6.76, 4.58, 3.2, 0.2, { size: 7.4, bold: true, color: C.navy });
   label(s, "La seccion 19.1 depende de kits, herramientas y disciplina FOD.", 6.76, 4.88, 5.0, 0.24, { size: 6.9, color: C.ink });
-  label(s, "El AMR reduce esperas y deja trazas; no fabrica el HTP.", 6.76, 5.16, 5.0, 0.24, { size: 6.9, color: C.ink });
+  label(s, "El AMR reduce esperas y deja trazas de entrega.", 6.76, 5.16, 5.0, 0.24, { size: 6.9, color: C.ink });
 }
 
 // 5
 {
   const s = slideBase("De conversacion guiada a requisitos trazables", "Entrevista", 5, C.violet);
   label(s, "ACTA TECNICA\nCarlos Perez\n+10 anos de experiencia en Alestis Puerto Real.", 0.75, 1.45, 1.85, 0.92, { size: 8.2, bold: true, color: C.violet });
-  label(s, "El alcance correcto no es fabricar: es asegurar flujo, FOD y trazabilidad.", 0.78, 2.7, 2.15, 1.1, { face: "Aptos Display", size: 17.5, bold: true, color: C.navy });
+  label(s, "El alcance correcto: asegurar flujo, FOD y registro.", 0.78, 2.7, 2.15, 1.1, { face: "Aptos Display", size: 17.5, bold: true, color: C.navy });
   const rows = [
     ["01", "No fabricar ni montar el HTP.", "Automatizar solo flujo auxiliar certificado.", "Kitting, retorno de utiles y entregas trazadas.", C.violet],
     ["02", "Prioridades y pasillos cambian durante el turno.", "Evitar rutas rigidas y paradas manuales.", "AMR omnidireccional con SLAM y gestor de misiones.", C.teal],
@@ -327,11 +327,11 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 7
 {
-  const s = slideBase("Matriz de decision, no seleccion por intuicion", "Alternativas", 7, C.cyan);
+  const s = slideBase("Matriz de decision con criterios ponderados", "Alternativas", 7, C.cyan);
   label(s, "PUNTUACION PONDERADA SOBRE 5", 0.85, 1.10, 2.7, 0.17, { size: 6.5, bold: true, color: C.muted });
   label(s, "4,25", 0.85, 1.42, 1.25, 0.36, { size: 23, bold: true, color: C.green });
   label(s, "AMR omnidireccional\nRB-KAIROS/AGILOX-class", 2.55, 1.38, 3.7, 0.50, { size: 8.7, bold: true, color: C.navy });
-  label(s, "Gana por maniobra en estacion y representabilidad en CoppeliaSim; no por ser la opcion mas barata.", 0.88, 2.08, 5.1, 0.42, { size: 6.4, color: C.muted });
+  label(s, "Se prioriza maniobra en estacion y representabilidad en CoppeliaSim, aunque no sea la opcion mas barata.", 0.88, 2.08, 5.1, 0.42, { size: 6.4, color: C.muted });
   const rows = [
     ["AMR omnidireccional", "4,25", 3.85, C.green],
     ["AMR diferencial MiR/Omron", "3,85", 3.50, C.teal],
@@ -351,7 +351,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   [
     ["25 %", "maniobra en estacion", C.green],
     ["20 %", "seguridad con operarios", C.red],
-    ["15 %", "trazabilidad e integracion", C.violet],
+    ["15 %", "registro e integracion", C.violet],
     ["15 %", "madurez comercial", C.teal],
     ["15 %", "coste/riesgo de integracion", C.amber],
   ].forEach(([pct, txtv, col], i) => {
@@ -381,7 +381,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     s.addShape(pptx.ShapeType.ellipse, { x: 7.05, y: 2.05 + i * 0.62, w: 0.14, h: 0.14, fill: { color: col }, line: { color: col } });
     label(s, `${a}: ${b}`, 7.35, 1.91 + i * 0.62, 4.9, 0.32, { size: 7.5, color: C.ink });
   });
-  label(s, "La licitacion exige base holonomica, safety pack, portakits, vx/vy/w, trazabilidad y pruebas FAT/SAT.", 7.02, 4.92, 5.1, 0.48, { size: 6.5, color: C.muted });
+  label(s, "La licitacion exige base holonomica, safety pack, portakits, vx/vy/w, registro de entregas y pruebas FAT/SAT.", 7.02, 4.92, 5.1, 0.48, { size: 6.5, color: C.muted });
 }
 
 // 9
@@ -447,7 +447,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 {
   const s = slideBase("Tres fases con entregables y criterio de paso", "Despliegue", 12, C.teal);
   const phases = [
-    ["1", "Piloto controlado", "219.856 € CAPEX", "Zona acotada y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
+    ["1", "Piloto controlado", "219.856 € CAPEX", "Zona reducida y 1-2 estaciones.", "Rutas, RFID-QR y ronda FOD.", "Riesgo: aceptacion y falsas alarmas.", "Pasa: 95 % misiones; 98 % trazas.", C.teal],
     ["7", "Expansion", "1.018.752 € CAPEX", "Varias estaciones y gestor de flota.", "Retorno de utiles y tablero de incidencias.", "Riesgo: pasillos y baterias.", "Pasa: disponibilidad >= 90 %.", C.amber],
     ["17", "Cobertura extendida", "2.310.896 € CAPEX", "Flujo auxiliar amplio e integracion.", "KPIs por turno y reservas de flota.", "Riesgo: ampliar antes de medir.", "Pasa: beneficio cerca de VAN cero.", C.green],
   ];
@@ -462,7 +462,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, risk, x + 0.28, 4.15, 2.9, 0.22, { size: 6.2, bold: true, color: C.red });
     label(s, gate, x + 0.28, 4.62, 2.85, 0.30, { size: 6.2, color: C.muted });
   });
-  label(s, "Regla comercial: no se escala por intuicion.", 1.0, 6.10, 4.0, 0.20, { size: 7.1, bold: true, color: C.navy });
+  label(s, "Regla comercial: escalar con trazas.", 1.0, 6.10, 4.0, 0.20, { size: 7.1, bold: true, color: C.navy });
   label(s, "Se escala con trazas, seguridad, disponibilidad y uso real de flota.", 5.1, 6.10, 5.9, 0.20, { size: 7.1, bold: true, color: C.navy });
 }
 
@@ -481,7 +481,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   label(s, "17 robots", 11.1, 2.55, 1.0, 0.16, { size: 6.3, bold: true, color: C.ink, align: "right" });
   const rows = [
     ["AMR omni + sensores + portakits", "78.500", "549.500", "1.334.500", C.teal],
-    ["Software flota + trazabilidad", "24.000", "65.000", "120.000", C.violet],
+    ["Software flota + registro", "24.000", "65.000", "120.000", C.violet],
     ["Ingenieria + CoppeliaSim", "46.000", "126.000", "245.000", C.cyan],
     ["Instalacion + mapeo + SAT", "20.000", "60.000", "135.000", C.green],
     ["Formacion + cambio operativo", "9.500", "27.000", "46.000", C.amber],
@@ -541,7 +541,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const deliverables = [
     ["Mapa operativo", "rutas, zonas lentas, carga y entrega", C.teal],
     ["Configuracion AMR", "misiones, prioridades y reglas de bateria", C.green],
-    ["Trazabilidad", "BD, RFID-QR, HMI y excepciones", C.violet],
+    ["Registro", "BD, RFID-QR, HMI y excepciones", C.violet],
     ["FOD preventivo", "rondas con imagen y revision humana", C.red],
     ["Validacion CoppeliaSim", "SLAM, ruta bloqueada, cruce y FOD", C.cyan],
     ["Formacion", "operarios, supervisores y mantenimiento", C.amber],
@@ -557,7 +557,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const gates = [
     ["Seguridad", "0 contactos o incidentes con dano", C.red],
     ["Misiones", ">= 95 % completadas", C.teal],
-    ["Trazabilidad", ">= 98 % con registro completo", C.violet],
+    ["Registro", ">= 98 % completo", C.violet],
     ["Disponibilidad", ">= 90 % en turno piloto", C.green],
     ["FOD", "100 % eventos revisables", C.amber],
     ["Escalado", "solo con VAN y datos de flujo", C.cyan],
@@ -568,7 +568,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, b, 9.78, y, 2.05, 0.16, { size: 5.9, color: C.ink });
     s.addShape(pptx.ShapeType.line, { x: 8.28, y: y + 0.28, w: 3.75, h: 0, line: { color: C.line, width: 0.6 } });
   });
-  label(s, "Exclusion explicita: no se certifica montaje HTP.", 8.28, 5.52, 3.7, 0.18, { size: 6.0, bold: true, color: C.red });
+  label(s, "Alcance del piloto: entregas, retorno, FOD y registro.", 8.28, 5.52, 4.3, 0.18, { size: 6.0, bold: true, color: C.red });
   label(s, "Tampoco sustituye inspeccion aeronautica obligatoria.", 8.28, 5.76, 3.7, 0.18, { size: 6.0, bold: true, color: C.red });
 }
 
@@ -577,14 +577,14 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   const s = slideBase("Recomendacion: medir antes de escalar", "Cierre", 16, C.green);
   label(s, "1 robot primero", 0.9, 1.45, 3.8, 0.42, { face: "Aptos Display", size: 22, bold: true, color: C.teal });
   label(s, "Validar rutas, seguridad y entregas.", 0.95, 2.16, 3.3, 0.24, { size: 9, color: C.ink });
-  label(s, "Medir trazabilidad, FOD y aceptacion.", 0.95, 2.50, 3.3, 0.24, { size: 9, color: C.ink });
+  label(s, "Medir registro, FOD y aceptacion.", 0.95, 2.50, 3.3, 0.24, { size: 9, color: C.ink });
   label(s, "Escalar solo con datos.", 0.95, 2.84, 2.4, 0.24, { size: 9, bold: true, color: C.navy });
   drawAmr(s, 7.2, 2.0, 1.15, C.cyan);
   arrow(s, 8.85, 2.45, 10.3, 2.45, C.cyan);
   s.addShape(pptx.ShapeType.rect, { x: 10.7, y: 2.2, w: 0.55, h: 0.78, fill: { color: C.amber }, line: { color: C.amber } });
   s.addShape(pptx.ShapeType.triangle, { x: 11.05, y: 1.85, w: 0.95, h: 0.65, rotate: 18, fill: { color: "6FB7C6" }, line: { color: "6FB7C6" } });
   label(s, "rutas verificadas", 1.0, 5.75, 1.6, 0.18, { size: 6.8, bold: true, color: C.teal });
-  label(s, "sin tocar montaje", 4.05, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.amber });
+  label(s, "logistica auxiliar", 4.05, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.amber });
   label(s, "costes por partida", 7.1, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.green });
   label(s, "temario aplicado", 10.0, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.violet });
 }

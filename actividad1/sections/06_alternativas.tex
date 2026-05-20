@@ -1,6 +1,6 @@
 \chapter{Alternativas consideradas}
 
-Se compararon seis familias de robots o vehículos móviles. La comparación se centra en la idoneidad para una nave aeronáutica interior con operarios, útiles grandes, estaciones cambiantes y necesidad de trazabilidad. El criterio no es escoger el robot más llamativo, sino el que resuelve mejor el flujo auxiliar sin interferir con el montaje certificado del HTP.
+Se compararon seis familias de robots o vehículos móviles. La comparación se centra en la idoneidad para una nave aeronáutica interior con operarios, útiles grandes, estaciones cambiantes y necesidad de seguimiento de materiales. El criterio es resolver el flujo auxiliar con el robot que mejor se adapte a la nave.
 
 \begin{longtable}{P{0.20\textwidth}P{0.30\textwidth}P{0.18\textwidth}P{0.22\textwidth}}
 \toprule
@@ -9,7 +9,7 @@ Se compararon seis familias de robots o vehículos móviles. La comparación se 
 \endhead
 AGV & Fiable para rutas repetitivas, tecnología madura, coste predecible. & Menor flexibilidad, dependencia de rutas fijas o infraestructura, difícil adaptación a cambios de layout. & Descartado como opción principal; válido solo para corredores muy estables.\\
 AMR diferencial & Navegación flexible, buena disponibilidad comercial, integración con flota. & Maniobra peor en espacios estrechos que una base omnidireccional; el acoplamiento lateral exige más espacio o maniobras. & Alternativa válida, pero no óptima para estaciones congestionadas.\\
-AMR omnidireccional & Movimiento lateral, alta maniobrabilidad, buena convivencia con estaciones y útiles grandes. & Mayor coste y complejidad mecánica que una base diferencial sencilla. & \textbf{Seleccionado}.\\
+AMR omnidireccional & Movimiento lateral, alta maniobrabilidad y buen trabajo cerca de estaciones y útiles grandes. & Mayor coste y complejidad mecánica que una base diferencial sencilla. & \textbf{Seleccionado}.\\
 Robot con orugas & Buen contacto en terrenos irregulares y capacidad de superar obstáculos. & Excesivo para suelo industrial interior, peor higiene, posible daño al pavimento, maniobra poco fina. & Descartado.\\
 Dron & Rápido para inspección visual en altura. & Riesgo de seguridad, ruido, autonomía limitada, restricciones en interior industrial y carga prácticamente nula. & Descartado para logística y FOD en estaciones.\\
 Robot con patas & Alta movilidad teórica en entornos complejos. & Coste alto, complejidad, riesgo de aceptación, innecesario en nave con pavimento regular. & Descartado.\\
@@ -44,6 +44,6 @@ En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-K
 
 \section{Robot seleccionado}
 
-La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim con KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg documentada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
+La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim con KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg indicada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
 
 La base omnidireccional da tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posición al aproximarse a útiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronáutico interior, estas ventajas pesan más que la simplicidad de un AGV de ruta fija o una base diferencial de compra más directa.

@@ -1,8 +1,8 @@
 \chapter{Análisis económico y ROI}
 
-El ahorro no viene de reducir personal, sino de aprovechar mejor el tiempo de planta. El valor económico aparece al recuperar tiempo de operarios, bajar esperas, evitar búsquedas de útiles y reducir incidencias que cortan el ritmo de estación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+El ahorro viene de aprovechar mejor el tiempo de planta. El valor económico aparece al recuperar tiempo de operarios, bajar esperas, evitar búsquedas de útiles y reducir incidencias que cortan el ritmo de estación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
 
-El análisis financiero va por fases. Usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año con beneficio parcial, porque piloto y arranque no capturan todo el potencial desde el primer mes. La pregunta queda acotada: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
+El análisis financiero va por fases. Usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año con beneficio parcial, porque piloto y arranque no capturan todo el potencial desde el primer mes. La pregunta es concreta: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
 
 \begin{longtable}{P{0.32\textwidth}P{0.50\textwidth}}
 \toprule
@@ -14,7 +14,7 @@ Tasa de descuento & 8\%, usada como coste de capital académico para comparar al
 Valor residual & 15\% del paquete AMR-FOD-Kitting, condicionado a reutilización de base, sensores y repuestos.\\
 Año 1 & 50\% del beneficio anual central, porque incluye levantamiento, simulación, piloto, ajuste y adopción.\\
 OPEX recurrente & Mantenimiento, soporte software, recalibraciones, rutas, consumibles y repuestos desde el año 2.\\
-Beneficio monetizado & Horas recuperadas, reducción de esperas, menor búsqueda de útiles, trazabilidad y eventos FOD evitados en escenario.\\
+Beneficio monetizado & Horas recuperadas, reducción de esperas, menor búsqueda de útiles, registro de entregas y eventos FOD evitados en escenario.\\
 \bottomrule
 \caption{Supuestos para análisis financiero ampliado.}
 \label{tab:supuestos-financieros}
@@ -41,7 +41,7 @@ El piloto no busca ahorro desde el primer día. Su valor está en medir rutas re
 
 \section{Horas de equilibrio}
 
-Para comprobar el caso financiero, se anualiza el CAPEX a cinco años y se compara con las horas que tendrían que recuperarse solo para cubrir la inversión. La prueba evita vender el proyecto como simple ahorro de mano de obra.
+Para comprobar el caso financiero, se anualiza el CAPEX a cinco años y se compara con las horas que tendrían que recuperarse solo para cubrir la inversión.
 
 \begin{longtable}{P{0.18\textwidth}r r r}
 \toprule
@@ -60,7 +60,7 @@ Con solo tiempo recuperado, el piloto queda por debajo del equilibrio financiero
 
 \section{Sensibilidad financiera a cinco años}
 
-La tabla siguiente evita que el VAN negativo se lea como conclusión comercial. El caso bajo monetiza casi solo horas recuperadas. El caso objetivo marca el beneficio anual que debe demostrarse con datos de planta para que el proyecto cierre financieramente. El caso alto añade continuidad de flujo y menos interrupciones relevantes, sin atribuir al robot la fabricación de más HTP por sí solo. El VAN se calcula con los supuestos anteriores y no incluye IVA.
+La tabla muestra tres escenarios de beneficio anual y el umbral para que el VAN cierre a cero. El caso bajo monetiza casi solo horas recuperadas. El caso objetivo marca el beneficio anual que debe demostrarse con datos de planta para que el proyecto cierre financieramente. El caso alto añade continuidad de flujo y menos interrupciones relevantes, sin atribuir al robot la fabricación de más HTP por sí solo. El VAN se calcula con los supuestos anteriores y no incluye IVA.
 
 \begingroup
 \footnotesize
@@ -103,7 +103,7 @@ La oferta no recomienda comprar 7 o 17 robots por intuición. Cada salto depende
 \textbf{Gate} & \textbf{Métrica} & \textbf{Criterio de paso} & \textbf{Fase}\\
 \midrule
 \endhead
-Seguridad operativa & Contactos, paradas no controladas, invasiones de campo protegido. & Cero incidentes con daño y trazabilidad completa de paradas. & 1--7\\
+Seguridad operativa & Contactos, paradas no controladas, invasiones de campo protegido. & Cero incidentes con daño y registro completo de paradas. & 1--7\\
 Calidad de entrega & Misiones completadas y entregas dentro de ventana. & \(\geq 95\%\) misiones completadas y \(\geq 90\%\) entregas a tiempo. & 1--7\\
 Trazabilidad & Misiones con robot, kit, destino, hora, lector y confirmación. & \(\geq 98\%\) de registros completos. & 1--7\\
 Utilidad FOD & Eventos detectados, falsos positivos y tiempo de revisión. & Evidencia revisable sin sobrecargar al supervisor. & 1--7\\
@@ -116,11 +116,11 @@ Economía de flujo & Beneficio anual recalculado con datos reales de planta. & E
 
 \section{Beneficios no monetizados}
 
-El retorno completo incluye beneficios que no se deben convertir de forma artificial a euros si no hay datos históricos de la planta. Para Alestis Puerto Real tendrían peso específico:
+Hay beneficios que no se pueden poner en euros sin datos reales de la planta, pero que igualmente pesan en la decisión. Para Alestis Puerto Real tendrían peso específico:
 
 \begin{itemize}
   \item Menos interrupciones por kits, consumibles o herramientas no disponibles en estación.
-  \item Evidencia de trazabilidad de entrega: robot, kit, estación, hora, lector RFID/QR y confirmación humana.
+  \item Evidencia de entrega: robot, kit, estación, hora, lector RFID/QR y confirmación humana.
   \item Menor exposición a incidencias FOD con rondas preventivas, registro visual y eventos trazados.
   \item Mejor dimensionamiento de recursos logísticos al disponer de datos de misiones, colas, rutas y tiempos.
   \item Mayor capacidad para absorber el crecimiento de 40 a 80 HTP/mes sin duplicar movimientos manuales de soporte.
@@ -128,4 +128,4 @@ El retorno completo incluye beneficios que no se deben convertir de forma artifi
 
 \section{Lectura del retorno}
 
-El ROI se evalúa por tiempo improductivo recuperado, menor variabilidad logística y registro trazable de entregas/FOD. La recomendación comercial mantiene tres pasos: primero un piloto para medir; después 7 robots si aparece un cuello de botella logístico verificable; y solo entonces 17 robots, condicionados a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.
+El ROI se evalúa por tiempo improductivo recuperado, menor variabilidad logística y registro de entregas/FOD. Lo que recomendamos es empezar con el piloto y ampliar solo si los datos lo justifican. No tiene sentido comprar 7 robots sin saber si el primero funciona en planta.

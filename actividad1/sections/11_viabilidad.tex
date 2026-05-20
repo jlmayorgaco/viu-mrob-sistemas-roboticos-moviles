@@ -8,6 +8,8 @@ La primera condición de viabilidad es la seguridad industrial. Los AMR circular
 
 La integración se divide por fases. En el piloto, las misiones se cargan manualmente desde HMI y se registran en una base de datos local. En la expansión, el sistema intercambia órdenes con un planificador o MES. En el despliegue extendido, la integración pasa a ser bidireccional con sistemas de producción, mantenimiento y calidad.
 
+No tenemos claro que la aceptación de operarios sea inmediata. Por eso el piloto mide uso real, comentarios de turno y número de intervenciones manuales, además de los KPIs técnicos.
+
 \section{Limitaciones y riesgos}
 
 \begin{itemize}
@@ -20,7 +22,7 @@ La integración se divide por fases. En el piloto, las misiones se cargan manual
 
 \section{Mitigaciones}
 
-Las mitigaciones incluyen piloto acotado, formación práctica, participación temprana de operarios, rutas validadas en CoppeliaSim, pruebas de seguridad, mantenimiento preventivo y despliegue por etapas. Para no depender de una integración compleja desde el primer día, el sistema se diseña con una base de datos propia y conectores progresivos hacia MES/ERP.
+Las mitigaciones incluyen piloto limitado, formación práctica, participación temprana de operarios, rutas validadas en CoppeliaSim, pruebas de seguridad, mantenimiento preventivo y despliegue por etapas. Para no depender de una integración compleja desde el primer día, el sistema se diseña con una base de datos propia y conexión por fases con MES/ERP.
 
 \section{Escalabilidad}
 

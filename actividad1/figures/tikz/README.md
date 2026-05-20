@@ -8,7 +8,7 @@ Esta carpeta concentra los dibujos TikZ reutilizables del informe y la presentac
 - `slides_icons.tex`: iconos TikZ reutilizables para AMR, HTP/sección 19.1, QR y layout de planta.
 - `slide_01_cover.tex`: portada visual de la presentación.
 - `slide_04_contexto.tex`: diagrama del contexto HTP A320 y sección 19.1.
-- `slide_05_entrevista.tex`: trazabilidad entre entrevista, requisitos y decisiones de diseño.
+- `slide_05_entrevista.tex`: relación entre entrevista, requisitos y decisiones de diseño.
 - `report_architecture_diagram.tex`: diagrama de arquitectura usado por el informe.
 
 ## Uso

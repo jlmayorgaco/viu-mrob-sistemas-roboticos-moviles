@@ -1,6 +1,6 @@
 \chapter{Entrevista con experto}
 
-La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. La transcripción de trabajo que se resume aquí mantiene ese enfoque: conversación informal, respuestas imperfectas, desvíos puntuales hacia Cádiz y vuelta al proceso productivo. Las capturas reales de la conversación deben incorporarse en el Anexo A antes de subir la entrega al campus.
+La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Se presenta la conversación de trabajo usada para extraer requisitos: tono informal, alguna duda razonable, desvíos puntuales hacia Cádiz y vuelta al proceso productivo. Las capturas reales de la conversación deben incorporarse en el Anexo A antes de subir la entrega al campus.
 
 \begin{interviewbrief}
 \textbf{Ficha de la entrevista}
@@ -8,7 +8,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 \begin{tabularx}{\textwidth}{@{}P{0.28\textwidth}Y@{}}
 \textbf{Entrevistado} & Carlos Pérez, operario/técnico con experiencia en operaciones de Alestis Puerto Real.\\
 \textbf{Rol en la actividad} & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatización.\\
-\textbf{Temas tratados} & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, trazabilidad, transporte interno, esperas y restricciones de seguridad.\\
+\textbf{Temas tratados} & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, seguimiento de materiales, transporte interno, esperas y restricciones de seguridad.\\
 \textbf{Uso de la evidencia} & Las respuestas se usan para definir requisitos, selección de robot, sensores, arquitectura, presupuesto y KPIs.\\
 \textbf{Capturas} & El Anexo A carga automáticamente las imágenes \texttt{captura\_01.png} a \texttt{captura\_04.png} cuando se guarden en \path{figures/entrevista/}.\\
 \end{tabularx}
@@ -19,19 +19,19 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 \begin{interviewtranscript}[Transcripción de trabajo con Carlos Pérez]
 \InterviewExchange
 {Carlos, para empezar: ¿qué debo entender por HTP y por la sección 19.1 en el caso de Alestis Puerto Real?}
-{El HTP es el estabilizador horizontal de cola del A320. Dicho en planta: una estructura grande, con útiles, papeleo, inspecciones y mucho material pequeño alrededor. Lo de la 19.1 va por la zona posterior, cerca de interfaces de cola. Si ahí falta algo, no siempre se para la línea, pero el puesto se queda esperando.}
+{Eso es la cola del avión, el estabilizador horizontal. En planta lo llamamos HTP y es una pieza grande, con muchos útiles alrededor, documentación, inspecciones y bastante material pequeño. Lo de la 19.1 va por la zona posterior, cerca de interfaces de cola. Si ahí algo se retrasa, se nota enseguida. Va todo muy coordinado.}
 
 \InterviewExchange
 {¿Qué se mueve realmente durante el turno? No me refiero a la pieza principal, sino al trabajo de soporte.}
-{Pues de todo un poco: cajas de fijaciones, consumibles, herramientas calibradas, algún útil, protecciones, documentación de orden y carros que vuelven a almacén o a metrología. Muchas piezas son pequeñas, pero van y vienen todo el día. Si falta una caja o una llave concreta, alguien acaba saliendo de su puesto.}
+{Pues kits de fijaciones, consumibles... herramientas calibradas, útiles, documentación, esas cosas. Ah, y los carros auxiliares, que van y vienen todo el día. Muchas piezas son pequeñas, pero si falta una caja o una llave concreta, alguien acaba saliendo de su puesto.}
 
 \InterviewExchange
 {¿Dónde se pierde más tiempo?}
-{En los ratos pequeños. Diez minutos buscando una herramienta, otros diez esperando un kit, otro rato preguntando si esa bandeja era para esa orden o para otra. No sale siempre como incidencia grande, pero al final del turno se nota.}
+{En los ratos pequeños. No es que se pare la línea oficialmente, pero a lo mejor pierdes diez minutos buscando una herramienta, o te quedas esperando un kit que no llega. También pasa lo de preguntar si esa bandeja era para esa orden o para otra. Al final del turno se nota.}
 
 \InterviewExchange
 {¿Tendría sentido que un robot móvil fabricara o montara directamente el HTP?}
-{No, eso no lo veo. El montaje estructural lo hace gente formada, con procedimiento y control. Un robot móvil puede ayudar alrededor: traer el kit, registrar la entrega, devolver útiles y avisar si ve algo raro. Pero poner un AMR a fabricar el HTP sería vender humo.}
+{No, eso no. Para el montaje hay procedimientos muy estrictos, gente cualificada, controles de calidad... un robot no va a hacer eso. Puede ayudar alrededor: traer el kit, registrar la entrega, devolver útiles y avisar si ve algo raro. Pero poner un AMR a fabricar el HTP sería vender humo.}
 
 \InterviewExchange
 {La guía de la actividad dice que usted puede desviarse de vez en cuando. Si nos vamos un momento a Cádiz: ¿esa cultura de planta tiene algo que ver con el entorno?}
@@ -39,7 +39,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \InterviewExchange
 {En localización de herramientas y materiales, ¿qué falla con más frecuencia?}
-{A veces el sistema dice que el material está, pero no está al lado del puesto. O se presta una herramienta “un momento” y luego toca preguntar. No digo que sea un desastre, porque no lo es. Falta saber el momento exacto: quién recogió, dónde dejó y para qué orden. Ahí un QR o RFID en origen y destino ayudaría bastante.}
+{A veces el sistema dice que el material existe, pero a lo mejor no está en tu puesto. O se presta una herramienta “un momento” y luego toca preguntar. No digo que sea un desastre, porque no lo es. Falta saber exactamente dónde está cada cosa y quién la dejó allí. Ahí un QR o RFID en origen y destino ayudaría bastante.}
 
 \InterviewExchange
 {¿Qué papel tiene FOD en esta propuesta?}
@@ -51,7 +51,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \InterviewExchange
 {¿Un AGV de ruta fija bastaría?}
-{Para un pasillo que no cambia, puede valer. Pero en montaje cambian prioridades, carros, útiles y zonas ocupadas. Yo tiraría por un AMR que tenga mapa y recalcule. Ojo, si el pasillo está bloqueado de verdad, esperará o avisará. Milagros no hace.}
+{Para un pasillo que no cambia, puede valer. Pero en montaje cambian prioridades, carros, útiles y zonas ocupadas. Yo preferiría uno de esos robots que llevan su propio mapa y, si el pasillo está ocupado, buscan otro camino. Ojo, si está bloqueado de verdad, esperará o avisará. Milagros no hace.}
 
 \InterviewExchange
 {Vuelvo a Cádiz un segundo. ¿Cree que la aceptación de operarios depende también de cómo se presente el proyecto?}
@@ -59,7 +59,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \InterviewExchange
 {La actividad habla de pasar de unos 40 HTP al mes a 80 o más. ¿Cómo se debe leer esa meta?}
-{No diría que el robot duplica producción. Eso sería pasarse. Ayuda a quitar fricción: menos esperas, menos búsquedas, entregas más fiables y mejor registro. Para llegar a 80 hacen falta planificación, gente, calidad y capacidad de estación. El AMR aporta una parte, no toda la solución.}
+{No diría que el robot duplica producción. Eso sería pasarse. Ayuda con cosas concretas: menos esperas, menos búsquedas, entregas más fiables y mejor registro. Para llegar a 80 hacen falta planificación, gente, calidad y capacidad de estación. El robot aporta una parte, no toda la solución.}
 
 \InterviewExchange
 {Si Lunabotics empieza con un piloto, ¿qué mediría antes de comprar 7 o 17 robots?}
@@ -68,7 +68,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \section{Hallazgos para diseño}
 
-De la entrevista salen cuatro decisiones de diseño. Primero, el robot debe trabajar en logística auxiliar, no en montaje estructural. Segundo, la trazabilidad tiene que ocurrir en origen y destino, porque saber que el material existe no alcanza para saber que está en la estación. Tercero, FOD debe tratarse como inspección preventiva con revisión humana. Cuarto, el piloto debe medirse con datos de operación antes de hablar de flotas grandes.
+La entrevista apunta a varias decisiones de diseño. El robot debe trabajar en logística auxiliar. El registro tiene que ocurrir en origen y destino, porque saber que el material existe no alcanza para saber que está en la estación. FOD debe tratarse como inspección preventiva con revisión humana. Y el piloto debe medirse con datos de operación antes de hablar de flotas grandes.
 
 \begin{longtable}{P{0.42\textwidth}P{0.50\textwidth}}
 \toprule
@@ -85,4 +85,4 @@ La planta cambia durante el turno. & AMR omnidireccional con SLAM, replanificaci
 
 \section{Lectura para Lunabotics}
 
-La entrevista confirma dónde tiene sentido automatizar: suministro, retorno, registro y rondas preventivas. En nuestra evaluación, el robot debe demostrar valor en una zona acotada antes de convertirse en flota. Ese enfoque baja el riesgo comercial y evita prometer que un AMR resolverá por sí solo el salto de 40 a 80 HTP mensuales.
+La entrevista deja claro que la automatización tiene sentido en suministro, retorno, registro y rondas preventivas. En nuestra evaluación, el robot debe demostrar valor en una zona reducida antes de convertirse en flota. Ese enfoque baja el riesgo comercial porque obliga a medir antes de ampliar.

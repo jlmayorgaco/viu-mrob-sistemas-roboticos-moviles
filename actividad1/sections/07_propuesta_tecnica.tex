@@ -2,7 +2,7 @@
 
 \section{Sistema AMR-FOD-Kitting para línea HTP A320}
 
-Lunabotics oferta un sistema de robots móviles autónomos para suministro coordinado, trazabilidad e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. Su trabajo diario es simple de enunciar y exigente de ejecutar: llevar el elemento correcto al punto correcto y dejar rastro digital de la misión.
+Lunabotics oferta un sistema de robots móviles autónomos para suministro coordinado, control de entregas e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. En el día a día, el robot tiene que llevar cada kit o herramienta al punto correcto y registrar la entrega. Parece sencillo, pero coordinarlo con el ritmo de planta no lo es.
 
 \section{Modelo de robot y criterio de selección}
 
@@ -26,7 +26,7 @@ Referencia industrial pesada & KUKA omniMove & Plataforma omnidireccional para c
 \label{tab:modelos-robot}
 \end{longtable}
 
-El robot se selecciona por la maniobra en estación, no por fabricación estructural. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
+El robot se selecciona por su capacidad de maniobra junto a estaciones. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
 
 \section{Opciones de compra y decisión de ingeniería}
 
@@ -37,7 +37,7 @@ El robot se selecciona por la maniobra en estación, no por fabricación estruct
 \endhead
 RB-KAIROS-class & Coincide con cinemática omnidireccional, ROS 2, SLAM y carga de 250 kg. & Requiere cotización formal, safety pack y adaptación portakits. & \textbf{Base técnica recomendada}.\\
 AGILOX ODM-class & Producto intralogístico maduro, omnidireccional y orientado a dollies. & Menos abierto para experimentación académica; integración depende de proveedor. & Alternativa comercial seria.\\
-MiR250 / Omron LD-250 & Muy buenos benchmarks de AMR 250 kg y flota. & No resuelven igual el acoplamiento lateral si la estación exige orientación fija. & Referencia de coste/capacidad, no selección final.\\
+MiR250 / Omron LD-250 & Muy buenos benchmarks de AMR 250 kg y flota. & Pierden ventaja cuando la estación exige acoplamiento lateral con orientación fija. & Referencia de coste/capacidad.\\
 KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y sobredimensionamiento para kits, herramientas y consumibles. & No recomendado para este alcance.\\
 \bottomrule
 \caption{Opciones comerciales y decisión de ingeniería para la plataforma móvil.}
@@ -53,7 +53,7 @@ KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y
 
 \section{Especificación de plataforma objetivo}
 
-La plataforma objetivo se especifica por requisitos de operación, no por marca cerrada. El integrador podría seleccionar un chasis industrial equivalente si respeta la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. Así no se confunde el robot usado en simulación con el equipo que se compraría para una nave aeronáutica.
+La plataforma objetivo se define por requisitos de operación. El integrador podría seleccionar un chasis industrial equivalente si respeta la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. Así no se confunde el robot usado en simulación con el equipo que se compraría para una nave aeronáutica.
 
 \begin{longtable}{P{0.22\textwidth}P{0.33\textwidth}P{0.35\textwidth}}
 \toprule
@@ -61,19 +61,19 @@ La plataforma objetivo se especifica por requisitos de operación, no por marca 
 \midrule
 \endhead
 Locomoción & Base holonómica con cuatro ruedas mecanum/suecas, control de \(v_x\), \(v_y\) y \(\omega\). & Permite aproximación lateral a estaciones, corrección fina sin reorientar la carga y menor ocupación de pasillo que una base diferencial.\\
-Carga y módulo & Clase 200--300 kg con bandeja portakits, puntos de amarre, balizas y posibilidad de cajones o estantería baja. & Cubre kits, herramientas, consumibles y útiles moderados sin plantear manipulación estructural del HTP.\\
+Carga y módulo & Clase 200--300 kg con bandeja portakits, puntos de amarre, balizas y posibilidad de cajones o estantería baja. & Cubre kits, herramientas, consumibles y útiles moderados.\\
 Motorización & Motores BLDC o servomotores eléctricos con reductora, encoder por rueda, supervisión de corriente y temperatura. & El temario de motores favorece accionamientos eléctricos compactos, eficientes y con realimentación para control de velocidad/posición.\\
 Control de bajo nivel & Conversión cinemática inversa de velocidad de cuerpo a velocidad de rueda; lazo cerrado por encoder; límites de aceleración. & La omnidireccionalidad mejora la maniobra, pero penaliza si no se controla el deslizamiento y la saturación de motores.\\
 Control de navegación & Fusión LiDAR--IMU--encoders para pose; SLAM/mapa; ruta global A*/Dijkstra; evitación local DWA o campos potenciales. & Conecta la arquitectura con localización, planificación y anticolisión del curso.\\
 Seguridad funcional & Escáner láser de seguridad, bumpers, E-stop físico, campos de protección, reducción de velocidad por zona y estado seguro ante fallo. & La parada de seguridad se implementa aparte del LiDAR de navegación y de la cámara FOD.\\
 Energía y disponibilidad & Batería industrial con retorno automático a carga, reserva mínima operativa y mantenimiento preventivo de ruedas/sensores. & Los actuadores consumen batería y se degradan; el plan de flota debe considerar autonomía, carga y desgaste.\\
-Interfaz e integración & HMI/tablet, WiFi industrial, base de datos de misiones y conectores progresivos hacia MES/ERP. & El piloto debe dejar evidencia operativa y preparar el crecimiento sin exigir integración total desde el primer día.\\
+Interfaz e integración & HMI/tablet, WiFi industrial, base de datos de misiones e integración gradual con MES/ERP. & El piloto debe dejar evidencia operativa y preparar el crecimiento sin exigir integración total desde el primer día.\\
 \bottomrule
 \caption{Especificación técnica de la plataforma AMR omnidireccional objetivo.}
 \label{tab:especificacion-amr-objetivo}
 \end{longtable}
 
-La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simular cinemática, MiR250/LD-250 para acotar el orden de magnitud comercial y AMR omnidireccional industrial como plataforma final. Con esa trazabilidad, el presupuesto no fuerza una compra incompatible con el criterio técnico. Las referencias de 250 kg dimensionan coste y carga; la licitación exigiría base holonómica o mecanum equivalente.
+La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simular cinemática, MiR250/LD-250 para fijar el orden de magnitud comercial y AMR omnidireccional industrial como plataforma final. Con ese seguimiento de requisitos, el presupuesto no fuerza una compra incompatible con el criterio técnico. Las referencias de 250 kg dimensionan coste y carga; la licitación exigiría base holonómica o mecanum equivalente.
 
 \section{Funciones principales}
 
@@ -90,11 +90,11 @@ La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simula
 
 El paquete sensorial se divide en tres grupos. Para navegación se usan LiDAR 2D/3D, IMU y encoders: con ellos el AMR estima pose, actualiza mapa y evita obstáculos geométricos. Para seguridad se reservan escáner láser certificado, bumpers y parada de emergencia, con campos de protección y reducción de velocidad por zona. Para proceso se integran cámara RGB-D o cámara industrial, lectura RFID/QR, HMI/tablet y base de datos de misiones.
 
-La cámara aporta evidencia visual de rondas FOD y el lector RFID/QR cierra la entrega en origen y destino. La HMI permite solicitar misiones, aceptar entregas y consultar estado. La WiFi industrial une robot, supervisor, gestor de flota y base de datos. La decisión práctica es separar lo que sirve para navegar, lo que sirve para parar con seguridad y lo que sirve para demostrar trazabilidad.
+La cámara aporta evidencia visual de rondas FOD y el lector RFID/QR cierra la entrega en origen y destino. La HMI permite solicitar misiones, aceptar entregas y consultar estado. La WiFi industrial une robot, supervisor, gestor de flota y base de datos. La decisión práctica es separar lo que sirve para navegar, lo que sirve para parar con seguridad y lo que sirve para demostrar el registro de entregas.
 
 \section{Arquitectura sensorial por capas}
 
-La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de navegación y la fusión encoders--IMU localizan el AMR y mantienen el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente de parada segura; la cámara RGB-D, RFID y QR cubren FOD y trazabilidad.
+La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de navegación y la fusión encoders--IMU localizan el AMR y mantienen el mapa; el escáner láser de seguridad, bumpers y E-stop forman una capa independiente de parada segura; la cámara RGB-D, RFID y QR cubren FOD y registro de entregas.
 
 \begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}P{0.22\textwidth}P{0.24\textwidth}}
 \toprule
@@ -104,7 +104,7 @@ La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de
 Localización & Encoders, IMU, LiDAR 2D/3D & Odometría, orientación, nube/distancia a obstáculos. & Estimar pose, actualizar mapa y ejecutar SLAM.\\
 Planificación & Mapa, gestor de misiones, LiDAR & Ruta global, ruta local, zonas bloqueadas. & Usar A*/Dijkstra para ruta global y DWA/campos potenciales para evitación local.\\
 Seguridad & Escáner láser de seguridad, bumpers, E-stop & Invasión de campo protegido, contacto, alarma manual. & Reducir velocidad, parar, bloquear misión o retirar AMR.\\
-Proceso & RGB-D/industrial, RFID, QR, HMI & Evidencia visual, identificador de kit, punto de entrega y confirmación humana. & Registrar entrega, ronda FOD, excepción y trazabilidad.\\
+Proceso & RGB-D/industrial, RFID, QR, HMI & Evidencia visual, identificador de kit, punto de entrega y confirmación humana. & Registrar entrega, ronda FOD y excepción.\\
 Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiempos, alarmas, KPIs. & Priorizar misiones, auditar eventos y decidir escalado.\\
 \bottomrule
 \caption{Capas sensoriales y decisiones operativas asociadas.}
@@ -113,7 +113,7 @@ Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiem
 
 \section{Actuadores, motorización y control}
 
-La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La base se elige por maniobrabilidad, no por carga extrema: la misión prevista es mover kits, herramientas y útiles moderados.
+La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La maniobrabilidad manda en esta elección: la misión prevista es mover kits, herramientas y útiles moderados.
 
 Los actuadores se concentran en locomoción y servicio auxiliar: mover la base, accionar elementos simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar el sistema.
 

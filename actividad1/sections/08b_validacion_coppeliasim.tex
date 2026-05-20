@@ -48,7 +48,7 @@ Antes de pasar a piloto físico, el modelo debe demostrar que las rutas propuest
 
 \section{Criterios técnicos de aceptación}
 
-Los criterios siguientes convierten la teoría del curso en pruebas verificables y evitan que la simulación quede como una demostración visual sin valor de ingeniería.
+Los criterios siguientes convierten la teoría del curso en pruebas verificables. Así la simulación tiene valor de ingeniería y no es solo visual.
 
 \begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
 \toprule
@@ -56,7 +56,7 @@ Los criterios siguientes convierten la teoría del curso en pruebas verificables
 \midrule
 \endhead
 Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en piloto controlado; ajuste final con marcas físicas si la estación lo requiere. & La entrega de kits no exige precisión metrológica, pero sí posición repetible y segura.\\
-Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin invadir zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
+Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin ocupar la zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
 Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
 Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
 Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
