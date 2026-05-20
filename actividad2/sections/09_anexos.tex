@@ -9,6 +9,7 @@
   \item `coppeliasim/pioneer\_professional\_controller.lua`
   \item `coppeliasim/scenario\_event\_manager.lua`
   \item `coppeliasim/multi\_robot\_astar\_manager.lua`
+  \item `coppeliasim/visual\_demo\_overlay.lua`
   \item `coppeliasim/build\_professional\_scene.py`
   \item `coppeliasim/Actividad2\_Pioneer\_Profesional\_10\_10\_validation.json`
   \item `slides/Actividad2\_Pioneer\_CoppeliaSim.pptx`
@@ -38,6 +39,8 @@ Robots de flota auxiliar & 3 & AMR visuales coordinados por A* cooperativo.\\
 Planes A* validados & 16 & Planificaciones generadas durante mision, retorno y carga.\\
 Conflictos cooperativos evitados & 8 & Reservas temporales que evitan ocupacion simultanea o cruces opuestos.\\
 Eventos de carga de flota & 4 & Retornos y recargas observados en la validacion headless.\\
+Labels de demo & 7 & Banners runtime para guiar la correccion visual dentro de CoppeliaSim.\\
+Camaras de inspeccion & 4 & Vistas nombradas para celda completa, ruta Pioneer, flota A* y HMI/carga.\\
 \bottomrule
 \end{longtable}
 
@@ -51,8 +54,9 @@ Eventos de carga de flota & 4 & Retornos y recargas observados en la validacion 
   \item Script Lua con evitacion de colisiones.
   \item Gestor Lua de escenarios y eventos temporizados.
   \item Gestor Lua multi-robot con A* cooperativo y reservas temporales.
+  \item Overlay visual de demo con labels runtime y camaras de inspeccion.
   \item Estacion de carga, HMI visual, bateria, zonas de velocidad y fallo sensorial.
-  \item Acabado visual industrial: piso texturizado, carriles, franjas de seguridad, grilla A* y rutas de flota.
+  \item Acabado visual industrial: piso texturizado, carriles, placas de demo, franjas de seguridad, grilla A* y rutas de flota.
   \item Tres robots AMR auxiliares con descarga, retorno a carga, recarga y estado final READY.
   \item Sensores virtuales adicionales integrados en el Pioneer.
   \item Validacion automatizada en CoppeliaSim headless.

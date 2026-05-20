@@ -1,0 +1,34 @@
+{
+  "scene": "C:\\Users\\walla\\Documents\\Master VIU\\C9_SistRobMoviles\\viu-mrob-sistemas-roboticos-moviles\\actividad2\\coppeliasim\\Actividad2_Pioneer_basic.ttt",
+  "initial_distance_m": 4.328,
+  "final_distance_m": 0.699,
+  "last_state": "ARRIVED",
+  "states_seen": [
+    "ARRIVED",
+    "AVOIDING",
+    "ROUTE"
+  ],
+  "sensor_count": 16,
+  "min_obstacle_distance_m": 0.359,
+  "min_obstacle_seen_m": 0.155,
+  "obstacle_risk": 0.264,
+  "max_obstacle_risk": 0.626,
+  "basic_guide_compliance": "potential_fields+anti_collision+robotized_cell",
+  "checks": {
+    "pioneer_present": true,
+    "mannequin_present": true,
+    "bill_present": true,
+    "basic_controller_attached": true,
+    "basic_cell_present": true,
+    "basic_obstacles_present": true,
+    "robotized_cell_elements_present": true,
+    "sensor_suite_active": true,
+    "potential_field_targeting_active": true,
+    "anti_collision_active": true,
+    "distance_reduced": true,
+    "close_to_target": true,
+    "arrived": true,
+    "no_professional_extensions": true
+  },
+  "passed": true
+}

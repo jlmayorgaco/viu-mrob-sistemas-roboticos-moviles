@@ -52,6 +52,7 @@
   },
   "min_obstacle_distance_m": 0.191,
   "obstacle_risk": 0.54,
+  "demo_overlay": "labels_ready:7",
   "checks": {
     "pioneer_present": true,
     "mannequin_present": true,
@@ -67,6 +68,10 @@
     "visual_floor_texture_present": true,
     "visual_signage_present": true,
     "fleet_visual_grid_present": true,
+    "demo_signage_present": true,
+    "course_traceability_markers_present": true,
+    "inspection_cameras_present": true,
+    "runtime_demo_overlay_active": true,
     "virtual_sensors_present": true,
     "sensor_suite_active": true,
     "battery_telemetry_active": true,

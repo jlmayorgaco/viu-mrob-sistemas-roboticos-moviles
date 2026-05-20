@@ -20,6 +20,7 @@ Tema 3 & Control y navegacion en robotica movil. & Maquina de estados `ROUTE`, `
 Tema 4 & Campos potenciales, DWA, A*, Dijkstra, RRT y SLAM como contexto de navegacion. & Se implementa el metodo pedido de campos potenciales en el Pioneer y se anade una extension de flota con A* cooperativo y reservas temporales.\\
 Tema 4 & Seguridad y pruebas simuladas antes del despliegue. & Validacion headless con escenarios S1-S8, zonas de velocidad, HMI y JSON de resultados reproducible.\\
 Extension profesional & Navegacion multi-robot cooperativa. & 3 AMR auxiliares con A* en grilla, reservas celda-tiempo, reservas arista-tiempo, bateria y recarga.\\
+Extension profesional & Presentacion evaluable de la escena. & Placas de demo, labels runtime, camaras nombradas y marcadores visuales de trazabilidad con guia/PPTs.\\
 \bottomrule
 \end{longtable}
 
@@ -34,6 +35,7 @@ Obstaculo frontal & El robot gira y rodea el obstaculo sin contacto. & Cumplido\
 Obstaculos laterales & El robot mantiene distancia minima. & Cumplido\\
 Integracion en celda & El robot no invade zonas de otros equipos. & Cumplido\\
 Organizacion visual & Piso texturizado, senalizacion industrial, carriles y grilla/rutas A* visibles. & Cumplido\\
+Demo evaluable & Labels de guia, camaras nombradas y marcadores de trazabilidad visibles en la escena. & Cumplido\\
 Flota A* & Tres robots auxiliares planifican rutas sin ocupar la misma celda-tiempo ni cruzar aristas opuestas. & Cumplido\\
 Bateria de flota & Los robots consumen bateria, regresan a carga y terminan recargados. & Cumplido\\
 \bottomrule
@@ -57,6 +59,7 @@ Estados observados & ROUTE, AVOIDING, RECOVERY, HOLD y ARRIVED\\
 Distancia minima a obstaculo registrada & 0,191 m\\
 Telemetria industrial validada & Bateria, zonas de velocidad, HMI, estacion de carga y fallo sensorial\\
 Acabado visual validado & Textura de piso, senalizacion de seguridad, carriles, grilla A* y rutas coloreadas\\
+Ayudas de demo validadas & 7 labels runtime, placas visuales, camaras de inspeccion y marcadores guia/PPTs\\
 Flota cooperativa & 3 robots AMR auxiliares con A* y reservas temporales\\
 Planes A* generados & 16\\
 Conflictos evitados por reservas & 8\\
@@ -67,4 +70,4 @@ Escena validada & \path{Actividad2_Pioneer_Profesional_10_10.ttt}\\
 \bottomrule
 \end{longtable}
 
-La validacion confirma que el robot reduce la distancia al objetivo, alcanza la tolerancia de seguimiento, mantiene activo el sistema anticolisiones, supera eventos de celda y publica telemetria interna mediante las senales `pioneerState`, `pioneerArrived`, `pioneerDistanceToTarget`, `pioneerMinObstacleDistance`, `pioneerObstacleRisk`, `pioneerSensorCount`, `pioneerRouteIndex`, `pioneerScenario`, `pioneerBatteryLevel`, `pioneerBatteryMode`, `pioneerSpeedZone` y `pioneerSensorFaultActive`. Tambien verifica la extension cooperativa con `fleetRobotsTotal`, `fleetAStarPlansReady`, `fleetAStarPlanCount`, `fleetReservationConflictsAvoided`, `fleetChargingEvents`, `fleetMissionComplete`, `fleetRechargedCount`, `fleetAllComplete`, `fleetMinBattery` y `fleetStateSummary`.
+La validacion confirma que el robot reduce la distancia al objetivo, alcanza la tolerancia de seguimiento, mantiene activo el sistema anticolisiones, supera eventos de celda y publica telemetria interna mediante las senales `pioneerState`, `pioneerArrived`, `pioneerDistanceToTarget`, `pioneerMinObstacleDistance`, `pioneerObstacleRisk`, `pioneerSensorCount`, `pioneerRouteIndex`, `pioneerScenario`, `pioneerBatteryLevel`, `pioneerBatteryMode`, `pioneerSpeedZone` y `pioneerSensorFaultActive`. Tambien verifica la extension cooperativa con `fleetRobotsTotal`, `fleetAStarPlansReady`, `fleetAStarPlanCount`, `fleetReservationConflictsAvoided`, `fleetChargingEvents`, `fleetMissionComplete`, `fleetRechargedCount`, `fleetAllComplete`, `fleetMinBattery` y `fleetStateSummary`. Finalmente comprueba las ayudas de presentacion con `demoOverlayLabels`, placas de demo y camaras de inspeccion para facilitar la correccion en CoppeliaSim.

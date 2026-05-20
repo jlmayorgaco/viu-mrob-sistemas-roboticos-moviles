@@ -22,6 +22,7 @@ OUTPUT_SCENE = ROOT / "actividad2" / "coppeliasim" / "Actividad2_Pioneer_Profesi
 CONTROLLER = ROOT / "actividad2" / "coppeliasim" / "pioneer_professional_controller.lua"
 SCENARIO_MANAGER = ROOT / "actividad2" / "coppeliasim" / "scenario_event_manager.lua"
 MULTI_ROBOT_MANAGER = ROOT / "actividad2" / "coppeliasim" / "multi_robot_astar_manager.lua"
+VISUAL_DEMO_OVERLAY = ROOT / "actividad2" / "coppeliasim" / "visual_demo_overlay.lua"
 VALIDATION_JSON = ROOT / "actividad2" / "coppeliasim" / "Actividad2_Pioneer_Profesional_10_10_validation.json"
 
 
@@ -47,6 +48,17 @@ def safe_get(sim, path: str) -> int:
     except Exception:
         return -1
     return handle if handle is not None else -1
+
+
+def is_camera_object(sim, path: str) -> bool:
+    handle = safe_get(sim, path)
+    if handle < 0:
+        return False
+    try:
+        camera_type = getattr(sim, "object_camera_type", 3)
+        return int(sim.getObjectType(handle)) == int(camera_type)
+    except Exception:
+        return False
 
 
 def all_objects(sim) -> list[int]:
@@ -340,6 +352,40 @@ def create_dummy(sim, alias: str, position: tuple[float, float, float], parent: 
     return handle
 
 
+def create_sign_plate(
+    sim,
+    alias: str,
+    position: tuple[float, float, float],
+    size: tuple[float, float, float],
+    color: tuple[float, float, float],
+    parent: int,
+    *,
+    accent_color: tuple[float, float, float] = (0.96, 0.74, 0.08),
+) -> int:
+    plate = create_box(
+        sim,
+        alias,
+        size,
+        position,
+        color,
+        parent,
+        respondable=False,
+        detectable=False,
+    )
+    accent_z = position[2] + size[2] * 0.42
+    create_box(
+        sim,
+        f"{alias}_AccentRail",
+        (size[0] * 0.88, size[1] * 1.16, min(0.035, size[2] * 0.16)),
+        (position[0], position[1] - 0.002, accent_z),
+        accent_color,
+        parent,
+        respondable=False,
+        detectable=False,
+    )
+    return plate
+
+
 def fleet_cell_to_world(cell: tuple[int, int], z: float = 0.08) -> tuple[float, float, float]:
     origin_x = -2.18
     origin_y = -2.20
@@ -494,6 +540,102 @@ def add_visual_polish(sim, group: int) -> int:
         )
 
     return visual_group
+
+
+def add_demo_signage(sim, group: int) -> None:
+    signage_group = sim.createDummy(0.025, None)
+    sim.setObjectAlias(signage_group, "VIU_Demo_Signage_And_Course_Traceability")
+    sim.setObjectParent(signage_group, group, True)
+
+    sign_specs = [
+        (
+            "VIU_Sign_GuideCompliance",
+            (0.00, 2.61, 1.12),
+            (2.55, 0.050, 0.38),
+            (0.030, 0.060, 0.075),
+            (0.94, 0.74, 0.10),
+            "VIU_Label_GuideCompliance",
+            (0.00, 2.67, 1.34),
+        ),
+        (
+            "VIU_Sign_PioneerPotentialFields",
+            (-1.50, -1.47, 0.62),
+            (1.05, 0.045, 0.28),
+            (0.050, 0.130, 0.190),
+            (0.40, 0.78, 0.92),
+            "VIU_Label_PotentialFields",
+            (-1.50, -1.42, 0.83),
+        ),
+        (
+            "VIU_Sign_AntiCollision",
+            (0.74, -0.23, 0.68),
+            (1.00, 0.045, 0.28),
+            (0.120, 0.075, 0.170),
+            (0.84, 0.62, 0.92),
+            "VIU_Label_AntiCollision",
+            (0.74, -0.17, 0.88),
+        ),
+        (
+            "VIU_Sign_AStarFleet",
+            (-0.48, 1.85, 0.70),
+            (1.12, 0.050, 0.30),
+            (0.055, 0.120, 0.100),
+            (0.50, 0.84, 0.56),
+            "VIU_Label_AStarFleet",
+            (-0.48, 1.91, 0.92),
+        ),
+        (
+            "VIU_Sign_ChargingPolicy",
+            (-1.55, -2.45, 0.61),
+            (1.05, 0.050, 0.28),
+            (0.150, 0.120, 0.045),
+            (0.98, 0.82, 0.12),
+            "VIU_Label_ChargingPolicy",
+            (-1.55, -2.38, 0.81),
+        ),
+        (
+            "VIU_Sign_HMIValidation",
+            (-1.78, 2.61, 0.70),
+            (1.20, 0.050, 0.28),
+            (0.100, 0.095, 0.105),
+            (0.94, 0.94, 0.90),
+            "VIU_Label_HMIValidation",
+            (-1.78, 2.67, 0.91),
+        ),
+        (
+            "VIU_Sign_DemoSteps",
+            (1.62, 2.61, 0.70),
+            (1.34, 0.050, 0.28),
+            (0.090, 0.080, 0.060),
+            (0.95, 0.60, 0.14),
+            "VIU_Label_DemoSteps",
+            (1.62, 2.67, 0.91),
+        ),
+    ]
+
+    for alias, pos, size, color, accent, label_alias, label_pos in sign_specs:
+        create_sign_plate(sim, alias, pos, size, color, signage_group, accent_color=accent)
+        create_dummy(sim, label_alias, label_pos, signage_group, size=0.035)
+
+    trace_specs = [
+        ("VIU_PPT_Trace_ModeloDiferencial", -1.90, (0.08, 0.30, 0.48)),
+        ("VIU_PPT_Trace_SensoresIncertidumbre", -1.52, (0.12, 0.46, 0.62)),
+        ("VIU_PPT_Trace_FSMControl", -1.14, (0.18, 0.28, 0.54)),
+        ("VIU_PPT_Trace_CamposPotenciales", -0.76, (0.40, 0.64, 0.30)),
+        ("VIU_PPT_Trace_AStarCooperativo", -0.38, (0.86, 0.58, 0.14)),
+        ("VIU_PPT_Trace_BateriaValidacion", 0.00, (0.70, 0.18, 0.18)),
+    ]
+    for alias, x, color in trace_specs:
+        create_box(
+            sim,
+            alias,
+            (0.24, 0.052, 0.10),
+            (x, 2.62, 0.46),
+            color,
+            signage_group,
+            respondable=False,
+            detectable=False,
+        )
 
 
 def add_fleet_grid_texture(sim, parent: int) -> None:
@@ -671,11 +813,46 @@ def add_multi_robot_fleet(sim, group: int) -> None:
     add_fleet_route_markers(sim, group)
 
 
+def add_inspection_cameras(sim, group: int) -> list[int]:
+    base = safe_get(sim, "/DefaultCamera")
+    if base < 0:
+        return []
+
+    specs = [
+        ("VIU_Camera_Overview_Cell", (3.15, -4.35, 3.15), (58.0, 0.0, 38.0)),
+        ("VIU_Camera_Pioneer_Path", (-2.75, -2.90, 1.85), (64.0, 0.0, -24.0)),
+        ("VIU_Camera_AStar_Fleet", (1.85, -3.25, 3.05), (62.0, 0.0, 28.0)),
+        ("VIU_Camera_HMI_Charging", (-2.85, 1.46, 1.55), (72.0, 0.0, -42.0)),
+    ]
+    cameras: list[int] = []
+    for alias, position, orientation_deg in specs:
+        existing = safe_get(sim, f"/{alias}")
+        if existing >= 0:
+            cameras.append(existing)
+            continue
+        try:
+            copied = sim.copyPasteObjects([base], 0)
+            camera = copied[0] if copied else -1
+        except Exception:
+            camera = create_dummy(sim, alias, position, group, size=0.06)
+        if camera >= 0:
+            sim.setObjectAlias(camera, alias)
+            sim.setObjectPosition(camera, list(position))
+            sim.setObjectOrientation(camera, [math.radians(v) for v in orientation_deg])
+            try:
+                sim.setObjectParent(camera, group, True)
+            except Exception:
+                pass
+            cameras.append(camera)
+    return cameras
+
+
 def add_robotized_cell(sim) -> int:
     group = sim.createDummy(0.04, None)
     sim.setObjectAlias(group, "VIU_Actividad2_Professional_Cell")
 
     add_visual_polish(sim, group)
+    add_demo_signage(sim, group)
 
     create_box(sim, "VIU_SafetyFence_North", (5.3, 0.05, 0.55), (0.0, 2.55, 0.275), (0.05, 0.14, 0.22), group)
     create_box(sim, "VIU_SafetyFence_South", (5.3, 0.05, 0.55), (0.0, -2.75, 0.275), (0.05, 0.14, 0.22), group)
@@ -742,7 +919,8 @@ def attach_controller(sim, group: int) -> int:
 -- 7. Publishes missionReady, pioneerArrived, pioneerState,
 --    pioneerDistanceToTarget, pioneerMinObstacleDistance, pioneerObstacleRisk,
 --    pioneerScenario, battery, speed-zone, route and fleet signals.
--- 8. Includes delivery scene, report and presentation in actividad2/.
+-- 8. Adds demo signage, runtime labels and inspection cameras for evaluation.
+-- 9. Includes delivery scene, report and presentation in actividad2/.
 """
     doc = sim.createScript(sim.scripttype_passive, documentation, 0, "lua")
     sim.setObjectAlias(doc, "VIU_Activity2_Delivery_Documentation")
@@ -757,6 +935,11 @@ def attach_controller(sim, group: int) -> int:
     fleet = sim.createScript(sim.scripttype_simulation, fleet_text, 0, "lua")
     sim.setObjectAlias(fleet, "VIU_MultiRobot_AStar_Manager")
     sim.setObjectParent(fleet, group, False)
+
+    overlay_text = VISUAL_DEMO_OVERLAY.read_text(encoding="utf-8")
+    overlay = sim.createScript(sim.scripttype_simulation, overlay_text, 0, "lua")
+    sim.setObjectAlias(overlay, "VIU_Visual_Demo_Overlay_Manager")
+    sim.setObjectParent(overlay, group, False)
     return script_handle
 
 
@@ -864,6 +1047,7 @@ def validate_scene(sim, sim_loop) -> dict:
     route_index = sim.getInt32Signal("pioneerRouteIndex")
     state = sim.getStringSignal("pioneerState")
     scenario = sim.getStringSignal("pioneerScenario")
+    demo_overlay = sim.getStringSignal("demoOverlayLabels")
     sim.stopSimulation()
     while sim.getSimulationState() != sim.simulation_stopped:
         sim_loop(None, 0)
@@ -910,6 +1094,7 @@ def validate_scene(sim, sim_loop) -> dict:
         },
         "min_obstacle_distance_m": round(float(min_obstacle), 3) if min_obstacle is not None else None,
         "obstacle_risk": round(float(obstacle_risk), 3) if obstacle_risk is not None else None,
+        "demo_overlay": demo_overlay,
         "checks": {
             "pioneer_present": robot >= 0,
             "mannequin_present": target >= 0,
@@ -941,6 +1126,17 @@ def validate_scene(sim, sim_loop) -> dict:
             and safe_get(sim, "/VIU_Fleet_R1_Route_01") >= 0
             and safe_get(sim, "/VIU_Fleet_R2_Route_01") >= 0
             and safe_get(sim, "/VIU_Fleet_R3_Route_01") >= 0,
+            "demo_signage_present": safe_get(sim, "/VIU_Demo_Signage_And_Course_Traceability") >= 0
+            and safe_get(sim, "/VIU_Sign_GuideCompliance") >= 0
+            and safe_get(sim, "/VIU_Label_DemoSteps") >= 0,
+            "course_traceability_markers_present": safe_get(sim, "/VIU_PPT_Trace_ModeloDiferencial") >= 0
+            and safe_get(sim, "/VIU_PPT_Trace_AStarCooperativo") >= 0
+            and safe_get(sim, "/VIU_PPT_Trace_BateriaValidacion") >= 0,
+            "inspection_cameras_present": is_camera_object(sim, "/VIU_Camera_Overview_Cell")
+            and is_camera_object(sim, "/VIU_Camera_Pioneer_Path")
+            and is_camera_object(sim, "/VIU_Camera_AStar_Fleet")
+            and is_camera_object(sim, "/VIU_Camera_HMI_Charging"),
+            "runtime_demo_overlay_active": demo_overlay is not None and "labels_ready" in str(demo_overlay),
             "virtual_sensors_present": virtual_sensor_count >= 6,
             "sensor_suite_active": sensor_count is not None and int(sensor_count) >= 22,
             "battery_telemetry_active": battery_level is not None and 0 <= float(battery_level) <= 100,
@@ -979,6 +1175,8 @@ def main() -> int:
         raise FileNotFoundError(SCENARIO_MANAGER)
     if not MULTI_ROBOT_MANAGER.exists():
         raise FileNotFoundError(MULTI_ROBOT_MANAGER)
+    if not VISUAL_DEMO_OVERLAY.exists():
+        raise FileNotFoundError(VISUAL_DEMO_OVERLAY)
 
     sim, sim_loop, sim_deinitialize = load_coppeliasim()
     try:
@@ -990,6 +1188,7 @@ def main() -> int:
         remove_previous_delivery(sim)
         set_initial_layout(sim)
         group = add_robotized_cell(sim)
+        add_inspection_cameras(sim, group)
         add_robot_sensor_suite(sim)
         attach_controller(sim, group)
 

@@ -10,6 +10,7 @@ El enunciado pide anadir el robot Pioneer con su script a una celda robotizada p
   \item El controlador acepta `mannequin`, Bill o `GoalStation` como referencias de mision.
   \item La celda contiene vallas, transportadores, palets, una zona de trabajo robotizada y zonas visuales de seguridad.
   \item El acabado visual incluye piso industrial texturizado con baldosas, carriles, franjas de seguridad, bahia de carga y grilla A* marcada.
+  \item Se anaden placas de demo, labels runtime y camaras nombradas para que el evaluador identifique rapidamente guia, campos potenciales, anticolision, HMI, carga y flota A*.
   \item El robot combina los 16 ultrasonidos del Pioneer con 6 sensores virtuales adicionales para anticipar obstaculos.
   \item La celda incorpora estacion de carga, telemetria de bateria, zonas de velocidad y un HMI visual con estado, bateria, zona activa y fallo sensorial.
   \item Como extension de celda se incorpora una flota auxiliar de 3 AMR con navegacion A* cooperativa, reservas temporales, estaciones de carga y ciclo de descarga/recarga de bateria.
@@ -34,6 +35,8 @@ La escena incluye el script `VIU\_Scenario\_Event\_Manager`, que activa eventos 
 \end{itemize}
 
 Estos eventos fuerzan estados `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`, por lo que la simulacion no se limita a un caso ideal, sino que prueba el robot en condiciones representativas de una celda automatizada.
+
+Para reforzar la relacion con los PPTs del curso, la escena incluye marcadores de trazabilidad para modelo diferencial, sensores e incertidumbre, maquina de estados, campos potenciales, A* cooperativo, bateria y validacion. Estos marcadores no sustituyen el comportamiento funcional: sirven como lectura visual de la solucion durante la correccion.
 
 \section{Extension multi-robot cooperativa}
 
