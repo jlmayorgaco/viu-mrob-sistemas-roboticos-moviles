@@ -17,7 +17,7 @@ La percepción combina sensores de navegación y sensores de proceso. El LiDAR p
 
 \section{Planificación y supervisión}
 
-El planificador asigna misiones según prioridad, estado del robot, proximidad y restricciones de zona. La HMI sirve para solicitar entregas, confirmar recepciones, cancelar misiones y consultar alarmas. La integración con MES/ERP empieza con importación y exportación de órdenes; en fases posteriores se habilita comunicación mediante API.
+El planificador asigna misiones según prioridad, estado del robot, proximidad y restricciones de zona. La HMI concentra solicitudes de entrega, confirmaciones, cancelaciones y alarmas. La integración con MES/ERP empieza con importación y exportación de órdenes; en fases posteriores se habilita comunicación mediante API.
 
 \section{Base de datos de trazabilidad}
 
@@ -25,7 +25,7 @@ Cada misión guarda identificador de kit, estación destino, hora de carga, hora
 
 \section{Arquitectura de control}
 
-El control se plantea como un ciclo \textit{sense--plan--act} con supervisión industrial. La capa de percepción no decide por sí sola: entrega datos filtrados y eventos. La capa de localización estima la pose del AMR con LiDAR, IMU y encoders. La planificación separa ruta global y evitación local. El control de bajo nivel traduce la consigna de movimiento holonómico a velocidades de rueda. La seguridad puede interrumpir cualquier misión y llevar el robot a estado detenido.
+El control opera como un ciclo \textit{sense--plan--act} con supervisión industrial. La capa de percepción no decide por sí sola: entrega datos filtrados y eventos. La capa de localización estima la pose del AMR con LiDAR, IMU y encoders. La planificación separa ruta global y evitación local. El control de bajo nivel traduce la consigna de movimiento holonómico a velocidades de rueda. La seguridad puede interrumpir cualquier misión y llevar el robot a estado detenido.
 
 \begin{longtable}{P{0.18\textwidth}P{0.24\textwidth}P{0.24\textwidth}P{0.24\textwidth}}
 \toprule

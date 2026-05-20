@@ -227,10 +227,10 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 2
 {
-  const s = slideBase("La propuesta no robotiza el HTP: ordena el flujo que lo rodea", "Tesis", 2, C.teal);
+  const s = slideBase("No se robotiza el HTP; se estabiliza el flujo que lo rodea", "Tesis", 2, C.teal);
   label(s, "Menos espera.\nMas trazabilidad.\nMenos riesgo FOD.", 0.78, 1.48, 4.5, 1.3, { face: "Aptos Display", size: 20, bold: true, color: C.navy });
-  label(s, "Automatiza transporte, confirmacion y evidencia.", 0.84, 3.02, 4.2, 0.28, { size: 9, color: C.muted });
-  label(s, "No invade montaje aeronautico certificado.", 0.84, 3.38, 4.2, 0.28, { size: 9, bold: true, color: C.navy });
+  label(s, "Cubre transporte, confirmacion y evidencia.", 0.84, 3.02, 4.2, 0.28, { size: 9, color: C.muted });
+  label(s, "No toca montaje aeronautico certificado.", 0.84, 3.38, 4.2, 0.28, { size: 9, bold: true, color: C.navy });
   s.addShape(pptx.ShapeType.line, { x: 7.15, y: 1.25, w: 0, h: 4.4, line: { color: C.teal, width: 1.2 } });
   metric(s, "40", "HTP/mes actuales aproximados", 7.85, 1.45, C.teal);
   metric(s, "80+", "HTP/mes como objetivo futuro", 7.85, 3.08, C.amber);
@@ -276,7 +276,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   pill(s, "Estacion HTP\nentrega trazada", 9.0, 3.35, 1.65, C.amber);
   arrow(s, 10.7, 3.56, 11.18, 3.56, C.cyan);
   pill(s, "Retorno + FOD\nevidencia digital", 11.22, 3.35, 1.25, C.green);
-  label(s, "Lectura clave para la propuesta", 6.76, 4.58, 3.2, 0.2, { size: 7.4, bold: true, color: C.navy });
+  label(s, "Lectura clave de planta", 6.76, 4.58, 3.2, 0.2, { size: 7.4, bold: true, color: C.navy });
   label(s, "La seccion 19.1 depende de kits, herramientas y disciplina FOD.", 6.76, 4.88, 5.0, 0.24, { size: 6.9, color: C.ink });
   label(s, "El AMR reduce esperas y deja trazas; no fabrica el HTP.", 6.76, 5.16, 5.0, 0.24, { size: 6.9, color: C.ink });
 }
@@ -422,7 +422,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, t, x - 0.2, 3.82 + (i % 2) * 0.55, 0.72, 0.14, { size: 6.5, color: c, bold: true, align: "center" });
     if (i < steps.length - 1) arrow(s, x + 0.36, 3.36 + (i % 2) * 0.55, x + 1.18, 3.36 + ((i + 1) % 2) * 0.55, C.cyan);
   });
-  label(s, "La mision termina con evidencia:", 2.5, 5.52, 3.0, 0.22, { size: 8, bold: true, color: C.navy, align: "center" });
+  label(s, "Cierre con evidencia:", 2.5, 5.52, 3.0, 0.22, { size: 8, bold: true, color: C.navy, align: "center" });
   label(s, "entrega confirmada + ruta registrada + excepcion documentada.", 5.35, 5.52, 5.4, 0.22, { size: 8, color: C.muted, align: "center" });
 }
 
@@ -529,8 +529,8 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
     label(s, val, 7.5 + vw, y - 0.1, 0.95, 0.16, { size: 5.5, color: C.ink });
     label(s, req, 7.5 + rw, y + 0.13, 0.95, 0.16, { size: 5.5, color: C.ink });
   });
-  label(s, "Lectura: con solo horas recuperadas el VAN central sigue exigente.", 5.05, 5.72, 5.3, 0.18, { size: 6.3, bold: true, color: C.navy });
-  label(s, "7 o 17 robots requieren menos esperas, continuidad de flujo y menor riesgo FOD.", 5.05, 5.98, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
+  label(s, "Lectura financiera: las horas recuperadas no venden por si solas 7 o 17 robots.", 5.05, 5.72, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
+  label(s, "La ampliacion exige datos de espera, continuidad de flujo y riesgo FOD.", 5.05, 5.98, 6.4, 0.18, { size: 6.3, bold: true, color: C.navy });
   label(s, "La decision final debe usar datos reales hacia 80 HTP/mes.", 5.05, 6.24, 5.3, 0.18, { size: 6.3, bold: true, color: C.navy });
 }
 

@@ -4,11 +4,11 @@ El presupuesto se formula como oferta preliminar de integración. La cifra final
 
 \section{Base de referencias comerciales}
 
-La propuesta técnica selecciona una plataforma AMR omnidireccional. Por tanto, el presupuesto ya no toma un AMR diferencial como si fuera el equipo final: se usa una clase RB-KAIROS/AGILOX como referencia técnica y se emplean MiR250/LD-250 solo como benchmarks de AMR de 250 kg. Esta distinción evita un error habitual en ofertas de robótica móvil: presupuestar una plataforma disponible y prometer una cinemática distinta.
+La selección técnica exige una plataforma AMR omnidireccional. El presupuesto, por tanto, no trata un AMR diferencial como equipo final. Usa una clase RB-KAIROS/AGILOX como referencia técnica y deja MiR250/LD-250 como benchmarks de AMR de 250 kg. La compra debe mantener la misma cinemática que se defiende en la oferta.
 
 Robotnik documenta el RB-KAIROS como AMR interior con tracción omnidireccional, SLAM, arquitectura ROS, velocidad de 1,5 m/s, WiFi y carga útil de hasta 250 kg en configuración de ruedas fuertes \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM documenta 300 kg, accionamiento omnidireccional y 1,4 m/s para transporte de dollies \cite{agiloxOdm}. El MiR250 aporta un precio público de 44.284 \texteuro{} como referencia inferior de AMR de 250 kg \cite{mekosrlMir250}, y la ficha del fabricante publica 250 kg, hasta 2 m/s y uso interior \cite{mir250Specs}. Omron LD-250 se usa como contraste de capacidad, seguridad y software de flota \cite{omronLd250}.
 
-Para no depender de un único precio se contrastan guías de mercado. Mesh Automation sitúa un AMR típico de 2026 entre USD 50.000 y más de USD 200.000 por unidad, con costes de proyecto superiores al incluir software, integración y soporte \cite{meshAmrCost2026}. KNAPP publica que un Open Shuttle parte de 45.000 \texteuro{} \cite{knappAmrRoi2026}. DNC Automation usa como ejemplo una flota media de 5 AMR con USD 350.000 en robots y USD 468.000 de coste total al sumar software de flota, estaciones de carga, integración WMS/MES, instalación y formación; además recomienda estimar el proyecto completo como 1,8--2,2 veces el coste de los vehículos \cite{dncAmrCost2026}. Estas referencias justifican que la propuesta no use solo precio de catálogo del robot.
+Para no depender de un único precio se contrastan guías de mercado. Mesh Automation sitúa un AMR típico de 2026 entre USD 50.000 y más de USD 200.000 por unidad, con costes de proyecto superiores al incluir software, integración y soporte \cite{meshAmrCost2026}. KNAPP publica que un Open Shuttle parte de 45.000 \texteuro{} \cite{knappAmrRoi2026}. DNC Automation usa como ejemplo una flota media de 5 AMR con USD 350.000 en robots y USD 468.000 de coste total al sumar software de flota, estaciones de carga, integración WMS/MES, instalación y formación; además recomienda estimar el proyecto completo como 1,8--2,2 veces el coste de los vehículos \cite{dncAmrCost2026}. Con esas referencias, el presupuesto evita apoyarse solo en el precio de catálogo del robot.
 
 \begin{longtable}{P{0.23\textwidth}P{0.24\textwidth}P{0.18\textwidth}P{0.25\textwidth}}
 \toprule
@@ -67,7 +67,7 @@ Puesta a punto por robot y parametrización & 2.500 & Calibración SLAM, campos 
 \midrule
 \endhead
 RB-KAIROS-class & Base omnidireccional abierta, ROS 2, SLAM, safety pack y módulo portakits a medida. & Necesita oferta de fabricante/integrador, disponibilidad y validación CE/seguridad del conjunto. & Opción recomendada.\\
-AGILOX ODM-class & Producto intralogístico comercial, omnidireccional y orientado a dollies. & Menor apertura para desarrollo académico; integración condicionada al ecosistema del proveedor. & Alternativa madura.\\
+AGILOX ODM-class & Producto intralogístico comercial, omnidireccional y orientado a dollies. & Menor apertura para desarrollo académico; integración condicionada al entorno del proveedor. & Alternativa madura.\\
 MiR250/LD-250-class & AMR diferencial de 250 kg con flota madura y soporte industrial. & Puede exigir más espacio de maniobra en estaciones con orientación fija. & Benchmark/caso de reserva.\\
 KUKA omniMove-class & Plataforma omnidireccional de cargas muy altas. & Sobredimensionada para kits y herramientas; CAPEX no defendible en piloto. & Descartada.\\
 \bottomrule
@@ -77,7 +77,7 @@ KUKA omniMove-class & Plataforma omnidireccional de cargas muy altas. & Sobredim
 
 \section{Lista de materiales del paquete AMR-FOD-Kitting}
 
-El paquete normalizado por robot no es una suma directa de catálogo, porque incluye integración mecánica, cableado, soportes, validación, parametrización y margen de incertidumbre técnica. Aun así, conviene detallar qué compra el cliente dentro de cada AMR. La tabla siguiente desglosa el paquete de 78.500 \texteuro{} usado en los escenarios.
+El paquete normalizado por robot no sale de una suma directa de catálogo. Incluye integración mecánica, cableado, soportes, validación, parametrización y margen de incertidumbre técnica. La tabla siguiente muestra qué compra el cliente dentro de cada AMR y cómo se llega al paquete de 78.500 \texteuro{} usado en los escenarios.
 
 \begin{longtable}{P{0.26\textwidth}r r P{0.30\textwidth}}
 \toprule
@@ -126,9 +126,9 @@ Contingencia y margen comercial (12\%) & 23.556 & 109.152 & 247.596\\
 
 \section{Interpretación comercial}
 
-El escenario de 1 robot no se vende como solución final. Su función es medir rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD en un entorno controlado. El escenario de 7 robots cubre varias estaciones y permite probar gestión de flota con prioridades, retornos de útiles y rondas preventivas. El escenario de 17 robots solo debe aprobarse si los datos de los dos primeros escenarios muestran que la planta necesita una cobertura más amplia para sostener el crecimiento hacia 80 HTP/mes o más.
+El escenario de 1 robot es un piloto, no el despliegue definitivo. Debe medir rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD en un entorno controlado. Con 7 robots ya se cubren varias estaciones y se prueba gestión de flota con prioridades, retornos de útiles y rondas preventivas. Los 17 robots solo tendrían sentido si los datos de las fases previas muestran que la planta necesita más cobertura para sostener el crecimiento hacia 80 HTP/mes o más.
 
-El presupuesto reduce la parte especulativa: la plataforma se apoya en modelos industriales identificables, los sensores en componentes comerciales concretos y el software/servicios en rangos de integración publicados para AMR. Las partidas de ingeniería cubren levantamiento de planta, mapa, zonas seguras, reglas de tráfico, simulación, pruebas, aceptación y documentación de seguridad.
+El presupuesto reduce la especulación al separar equipo, sensores, software y servicios. La plataforma se apoya en modelos industriales identificables; los sensores, en componentes comerciales concretos; y el software/servicios, en rangos de integración publicados para AMR. Las partidas de ingeniería cubren levantamiento de planta, mapa, zonas seguras, reglas de tráfico, simulación, pruebas, aceptación y documentación de seguridad.
 
 \section{Coste total de propiedad}
 
@@ -153,4 +153,4 @@ Baterías, consumibles y pequeños repuestos & 4.000 & 32.000 & 77.000\\
 
 \section{Condiciones comerciales académicas}
 
-Se propone un pago por hitos: 30\% al inicio de ingeniería y simulación, 40\% tras entrega del piloto instalado, 20\% tras validación de KPIs y 10\% al cierre documental y formación. En contrato real, estos hitos deberían acompañarse de criterios de aceptación, matriz de responsabilidades, plan de soporte, cláusulas de ciberseguridad, tratamiento de datos y procedimiento de gestión de cambios.
+El pago por hitos queda así: 30\% al inicio de ingeniería y simulación, 40\% tras entrega del piloto instalado, 20\% tras validación de KPIs y 10\% al cierre documental y formación. En contrato real, estos hitos deberían acompañarse de criterios de aceptación, matriz de responsabilidades, plan de soporte, cláusulas de ciberseguridad, tratamiento de datos y procedimiento de gestión de cambios.

@@ -1,8 +1,8 @@
 \chapter{Análisis económico y ROI}
 
-El ROI parte de una restricción: la robótica móvil no elimina puestos ni duplica por sí sola la producción. El valor económico aparece al reducir esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
+El ROI parte de una restricción clara: la robótica móvil no elimina puestos ni duplica por sí sola la producción. El valor económico aparece al reducir esperas, desplazamientos, errores de suministro, búsquedas de útiles y eventos FOD que interrumpen la operación. El enunciado fija un salario medio de 20.000--28.000 \texteuro{} anuales por operario. Para normalizar el análisis se usa un salario central de 24.000 \texteuro{}/año, un factor de coste empresa de 1,35 y 1.760 horas laborables anuales. El coste horario cargado resultante es 18,4 \texteuro{}/h.
 
-El análisis incluye una lectura financiera a cinco años. Se usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año de beneficio parcial, porque el piloto y el arranque no capturan todo el potencial desde el primer mes. Estos supuestos fuerzan una pregunta útil: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
+El análisis financiero trabaja a cinco años. Usa una tasa de descuento académica del 8\%, vida económica de 5 años, valor residual del 15\% del paquete robotizado y un primer año con beneficio parcial, porque piloto y arranque no capturan todo el potencial desde el primer mes. La pregunta económica queda acotada: qué beneficio anual debe generar la planta para justificar 1, 7 o 17 robots.
 
 \begin{longtable}{P{0.32\textwidth}P{0.50\textwidth}}
 \toprule
@@ -56,7 +56,7 @@ Para comprobar el caso financiero, se anualiza el CAPEX a cinco años y se compa
 \label{tab:roi-break-even}
 \end{longtable}
 
-El escenario de 1 robot queda por debajo del punto de equilibrio financiero si se mira solo el tiempo recuperado. El de 7 robots se acerca más, pero aún requiere beneficios operativos adicionales. El de 17 robots exige una mejora de flujo global, no solo misiones de transporte. La tabla muestra dónde deja de bastar el argumento de horas recuperadas.
+Con solo tiempo recuperado, el piloto queda por debajo del equilibrio financiero. Siete robots se acercan más, aunque todavía necesitan beneficios operativos adicionales. Diecisiete robots exigen una mejora global del flujo, no solo más misiones de transporte. La tabla marca el punto en el que el argumento de horas recuperadas deja de bastar.
 
 \section{Sensibilidad financiera a cinco años}
 
@@ -92,11 +92,11 @@ El siguiente análisis diferencia tres niveles de beneficio anual. El escenario 
 \label{tab:lectura-financiera}
 \end{longtable}
 
-La lectura financiera queda así: el piloto compra información; la expansión compra continuidad; el despliegue extendido compra resiliencia de flujo. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deberían sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
+La lectura financiera es deliberadamente escalonada: el piloto compra información; la expansión compra continuidad; el despliegue extendido compra resiliencia de flujo. Si Alestis dispone de datos históricos de paradas, incidencias FOD, retrasos de kits o coste de oportunidad por unidad no entregada, esos datos deben sustituir los rangos académicos y recalcular el VAN antes de firmar una fase de 7 o 17 robots.
 
 \section{Gates de decisión antes de escalar}
 
-La propuesta comercial no recomienda comprar 7 o 17 robots por intuición. Cada salto se condiciona a datos del escenario anterior. Estos gates son útiles porque conectan la oferta técnica, la oferta comercial y la guía de evaluación: el presupuesto de expansión solo se defiende si el piloto demuestra utilidad medible.
+La oferta no recomienda comprar 7 o 17 robots por intuición. Cada salto depende de datos del escenario anterior. Los gates conectan la decisión técnica con la comercial: el presupuesto de expansión solo se defiende si el piloto demuestra utilidad medible.
 
 \begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.26\textwidth}P{0.10\textwidth}}
 \toprule
@@ -128,4 +128,4 @@ El retorno completo incluye beneficios que no se deben convertir de forma artifi
 
 \section{Lectura del retorno}
 
-El ROI se evalúa por recuperación de tiempo improductivo, reducción de variabilidad logística y control documentado de trazabilidad/FOD. La recomendación comercial queda escalonada: primero un piloto para medir, después 7 robots si aparece un cuello de botella logístico verificable, y solo entonces 17 robots condicionados a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.
+El ROI se evalúa por tiempo improductivo recuperado, menor variabilidad logística y control documentado de trazabilidad/FOD. La recomendación comercial mantiene tres pasos: primero un piloto para medir; después 7 robots si aparece un cuello de botella logístico verificable; y solo entonces 17 robots, condicionados a KPIs reales de disponibilidad, seguridad, puntualidad de entrega, incidencias FOD y utilización de flota.

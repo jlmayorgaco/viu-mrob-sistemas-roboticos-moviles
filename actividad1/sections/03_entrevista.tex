@@ -1,6 +1,6 @@
 \chapter{Entrevista simulada con experto}
 
-La guía oficial de la Actividad 1 solicita obtener información de primera mano mediante una conversación con un experto de planta. Para cumplir ese bloque, se simula una entrevista con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. El objetivo no es crear una transcripción extensa, sino extraer información útil para justificar una oferta técnica y comercial de robótica móvil.
+La entrevista se redacta como acta técnica, no como conversación decorativa. Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real, aporta el punto de vista de planta: qué se mueve, dónde se pierden minutos, cómo pesa FOD y qué restricciones tendría un AMR en una línea aeronáutica.
 
 \begin{interviewbrief}
 \textbf{Ficha de la entrevista simulada}
@@ -18,7 +18,7 @@ La guía oficial de la Actividad 1 solicita obtener información de primera mano
 
 \begin{interviewtranscript}[Acta técnica de entrevista con Carlos Pérez]
 \InterviewExchange
-{Carlos, gracias por atendernos. La guía de la actividad nos pide centrarnos en procesos reales de Alestis Puerto Real. Si aparece algún detalle personal o de la vida en Cádiz lo dejamos para otro momento; nos interesa entender qué ocurre alrededor del HTP del A320 y la sección 19.1.}
+{Carlos, gracias por atendernos. Queremos ir al proceso, no a una descripción genérica de robots. ¿Qué ocurre alrededor del HTP del A320 y la sección 19.1?}
 {De acuerdo. El HTP es el estabilizador horizontal de cola del A320 y en planta se trabaja con estructuras grandes, útiles específicos, documentación, inspecciones y mucho material auxiliar. La sección 19.1 está asociada al entorno posterior del avión y a interfaces de cola, por lo que la coordinación entre estaciones es crítica.}
 
 \InterviewExchange
@@ -34,7 +34,7 @@ La guía oficial de la Actividad 1 solicita obtener información de primera mano
 {No para este caso. El montaje estructural tiene procedimientos, personal cualificado y controles de calidad. Donde sí veo valor es en que un AMR traiga el material correcto, registre entregas, devuelva útiles usados, haga rondas preventivas y avise cuando algo no cuadra. Eso ayuda sin tocar el proceso certificado.}
 
 \InterviewExchange
-{La guía nos pide identificar posibles problemas internos. ¿Qué problemas concretos destacaría en transporte y localización de materiales?}
+{Para aterrizar el problema, ¿qué falla con más frecuencia en transporte y localización de materiales?}
 {El primer problema es saber dónde está cada cosa en el momento exacto. A veces el sistema dice que el material existe, pero no está junto a la estación. También ocurre que una herramienta se presta entre equipos y la trazabilidad queda incompleta. Si el robot valida RFID o QR al recoger y entregar, se reduce esa incertidumbre.}
 
 \InterviewExchange
@@ -65,7 +65,7 @@ La guía oficial de la Actividad 1 solicita obtener información de primera mano
 \textbf{Hallazgo de la entrevista} & \textbf{Implicación para la solución robótica}\\
 \midrule
 \endhead
-El HTP del A320 y la sección 19.1 implican estructuras grandes, útiles específicos, documentación e interfaces de cola. & La propuesta debe centrarse en apoyo logístico y trazabilidad, no en manipulación estructural pesada ni montaje certificado.\\
+El HTP del A320 y la sección 19.1 implican estructuras grandes, útiles específicos, documentación e interfaces de cola. & El alcance debe limitarse al apoyo logístico y la trazabilidad, sin manipulación estructural pesada ni montaje certificado.\\
 Los movimientos más frecuentes afectan a kits, fijaciones, consumibles, herramientas calibradas, útiles y retornos. & El módulo portacargas debe admitir bandejas, cajón seguro, etiquetado RFID/QR y misiones de entrega/retorno.\\
 Las pérdidas aparecen como microesperas y desplazamientos repetidos que no siempre se registran como parada. & Los KPIs deben medir tiempo recuperado, entregas a tiempo, misiones completadas y reducción de búsquedas manuales.\\
 La localización de herramientas y materiales puede ser incompleta en el momento operativo. & Se requiere trazabilidad fina con lectura RFID/QR en origen, destino y retorno, asociada a orden, estación y hora.\\
@@ -79,4 +79,4 @@ El despliegue debe empezar con evidencia medible. & Recomendar piloto de 1 robot
 
 \section{Resultado para el diseño}
 
-La entrevista sitúa la automatización en el flujo auxiliar de planta: mover y registrar kits, herramientas, consumibles y útiles; reforzar rondas FOD; recortar desplazamientos improductivos; y producir datos suficientes para decidir si el piloto merece escalar. De ahí salen los requisitos técnicos, la arquitectura AMR-FOD-Kitting y los escenarios de presupuesto desarrollados en los capítulos posteriores.
+La entrevista desplaza la automatización al punto correcto: flujo auxiliar de planta. El robot mueve y registra kits, herramientas, consumibles y útiles; refuerza rondas FOD; recorta desplazamientos improductivos; y genera datos para decidir si el piloto merece escalar. Con esa base se construyen los requisitos técnicos, la arquitectura AMR-FOD-Kitting y los escenarios de presupuesto.

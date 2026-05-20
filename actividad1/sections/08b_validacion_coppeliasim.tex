@@ -52,7 +52,7 @@ Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en 
 Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin invadir zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
 Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
 Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
-Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción documentada. & Una misión sin cierre no sirve para justificar productividad ni cumplimiento FOD.\\
+Trazabilidad & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción documentada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
 FOD preventivo & Todo positivo RGB-D genera evidencia visual y validación humana; los falsos positivos se registran. & La cámara apoya inspección preventiva, no sustituye calidad aeronáutica.\\
 Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
 Energía & No se asignan nuevas misiones por debajo de una reserva mínima operativa del 20\% de batería. & Los actuadores y sensores consumen energía; la planificación debe contemplar carga y disponibilidad.\\
@@ -63,7 +63,7 @@ Energía & No se asignan nuevas misiones por debajo de una reserva mínima opera
 
 \section{Relación con navegación y localización del curso}
 
-La validación usa los conceptos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM permite construir o actualizar el mapa de una nave cambiante; el planificador global genera una ruta hacia la estación; y el planificador local evita obstáculos dinámicos como operarios, carros o útiles. En una implantación real se seleccionaría el algoritmo concreto según el software del AMR, pero para la oferta académica se deja trazado el vínculo técnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.
+La validación conecta la oferta con los contenidos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM construye o actualiza el mapa de una nave cambiante; el planificador global calcula la ruta hacia la estación; y el planificador local resuelve obstáculos dinámicos como operarios, carros o útiles. En una implantación real se escogería el algoritmo concreto según el software del AMR, pero la oferta académica deja explícito el vínculo técnico con Kalman/Montecarlo, SLAM, A*/Dijkstra, DWA y campos potenciales.
 
 \begin{longtable}{P{0.25\textwidth}P{0.33\textwidth}P{0.32\textwidth}}
 \toprule

@@ -18,7 +18,7 @@ Robot con patas & Alta movilidad teórica en entornos complejos. & Coste alto, c
 
 \section{Matriz ponderada de selección}
 
-Para evitar una selección puramente narrativa se usa una matriz de decisión con pesos. La puntuación va de 1 a 5, donde 5 significa mejor ajuste al caso. El resultado favorece la plataforma omnidireccional porque la maniobrabilidad cerca de estaciones pesa más que el coste unitario mínimo.
+La selección se apoya en una matriz ponderada. La puntuación va de 1 a 5, donde 5 indica mejor ajuste al caso. La plataforma omnidireccional gana porque en esta planta pesa más maniobrar bien junto a estaciones que comprar el vehículo más barato.
 
 \begingroup
 \small
@@ -40,10 +40,10 @@ Robot con patas & 2 & 2 & 2 & 2 & 1 & 2 & 1,85\\
 \end{longtable}
 \endgroup
 
-En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-KAIROS/AGILOX-class. La matriz muestra que un AMR diferencial tipo MiR250 u Omron LD-250 es una alternativa industrial fuerte, pero no captura la ventaja crítica del movimiento lateral en zonas de entrega. El dron y el robot con patas se descartan por seguridad, carga, aceptación y falta de necesidad en una nave con pavimento regular. La oruga tampoco aporta valor en suelo industrial limpio y puede penalizar mantenimiento e higiene.
+En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-KAIROS/AGILOX-class. Un AMR diferencial como MiR250 u Omron LD-250 sigue siendo una opción industrial fuerte, pero pierde ventaja cuando la entrega exige acoplamiento lateral. El dron y el robot con patas quedan fuera por seguridad, carga y aceptación. Las orugas tampoco encajan: el suelo es regular y el mantenimiento sería más difícil sin aportar capacidad útil.
 
 \section{Robot seleccionado}
 
-Se adopta una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim mediante KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La referencia técnica principal para la especificación es una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, por su tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg documentada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. Como alternativa comercial de intralogística se considera AGILOX ODM, que declara movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
+La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim mediante KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg documentada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM queda como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
 
 La base omnidireccional da tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posición al aproximarse a útiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronáutico interior, estas ventajas pesan más que la simplicidad de un AGV de ruta fija o una base diferencial de compra más directa.
