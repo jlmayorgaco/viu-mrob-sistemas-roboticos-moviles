@@ -60,6 +60,31 @@ const C = {
   white: "FFFFFF",
 };
 
+const deckSlides = [];
+
+function trackSlide(slide) {
+  deckSlides.push(slide);
+  return slide;
+}
+
+function addWebcamPlaceholder(slide) {
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x: 12.20, y: 6.16, w: 0.92, h: 0.92,
+    fill: { color: C.ink, transparency: 86 },
+    line: { color: C.ink, transparency: 100 },
+  });
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x: 12.14, y: 6.10, w: 0.90, h: 0.90,
+    fill: { color: C.white, transparency: 6 },
+    line: { color: C.teal, width: 1.2 },
+  });
+  slide.addShape(pptx.ShapeType.ellipse, {
+    x: 12.30, y: 6.26, w: 0.58, h: 0.58,
+    fill: { color: C.white, transparency: 100 },
+    line: { color: C.line, width: 0.6 },
+  });
+}
+
 const TEXT_FIXES = [
   [/\bRoboticos\b/g, "Robóticos"],
   [/\broboticos\b/g, "robóticos"],
@@ -142,7 +167,7 @@ function addFooter(slide, n) {
     x: 0.55, y: 7.14, w: 4.8, h: 0.18, fontFace: "Aptos", fontSize: 6.2, color: C.muted,
   });
   slide.addText(txt("Lunabotics  •  Alestis Puerto Real  •  HTP A320"), {
-    x: 8.35, y: 7.14, w: 4.35, h: 0.18, fontFace: "Aptos", fontSize: 6.2, color: C.muted, align: "right",
+    x: 7.35, y: 7.14, w: 4.45, h: 0.18, fontFace: "Aptos", fontSize: 6.2, color: C.muted, align: "right",
   });
   slide.addText(txt(`${n}/16`), {
     x: 12.45, y: 0.22, w: 0.35, h: 0.16, fontFace: "Aptos", fontSize: 6.2, color: C.muted, align: "right",
@@ -150,7 +175,7 @@ function addFooter(slide, n) {
 }
 
 function slideBase(title, subtitle, n, accent = C.teal) {
-  const slide = pptx.addSlide();
+  const slide = trackSlide(pptx.addSlide());
   slide.background = { color: "F7F9FC" };
   slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.333, h: 0.08, fill: { color: accent }, line: { color: accent } });
   slide.addText(txt(subtitle), { x: 0.55, y: 0.24, w: 5.8, h: 0.18, fontFace: "Aptos", fontSize: 6.7, bold: true, color: accent });
@@ -210,7 +235,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
 
 // 1
 {
-  const s = pptx.addSlide();
+  const s = trackSlide(pptx.addSlide());
   s.background = { color: C.navy };
   s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.333, h: 7.5, fill: { color: C.navy }, line: { color: C.navy } });
   for (let i = 0; i < 12; i++) {
@@ -588,5 +613,7 @@ function drawAmr(slide, x, y, s = 1, accent = C.cyan) {
   label(s, "costes por partida", 7.1, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.green });
   label(s, "temario aplicado", 10.0, 5.75, 1.8, 0.18, { size: 6.8, bold: true, color: C.violet });
 }
+
+deckSlides.forEach(addWebcamPlaceholder);
 
 pptx.writeFile({ fileName: path.join(__dirname, "Actividad1_AMR_FOD_Kitting_editable.pptx") });

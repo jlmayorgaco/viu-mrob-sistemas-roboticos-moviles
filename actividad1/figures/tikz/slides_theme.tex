@@ -48,10 +48,19 @@
   \node[anchor=west,title,text width=12.9cm] at (0.72,8.12) {#2};
   \node[anchor=east,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Muted] at (15.24,8.46) {\theslide/\totalSlides};
   \node[anchor=west,caption] at (0.72,0.24) {Actividad 1 \textbullet{} Sistemas Rob\'oticos M\'oviles};
-  \node[anchor=east,caption] at (15.24,0.24) {Lunabotics \textbullet{} Alestis Puerto Real \textbullet{} HTP A320};
+  \node[anchor=east,caption] at (13.75,0.24) {Lunabotics \textbullet{} Alestis Puerto Real \textbullet{} HTP A320};
 }
 
-\newcommand{\stopslide}{\end{scope}\end{tikzpicture}}
+\newcommand{\webcamplaceholder}{%
+  \begin{scope}
+    \fill[Ink,opacity=0.12] (14.96,0.92) circle (0.66);
+    \fill[white,opacity=0.94] (14.90,0.99) circle (0.64);
+    \draw[Teal,line width=1.0pt] (14.90,0.99) circle (0.64);
+    \draw[Line,line width=0.45pt] (14.90,0.99) circle (0.49);
+  \end{scope}
+}
+
+\newcommand{\stopslide}{\webcamplaceholder\end{scope}\end{tikzpicture}}
 
 \newcommand{\roundbox}[6]{%
   \fill[#5,rounded corners=5pt] (#1,#2) rectangle ++(#3,#4);
