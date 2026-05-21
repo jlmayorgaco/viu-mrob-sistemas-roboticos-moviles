@@ -88,7 +88,8 @@
 \newcommand{\VIUAuthor}{Jorge Luis Mayorga Taborda}
 \newcommand{\VIUDate}{26 de mayo de 2026}
 \newcommand{\VIUGroup}{Lunabotics}
-\newcommand{\VIULogo}{logo-viu}
+\newcommand{\VIUGrupo}{Propuesta t\'ecnica y comercial de \VIUGroup}
+\newcommand{\VIULogo}{logo-viu-w}
 \newcommand{\VIULogoPath}{images/}
 \newcommand{\VIUCoverBgPath}{images/bg-viu}
 \newcommand{\SetVIUMaster}[1]{\renewcommand{\VIUMaster}{#1}}
@@ -99,9 +100,18 @@
 \newcommand{\SetVIUAuthor}[1]{\renewcommand{\VIUAuthor}{#1}}
 \newcommand{\SetVIUDate}[1]{\renewcommand{\VIUDate}{#1}}
 \newcommand{\SetVIUGroup}[1]{\renewcommand{\VIUGroup}{#1}}
+\newcommand{\SetVIUGrupo}[1]{\renewcommand{\VIUGrupo}{#1}}
 \newcommand{\SetVIULogo}[1]{\renewcommand{\VIULogo}{#1}}
 \newcommand{\SetVIULogoPath}[1]{\renewcommand{\VIULogoPath}{#1}}
 \newcommand{\SetVIUCoverBgPath}[1]{\renewcommand{\VIUCoverBgPath}{#1}}
+
+\newcommand{\VIUContributors}{%
+    \begin{tabular}{@{}p{3.2cm}p{10.8cm}@{}}
+        \textbf{Autor} & \VIUAuthor\\
+        \textbf{Proyecto} & Propuesta t\'ecnica y comercial de \VIUGroup
+    \end{tabular}
+}
+\newcommand{\SetVIUContributors}[1]{\renewcommand{\VIUContributors}{#1}}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -196,54 +206,62 @@
 }
 
 \newcommand{\MakeVIUActivityTitle}{%
-\begin{titlepage}
-\newgeometry{left=1.9cm,right=1.9cm,top=1.9cm,bottom=2.1cm}
+\newgeometry{left=1.8cm,right=1.8cm,top=1.8cm,bottom=2.2cm}
 \hypersetup{pageanchor=false}
-\thispagestyle{empty}
-\pagecolor{UniPrimaryDeep}
-\color{white}
-\begin{tikzpicture}[remember picture,overlay]
-  \IfFileExists{\VIUCoverBgPath.png}{%
-    \node[anchor=south east,opacity=0.13] at ($(current page.south east)+(1.0cm,-1.2cm)$)
-      {\includegraphics[height=18.2cm]{\VIUCoverBgPath}};
-  }{}
-  \fill[UniPrimary] (current page.north east) ++(-7.2cm,0) rectangle (current page.south east);
-  \draw[white,opacity=0.17,line width=1.2pt] ($(current page.south east)+(-8.8cm,1.3cm)$) circle (5.0cm);
-  \draw[white,opacity=0.10,line width=1.0pt] ($(current page.south east)+(-3.4cm,8.0cm)$) circle (4.4cm);
-  \draw[white,opacity=0.12,line width=0.7pt] ($(current page.north west)+(1.3cm,-2.6cm)$) -- ($(current page.north east)+(-1.5cm,-2.6cm)$);
-  \node[anchor=north west,align=left] at ($(current page.north west)+(1.9cm,-1.7cm)$)
-    {\fontsize{16}{18}\selectfont\bfseries Universidad Internacional de Valencia};
-  \IfFileExists{\VIULogoPath\VIULogo.pdf}{%
-    \node[anchor=north east] at ($(current page.north east)+(-1.9cm,-1.45cm)$)
-      {\includegraphics[height=1.25cm]{\VIULogoPath\VIULogo}};
-  }{%
-    \IfFileExists{\VIULogoPath\VIULogo.png}{%
-      \node[anchor=north east] at ($(current page.north east)+(-1.9cm,-1.45cm)$)
-        {\includegraphics[height=1.25cm]{\VIULogoPath\VIULogo}};
-    }{}%
-  }
-\end{tikzpicture}
+\begin{titlepage}
+    \thispagestyle{empty}
+    \pagecolor{UniPrimaryDeep}
+    \color{white}
 
-\vspace*{3.0cm}
-{\bfseries\fontsize{13}{16}\selectfont \VIUMaster\par}
-\vspace{4pt}
-{\fontsize{22}{25}\selectfont \VIUSubject\par}
-\vspace*{2.6cm}
-{\bfseries\fontsize{36}{40}\selectfont \VIUActivityType\par}
-\vspace{8pt}
-{\bfseries\fontsize{18}{22}\selectfont \VIUActivityTitle\par}
-\vspace{10pt}
-{\fontsize{13}{16}\selectfont Propuesta t\'ecnica y comercial de \VIUGroup\par}
-\vfill
-{\color{white!85}\rule{\textwidth}{0.9pt}\par}
-\vspace{0.9cm}
-\begin{tabularx}{\textwidth}{@{}P{3.2cm}X@{}}
-\textbf{Autor} & \VIUAuthor\\
-\textbf{Profesor} & \VIUProfessor\\
-\textbf{Entrega} & \VIUDate, antes de las 23:59\\
-\end{tabularx}
-\restoregeometry
+    \begin{tikzpicture}[remember picture,overlay]
+        \IfFileExists{\VIUCoverBgPath.png}{%
+            \node[anchor=south east,opacity=0.15] at ($(current page.south east)+(+1.0cm,-1.3cm)$)
+            {\includegraphics[height=18.2cm]{\VIUCoverBgPath}};
+        }{}%
+    \end{tikzpicture}
+
+    \raggedright
+
+    \IfFileExists{\VIULogoPath\VIULogo.pdf}{%
+        \includegraphics[height=1.7cm]{\VIULogoPath\VIULogo}%
+    }{%
+        \IfFileExists{\VIULogoPath\VIULogo.png}{%
+            \includegraphics[height=1.7cm]{\VIULogoPath\VIULogo}%
+        }{%
+            {\fontsize{16}{18}\selectfont\bfseries Universidad Internacional de Valencia\par}%
+        }%
+    }
+
+    \vspace*{2.1cm}
+
+    {\bfseries\fontsize{14}{16}\selectfont \VIUMaster\par}
+    \vspace{3pt}
+    {\fontsize{22}{24}\selectfont \VIUSubject\par}
+
+    \vspace*{2.8cm}
+
+    {\bfseries\fontsize{34}{40}\selectfont \VIUActivityType\par}
+    \vspace{4pt}
+    {\color{UniLight}\bfseries\fontsize{16}{20}\selectfont \VIUActivityTitle\par}
+    \vspace{8pt}
+    {\fontsize{14}{16}\selectfont \VIUGrupo\par}
+
+    \vfill
+
+    {\color{UniLight}\rule{\textwidth}{0.9pt}\par}
+    \vspace{1.0cm}
+
+    \begin{minipage}[t]{0.72\textwidth}
+        \raggedright
+        {\fontsize{11}{14}\selectfont
+        \VIUContributors\par
+        \vspace{6pt}
+        \textbf{Profesor}\quad \VIUProfessor\par
+        \vspace{2pt}
+        \textbf{Fecha}\quad \VIUDate, antes de las 23:59\par}
+    \end{minipage}
 \end{titlepage}
+\restoregeometry
 \pagecolor{white}
 \color{UniDark}
 \setcounter{page}{2}
