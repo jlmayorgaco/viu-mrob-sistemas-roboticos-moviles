@@ -1,29 +1,29 @@
 \chapter{Oferta comercial y presupuesto}
 
-El presupuesto se formula como oferta preliminar de integración. La cifra combina plataforma móvil, adaptación mecánica para kitting, sensores, seguridad, software, simulación, instalación, formación, soporte y margen. Las referencias usadas son precios públicos, fichas oficiales o rangos de mercado revisados el 20 de mayo de 2026; su función es defender el orden de magnitud de la oferta.
+El presupuesto se formula como oferta preliminar de integración. La cifra combina plataforma móvil, adaptación mecánica para kitting, sensores, seguridad, software, simulación, instalación, formación, soporte y margen. Las referencias usadas son precios públicos, fichas oficiales o rangos de mercado revisados entre abril y mayo de 2026.
 
 \section{Base de referencias comerciales}
 
-La selección técnica exige una plataforma AMR omnidireccional. El presupuesto, por tanto, no trata un AMR diferencial como equipo final. Usa una clase RB-KAIROS/AGILOX como referencia técnica y deja MiR250/LD-250 como benchmarks de AMR de 250 kg. La compra debe mantener la misma cinemática que se defiende en la oferta.
+La selección técnica exige una plataforma AMR omnidireccional. Por eso el presupuesto toma RB-KAIROS/AGILOX como referencia técnica y usa MiR250/LD-250 sólo como benchmarks de precio y capacidad. La compra debe mantener la misma cinemática que se defiende en la oferta.
 
-Robotnik documenta el RB-KAIROS como AMR interior con tracción omnidireccional, SLAM, arquitectura ROS, velocidad de 1,5 m/s, WiFi y carga útil de hasta 250 kg en configuración de ruedas fuertes \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM documenta 300 kg, accionamiento omnidireccional y 1,4 m/s para transporte de dollies \cite{agiloxOdm}. El MiR250 aporta un precio público de 44.284 \texteuro{} como referencia inferior de AMR de 250 kg \cite{mekosrlMir250}, y la ficha del fabricante publica 250 kg, hasta 2 m/s y uso interior \cite{mir250Specs}. Omron LD-250 se usa como contraste de capacidad, seguridad y software de flota \cite{omronLd250}.
+Robotnik documenta el RB-KAIROS como AMR interior con tracción omnidireccional, SLAM, arquitectura ROS, velocidad de 1,5 m/s, WiFi y carga útil de hasta 250 kg en configuración de ruedas fuertes \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM documenta 300 kg, tracción omnidireccional y 1,4 m/s para transporte de dollies \cite{agiloxOdm}. El MiR250 aporta un precio público de 44.284 \texteuro{} como referencia inferior de AMR de 250 kg \cite{mekosrlMir250}, y la ficha del fabricante publica 250 kg, hasta 2 m/s y uso interior \cite{mir250Specs}. Omron LD-250 se usa como contraste de capacidad, seguridad y software de flota \cite{omronLd250}.
 
-Para no depender de un único precio se contrastan guías de mercado. Mesh Automation sitúa un AMR típico de 2026 entre USD 50.000 y más de USD 200.000 por unidad, con costes de proyecto superiores al incluir software, integración y soporte \cite{meshAmrCost2026}. KNAPP publica que un Open Shuttle parte de 45.000 \texteuro{} \cite{knappAmrRoi2026}. DNC Automation usa como ejemplo una flota media de 5 AMR con USD 350.000 en robots y USD 468.000 de coste total al sumar software de flota, estaciones de carga, integración WMS/MES, instalación y formación; además recomienda estimar el proyecto completo como 1,8--2,2 veces el coste de los vehículos \cite{dncAmrCost2026}. Con esas referencias, el presupuesto evita apoyarse solo en el precio de catálogo del robot.
+Mesh Automation sitúa un AMR típico de 2026 entre USD 50.000 y más de USD 200.000 por unidad, con costes de proyecto superiores al incluir software, integración y soporte \cite{meshAmrCost2026}. KNAPP publica que un Open Shuttle parte de 45.000 \texteuro{} \cite{knappAmrRoi2026}. DNC Automation usa como ejemplo una flota media de 5 AMR con USD 350.000 en robots y USD 468.000 de coste total al sumar software de flota, estaciones de carga, integración WMS/MES, instalación y formación; además recomienda estimar el proyecto completo como 1,8--2,2 veces el coste de los vehículos \cite{dncAmrCost2026}. Estas referencias separan el precio del vehículo del coste real de integración.
 
 \begin{longtable}{P{0.23\textwidth}P{0.24\textwidth}P{0.18\textwidth}P{0.25\textwidth}}
 \toprule
-\textbf{Bloque} & \textbf{Referencia usada} & \textbf{Dato/precio público} & \textbf{Uso en el presupuesto}\\
+Bloque & Referencia usada & Dato/precio público & Uso en el presupuesto\\
 \midrule
 \endhead
 AMR omnidireccional & Robotnik RB-KAIROS & 250 kg, 1,5 m/s, ROS, SLAM, tracción omnidireccional & Referencia técnica principal de la plataforma objetivo.\\
-AMR omnidireccional & AGILOX ODM & 300 kg, 1,4 m/s, accionamiento omnidireccional & Alternativa comercial de intralogística para dollies/kitting.\\
+AMR omnidireccional & AGILOX ODM & 300 kg, 1,4 m/s, tracción omnidireccional & Alternativa comercial de intralogística para dollies/kitting.\\
 AMR 250 kg & MiR250 Base Robot & 44.284 \texteuro{} & Benchmark público de coste para AMR industrial compacto.\\
 Benchmark AMR & Omron LD-250 & 250 kg, 1,2 m/s, navegación natural y seguridad & Validación de carga útil industrial y software de flota.\\
 Rango AMR 2026 & Mesh Automation & USD 50.000--200.000+ por unidad & Verificación de que el escenario cae en rango de mercado.\\
 AMR intralogístico & KNAPP Open Shuttle & Desde 45.000 \texteuro{} & Contraste europeo de coste de AMR industrial.\\
 Proyecto AMR 5 vehículos & DNC Automation & USD 468.000 como proyecto completo de ejemplo & Control de realismo para integración, infraestructura y servicios.\\
 Costes de flota & Novus Hi-Tech & USD 3.000--10.000 por robot en software & Dimensionamiento de software, flota e integración.\\
-Cámara RGB-D & Intel RealSense D435i & USD 334 & Referencia de visión/depth e IMU auxiliar para FOD.\\
+Cámara RGB-D & Intel RealSense D435i & USD 334 & Referencia de piloto para visión/depth; si FOD exige más resolución se cotiza cámara industrial.\\
 LiDAR navegación & Hokuyo UST-10LX & 1.365--1.878 \texteuro{} según distribuidor & Referencia de LiDAR 2D compacto para SLAM/obstáculos.\\
 Escáner seguridad & SICK microScan3 Core I/O & USD 5.695 & Base para seguridad funcional perimetral.\\
 RFID fijo & Zebra FX9600 & USD 1.980,91 & Lectura de kits, útiles y puntos de entrega.\\
@@ -38,22 +38,26 @@ La partida de software y flota toma como referencia los rangos publicados por No
 
 \section{Criterios de normalización}
 
-El coste se separa en plataforma móvil, integración aeronáutica y servicios de proyecto. La conversión operativa adoptada para partidas en dólares es 1 USD = 0,86 \texteuro{}; en una oferta real se actualizaría con el tipo de cambio y condiciones de importación del día de compra. El paquete por robot sube respecto a un AMR diferencial básico porque exige cinemática omnidireccional, seguridad separada, portakits y validación por unidad.
+El coste se separa en plataforma móvil, integración aeronáutica y servicios de proyecto. La conversión operativa adoptada para partidas en dólares es 1 USD = 0,86 \texteuro{}, tomada como referencia orientativa de mayo de 2026 a partir de los tipos diarios publicados por el BCE \cite{ecbReferenceRates}; en una oferta real se actualizaría con el tipo de cambio y condiciones de importación del día de compra. El paquete por robot sube respecto a un AMR diferencial básico porque exige cinemática omnidireccional, seguridad separada, portakits y validación por unidad. La plataforma se trabaja como rango comercial: 52.000--75.000 \texteuro{} por AMR antes de adaptación. El caso base usa 52.000 \texteuro{} porque es el extremo conservador compatible con las referencias públicas; la compra real tendría que cerrarse con oferta de fabricante.
+
+La estación de carga no se deja fuera. En el piloto se considera incluida en la plataforma base o en la puesta a punto del AMR; en flotas de 7 y 17 robots se presupone como \textit{docking} compartido dentro de instalación, mapeo y SAT. En una oferta vinculante se separaría en una línea propia si el fabricante no la incluye.
 
 \begin{longtable}{P{0.46\textwidth}rP{0.32\textwidth}}
 \toprule
-\textbf{Componente por robot} & \textbf{Importe} & \textbf{Justificación}\\
+Componente por robot & Importe & Justificación\\
 \midrule
 \endhead
-Plataforma AMR omnidireccional 200--300 kg & 52.000 & Clase RB-KAIROS/AGILOX equivalente; el MiR250 de 44.284 \texteuro{} actúa como benchmark inferior, no como compra final.\\
+Plataforma AMR omnidireccional 200--300 kg & 52.000 & Caso base dentro de un rango 52.000--75.000 \texteuro{}; el MiR250 de 44.284 \texteuro{} actúa como benchmark inferior, no como compra final.\\
 Módulo kitting, bandejas, fijaciones y protección de carga & 8.500 & Utillaje mecánico para kits, consumibles y herramientas.\\
 LiDAR de navegación & 1.500 & Referencia Hokuyo UST-10LX y accesorios de montaje.\\
-Paquete FOD/registro: RGB-D, QR/RFID, iluminación y soporte & 3.500 & Cámara RGB-D, lector, antenas, etiquetas, QR, iluminación y cableado inicial.\\
-Seguridad: escáner, bumpers, E-stop y validación básica & 7.000 & Referencia SICK microScan3 más accesorios y elementos de parada.\\
+Paquete FOD/registro: RGB-D, QR/RFID, iluminación y soporte & 3.500 & Sensores y soportes adicionales para FOD/trazabilidad; si la base trae cámara o LiDAR, esta partida pasa a integración, cableado y validación.\\
+Seguridad: escáner, bumpers, E-stop y validación básica & 7.000 & Safety pack adicional o validación de los equipos incluidos por fabricante, con campos de protección y pruebas documentadas.\\
 HMI, comunicaciones y puesta en red por robot & 3.500 & Tablet, WiFi, identificador, cliente HMI y configuración.\\
 Puesta a punto por robot y parametrización & 2.500 & Calibración SLAM, campos de seguridad, docking, lectura RFID y pruebas FAT/SAT por unidad.\\
 \midrule
-\textbf{Paquete normalizado por robot} & \textbf{78.500} & Base común para escenarios 1, 7 y 17.\\
+Docking y cargador & Incluido & Prorrateado en plataforma o instalación para evitar doble conteo. Se separaría si el proveedor lo factura aparte.\\
+\midrule
+Paquete normalizado por robot & 78.500 & Base común para escenarios 1, 7 y 17.\\
 \bottomrule
 \caption{Coste normalizado por AMR de la solución AMR-FOD-Kitting, en euros sin IVA.}
 \label{tab:coste-robot-normalizado}
@@ -63,7 +67,7 @@ Puesta a punto por robot y parametrización & 2.500 & Calibración SLAM, campos 
 
 \begin{longtable}{P{0.20\textwidth}P{0.28\textwidth}P{0.26\textwidth}P{0.16\textwidth}}
 \toprule
-\textbf{Opción} & \textbf{Qué compra realmente} & \textbf{Riesgo contractual} & \textbf{Uso}\\
+Opción & Qué compra realmente & Riesgo contractual & Uso\\
 \midrule
 \endhead
 RB-KAIROS-class & Base omnidireccional abierta, ROS 2, SLAM, safety pack y módulo portakits a medida. & Necesita oferta de fabricante/integrador, disponibilidad y validación CE/seguridad del conjunto. & Opción recomendada.\\
@@ -77,33 +81,56 @@ KUKA omniMove-class & Plataforma omnidireccional de cargas muy altas. & Sobredim
 
 \section{Lista de materiales del paquete AMR-FOD-Kitting}
 
-El paquete normalizado por robot no sale de una suma directa de catálogo. Incluye integración mecánica, cableado, soportes, validación, parametrización y margen de incertidumbre técnica. La tabla siguiente muestra qué compra el cliente dentro de cada AMR y cómo se llega al paquete de 78.500 \texteuro{} usado en los escenarios.
+El paquete normalizado por robot incluye integración mecánica, cableado, soportes, validación, parametrización y margen de incertidumbre técnica. Cada AMR se presupone como unidad funcional lista para misiones de kitting, FOD y registro, no como vehículo desnudo.
 
 \begin{longtable}{P{0.26\textwidth}r r P{0.30\textwidth}}
 \toprule
-\textbf{Partida por AMR} & \textbf{Cantidad} & \textbf{Importe estimado} & \textbf{Base de cálculo}\\
+Partida por AMR & Cantidad & Importe estimado & Base de cálculo\\
 \midrule
 \endhead
-Plataforma AMR omnidireccional 200--300 kg & 1 & 52.000 & Clase RB-KAIROS/AGILOX; MiR250 se conserva como referencia inferior de coste AMR 250 kg.\\
+Plataforma AMR omnidireccional 200--300 kg & 1 & 52.000 & Caso base; rango comercial esperado 52.000--75.000 \texteuro{} antes de adaptación.\\
 Módulo kitting, bandejas, fijaciones y protección de carga & 1 & 8.500 & Diseño mecánico ligero para kits, herramientas, consumibles y útiles moderados.\\
 LiDAR de navegación & 1 & 1.500 & Referencia Hokuyo UST-10LX y accesorios de montaje.\\
-Cámara RGB-D/FOD & 1 & 300 & Referencia Intel RealSense D435i.\\
+Cámara RGB-D/FOD & 1 & 300 & Referencia Intel RealSense D435i para piloto; la especificación final puede migrar a cámara industrial con iluminación controlada.\\
 RFID/QR, antenas, etiquetas iniciales y cableado & 1 & 3.200 & Zebra FX9600 como referencia de lector fijo más antenas, QR y consumibles iniciales.\\
-Escáner de seguridad, bumpers y parada de emergencia & 1 & 7.000 & Referencia SICK microScan3, elementos de parada y validación básica.\\
+Escáner de seguridad, bumpers y parada de emergencia & 1 & 7.000 & Hardware adicional o validación del safety pack de fábrica, incluyendo campos, E-stop y pruebas.\\
 HMI/tablet y comunicaciones por robot & 1 & 3.500 & Samsung Tab Active5, conectividad industrial, cliente HMI y configuración.\\
 Puesta a punto y parametrización por robot & 1 & 2.500 & Calibración SLAM, campos de seguridad, docking, lectura RFID y pruebas FAT/SAT.\\
 \midrule
-\textbf{Paquete AMR-FOD-Kitting} &  & \textbf{78.500} & Total normalizado por robot, sin IVA.\\
+Docking y cargador & 1 & Incluido & Prorrateado en plataforma o instalación para evitar doble conteo.\\
+\midrule
+Paquete AMR-FOD-Kitting &  & 78.500 & Total normalizado por robot, sin IVA.\\
 \bottomrule
 \caption{Lista de materiales normalizada por AMR, en euros sin IVA.}
 \label{tab:bom-amr}
+\end{longtable}
+
+\section{Bolsa de ingeniería y servicios}
+
+Cubre trabajo de campo, simulación, parametrización y aceptación. Para el piloto se estima una bolsa de 45--50 jornadas mixtas de ingeniería, integración y documentación; en las fases de 7 y 17 robots el coste crece menos que linealmente porque se reutilizan mapa, arquitectura, HMI y reglas de misión. El piloto tiene un factor de proyecto cercano a 3,0 veces el paquete robotizado porque concentra costes fijos de levantamiento, simulación y aceptación en una sola unidad; en 7 y 17 robots el factor baja a 2,0 y 1,9, dentro del rango de referencia DNC.
+
+La validación CE del conjunto modificado, la revisión de campos de seguridad y la documentación SAT se incluyen en las partidas de instalación, aceptación y ciberseguridad/documentación. Si Alestis exigiera organismo externo específico, se abriría una partida separada de 8.000--15.000 \texteuro{} antes de firmar contrato.
+
+\begin{longtable}{P{0.34\textwidth}r r r P{0.20\textwidth}}
+\toprule
+Actividad de servicio & 1 robot & 7 robots & 17 robots & Comentario\\
+\midrule
+\endhead
+Levantamiento de planta y layout operativo & 5 j & 8 j & 12 j & Medición de rutas, zonas lentas y puntos de entrega.\\
+Modelo CoppeliaSim/ROS y pruebas de ruta & 10 j & 18 j & 28 j & SLAM, obstáculos, cruce con operarios y misión FOD.\\
+Integración FOD, RFID/QR, HMI y base de datos & 12 j & 25 j & 45 j & Registro de entrega, eventos, excepciones y usuarios.\\
+FAT/SAT, safety fields y puesta en marcha & 10 j & 22 j & 40 j & Pruebas por zona, por robot y por escenario de operación.\\
+Documentación, formación y gestión de proyecto & 8 j & 15 j & 25 j & Manuales, checklist, sesiones y cierre contractual.\\
+\bottomrule
+\caption{Desglose de jornadas que justifica las partidas de ingeniería, instalación, formación y aceptación.}
+\label{tab:jornadas-ingenieria}
 \end{longtable}
 
 \section{Presupuesto por escenarios}
 
 \begin{longtable}{P{0.34\textwidth}r r r}
 \toprule
-\textbf{Partida presupuestaria} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+Partida presupuestaria & 1 robot & 7 robots & 17 robots\\
 \midrule
 \endhead
 Paquetes AMR-FOD-Kitting completos & 78.500 & 549.500 & 1.334.500\\
@@ -115,20 +142,58 @@ Mantenimiento preventivo del primer año & 6.300 & 44.100 & 106.800\\
 Desplazamientos, logística y medios auxiliares & 5.000 & 20.000 & 40.000\\
 Ciberseguridad, documentación y aceptación & 7.000 & 18.000 & 36.000\\
 \midrule
-\textbf{Subtotal antes de contingencia/margen} & \textbf{196.300} & \textbf{909.600} & \textbf{2.063.300}\\
-Contingencia y margen comercial (12\%) & 23.556 & 109.152 & 247.596\\
+Subtotal antes de contingencia/margen & 196.300 & 909.600 & 2.063.300\\
+Contingencia técnica (8\% del subtotal) & 15.704 & 72.768 & 165.064\\
+Margen comercial (12\% sobre subtotal y contingencia) & 25.440 & 117.884 & 267.404\\
 \midrule
-\textbf{Total CAPEX estimado} & \textbf{219.856} & \textbf{1.018.752} & \textbf{2.310.896}\\
+Total CAPEX estimado & 237.444 & 1.100.252 & 2.495.768\\
 \bottomrule
 \caption{Presupuesto estimado por escenario, en euros sin IVA.}
 \label{tab:presupuesto}
 \end{longtable}
 
-\section{Lectura comercial}
+\begin{longtable}{P{0.34\textwidth}r r r P{0.20\textwidth}}
+\toprule
+Bloque comercial & 1 robot & 7 robots & 17 robots & Contenido\\
+\midrule
+\endhead
+Hardware AMR y kitting & 78.500 & 549.500 & 1.334.500 & Plataforma, portakits, sensores, safety pack, HMI por robot y docking incluido/prorrateado.\\
+Software y datos & 24.000 & 65.000 & 120.000 & Gestor de flota, registro, dashboard y conectores MES/ERP por fases.\\
+Servicios de implantación & 87.500 & 251.000 & 502.000 & Ingeniería, simulación, instalación, formación, documentación, ciberseguridad y aceptación.\\
+Mantenimiento primer año & 6.300 & 44.100 & 106.800 & Preventivo inicial y soporte de arranque.\\
+\midrule
+Subtotal & 196.300 & 909.600 & 2.063.300 & Base antes de contingencia y margen.\\
+Contingencia técnica & 15.704 & 72.768 & 165.064 & 8\% por ajuste de layout, integración y parametrización.\\
+Margen comercial & 25.440 & 117.884 & 267.404 & 12\% sobre subtotal más contingencia.\\
+\bottomrule
+\caption{Presupuesto por bloques comerciales, en euros sin IVA.}
+\label{tab:presupuesto-bloques}
+\end{longtable}
 
-El escenario de 1 robot es el punto de partida: una zona, pocas estaciones y datos reales. Debe medir rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD. Con 7 robots, Lunabotics ya entrega una operación de línea: varias estaciones, prioridades, retorno de útiles y rondas preventivas. Los 17 robots se reservan para una planta que demuestre necesidad de cobertura amplia para sostener el crecimiento hacia 80 HTP/mes o más.
+\begin{longtable}{P{0.32\textwidth}r r r P{0.22\textwidth}}
+\toprule
+Categoría pedida por la guía & 1 robot & 7 robots & 17 robots & Detalle\\
+\midrule
+\endhead
+Costes de equipos AMR & 59.000 & 413.000 & 1.003.000 & Plataforma móvil omnidireccional, safety pack, escáner, bumpers y E-stop.\\
+Costes de materiales, sensores y kitting & 19.000 & 133.000 & 323.000 & Portakits, bandejas, cámara RGB-D, RFID/QR, HMI, cableado y consumibles iniciales.\\
+Costes de personal técnico & 75.500 & 213.000 & 426.000 & Ingeniería, simulación, instalación, puesta en marcha, formación y gestión del cambio.\\
+Software, ciberseguridad y mantenimiento & 37.800 & 130.600 & 271.300 & Gestor de flota, conectores, documentación SAT, controles OT y mantenimiento del primer año.\\
+Desplazamientos y logística & 5.000 & 20.000 & 40.000 & Viajes, transporte de material, medios auxiliares y dietas.\\
+\midrule
+Subtotal & 196.300 & 909.600 & 2.063.300 & Base antes de contingencia y margen.\\
+\bottomrule
+\caption{Vista del presupuesto con las categorías solicitadas en el enunciado, en euros sin IVA.}
+\label{tab:presupuesto-categorias-guia}
+\end{longtable}
 
-La oferta separa equipo, sensores, software y servicios para que Alestis vea qué está comprando. La plataforma se apoya en modelos industriales identificables; los sensores, en componentes comerciales concretos; y el software/servicios, en rangos de integración publicados para AMR. Las partidas de ingeniería cubren levantamiento de planta, mapa, zonas seguras, reglas de tráfico, simulación, pruebas, aceptación y documentación.
+El margen del 12\% es bajo para integración industrial; se usa aquí como oferta de entrada para un piloto medible. En una negociación industrial real, un integrador pequeño podría elevarlo al 18--25\% si asume garantía extendida, penalizaciones de disponibilidad o certificación externa completa.
+
+\section{Interpretación comercial}
+
+El piloto cubre una zona piloto y mide rutas, aceptación de operarios, calidad de lecturas RFID/QR, tiempo de entrega y falsos positivos FOD. Con 7 robots, Lunabotics ya entrega una operación de línea: varias estaciones, prioridades, retorno de útiles y rondas preventivas. Los 17 robots se reservan para una planta que demuestre necesidad de cobertura amplia para sostener el crecimiento hacia 80 HTP/mes o más.
+
+La oferta separa equipo, sensores, software y servicios para que Alestis distinga plataforma, sensores, software y trabajo de integración. Cada bloque se apoya en referencias públicas o en jornadas justificadas. Las partidas de ingeniería cubren levantamiento de planta, mapa, zonas seguras, reglas de tráfico, simulación, pruebas, aceptación y documentación.
 
 \section{Coste total de propiedad}
 
@@ -136,16 +201,16 @@ El coste total de propiedad a tres años incluye soporte posterior al arranque. 
 
 \begin{longtable}{P{0.36\textwidth}r r r}
 \toprule
-\textbf{Concepto TCO 3 años} & \textbf{1 robot} & \textbf{7 robots} & \textbf{17 robots}\\
+Concepto TCO 3 años & 1 robot & 7 robots & 17 robots\\
 \midrule
 \endhead
-Inversión inicial estimada & 219.856 & 1.018.752 & 2.310.896\\
+Inversión inicial estimada & 237.444 & 1.100.252 & 2.495.768\\
 Mantenimiento años 2 y 3 & 12.600 & 88.200 & 213.600\\
 Soporte software años 2 y 3 & 24.000 & 54.000 & 110.000\\
 Recalibraciones, rutas y cambios menores & 6.000 & 25.000 & 55.000\\
 Baterías, consumibles y pequeños repuestos & 4.000 & 32.000 & 77.000\\
 \midrule
-\textbf{TCO 3 años estimado} & \textbf{266.456} & \textbf{1.217.952} & \textbf{2.766.496}\\
+TCO 3 años estimado & 284.044 & 1.299.452 & 2.951.368\\
 \bottomrule
 \caption{Coste total de propiedad estimado a tres años, en euros sin IVA.}
 \label{tab:tco}
@@ -153,4 +218,4 @@ Baterías, consumibles y pequeños repuestos & 4.000 & 32.000 & 77.000\\
 
 \section{Condiciones comerciales académicas}
 
-El pago por hitos queda así: 30\% al inicio de ingeniería y simulación, 40\% tras entrega del piloto instalado, 20\% tras validación de KPIs y 10\% al cierre documental y formación. En contrato real, estos hitos deberían acompañarse de criterios de aceptación, matriz de responsabilidades, plan de soporte, cláusulas de ciberseguridad, tratamiento de datos y procedimiento de gestión de cambios.
+La propuesta de pago por hitos es: 30\% al inicio de ingeniería y simulación, 40\% tras entrega del piloto instalado, 20\% tras validación de KPIs y 10\% al cierre documental y formación. En contrato real, estos hitos deberían acompañarse de criterios de aceptación, matriz de responsabilidades, plan de soporte, cláusulas de ciberseguridad, tratamiento de datos y procedimiento de gestión de cambios.

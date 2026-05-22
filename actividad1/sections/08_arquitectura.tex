@@ -25,11 +25,11 @@ Cada misión guarda identificador de kit, estación destino, hora de carga, hora
 
 \section{Arquitectura de control}
 
-El control opera como un ciclo \textit{sense--plan--act} con supervisión industrial. La capa de percepción no decide por sí sola: entrega datos filtrados y eventos. La capa de localización estima la pose del AMR con LiDAR, IMU y encoders. La planificación separa ruta global y evitación local. El control de bajo nivel traduce la consigna de movimiento holonómico a velocidades de rueda. La seguridad puede interrumpir cualquier misión y llevar el robot a estado detenido.
+El control opera como un ciclo \textit{sense--plan--act} con supervisión industrial. La capa de percepción entrega datos filtrados y eventos a revisión. La capa de localización estima la pose del AMR con LiDAR, IMU y encoders. La planificación separa ruta global y evitación local. El control de bajo nivel traduce la consigna de movimiento holonómico a velocidades de rueda. La seguridad puede interrumpir cualquier misión y llevar el robot a estado detenido.
 
 \begin{longtable}{P{0.18\textwidth}P{0.24\textwidth}P{0.24\textwidth}P{0.24\textwidth}}
 \toprule
-\textbf{Capa} & \textbf{Entrada} & \textbf{Salida} & \textbf{Fallo previsto y mitigación}\\
+Capa & Entrada & Salida & Fallo previsto y mitigación\\
 \midrule
 \endhead
 Percepción & LiDAR, RGB-D, RFID/QR, HMI y escáner de seguridad. & Obstáculos, lectura de kit, evento FOD, alarma de seguridad. & Lectura ruidosa o incompleta; se filtra, se repite lectura o se deriva a revisión humana.\\

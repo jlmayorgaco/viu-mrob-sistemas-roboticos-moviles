@@ -1,16 +1,15 @@
 \chapter{Entrevista con experto}
 
-La guía solicita introducir en ChatGPT un prompt específico para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Esta entrevista está transcrita y adaptada de la conversación con ChatGPT 5.4; la evidencia completa se incluye en el \hyperref[sec:anexo-capturas-entrevista]{Anexo A.2}. Se presenta una síntesis de la conversación usada para extraer requisitos: tono informal, alguna duda razonable, referencias puntuales a Cádiz y foco principal en el proceso productivo.
+Para simular la entrevista se utilizó ChatGPT con el prompt oficial de la guía para conversar con Carlos Pérez, trabajador con más de diez años de experiencia en Alestis Puerto Real. Esta entrevista está transcrita y adaptada de la conversación con ChatGPT; la evidencia visual disponible se incluye en el \hyperref[sec:anexo-capturas-entrevista]{Anexo A.2}. 
 
 \begin{interviewbrief}
-\textbf{Ficha de la entrevista}
+Ficha de la entrevista
 
 \begin{tabularx}{\textwidth}{@{}P{0.28\textwidth}Y@{}}
-\textbf{Entrevistado} & Carlos Pérez, operario/técnico con experiencia en operaciones de Alestis Puerto Real.\\
-\textbf{Rol en la actividad} & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatización.\\
-\textbf{Temas tratados} & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, seguimiento de materiales, transporte interno, esperas y restricciones de seguridad.\\
-\textbf{Uso de la evidencia} & Las respuestas se usan para definir requisitos, selección de robot, sensores, arquitectura, presupuesto y KPIs.\\
-\textbf{Capturas} & La evidencia visual de la conversación se incluye en el \hyperref[sec:anexo-capturas-entrevista]{Anexo A.2}, con las imágenes \texttt{screenshot\_chatgpt\_sc1.png} a \texttt{screenshot\_chatgpt\_sc11.png}.\\
+Entrevistado & Carlos Pérez, operario/técnico con experiencia en operaciones de Alestis Puerto Real.\\
+Rol en la actividad & Experto de planta consultado por Lunabotics para identificar problemas internos y oportunidades de automatización.\\
+Temas tratados & HTP del A320, sección 19.1, flujo de kits y herramientas, FOD, seguimiento de materiales, transporte interno, esperas y restricciones de seguridad.\\
+Objetivo & Las respuestas se usan para definir requisitos, selección de robot, sensores, arquitectura, presupuesto y KPIs.\\
 \end{tabularx}
 \end{interviewbrief}
 
@@ -42,7 +41,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 {Fabricarlo entero, yo diría que no. Al menos ahora mismo. En el montaje hay procedimientos muy estrictos, gente cualificada y mucho ajuste fino. A veces el operario nota a tacto si una pieza asienta bien, si un borde está raro o si el sellante no quedó como debía. Un robot necesitaría una barbaridad de sensores y aun así tendría limitaciones. Donde sí lo veo es alrededor: mover carros, llevar herramientas o consumibles, hacer una ronda visual básica, escanear FOD, registrar entregas. Pero montaje completo del HTP, complicado.}
 
 \InterviewExchange
-{¿El entorno de Cádiz influye en cómo se trabaja y se convive en planta?}
+{¿El entorno de Cádiz influye en cómo se trabaja en planta?}
 {Sí, se nota. Hay mucha cultura de oficio en la Bahía, mucha gente que viene de astilleros, metal, aeronáutica o de familias que llevan años en esto. El trato suele ser cercano, con bastante compañerismo, aunque cuando toca auditoría o FOD la gente se pone seria. También pasa que viene gente de visita, ve una industria muy avanzada y se sorprende de cuánto trabajo manual sigue habiendo. Luego salen a Cádiz, se comen un pescaito y dicen que lo mejor fue la Bahía. Tampoco les culpo. Para el robot eso importa: si vendes que va a hacerlo todo, nadie te cree; si dices que va a quitar paseos, ordenar entregas y dejar registro, suena más real.}
 
 \InterviewExchange
@@ -59,7 +58,7 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \InterviewExchange
 {La actividad habla de pasar de unos 40 HTP al mes a 80 o más. ¿Cómo se debe leer esa meta?}
-{No diría que el robot duplica producción. Eso sería pasarse. Ayuda en cosas concretas: menos esperas, menos búsquedas, entregas más fiables y mejor registro. Para llegar a 80 hacen falta planificación, gente, calidad y capacidad de estación. El robot aporta una parte, no toda la solución.}
+{No diría que el robot duplica producción. Eso es venderse mucho. Ayuda en cosas concretas: menos esperas, menos búsquedas, entregas más fiables y mejor registro. Para llegar a 80 hacen falta planificación, gente, calidad y capacidad de estación. El robot aporta una parte, no toda la solución.}
 
 \InterviewExchange
 {Si Lunabotics empieza con un piloto, ¿qué mediría antes de comprar 7 o 17 robots?}
@@ -68,11 +67,11 @@ La guía solicita introducir en ChatGPT un prompt específico para conversar con
 
 \section{Hallazgos para diseño}
 
-La entrevista apunta a varias decisiones de diseño. El robot debe trabajar en logística auxiliar: carros, kits, útiles, herramientas y consumibles. El registro tiene que ocurrir en origen y destino, porque saber que el material existe no alcanza para saber que está en la estación. FOD debe tratarse como inspección preventiva con revisión humana. Y el piloto debe medirse con datos de operación antes de hablar de flotas grandes.
+De la entrevista salen varias decisiones de diseño. El robot trabaja en logística auxiliar: carros, kits, útiles, herramientas y consumibles. El registro ocurre en origen y destino, porque saber que el material existe no alcanza para saber que está en la estación. El piloto se mide con datos de operación antes de pasar a flotas grandes.
 
 \begin{longtable}{P{0.42\textwidth}P{0.50\textwidth}}
 \toprule
-\textbf{Lo que dice planta} & \textbf{Decisión de diseño}\\
+Lo que dice planta & Decisión de diseño\\
 \midrule
 \endhead
 Carros, herramientas y consumibles se mueven durante todo el turno. & AMR para entregas, retornos y reposición de kits/herramientas.\\
@@ -83,7 +82,3 @@ FOD exige evidencia, pero la decisión sigue siendo de calidad. & Cámara RGB-D/
 La planta cambia durante el turno. & AMR omnidireccional con SLAM, replanificación y gestor de misiones para evitar rutas fijas.\\
 \bottomrule
 \end{longtable}
-
-\section{Lectura para Lunabotics}
-
-La entrevista deja claro que la automatización tiene sentido en suministro, retorno, registro y rondas preventivas. En nuestra evaluación, el robot debe demostrar valor en una zona reducida antes de convertirse en flota. Ese enfoque baja el riesgo comercial porque obliga a medir antes de ampliar.

@@ -8,7 +8,7 @@ Proyecto LaTeX para la Actividad 1: oferta de automatización a planta industria
 - `sections/`: capítulos del informe.
 - `slides/slides.tex`: presentación PDF en LaTeX, equivalente a PowerPoint.
 - `slides/build_pptx.py`: generador autocontenido de PowerPoint visual desde el PDF de LaTeX/TikZ.
-- `slides/build_editable_pptx.js`: generador de PowerPoint nativo editable con el mismo guion y contenido clave.
+- `coppeliasim/`: escena `.ttt` de apoyo para screenshots de la propuesta AMR-FOD-Kitting.
 - `figures/tikz/`: fuentes TikZ reutilizables del informe y la presentación.
 - `tables/`: CSV auxiliares de modelos, sensores/BOM, presupuesto, KPIs, trazabilidad, referencias comerciales, supuestos ROI y sensibilidad financiera.
 - `references.bib`: bibliografía usada.
@@ -18,14 +18,14 @@ Los enunciados originales están en `../docs/enunciado/`.
 
 ## Evidencia de entrevista
 
-La guía de la Actividad 1 pide capturas de pantalla de la conversación con ChatGPT. Antes de entregar en el campus, guarda las capturas reales en:
+La guía de la Actividad 1 pide capturas de pantalla de la conversación con ChatGPT. Las capturas reales incluidas en esta entrega están en:
 
-- `figures/entrevista/captura_01.png`
-- `figures/entrevista/captura_02.png`
-- `figures/entrevista/captura_03.png`
-- `figures/entrevista/captura_04.png`
+- `figures/entrevista/screenshot_chatgpt_sc1.png`
+- `figures/entrevista/screenshot_chatgpt_sc2.png`
+- ...
+- `figures/entrevista/screenshot_chatgpt_sc11.png`
 
-El informe las inserta automáticamente en el Anexo A. Si esos archivos no existen, el PDF compila, pero la entrega no debe considerarse final.
+El informe las inserta automáticamente en el Anexo A.
 
 ## Compilar informe
 
@@ -53,14 +53,23 @@ python build_pptx.py
 
 El PPTX conserva el diseño final de `slides.pdf` como diapositivas visuales. La fuente editable de la presentación es `slides/slides.tex`.
 
-## Generar PowerPoint editable
+## Escena CoppeliaSim
+
+La escena de apoyo para la Actividad 1 está en:
+
+- `coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt`
+- `coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json`
+- `coppeliasim/build_activity1_scene.py`
+
+La escena se centra en el piloto de un único AMR: estación HTP A320/sección 19.1, zona logística/kitting, puerta RFID/QR, punto FOD, ruta de ida/retorno, base de carga, operadores humanos en tareas de planta y cámaras preparadas para capturas. Al iniciar la simulación, el KUKA YouBot cargado como `A1_AMR_Pilot_01_KUKA_YouBot_Model` recorre la misión dock -> kitting -> RFID/QR -> parada ante humano -> esquiva -> HTP -> FOD -> retorno mediante el frame `A1_AMR_Pilot_01_RB_KAIROS_Class_Frame`.
+
+Para regenerarla:
 
 ```powershell
-cd slides
-node build_editable_pptx.js
+python coppeliasim/build_activity1_scene.py
 ```
 
-El archivo `Actividad1_AMR_FOD_Kitting_editable.pptx` contiene cajas de texto y formas editables. El archivo generado ya se deja en el repositorio. Para regenerarlo desde cero se requiere Node.js y `pptxgenjs`; si el paquete no está disponible, instala la dependencia fuera del repositorio o define `NODE_PATH` hacia un `node_modules` que la contenga.
+Para tomar la captura principal, abrir el `.ttt` en CoppeliaSim y usar la cámara `A1_Camera_Overview_Submit`. También quedan preparadas `A1_Camera_HTP_Station_19_1`, `A1_Camera_Logistics_RFID_AMR` y `A1_Camera_Top_Dimensioning`. El JSON de validación comprueba 704 objetos, 6 modelos de operario, script de tareas humanas, herramienta móvil de handoff, orientación del AMR piloto, rutas dentro del suelo, parada/esquiva ante humano y una prueba corta de estabilidad sin caída. La distancia mínima validada entre ruta y operario es 0,737 m frente a un radio de seguridad de 0,68 m (0,48 m de frenado, 0,10 m de reacción/latencia y 0,10 m de margen). Las marcas de suelo representan la ruta AMR planificada para la simulación; no son guías físicas de AGV.
 
 ## Limpieza
 

@@ -4,19 +4,17 @@
 \draw[Cyan!32,rounded corners=10pt,line width=0.45pt] (0.92,1.08) rectangle (15.08,6.92);
 
 \node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont\bfseries,text=Cyan] at (1.30,6.50) {CONTEXTO DE PLANTA};
-\node[anchor=west,font=\fontsize{14.5}{15.8}\selectfont\bfseries,text=Navy,text width=5.7cm,align=left] at (1.30,5.78) {HTP grande; flujo auxiliar delicado.};
+\node[anchor=west,font=\fontsize{14.5}{15.8}\selectfont\bfseries,text=Navy,text width=5.7cm,align=left] at (1.30,5.78) {HTP grande, flujo auxiliar delicado.};
 \node[anchor=west,font=\fontsize{6.7}{7.8}\selectfont,text=Muted,text width=5.65cm,align=left] at (1.32,4.72) {La secci\'on 19.1 concentra dependencias de kits, \'utiles, documentaci\'on y disciplina FOD. El AMR act\'ua alrededor de la estaci\'on.};
 
-\begin{scope}[shift={(1.30,2.42)},scale=1.38]
-  \draw[Navy,line width=1.10pt] (0,0) .. controls (1.28,0.34) and (3.56,0.25) .. (5.00,0.02);
-  \draw[Navy,line width=1.10pt] (0,-0.68) .. controls (1.28,-0.98) and (3.56,-0.90) .. (5.00,-0.66);
-  \draw[Navy,line width=0.75pt] (5.00,0.02) -- (5.00,-0.66);
-  \fill[Teal!68] (1.95,0.03) -- (0.95,0.70) -- (2.50,0.33) -- cycle;
-  \fill[Teal!68] (1.95,-0.67) -- (0.95,-1.34) -- (2.50,-0.96) -- cycle;
-  \fill[Amber!88] (3.18,0.19) rectangle (3.84,-0.86);
-  \node[font=\fontsize{5.3}{5.9}\selectfont\bfseries,text=white] at (3.51,-0.33) {19.1};
-  \node[anchor=west,font=\fontsize{5.7}{6.3}\selectfont\bfseries,text=Teal] at (0.83,0.96) {HTP};
+\begin{scope}
+  \clip (1.28,1.48) rectangle (6.55,3.92);
+  \node[anchor=center] at (3.92,2.70) {\includegraphics[width=5.50cm]{../figures/source/alestis_estacion_herramientas.png}};
+  \fill[Navy,opacity=0.12] (1.28,1.48) rectangle (6.55,3.92);
 \end{scope}
+\draw[white,line width=0.8pt] (1.28,1.48) rectangle (6.55,3.92);
+\node[anchor=west,font=\fontsize{5.3}{6.1}\selectfont\bfseries,text=white,fill=Navy,inner sep=1.2pt] at (1.42,1.72) {Puesto con \'utiles y estructura HTP};
+\node[anchor=west,font=\fontsize{4.45}{5.1}\selectfont,text=Muted] at (1.32,1.28) {Imagen base: Alestis / gu\'ia de la actividad.};
 
 \draw[Line,line width=0.6pt] (7.20,1.52) -- (7.20,6.42);
 
@@ -37,5 +35,7 @@
 }
 \foreach \x in {9.18,11.02,12.86}{\draw[Cyan,arrow,line width=0.8pt] (\x,4.10) -- (\x+0.32,4.10);}
 
-\node[anchor=west,font=\fontsize{7.3}{8.4}\selectfont\bfseries,text=Navy,text width=6.45cm,align=left] at (7.72,2.55) {Lectura para la oferta};
-\node[anchor=west,font=\fontsize{6.6}{7.7}\selectfont,text=Muted,text width=6.75cm,align=left] at (7.72,1.92) {El valor est\'a en reducir esperas, cerrar entregas y aportar evidencia FOD alrededor de la estaci\'on.};
+\fill[Cyan!10,rounded corners=5pt] (7.60,1.58) rectangle (14.70,2.72);
+\draw[Cyan!45,line width=0.40pt,rounded corners=5pt] (7.60,1.58) rectangle (14.70,2.72);
+\node[anchor=west,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=Navy,text width=6.45cm,align=left] at (7.82,2.38) {Distancias estimadas para levantamiento S1};
+\node[anchor=west,font=\fontsize{6.25}{7.2}\selectfont,text=Ink,text width=6.45cm,align=left] at (7.82,1.88) {kit \(\rightarrow\) estaci\'on 40 m \textbullet{} retorno \'utiles 25 m \textbullet{} ronda FOD 80 m.};

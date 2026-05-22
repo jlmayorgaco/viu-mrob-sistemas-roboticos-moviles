@@ -4,6 +4,18 @@
 
 La primera condición de viabilidad es la seguridad industrial. Los AMR circularán con velocidades limitadas, zonas de protección configurables, escáner láser de seguridad, bumpers, parada de emergencia y protocolos de retirada manual. La validación debe incluir pruebas con peatones, obstáculos inesperados y estaciones ocupadas.
 
+\section{Marco normativo y cumplimiento}
+
+El proyecto modifica la logística interna y deja intacto el proceso de montaje certificado. Aun así, una planta aeronáutica exigiría disciplina documental. La implantación debe alinearse con EN/AS 9100 para gestión de calidad aeroespacial, NAS 412 como referencia de prevención FOD, ISO 3691-4 para vehículos industriales sin conductor y marcado CE del conjunto modificado \cite{iaqg9100,nas412,iso36914}. Si el despliegue contractual se extendiera a 2027, habría que revisar también el Reglamento (UE) 2023/1230 de máquinas \cite{euMachineryReg2023}. La red OT y la base de datos de misiones deberían seguir criterios ISA/IEC 62443: segmentación, gestión de usuarios, registro de eventos y control de cambios antes del SAT \cite{iec62443}.
+
+Los registros del AMR se conservarían en formato exportable durante el periodo que defina calidad de planta. Cada misión debe guardar robot, kit, estación, hora, usuario que confirma, lectura RFID/QR, incidencia FOD y estado final. Así el sistema puede responder a auditorías internas sin convertir los datos del robot en una fuente paralela no controlada.
+
+\section{Validación industrial y convivencia de planta}
+
+El piloto debe demostrar que el AMR no introduce nuevas fuentes de FOD. Antes del SAT se define una primera validación de artículo/proceso para la zona piloto: inspección visual del módulo portakits, control de fijaciones, verificación de ruedas, limpieza del chasis y registro de cualquier elemento desprendido. El resultado se adjunta al dossier de aceptación junto con rutas, campos de seguridad, límites de velocidad y logs de misión.
+
+La nave no contiene solo operarios y carros. También puede haber carretillas, plataformas, grúas puente o cargas suspendidas. En esos casos, el gestor bloquea los corredores afectados y los AMR pasan a espera o ruta alternativa. El modo manual de retirada queda reservado a personal formado, con procedimiento LOTO y comunicación previa al supervisor de planta.
+
 \section{Integración en planta existente}
 
 La integración se divide por fases. En el piloto, las misiones se cargan manualmente desde HMI y se registran en una base de datos local. En la expansión, el sistema intercambia órdenes con un planificador o MES. En el despliegue extendido, la integración pasa a ser bidireccional con sistemas de producción, mantenimiento y calidad.
@@ -12,18 +24,40 @@ No tenemos claro que la aceptación de operarios sea inmediata. Por eso el pilot
 
 \section{Limitaciones y riesgos}
 
-\begin{itemize}
-  \item El AMR no elimina la necesidad de planificación de materiales ni de disciplina operacional.
-  \item La inspección FOD con cámara exige revisión humana y reglas claras de escalado.
-  \item La red WiFi industrial y la calidad del mapa condicionan la disponibilidad.
-  \item La flota requiere mantenimiento de baterías, ruedas, sensores y calibraciones.
-  \item La aceptación de los operarios puede caer si el sistema se percibe como obstáculo o carga administrativa.
-\end{itemize}
+El principal riesgo está en la coordinación diaria. El AMR reduce desplazamientos y deja registro de las entregas, pero depende de que materiales, calidad y producción trabajen con reglas comunes. Si el kit sale incompleto, si la orden cambia sin actualizarse o si una estación acepta material fuera de ventana, el robot hará visible el desajuste.
+
+La inspección FOD con cámara también tiene un alcance limitado. Puede ayudar a detectar elementos visibles en suelo, bandejas o zonas de paso, aunque la decisión final queda en revisión humana. Por eso el piloto necesita criterios de escalado sencillos: cuándo se para una ruta, quién valida la imagen y cómo se cierra el evento en el registro.
+
+La disponibilidad depende de factores de planta muy concretos: cobertura WiFi, calidad del mapa, desgaste de ruedas mecanum, estado de baterías, calibración de sensores y cambios de layout. A esto se suma la aceptación de los operarios. Si el AMR estorba en pasillos estrechos o obliga a confirmar demasiadas pantallas, se convierte en una carga más del turno. El piloto mide esos puntos antes de recomendar una flota mayor.
 
 \section{Mitigaciones}
 
-Las mitigaciones incluyen piloto limitado, formación práctica, participación temprana de operarios, rutas validadas en CoppeliaSim, pruebas de seguridad, mantenimiento preventivo y despliegue por etapas. Para no depender de una integración compleja desde el primer día, el sistema se diseña con una base de datos propia y conexión por fases con MES/ERP.
+El piloto se acota a una zona concreta, con rutas ya probadas en CoppeliaSim y pruebas de seguridad antes de operar junto a personal. Después se trabaja con los turnos afectados: formación corta, recogida de incidencias y ajustes de HMI para que la confirmación de entregas no añada burocracia al operario.
+
+La parte técnica se mantiene separada de la integración corporativa durante el arranque. El piloto usa una base de datos propia y solo conecta con MES/ERP cuando las rutas, las lecturas RFID/QR y los registros FOD funcionan con estabilidad. Así las primeras pruebas de planta no dependen de una integración completa desde el primer día.
+
+\section{AMDEC simplificada}
+
+\begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}c c c c P{0.22\textwidth}}
+\toprule
+Modo de fallo & Efecto & S & O & D & NPR & Mitigación\\
+\midrule
+\endhead
+Rechazo de usuarios & Uso manual paralelo & 7 & 4 & 5 & 140 & Formación por turno, piloto corto y métricas visibles.\\
+Falso positivo FOD & Parada innecesaria de estación & 5 & 5 & 4 & 100 & Umbral ajustable y revisión humana.\\
+Deslizamiento mecanum & Error de posicionamiento & 6 & 4 & 4 & 96 & Inspección de ruedas, límites de aceleración y marcas de estación.\\
+Cambio de layout & Mapa desactualizado & 6 & 4 & 4 & 96 & Mapa base, zonas dinámicas y remapeo controlado.\\
+Falso negativo FOD & Elemento no detectado & 9 & 2 & 5 & 90 & Ronda humana y cámara industrial si el piloto lo exige.\\
+Lectura RFID fallida & Entrega sin cierre de registro & 7 & 4 & 3 & 84 & Relectura, QR alternativo y confirmación HMI.\\
+Ciberincidente OT & Parada o pérdida de datos & 8 & 2 & 4 & 64 & Red segmentada, credenciales y registro de cambios.\\
+Obstáculo en pasillo & Retraso o bloqueo de ruta & 6 & 5 & 2 & 60 & Replanificación y zonas dinámicas.\\
+Pérdida WiFi & Misión sin supervisión remota & 6 & 3 & 3 & 54 & Modo degradado y parada segura si supera 60 s.\\
+Batería baja & Robot detenido fuera de base & 5 & 3 & 2 & 30 & Reserva mínima del 20\% y retorno automático.\\
+\bottomrule
+\caption{AMDEC simplificada para el piloto AMR-FOD-Kitting. S: severidad, O: ocurrencia, D: detección, NPR: número de prioridad de riesgo.}
+\label{tab:amdec}
+\end{longtable}
 
 \section{Escalabilidad}
 
-El escalado se apoya en separar robot, gestor de flota, base de datos y supervisión. El mismo modelo de misión puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. Esta arquitectura coincide con la evolución hacia sistemas multi-robot descrita en la literatura de robótica móvil \cite{kagan2019}.
+El escalado se apoya en separar robot, gestor de flota, base de datos y supervisión. El mismo modelo de misión puede aplicarse a un robot o a una flota, ajustando reglas de prioridad, zonas y ventanas de entrega. El patrón práctico es \textit{Fleet Manager + Robot Adapter}: el gestor asigna misiones y prioridades, mientras cada AMR conserva navegación local, seguridad y estado de batería \cite{kagan2019}.

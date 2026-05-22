@@ -1,4 +1,4 @@
-escenario,beneficio_bajo_anual,beneficio_objetivo_anual,beneficio_alto_anual,opex_anual_desde_anio_2,van_objetivo_5_anios,van_alto_5_anios,beneficio_anual_requerido_van_cero,payback_simple_objetivo_anios
-1 robot,22000,80000,95000,23300,aprox_0,52015,80260,2.7
-7 robots,135000,360000,430000,99600,aprox_0,249767,359263,2.8
-17 robots,330000,815000,950000,227800,aprox_0,480000,814017,2.8
+escenario,beneficio_bajo_anual,beneficio_objetivo_anual,beneficio_alto_anual,opex_anual_desde_anio_1,van_bajo_5_anios,van_objetivo_5_anios,van_alto_5_anios,tir_bajo_pct,tir_objetivo_pct,tir_alto_pct,beneficio_anual_requerido_van_cero,payback_descuento_objetivo_anios
+1 robot,22000,91355,105000,23300,-244806,0,48163,-48.7,8.0,14.5,91355,5
+7 robots,135000,408479,455000,99600,-965313,0,164206,-31.8,8.0,12.8,408479,5
+17 robots,330000,926149,1020000,227800,-2104255,0,331270,-29.1,8.0,12.3,926149,5

@@ -2,7 +2,7 @@
 
 \section{Flujo productivo del HTP}
 
-El HTP del A320 es un conjunto aeronáutico de alta criticidad. Su fabricación y montaje requieren útiles específicos, documentación, control dimensional, seguimiento de materiales, inspecciones y coordinación entre estaciones. En el entorno de sección 19.1, la operación se relaciona con el área posterior del fuselaje y las interfaces de cola, por lo que la disponibilidad correcta de kits, herramientas y consumibles condiciona la continuidad del trabajo.
+El HTP del A320 forma parte de la estructura de cola y se trabaja bajo disciplina de aeroestructuras: cualquier desviación dimensional, herramienta no localizada o evidencia FOD puede generar inspección, retrabajo o bloqueo temporal de una estación. En el entorno de sección 19.1, la operación se relaciona con el área posterior del fuselaje y las interfaces de cola, por lo que la disponibilidad correcta de kits, herramientas y consumibles condiciona la continuidad del trabajo.
 
 En un turno típico, el flujo operativo pasa por preparación de kits, traslado a estación, identificación de material, uso de útiles y herramientas, inspección, retirada de elementos usados, registro y cierre documental. Un paso puede estar bien ejecutado y aun así generar espera si el kit, la herramienta o la confirmación llegan fuera de la ventana de trabajo.
 
@@ -19,23 +19,25 @@ En un turno típico, el flujo operativo pasa por preparación de kits, traslado 
   \includegraphics[width=\textwidth]{figures/source/alestis_htp_nave.png}
   \caption{Estructura HTP en nave de montaje.}
 \end{subfigure}
-\caption{Referencias visuales de Alestis Puerto Real incluidas en la guía de la actividad, procedentes de la página de montaje de Alestis \cite{alestisMontaje}.}
+\caption{Referencias visuales de Alestis Puerto Real, procedentes de la página de montaje de Alestis \cite{alestisMontaje}.}
 \label{fig:alestis-planta}
 \end{figure}
 
 \section{Problemas típicos detectados}
 
-El primer problema son los desplazamientos de operarios. Parte del turno se dedica a buscar, recoger o devolver útiles y consumibles en lugar de ejecutar tareas de valor directo. A eso se suman las esperas por kits incompletos o herramientas no localizadas: la estación puede estar lista, pero la secuencia se bloquea por un recurso auxiliar.
+El cuello de botella descrito en la entrevista combina esperas operativas y retrabajos. El alcance de Lunabotics se concentra en las esperas inducidas por logística auxiliar: kits incompletos, herramientas no localizadas, retornos de útiles fuera de ventana y rondas FOD reactivas.
 
-El riesgo FOD aparece con restos, tornillería, embalajes o elementos no controlados. En paralelo, el control fino del material no siempre llega al momento operativo: saber que un lote existe no equivale a saber dónde está, quién lo recibió y para qué orden se usó. Cuando la planta intenta pasar de unas 40 unidades HTP al mes a 80 o más, duplicar recursos no sirve si el flujo auxiliar sigue igual.
+Para dimensionar el caso se usa un supuesto conservador a validar en planta: ese segmento representa entre el 8\% y el 15\% del tiempo de turno en las operaciones afectadas. Con 45 operarios influidos por el flujo auxiliar, 6 horas efectivas por turno y 220 días/año, el rango equivale aproximadamente a 4.752--8.910 horas/año, es decir, unas 396--743 horas/mes de tiempo recuperable potencial. El AMR convierte la parte repetitiva de ese rango en dato medible y reduce caminatas, búsquedas y retornos fuera de ventana.
+
+El riesgo FOD aparece con restos, tornillería, embalajes o elementos no controlados. En paralelo, el control fino del material no siempre llega al momento operativo: saber que un lote existe no equivale a saber dónde está, quién lo recibió y para qué orden se usó. Cuando la planta intenta pasar de unas 40 unidades HTP al mes a 80 o más, el flujo auxiliar debe crecer sin duplicar caminatas, búsquedas y rondas manuales.
 
 \section{Oportunidad de automatización}
 
-La automatización útil está en el movimiento y el registro. Un AMR puede ejecutar misiones recurrentes, entregar kits en una ventana horaria, verificar identificaciones RFID/QR, registrar confirmaciones, inspeccionar zonas definidas y devolver útiles usados. Con esto debería reducirse la variabilidad logística cuando la planta opera cerca de su límite de capacidad.
+La automatización se concentra en movimiento y registro. Un AMR puede ejecutar misiones recurrentes, entregar kits en una ventana horaria, verificar identificaciones RFID/QR, registrar confirmaciones, inspeccionar zonas definidas y devolver útiles usados. Con esto debería reducirse la variabilidad logística cuando la planta opera cerca de su límite de capacidad.
 
 \begin{figure}[H]
 \centering
 \input{figures/tikz/report_layout_concept}
-\caption{Lectura operativa del flujo auxiliar alrededor de estaciones HTP.}
+\caption{Interpretación operativa del flujo auxiliar alrededor de estaciones HTP.}
 \label{fig:layout-concept}
 \end{figure}

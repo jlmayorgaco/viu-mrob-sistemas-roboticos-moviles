@@ -17,119 +17,29 @@ El usuario intentará obtener información relevante sobre Alestis. Su tarea ser
 
 La guía solicita capturas de pantalla de la conversación con ChatGPT. Este anexo incorpora las capturas reales guardadas en \path{figures/entrevista/} como evidencia de la entrevista.
 
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc1.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc1.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 1 pendiente: prompt oficial introducido en ChatGPT.}}%
+\newcommand{\InterviewShot}[2]{%
+  \begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc#1.png}
+  \caption{Captura #1 de la entrevista con Carlos Pérez: #2.}
+  \end{figure}
 }
-\caption{Captura 1 de la entrevista con Carlos Pérez: prompt oficial y presentación inicial.}
-\end{figure}
 
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc2.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc2.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 2 pendiente: primeras respuestas sobre HTP, sección 19.1 y flujo de materiales.}}%
-}
-\caption{Captura 2 de la entrevista con Carlos Pérez: HTP, sección 19.1 y flujo auxiliar.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc3.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc3.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 3 pendiente: referencia a Cádiz y vuelta al proceso productivo.}}%
-}
-\caption{Captura 3 de la entrevista con Carlos Pérez: esperas, retrabajos y FOD.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc4.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc4.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 4 pendiente: conclusiones sobre AMR, FOD, registro y piloto.}}%
-}
-\caption{Captura 4 de la entrevista con Carlos Pérez: alcance realista para robots móviles.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc5.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc5.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 5 pendiente: cierre sobre aceptación, medición y piloto.}}%
-}
-\caption{Captura 5 de la entrevista con Carlos Pérez: aceptación en planta y criterios de piloto.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc6.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc6.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 6 pendiente: Cádiz y cultura de planta.}}%
-}
-\caption{Captura 6 de la entrevista con Carlos Pérez: Cádiz y cultura de planta.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc7.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc7.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 7 pendiente: localización de herramientas y materiales.}}%
-}
-\caption{Captura 7 de la entrevista con Carlos Pérez: localización de herramientas y materiales.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc8.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc8.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 8 pendiente: papel de FOD en la propuesta.}}%
-}
-\caption{Captura 8 de la entrevista con Carlos Pérez: papel de FOD en la propuesta.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc9.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc9.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 9 pendiente: restricciones del AMR en planta.}}%
-}
-\caption{Captura 9 de la entrevista con Carlos Pérez: restricciones del AMR en planta.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc10.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc10.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 10 pendiente: comparación entre AGV y AMR.}}%
-}
-\caption{Captura 10 de la entrevista con Carlos Pérez: comparación entre AGV y AMR.}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\IfFileExists{figures/entrevista/screenshot_chatgpt_sc11.png}{%
-  \includegraphics[width=0.92\textwidth]{figures/entrevista/screenshot_chatgpt_sc11.png}%
-}{%
-  \fbox{\parbox[c][4.2cm][c]{0.88\textwidth}{\centering Captura 11 pendiente: aceptación del proyecto por operarios.}}%
-}
-\caption{Captura 11 de la entrevista con Carlos Pérez: aceptación del proyecto por operarios.}
-\end{figure}
+\InterviewShot{1}{prompt oficial y presentación inicial}
+\InterviewShot{2}{HTP, sección 19.1 y flujo auxiliar}
+\InterviewShot{3}{esperas, retrabajos y FOD}
+\InterviewShot{4}{alcance realista para robots móviles}
+\InterviewShot{5}{aceptación en planta y criterios de piloto}
+\InterviewShot{6}{Cádiz y cultura de planta}
+\InterviewShot{7}{localización de herramientas y materiales}
+\InterviewShot{8}{papel de FOD en la propuesta}
+\InterviewShot{9}{restricciones del AMR en planta}
+\InterviewShot{10}{comparación entre AGV y AMR}
+\InterviewShot{11}{aceptación del proyecto por operarios}
 
 \section{Tabla completa de presupuesto}
 
-La Tabla~\ref{tab:presupuesto} contiene el presupuesto por partidas para 1, 7 y 17 robots. La misma información aparece resumida en la diapositiva extra de presupuesto. Los CSV de la carpeta \texttt{tables/} conservan el detalle de referencias comerciales, supuestos de ROI y sensibilidad financiera.
+El presupuesto por partidas para 1, 7 y 17 robots se recoge en el Cuadro~\ref{tab:presupuesto}.
 
 \section{Diapositiva extra de presupuesto}
 
@@ -145,40 +55,97 @@ La Tabla~\ref{tab:presupuesto} contiene el presupuesto por partidas para 1, 7 y 
   arc=1.5mm,
   boxrule=0.8pt
 ]
-\textbf{Sistema AMR-FOD-Kitting para línea HTP A320.} Estimación preliminar sin IVA, basada en referencias comerciales públicas.
+Sistema AMR-FOD-Kitting para línea HTP A320. Estimación preliminar sin IVA, basada en referencias comerciales públicas. Tipo de cambio orientativo: 1 USD = 0,86 \texteuro{} (BCE, mayo de 2026); una oferta vinculante actualizaría el cambio al día de cotización.
 
 \begin{tabularx}{\textwidth}{Y r r r}
 \toprule
-\textbf{Escenario} & \textbf{CAPEX} & \textbf{TCO 3 años} & \textbf{Uso recomendado}\\
+Escenario & CAPEX & TCO 3 años & Uso recomendado\\
 \midrule
-1 robot & 219.856 \texteuro{} & 266.456 \texteuro{} & Piloto controlado\\
-7 robots & 1.018.752 \texteuro{} & 1.217.952 \texteuro{} & Expansión de línea\\
-17 robots & 2.310.896 \texteuro{} & 2.766.496 \texteuro{} & Despliegue extendido\\
+1 robot & 237.444 \texteuro{} & 284.044 \texteuro{} & Piloto controlado\\
+7 robots & 1.100.252 \texteuro{} & 1.299.452 \texteuro{} & Expansión de línea\\
+17 robots & 2.495.768 \texteuro{} & 2.951.368 \texteuro{} & Despliegue extendido\\
 \bottomrule
 \end{tabularx}
 
 \vspace{0.4em}
-\textbf{Partidas incluidas:} paquetes AMR-FOD-Kitting, software de flota y registro, ingeniería, simulación en CoppeliaSim, instalación, formación, mantenimiento, desplazamientos, ciberseguridad, documentación, contingencia y margen comercial.
+\scriptsize
+\begin{tabularx}{\textwidth}{Y r r r}
+\toprule
+Partida principal & 1 robot & 7 robots & 17 robots\\
+\midrule
+Equipos AMR y seguridad & 59.000 & 413.000 & 1.003.000\\
+Materiales, sensores y kitting & 19.000 & 133.000 & 323.000\\
+Personal técnico & 75.500 & 213.000 & 426.000\\
+Software, ciberseguridad y mantenimiento & 37.800 & 130.600 & 271.300\\
+Desplazamientos y logística & 5.000 & 20.000 & 40.000\\
+Contingencia y margen & 41.144 & 190.652 & 432.468\\
+\midrule
+CAPEX total & 237.444 & 1.100.252 & 2.495.768\\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\vspace{0.4em}
+\scriptsize
+\begin{tabularx}{\textwidth}{Y r r r}
+\toprule
+Indicador & 1 robot & 7 robots & 17 robots\\
+\midrule
+TCO 3 años & 284.044 & 1.299.452 & 2.951.368\\
+Beneficio anual para VAN=0 & 91.355 & 408.479 & 926.149\\
+HTP/mes adicionales con margen 20k & n/a & 1,25 & 2,8\\
+TIR caso alto & 14,5\% & 12,8\% & 12,3\%\\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\vspace{0.4em}
+\scriptsize
+\begin{tabularx}{\textwidth}{Y r Y}
+\toprule
+Partida por AMR & Importe & Referencia comercial\\
+\midrule
+Plataforma AMR omnidireccional & 52.000 & Robotnik RB-KAIROS / AGILOX ODM\\
+Módulo kitting & 8.500 & Diseño mecánico a medida\\
+LiDAR, RGB-D, RFID/QR, safety y HMI & 15.500 & Hokuyo, Intel RealSense, Zebra, SICK, Samsung/Cisco\\
+Puesta a punto por robot & 2.500 & Calibración SLAM, campos y FAT/SAT\\
+\midrule
+Total normalizado por AMR & 78.500 & --\\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+\vspace{0.4em}
+Partidas incluidas: paquetes AMR-FOD-Kitting, software de flota y registro, ingeniería, simulación en CoppeliaSim, instalación, formación, mantenimiento, desplazamientos, ciberseguridad, documentación, contingencia técnica y margen comercial separados.
 \end{tcolorbox}
+
+\section{Archivos de validación CoppeliaSim}
+
+La simulación se entrega como escena editable de CoppeliaSim:
+
+\begin{itemize}
+  \item \path{actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt}
+  \item \path{actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json}
+  \item \path{actividad1/coppeliasim/build_activity1_scene.py}
+\end{itemize}
+
+La escena contiene estación HTP A320/sección 19.1, zona de kitting, puerta RFID/QR, evento FOD, ruta AMR planificada, base de carga, un KUKA YouBot activo como piloto de misión y seis operarios en tareas de planta. El JSON confirma 704 objetos, un modelo CoppeliaSim cargado, seis modelos de operario, cuatro cámaras de captura, rutas dentro del suelo, orientación correcta del AMR piloto, script de tareas humanas, herramienta móvil de handoff, parada/esquiva ante cruce humano y una prueba de estabilidad de 180 pasos sin caída. En el punto \texttt{StopHumano}, la misión se detiene 1,8 s y rodea al operario por \texttt{EsquivaHumano1/2}, con distancia mínima validada de 0,737 m frente a un radio de seguridad de 0,68 m (0,48 m de frenado, 0,10 m de reacción/latencia y 0,10 m de margen).
 
 \section{Lista de sensores}
 
-\begin{itemize}
-  \item LiDAR 2D/3D para SLAM y obstáculos; la seguridad funcional usa escáner láser certificado.
-  \item Cámara RGB-D o industrial para rondas FOD con imagen revisable.
-  \item RFID/QR para seguimiento de kits, herramientas, útiles y puntos de entrega.
-  \item IMU y encoders para odometría.
-  \item Bumpers, escáner de seguridad y parada de emergencia.
-  \item HMI/tablet, WiFi industrial y base de datos de misiones.
-\end{itemize}
-
-\section{Artefactos de entrega}
-
-\begin{itemize}
-  \item Informe PDF: \texttt{actividad1/main.pdf}.
-  \item Presentación PDF: \texttt{actividad1/slides/slides.pdf}.
-  \item Presentación PowerPoint visual: \path{actividad1/slides/Actividad1_AMR_FOD_Kitting.pptx}.
-  \item Presentación PowerPoint nativa editable: \path{actividad1/slides/Actividad1_AMR_FOD_Kitting_editable.pptx}.
-  \item Fuente principal de la presentación: \path{actividad1/slides/slides.tex}.
-  \item Tablas auxiliares: \texttt{actividad1/tables/}.
-\end{itemize}
+\begin{longtable}{P{0.22\textwidth}P{0.24\textwidth}P{0.18\textwidth}P{0.26\textwidth}}
+\toprule
+Elemento & Modelo/referencia & Coste unitario & Función\\
+\midrule
+\endhead
+LiDAR navegación & Hokuyo UST-10LX & 1.500 \texteuro{} & SLAM, obstáculos y actualización de mapa.\\
+Cámara FOD & Intel RealSense D435i & 300 \texteuro{} & Piloto RGB-D; en despliegue real puede migrar a Basler/FLIR/Zivid.\\
+RFID/QR & Zebra FX9600 + antenas & 3.200 \texteuro{} & Lectura de kits, útiles, herramientas y puntos de entrega.\\
+Escáner de seguridad & SICK microScan3 & 7.000 \texteuro{} & Campo protegido, parada segura, bumpers y E-stop.\\
+HMI y comunicaciones & Samsung Tab Active5 + Cisco IW9165D & 3.500 \texteuro{} & Interfaz de supervisor, WiFi industrial y estado de misión.\\
+Presencia/peso en bandeja & Células de carga industriales & Incluido en kitting & Confirmar carga antes de iniciar misión y detectar pérdida de material.\\
+Odometría & Encoders + IMU de plataforma & Incluido en AMR & Estimación de pose y fusión con LiDAR.\\
+\bottomrule
+\caption{Lista consolidada de sensores y componentes de proceso del AMR-FOD-Kitting.}
+\label{tab:anexo-sensores}
+\end{longtable}

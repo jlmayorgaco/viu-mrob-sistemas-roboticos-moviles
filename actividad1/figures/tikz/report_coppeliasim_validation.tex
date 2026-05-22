@@ -1,37 +1,72 @@
 \begin{tikzpicture}[
-  x=1cm,y=1cm,
-  card/.style={draw=UniPrimaryDeep!45,fill=white,rounded corners=2mm,minimum width=5.55cm,minimum height=1.55cm,align=left,inner sep=5pt},
-  num/.style={circle,fill=UniPrimary,text=white,font=\small\bfseries,minimum size=0.55cm},
-  arr/.style={-{Latex[length=2.4mm,width=1.6mm]},line width=0.75pt,draw=UniPrimaryDeep!70}
+  % --- ESTILOS GLOBALES ---
+  card/.style={
+    draw=UniPrimaryDeep!40, fill=white, rounded corners=3mm,
+    minimum width=5.8cm, minimum height=2.1cm, inner sep=0pt, % Dimensiones ampliadas
+    drop shadow={opacity=0.03, shadow xshift=1pt, shadow yshift=-1pt}
+  },
+  num/.style={
+    circle, fill=UniPrimary, text=white, font=\small\bfseries\sffamily,
+    minimum size=0.6cm, inner sep=0pt, align=center
+  },
+  arr/.style={
+    -{Latex[length=2.5mm,width=1.8mm]}, line width=1.2pt, draw=UniPrimaryDeep!60,
+    shorten >= 4pt, shorten <= 4pt
+  }
 ]
 
-\fill[UniLight] (-0.2,-0.2) rectangle (12.5,5.6);
+  % --- MACRO MEJORADA (Eje central dividido) ---
+  \def\stepcard#1#2#3#4#5#6{
+    \node[card, #2] (#1) {};
+    
+    % Círculo con el número (esquina superior izquierda)
+    \node[num, fill=#3, anchor=north west] 
+      (#1-n) at ($(#1.north west) + (12pt, -14pt)$) {#4};
+    
+    % Título (Anclado hacia ARRIBA desde el centro del círculo)
+    \node[anchor=south west, font=\normalsize\bfseries\sffamily, text=UniPrimaryDeep, inner sep=0pt] 
+      (#1-t) at ($(#1-n.east) + (8pt, 2pt)$) {#5};
+      
+    % Descripción (Anclada hacia ABAJO desde el centro del círculo)
+    % El 'inner sep=0pt' y 'text width=4.1cm' aseguran que no rebase la caja
+    \node[anchor=north west, font=\footnotesize\sffamily, text=UniDark, text width=4.1cm, align=left, inner sep=0pt] 
+      (#1-d) at ($(#1-n.east) + (8pt, -2pt)$) {#6};
+  }
 
-\node[card] (r1) at (3.05,4.20) {};
-\node[num] at (0.55,4.70) {1};
-\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (0.95,4.82) {Ruta base};
-\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (0.95,4.32) {Llegada nominal a estaci\'on con SLAM, IMU y encoders.};
+  % --- CREACIÓN DE LAS TARJETAS ---
+  
+  % 1. Ruta Base
+  \stepcard{c1}{}{UniPrimary}{1}{Ruta base}
+           {Llegada nominal a estación con SLAM, IMU y encoders.}
 
-\node[card] (r2) at (9.25,4.20) {};
-\node[num,fill=WarnAmber!85!black] at (6.75,4.70) {2};
-\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (7.15,4.82) {Pasillo bloqueado};
-\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (7.15,4.32) {A*/Dijkstra recalcula ruta fuera de zona restringida.};
+  % 2. Pasillo Bloqueado
+  \stepcard{c2}{right=1.2cm of c1}{WarnAmber!95!black}{2}{Pasillo bloqueado}
+           {A*/Dijkstra recalcula ruta fuera de zona restringida.}
 
-\node[card] (r3) at (3.05,1.85) {};
-\node[num,fill=GoodGreen!70!black] at (0.55,2.35) {3};
-\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (0.95,2.47) {Cruce con operario};
-\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (0.95,1.97) {Evitaci\'on local o parada segura en zona compartida.};
+  % 4. Ronda FOD
+  \stepcard{c4}{below=1.2cm of c2}{UniPrimaryDeep}{4}{Ronda FOD}
+           {Captura RGB-D, evento trazado y revisión humana.}
 
-\node[card] (r4) at (9.25,1.85) {};
-\node[num,fill=UniPrimaryDeep] at (6.75,2.35) {4};
-\node[anchor=west,font=\small\bfseries,text=UniPrimaryDeep] at (7.15,2.47) {Ronda FOD};
-\node[anchor=west,font=\footnotesize,text=UniDark,text width=4.45cm] at (7.15,1.97) {Captura RGB-D, evento trazado y revisi\'on humana.};
+  % 3. Cruce Operario
+  \stepcard{c3}{below=1.2cm of c1}{GoodGreen!85!black}{3}{Cruce con operario}
+           {Evitación local o parada segura en zona compartida.}
 
-\draw[arr] (5.92,4.20) -- (6.38,4.20);
-\draw[arr] (9.25,3.33) -- (9.25,2.70);
-\draw[arr] (6.38,1.85) -- (5.92,1.85);
-\draw[arr] (3.05,2.72) -- (3.05,3.35);
+  % --- FLECHAS DE FLUJO ---
+  \draw[arr] (c1.east) -- (c2.west);
+  \draw[arr] (c2.south) -- (c4.north);
+  \draw[arr] (c4.west) -- (c3.east);
+  \draw[arr] (c3.north) -- (c1.south);
 
-\node[anchor=west,font=\footnotesize\bfseries,text=UniMuted] at (0.55,0.45)
-{Gate: error de llegada \(\leq 0{,}25\) m, cero contactos, 100\% de misiones cerradas y reserva de bater\'ia.};
+  % --- FOOTER ---
+  \node[anchor=north, font=\footnotesize\bfseries\sffamily, text=UniPrimaryDeep, align=center,
+        draw=UniPrimaryDeep!30, fill=white, rounded corners=4pt, inner sep=7pt,
+        minimum width=12.8cm] (footer) at ($ (c3.south)!0.5!(c4.south) + (0, -0.9cm) $)
+  {Gate: error de llegada $\leq 0{,}25$ m, cero contactos, 100\% de misiones cerradas y reserva de batería.};
+
+  % --- FONDO GENERAL ---
+  \begin{scope}[on background layer]
+    \node[fill=UniLight, rounded corners=6mm, inner sep=18pt, 
+          fit=(c1) (c2) (c3) (c4) (footer)] {};
+  \end{scope}
+
 \end{tikzpicture}

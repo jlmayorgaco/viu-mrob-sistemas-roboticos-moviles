@@ -1,0 +1,101 @@
+{
+  "scene": "C:\\Users\\walla\\Documents\\Master VIU\\C9_SistRobMoviles\\viu-mrob-sistemas-roboticos-moviles\\actividad1\\coppeliasim\\Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt",
+  "object_count": 704,
+  "loaded_coppeliasim_models": 1,
+  "human_operator_models": 6,
+  "human_task_animation": {
+    "script_present": true,
+    "tool_handoff_present": true,
+    "load_zone_present": true,
+    "pickup_zone_present": true
+  },
+  "screenshot_cameras": 4,
+  "checks": {
+    "/A1_AMR_FOD_Kitting_HTP_Alestis": true,
+    "/A1_Floor_Alestis_HTP_Cell": true,
+    "/A1_A320_Section_19_1_Fuselage_Proxy": true,
+    "/A1_A320_TailCone_Construction_Section": true,
+    "/A1_HTP_Center_Box": true,
+    "/A1_HTP_Internal_Rib_01": true,
+    "/A1_RFID_Gate_Left_Post": true,
+    "/A1_Pilot01_ChargingPad": true,
+    "/A1_Pilot01_ChargingTotem": true,
+    "/A1_Mission_Board": true,
+    "/A1_Status_RFID_OK": true,
+    "/A1_AMR_Pilot_01_KUKA_YouBot_Model": true,
+    "/A1_AMR_Pilot_01_RB_KAIROS_Class_Body": true,
+    "/A1_AMR_Pilot_01_RB_KAIROS_Class_Frame": true,
+    "/A1_AMR_Pilot_01_Mission_Script": true,
+    "/A1_Waypoint_02_Kitting": true,
+    "/A1_FOD_Object_Red_Bit": true,
+    "/A1_EStop_Post": true,
+    "/A1_Dynamic_Obstacle_Pallet_Ghost": true,
+    "/A1_Operator_Human_Crossing": true,
+    "/A1_Human_Safety_Stop_Zone": true,
+    "/A1_Status_Human_Avoidance": true,
+    "/A1_Sim_Limits_Board": true,
+    "/A1_Operator_Logistics_Walking": true,
+    "/A1_Operator_QA_Tablet": true,
+    "/A1_Operator_Kitting_Rack": true,
+    "/A1_Operator_FOD_Check": true,
+    "/A1_Operator_HMI_Supervisor": true,
+    "/A1_Human_Task_Animation_Script": true,
+    "/A1_Tool_Handoff_TorqueWrench_Frame": true,
+    "/A1_Tool_Handoff_LoadZone": true,
+    "/A1_Tool_Handoff_PickupZone": true,
+    "/A1_Human_Path_Kitting_Handoff_1_Dash_01": true,
+    "/A1_Human_Path_QA_Delivery_1_Dash_01": true,
+    "/A1_Human_Path_Crossing_1_Dash_01": true,
+    "/A1_Camera_Overview_Submit": true
+  },
+  "route_points_inside_floor": {
+    "Dock": true,
+    "Kitting": true,
+    "RFID": true,
+    "StopHumano": true,
+    "EsquivaHumano1": true,
+    "EsquivaHumano2": true,
+    "PasilloLibre": true,
+    "Aproximacion": true,
+    "Entrega": true,
+    "FOD": true,
+    "Salida": true,
+    "Bypass": true,
+    "Retorno": true,
+    "RFID-retorno": true,
+    "Dock-retorno": true
+  },
+  "robot_orientation_checks": {
+    "/A1_AMR_Pilot_01_RB_KAIROS_Class_Frame": true
+  },
+  "youbot_upright_check": {
+    "present": true,
+    "upright": true,
+    "wheel_z_spread_m": 0.0,
+    "wheel_z_mean_m": 0.105,
+    "arm_max_z_m": 0.3005
+  },
+  "youbot_forward_alignment": {
+    "present": true,
+    "aligned": true,
+    "angle_error_deg": 0.04
+  },
+  "human_avoidance_clearance": {
+    "human_point": [
+      -0.55,
+      -0.55
+    ],
+    "safety_radius_m": 0.62,
+    "min_route_clearance_m": 0.737,
+    "route_avoids_human": true
+  },
+  "stability_preview": {
+    "ran": true,
+    "watched_handles": 8,
+    "min_z_after_180_steps_m": 0.0,
+    "all_above_floor": true,
+    "all_within_floor_bounds": true
+  },
+  "passed": true,
+  "open_hint": "Open the .ttt in CoppeliaSim, press Start to see A1_AMR_Pilot_01 follow the single-robot pilot mission, and select A1_Camera_Overview_Submit for the main screenshot."
+}

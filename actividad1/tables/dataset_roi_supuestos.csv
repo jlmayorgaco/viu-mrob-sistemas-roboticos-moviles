@@ -1,4 +1,4 @@
 escenario,robots,operarios_afectados,minutos_recuperados_por_operario_dia,dias_operacion,horas_recuperadas_anuales,valor_eur_hora,valor_anual_estimado,capex,capex_anualizado_5_anios,horas_break_even_anual
-piloto,1,15,15,220,825,18.4,15180,219856,43971,2390
-expansion,7,45,33,240,5940,18.4,109296,1018752,203750,11073
-extendido,17,70,48,250,14000,18.4,257600,2310896,462179,25118
+piloto,1,15,15,220,825,18.4,15180,237444,47489,2581
+expansion,7,45,33,240,5940,18.4,109296,1100252,220050,11959
+extendido,17,70,48,250,14000,18.4,257600,2495768,499154,27128

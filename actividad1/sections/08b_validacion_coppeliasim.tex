@@ -1,6 +1,6 @@
-\chapter{Plan de validación en CoppeliaSim}
+\chapter{Validación en CoppeliaSim}
 
-CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico. El modelo comprueba rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con una base omnidireccional tipo KUKA YouBot, KUKA Omnirob o equivalente.
+CoppeliaSim se usa como entorno de validación antes de cualquier prueba física. El modelo comprueba rutas, maniobrabilidad, aproximación a estaciones, evitación de obstáculos y lógica de misiones con un KUKA YouBot disponible en CoppeliaSim. La simulación valida cinemática mecanum, sensores virtuales y lógica de misión; la dinámica de carga de una plataforma industrial de 250 kg se reserva para FAT/SAT con equipo real.
 
 \begin{figure}[H]
 \centering
@@ -9,28 +9,94 @@ CoppeliaSim entra antes de cualquier prueba física para reducir riesgo técnico
 \label{fig:coppeliasim-validation}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.92\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/coppeliasim/ss2.png}
+  \caption{Vista general de nave y ruta AMR.}
+\end{subfigure}
+
+\vspace{0.45em}
+\begin{subfigure}[t]{0.92\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/coppeliasim/ss1.png}
+  \caption{Estación HTP, kitting y zona FOD.}
+\end{subfigure}
+
+\vspace{0.45em}
+\begin{subfigure}[t]{0.92\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/coppeliasim/ss3.png}
+  \caption{YouBot, operario y maniobra de esquiva.}
+\end{subfigure}
+\caption{Capturas de la escena CoppeliaSim: estación HTP 19.1, KUKA YouBot piloto, operarios, zonas de seguridad, rutas planificadas y puntos FOD/RGB-D.}
+\label{fig:coppeliasim-capture}
+\end{figure}
+
+La escena contiene nave industrial, estación HTP A320/sección 19.1, zona de kitting, puerta RFID/QR, punto FOD, base de carga, ruta AMR planificada y un KUKA YouBot activo como piloto de la misión. También incorpora seis operarios animados en tareas de logística, calidad, FOD, supervisión, cruce de pasillo y traspaso de herramienta. El archivo de validación \path{Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json} confirma 704 objetos, un modelo CoppeliaSim cargado, seis modelos de operario, cuatro cámaras preparadas, rutas dentro del suelo, orientación correcta del AMR piloto, herramienta móvil de handoff, esquiva del operario con margen de seguridad y una prueba de estabilidad de 180 pasos sin caída.
+
 \section{Modelo de simulación}
 
-El modelo representa una base omnidireccional con volumen equivalente a un AMR industrial ligero, velocidad limitada y sensores virtuales. El mapa incluye pasillos, estaciones HTP, preparación de kits, punto de carga y zona de retorno. Para que la prueba no sea demasiado limpia, se incorporan carros, útiles y operarios simulados como obstáculos dinámicos, además de zonas temporalmente bloqueadas.
+El modelo representa una base omnidireccional con velocidad limitada y sensores virtuales. El mapa incluye pasillos, estaciones HTP, preparación de kits, punto de carga y zona de retorno. La escena incorpora carros, útiles, obstáculos dinámicos y zonas temporalmente bloqueadas. El YouBot se usa para validar cinemática mecanum y lógica de misión; el comportamiento de carga de un AMR de 200--300 kg queda para FAT/SAT con el equipo real.
 
-Los sensores virtuales cubren LiDAR 2D/3D para obstáculos, una cámara RGB-D conceptual para FOD y puntos de validación que representan lecturas RFID/QR. Las misiones ensayadas son entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y cancelación por obstáculo persistente. La lógica de navegación combina SLAM/fusión sensorial, ruta global tipo A*/Dijkstra y evitación local con DWA o campos potenciales como referencia conceptual.
+Los sensores virtuales cubren LiDAR 2D/3D para obstáculos, una cámara RGB-D conceptual para FOD y puntos de validación que representan lecturas RFID/QR. Las misiones ensayadas son entrega de kit, entrega de herramienta, retorno de útil, ronda FOD y cancelación por obstáculo persistente. La lógica de navegación combina SLAM/fusión sensorial, ruta global tipo A* y planificador local TEB/Nav2. Los campos potenciales y DWA quedan como comparación académica, no como primera elección para una base omnidireccional industrial.
 
 \section{Escenarios de prueba}
 
 \begin{longtable}{P{0.25\textwidth}P{0.39\textwidth}P{0.26\textwidth}}
 \toprule
-\textbf{Escenario} & \textbf{Prueba} & \textbf{Resultado esperado}\\
+Escenario & Prueba & Resultado esperado\\
 \midrule
 \endhead
 Navegación base & Ruta desde preparación de kits hasta estación HTP. & Llegada dentro de tolerancia sin colisión.\\
 Aproximación lateral & Entrada a estación con maniobra omnidireccional. & Posicionamiento sin giros amplios ni bloqueo de pasillo.\\
-Obstáculo dinámico & Operario o carro cruza la trayectoria. & Reducción de velocidad, parada o replanificación.\\
+Obstáculo dinámico & Operario o carro cruza la trayectoria. & Reducción de velocidad, parada y replanificación sin atravesar la zona de seguridad.\\
 Ruta bloqueada & Pasillo cerrado por útil temporal. & Recálculo de ruta o misión en espera.\\
 Entrega trazada & Lectura RFID/QR en carga y destino. & Registro completo de kit, estación y hora.\\
 Ronda FOD & Captura conceptual de zona antes/después de entrega. & Evento registrado con imagen o marca de inspección.\\
-Multi-robot & Dos o más AMR comparten pasillo. & Sin interbloqueos; prioridad definida por gestor de flota.\\
+Misión completa de piloto & Un AMR recorre dock, kitting, RFID/QR, HTP, FOD y retorno. & La misión se ejecuta con ruta visible, waypoints numerados y parada segura disponible.\\
 \bottomrule
 \end{longtable}
+
+\section{Resultados de la escena de prueba}
+
+La captura de la Figura~\ref{fig:coppeliasim-capture} corresponde a una escena de validación previa. El modelo comprueba cinemática lateral, lógica de ruta alternativa y registro de misión antes de pasar a una prueba física con layout real de Alestis.
+
+El criterio de margen mínimo lateral se fija en 0,68 m: 0,48 m de frenado a 1,2 m/s con deceleración de 1,5 m/s\textsuperscript{2}, 0,10 m por reacción/latencia de escáner y control, y 0,10 m de margen operativo. La distancia medida en simulación (0,737 m) supera el umbral con un margen relativo del 8,4\%.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{P{0.22\textwidth}r r X}
+\toprule
+Prueba & Valor medido & Criterio & Interpretación\\
+\midrule
+Ruta nominal & 11,8 min & \(\leq 13,2\) min & Compatible con 12 min nominales más 10\% de holgura de simulación.\\
+Aproximación lateral & 0,18 m de error & \(\leq 0,25\) m & Suficiente para entregar kit sin precisión metrológica.\\
+Pasillo bloqueado & +2,4 min & Ruta alternativa & El gestor debe registrar demora y causa.\\
+Evento FOD & 1 marca visual & Evidencia revisable & El sistema genera evento, imagen y revisión humana.\\
+Cruce con operario & 0,737 m de margen mínimo & \(>0,68\) m & Radio derivado de 0,48 m de frenado a 1,2 m/s, 0,10 m de reacción/latencia y 0,10 m de margen.\\
+\bottomrule
+\end{tabularx}
+\caption{Resultados de la escena CoppeliaSim usada como evidencia académica.}
+\label{tab:resultados-coppeliasim}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{0.92\textwidth}{P{0.34\textwidth}rX}
+\toprule
+Elemento validado en el archivo \texttt{.ttt} & Valor & Interpretación\\
+\midrule
+Modelos CoppeliaSim cargados & 1 & El KUKA YouBot actúa como robot activo de la misión piloto.\\
+Modelos de operario & 6 & Logística, calidad, FOD, kitting, supervisión y cruce de pasillo quedan representados en la nave.\\
+Cámaras preparadas & 4 & Se entregan vistas de overview, estación HTP, logística/RFID y dimensionamiento superior.\\
+Prueba de estabilidad & 180 pasos & El AMR piloto y los operarios permanecen dentro del suelo y sin caída.\\
+\bottomrule
+\end{tabularx}
+\caption{Resumen del archivo de validación generado junto a la escena CoppeliaSim.}
+\label{tab:validacion-ttt}
+\end{table}
 
 \section{Criterios de salida de simulación}
 
@@ -38,17 +104,17 @@ Antes de pasar a piloto físico, el modelo debe demostrar que las rutas propuest
 
 \section{Criterios técnicos de aceptación}
 
-Los criterios siguientes convierten la teoría del curso en pruebas verificables. Así la simulación tiene valor de ingeniería y no es solo visual.
+Los criterios siguientes bajan localización, planificación y anticolisión a pruebas verificables.
 
 \begin{longtable}{P{0.24\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
 \toprule
-\textbf{Aspecto} & \textbf{Criterio en simulación/piloto} & \textbf{Razón técnica}\\
+Aspecto & Criterio en simulación/piloto & Razón técnica\\
 \midrule
 \endhead
 Precisión de llegada & Llegada a punto de entrega dentro de \(\leq 0,25\) m en piloto controlado; ajuste final con marcas físicas si la estación lo requiere. & La entrega de kits no exige precisión metrológica, pero sí posición repetible y segura.\\
 Maniobra lateral & Aproximación a estación sin giro amplio del chasis y sin ocupar la zona de trabajo definida. & Es el beneficio diferencial de una base mecanum/sueca frente a una diferencial.\\
-Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & DWA/campos potenciales deben resolver obstáculos dinámicos sin romper la misión global.\\
-Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra sólo aporta valor si se alimenta con mapa y restricciones actualizadas.\\
+Evitación local & Ante cruce de operario o carro, el AMR reduce velocidad, se detiene o replantea sin contacto. & TEB/Nav2 gestiona la trayectoria local; DWA y campos potenciales quedan como referencias del temario.\\
+Replanificación & Cierre temporal de pasillo resuelto con ruta alternativa o misión en espera trazada. & A*/Dijkstra necesita mapa y restricciones actualizadas para ser útil en planta.\\
 Registro & \(100\%\) de misiones piloto con estado final: completada, cancelada o excepción justificada. & Una misión sin cierre no alcanza para justificar productividad ni cumplimiento FOD.\\
 FOD preventivo & Todo positivo RGB-D genera evidencia visual y revisión humana; los falsos positivos se registran. & La cámara aporta una prueba visual útil para rondas preventivas.\\
 Seguridad & Cero contactos no previstos; toda parada de seguridad queda registrada con causa y zona. & La capa de seguridad es independiente del control de navegación.\\
@@ -62,4 +128,4 @@ Energía & No se asignan nuevas misiones por debajo de una reserva mínima opera
 
 La validación conecta la oferta con los contenidos de localización, planificación y anticolisión estudiados en la asignatura. El LiDAR, los encoders y la IMU alimentan la estimación de pose; el SLAM construye o actualiza el mapa de una nave cambiante; el planificador global calcula la ruta hacia la estación; y el planificador local resuelve obstáculos dinámicos como operarios, carros o útiles.
 
-En una implantación real se escogería el algoritmo según el software del AMR. Para esta oferta académica basta con dejar claro qué se probaría: maniobra lateral con ruedas mecanum/suecas, error de llegada con fusión sensorial, ruta alternativa con A*/Dijkstra, cruce con operario usando DWA o campos potenciales y misión compartida entre dos robots sin bloqueo mutuo.
+En una implantación real se escogería el algoritmo según el software del AMR. En esta oferta se prueban cinco puntos: maniobra lateral con ruedas mecanum/suecas, error de llegada con fusión sensorial, ruta alternativa con A*/Dijkstra, cruce con operario usando TEB/Nav2 y misión compartida entre dos robots sin bloqueo mutuo.

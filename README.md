@@ -4,7 +4,7 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 
 ## Estado
 
-- `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentacion PDF, PowerPoint editable, presupuesto y tablas auxiliares.
+- `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentacion PDF, PowerPoint visual, presupuesto y tablas auxiliares.
 - `actividad2/`: entrega separada con informe PDF, presentacion PDF/PPTX, escena CoppeliaSim final, scripts Lua/Python y validacion JSON.
 - `docs/enunciado/`: guias y archivos base proporcionados para la asignatura.
 - `docs/ppt/`: presentaciones y temas cubiertos en el curso.
@@ -22,6 +22,10 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 |   |   |-- slides.pdf
 |   |   |-- build_pptx.py
 |   |   `-- Actividad1_AMR_FOD_Kitting.pptx
+|   |-- coppeliasim/
+|   |   |-- Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt
+|   |   |-- Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json
+|   |   `-- build_activity1_scene.py
 |   |-- tables/
 |   |-- references.bib
 |   `-- README.md
@@ -70,7 +74,8 @@ Entregables directos:
 - `actividad1/main.pdf`
 - `actividad1/slides/slides.pdf`
 - `actividad1/slides/Actividad1_AMR_FOD_Kitting.pptx`
-- `actividad1/slides/Actividad1_AMR_FOD_Kitting_editable.pptx`
+- `actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt`
+- `actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json`
 
 Compilacion completa:
 
@@ -85,6 +90,9 @@ cd slides
 pdflatex -interaction=nonstopmode -halt-on-error slides.tex
 pdflatex -interaction=nonstopmode -halt-on-error slides.tex
 python build_pptx.py
+
+cd ..
+python coppeliasim/build_activity1_scene.py
 ```
 
 ## Actividad 2

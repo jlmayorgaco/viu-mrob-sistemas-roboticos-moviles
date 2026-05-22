@@ -1,37 +1,75 @@
 \begin{tikzpicture}[
-  x=1cm,y=1cm,
-  box/.style={draw=UniPrimaryDeep!50,fill=white,rounded corners=2mm,align=center,font=\footnotesize\bfseries,text width=2.15cm,minimum height=0.78cm,inner sep=3pt},
-  station/.style={draw=UniPrimaryDeep!70,fill=UniPrimary!8,rounded corners=2mm,align=center,font=\footnotesize\bfseries,text width=2.20cm,minimum height=0.82cm,inner sep=3pt},
-  flow/.style={-{Latex[length=2.4mm,width=1.7mm]},line width=1.05pt,draw=GoodGreen!70!black,rounded corners=7pt},
-  manual/.style={-{Latex[length=2.1mm,width=1.5mm]},line width=0.75pt,draw=WarnAmber!85!black,dashed,rounded corners=6pt},
-  tag/.style={font=\scriptsize,text=UniMuted,align=center}
+  node distance = 1.0cm and 1.2cm, % Controla la separación vertical y horizontal de forma global
+  box/.style={
+    draw=UniPrimaryDeep!50, fill=white, rounded corners=2mm, align=center, 
+    font=\footnotesize\bfseries, text width=2.4cm, minimum height=0.9cm, inner sep=5pt
+  },
+  station/.style={
+    draw=UniPrimaryDeep!70, fill=UniPrimary!10, rounded corners=2mm, align=center, 
+    font=\footnotesize\bfseries, text width=2.4cm, minimum height=0.9cm, inner sep=5pt
+  },
+  amr_box/.style={
+    draw=GoodGreen!70!black, fill=GoodGreen!10, rounded corners=2mm, align=center, 
+    font=\footnotesize\bfseries, text width=3.4cm, minimum height=1.1cm, inner sep=6pt
+  },
+  flow/.style={
+    -{Latex[length=2.5mm,width=1.8mm]}, line width=1.2pt, draw=GoodGreen!80!black, rounded corners=6pt
+  },
+  manual/.style={
+    -{Latex[length=2.2mm,width=1.6mm]}, line width=0.8pt, draw=WarnAmber!90!black, dashed, rounded corners=6pt
+  }
 ]
 
-\fill[UniLight] (-0.15,-0.10) rectangle (12.85,5.10);
-\draw[UniMuted!35,line width=8pt,line cap=round] (0.60,2.40) -- (12.10,2.40);
-\node[anchor=west,font=\scriptsize\bfseries,text=UniMuted] at (0.70,2.67) {pasillo compartido};
+  % --- FILA SUPERIOR ---
+  \node[box] (prep) {Preparación\\kits};
+  \node[station, right=of prep] (s1) {Estación\\HTP 1};
+  \node[station, right=of s1] (s2) {Estación\\HTP 2};
+  \node[box, right=of s2] (ret) {Retorno\\útiles};
 
-\node[box] (prep) at (1.20,4.25) {Preparaci\'on\\kits};
-\node[station] (s1) at (4.30,4.25) {Estaci\'on\\HTP 1};
-\node[station] (s2) at (7.40,4.25) {Estaci\'on\\HTP 2};
-\node[box] (ret) at (10.70,4.25) {Retorno\\\'utiles};
+  % --- FILA INFERIOR (Alineada perfectamente con la superior) ---
+  \node[box, below=of prep, yshift=-2.2cm] (alm) {Almacén\\consumibles}; 
+  \node[station, at={(alm -| s1)}] (fod) {Ronda FOD\\preventiva};
+  \node[box, at={(alm -| s2)}] (met) {Metrología\\calibración};
+  \node[box, at={(alm -| ret)}] (sup) {HMI\\supervisión};
 
-\node[box] (alm) at (1.20,0.68) {Almac\'en\\consumibles};
-\node[station] (fod) at (4.30,0.68) {Ronda FOD\\preventiva};
-\node[box] (met) at (7.40,0.68) {Metrolog\'ia\\calibraci\'on};
-\node[box] (sup) at (10.70,0.68) {HMI\\supervisi\'on};
+  % --- FONDO DEL PASILLO COMPARTIDO (Se auto-ajusta al ancho total) ---
+  \begin{scope}[on background layer]
+    % Calculamos el punto medio exacto entre las dos filas para el pasillo
+    \coordinate (pasillo_center) at ($(prep.south)!0.5!(alm.north)$);
+    
+    % Fondo gris claro exterior
+    \fill[UniLight] ($(prep.north west)+(-0.5,0.5)$) rectangle ($(sup.south east)+(0.5,-0.5)$);
+    
+    % Línea del pasillo central
+    \draw[UniMuted!25, line width=24pt, line cap=round] 
+      ($(pasillo_center)- (1.5,0)$) -- ($(pasillo_center) + (11.5,0)$);
+      
+    \node[anchor=west, font=\scriptsize\bfseries\sffamily, text=UniMuted!90, yshift=5pt] 
+      at ($(pasillo_center)-(1.2,0)$) {PASILLO COMPARTIDO};
+  \end{scope}
 
-\node[draw=GoodGreen!70!black,fill=GoodGreen!10,rounded corners=2mm,align=center,font=\footnotesize\bfseries,text width=2.45cm,minimum height=1.00cm,inner sep=3pt] (amr) at (6.00,2.42) {AMR-FOD-Kitting\\entrega y registro};
+  % --- NODO CENTRAL (AMR) ---
+  % Posicionado exactamente en el centro geométrico del diagrama
+  \node[amr_box] (amr) at ($(s1.south)!0.5!(met.north)$) {AMR-FOD-Kitting\\entrega y registro};
 
-\draw[flow] (prep) -- (s1);
-\draw[flow] (s1) -- (s2);
-\draw[flow] (s2) -- (ret);
-\draw[flow] (alm) -- (fod);
-\draw[flow] (fod) -- (met);
-\draw[flow] (met) -- (sup);
-\draw[flow] (amr.north) -- ++(0,0.38) -| (s2.south);
-\draw[flow] (amr.south) -- ++(0,-0.38) -| (fod.north);
+  % --- FLUJOS PRINCIPALES (Líneas Verdes) ---
+  \draw[flow] (prep) -- (s1);
+  \draw[flow] (s1) -- (s2);
+  \draw[flow] (s2) -- (ret);
+  
+  \draw[flow] (alm) -- (fod);
+  \draw[flow] (fod) -- (met);
+  \draw[flow] (met) -- (sup);
 
-\draw[manual] (s1.south) -- (2.75,2.68) -- (alm.north);
-\draw[manual] (s2.south) -- (8.95,2.68) -- (met.north);
+  % Conexiones del AMR limpias (sin pisar el texto)
+  \draw[flow] (amr.north) -- (s1.south);
+  \draw[flow] (fod.north) -- (amr.south);
+
+  % --- FLUJOS MANUALES (Líneas Amarillas Discontinuas con desvíos limpios) ---
+  % Desvío estético usando el espacio libre a la izquierda del AMR
+  \draw[manual] (s1.south west) -- ++(-0.4,-0.8) |- (alm.north);
+  
+  % Desvío estético usando el espacio libre a la derecha del AMR
+  \draw[manual] (s2.south east) -- ++(0.4,-0.8) |- (met.north);
+
 \end{tikzpicture}

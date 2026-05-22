@@ -1,29 +1,38 @@
 \chapter{Introducción}
 
-En una nave aeronáutica, mover material implica registrar kit, estación, hora, operador y, si aparece, una incidencia FOD. Un AMR industrial resuelve esa parte del problema: transporta cargas repetitivas sin carriles físicos y se adapta mejor que un AGV de ruta fija.
+En fabricación aeronáutica, todo movimiento de material exige registrar kit, estación, hora, operador y, en su caso, incidencias FOD. Un AMR industrial puede asumir una parte de ese trabajo: transporte repetitivo, confirmación de entregas y rutas flexibles sin carriles físicos.
 
-En el caso planteado, Lunabotics actúa como empresa ficticia responsable de preparar una oferta para Alestis Puerto Real. El cliente trabaja con componentes estructurales del A320, entre ellos el HTP, elemento aerodinámico horizontal situado en la cola que contribuye a la estabilidad longitudinal de la aeronave. En torno a la sección 19.1 del avión convergen operaciones de estructura posterior, interfaces con elementos de cola, útiles de montaje, inspecciones y flujos de materiales que requieren coordinación fina entre estaciones.
+Lunabotics prepara una oferta para Alestis Puerto Real. El cliente trabaja con componentes estructurales del A320, entre ellos el HTP, elemento aerodinámico horizontal situado en la cola que contribuye a la estabilidad longitudinal de la aeronave. En torno a la sección 19.1 del avión convergen operaciones de estructura posterior, interfaces con elementos de cola, útiles de montaje, inspecciones y flujos de materiales que requieren coordinación fina entre estaciones.
 
 \section{Perfil de Lunabotics}
 
-Lunabotics es una integradora joven de robótica móvil industrial, con perfiles de automatización, simulación y datos de planta. Su trabajo cubre análisis de flujos intralogísticos, modelado de rutas en CoppeliaSim, selección de plataformas AMR, integración de sensores LiDAR/RGB-D/RFID, diseño de HMI de supervisión y definición de indicadores de aceptación.
+Lunabotics se plantea como una integradora de 24 personas: cinco roboticistas con experiencia en ROS 2/Nav2, tres ingenieros de automatización, un responsable de seguridad de máquinas, tres desarrolladores de HMI/datos, cuatro técnicos de puesta en marcha, dos ingenieros de soporte, tres perfiles de proyecto y documentación, dos perfiles comerciales y un responsable de calidad. La empresa ha desplegado AMR en logística interna de componentes aeronáuticos. Esta oferta se limita a logística auxiliar y despliegue por fases, fuera de procesos certificados de montaje estructural.
 
-Para esta oferta se atribuye a Lunabotics una experiencia ficticia, pero razonable para una empresa de reciente creación: pilotos de transporte interno en entornos de montaje, celdas de ensayo con bases omnidireccionales y proyectos académico-industriales de seguimiento con QR/RFID. Con esos antecedentes, Lunabotics tiene una base técnica para proponer misiones autónomas repetibles, registro digital de entregas, menos búsquedas manuales y validación en simulador antes del despliegue físico.
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{P{0.23\textwidth}P{0.35\textwidth}X}
+\toprule
+Referencia ficticia & Trabajo realizado & Utilidad para Alestis\\
+\midrule
+Planta aeronáutica auxiliar & Flota de 3 AMR para suministro de consumibles y kits en zona de pretratamiento de composites. & Experiencia directa en logística de planta aeronáutica con disciplina FOD.\\
+Montaje automotriz & Integración de 4 AMR tipo MiR para suministro de subconjuntos. & Gestión de misiones, seguridad en pasillos compartidos y aceptación de operarios.\\
+Celda universitaria mecanum & Validación de cinemática holonómica con KUKA YouBot en CoppeliaSim. & Base técnica para maniobra lateral, control de ruedas mecanum y pruebas previas al piloto.\\
+Almacén electrónico & Registro QR/RFID de entregas y dashboard de incidencias. & Trazabilidad de kits, herramientas y consumibles sin depender de memoria verbal de turno.\\
+\bottomrule
+\end{tabularx}
+\caption{Perfil operativo de Lunabotics para la oferta.}
+\label{tab:perfil-lunabotics}
+\end{table}
 
-El reto es sostener el flujo cuando la planta trabaja cerca de su límite. Cuando un operario debe abandonar su estación para buscar herramientas, consumibles o documentación, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, útiles no localizados, entregas sin registrar o inspecciones FOD tardías.
+Cuando un operario debe abandonar su estación para buscar herramientas, consumibles o documentación, el tiempo perdido no siempre aparece como parada formal, pero reduce capacidad real. Algo similar ocurre con kits incompletos, útiles no localizados, entregas sin registrar o inspecciones FOD tardías.
 
-El informe desarrolla una oferta técnica y comercial con robots móviles autónomos para acompañar el crecimiento de 40 HTP al mes hacia 80 HTP al mes o más. La arquitectura AMR-FOD-Kitting se revisa primero a nivel de diseño y después en CoppeliaSim, antes de plantear un piloto físico.
 
 \section{Alcance de la propuesta}
 
-El alcance cubre transporte interno de kits, herramientas, consumibles y útiles ligeros o moderados. También incluye inspección preventiva FOD con cámara, trazabilidad RFID/QR, retorno de útiles usados, supervisión de misiones y registro de eventos. Se excluyen la fabricación directa de piezas aeronáuticas, la manipulación estructural pesada del HTP y la sustitución de procesos certificados de calidad.
+El alcance cubre transporte interno de kits, herramientas, consumibles y útiles ligeros o moderados. También incluye inspección preventiva FOD con cámara, trazabilidad RFID/QR, retorno de útiles usados, supervisión de misiones y registro de eventos. Se excluyen la fabricación directa de piezas aeronáuticas, la manipulación estructural pesada del HTP y la sustitución de procesos certificados de calidad. La solución queda dentro de una aplicación propia de Sistemas Robóticos Móviles \cite{siegwart2011,tzafestas2014,ollero2001}.
 
 \section{Supuestos y exclusiones}
 
-El caso asume una nave interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y personal disponible para carga/descarga del AMR. Los kits y herramientas se etiquetarían con RFID, QR o una combinación de ambos.
+El caso asume una fábrica interior con pavimento regular, cobertura WiFi industrial ampliable, estaciones con puntos de entrega identificables y personal disponible para carga/descarga del AMR. Los kits y herramientas se etiquetarían con RFID, QR o una combinación de ambos.
 
 Del presupuesto quedan fuera la obra civil, modificaciones estructurales de estaciones e integraciones ERP/MES altamente personalizadas no descritas en el alcance. Con esas exclusiones, el coste se concentra en robótica móvil, kitting, sensores, registro operativo, seguridad y soporte.
-
-\section{Criterio de realismo industrial}
-
-La oferta apoya la operación existente. Consideramos que un sistema AMR tiene sentido cuando libera tiempo operativo, mejora el control de entregas y estabiliza el suministro a estaciones. Así se mantiene el alcance dentro de una aplicación propia de Sistemas Robóticos Móviles \cite{siegwart2011,tzafestas2014,ollero2001}.

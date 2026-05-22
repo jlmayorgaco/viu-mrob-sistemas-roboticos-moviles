@@ -19,7 +19,7 @@
 \definecolor{Blueprint}{HTML}{EAF1F8}
 
 \newcounter{slide}
-\newcommand{\totalSlides}{16}
+\newcommand{\totalSlides}{24}
 \newcommand{\smallcaps}[1]{{\fontsize{5.8}{6.6}\selectfont\bfseries\MakeUppercase{#1}}}
 
 \tikzset{
@@ -53,14 +53,18 @@
 
 \newcommand{\webcamplaceholder}{%
   \begin{scope}
-    \fill[Ink,opacity=0.12] (14.96,0.92) circle (0.66);
-    \fill[white,opacity=0.94] (14.90,0.99) circle (0.64);
-    \draw[Teal,line width=1.0pt] (14.90,0.99) circle (0.64);
-    \draw[Line,line width=0.45pt] (14.90,0.99) circle (0.49);
+    \fill[white,opacity=0.94] (14.82,0.72) circle (0.38);
+    \draw[Teal,line width=0.65pt] (14.82,0.72) circle (0.38);
+    \node[font=\fontsize{7.0}{7.2}\selectfont\bfseries,text=Teal] at (14.82,0.72) {LB};
   \end{scope}
 }
 
 \newcommand{\stopslide}{\webcamplaceholder\end{scope}\end{tikzpicture}}
+\newcommand{\stopslideplain}{\end{scope}\end{tikzpicture}}
+
+% Beamer-style speaker notes. They are intentionally hidden in the slide PDF/PPTX,
+% but kept next to each slide in the source as the rehearsal script.
+\newcommand{\speakernote}[1]{}
 
 \newcommand{\roundbox}[6]{%
   \fill[#5,rounded corners=5pt] (#1,#2) rectangle ++(#3,#4);
@@ -71,3 +75,4 @@
   \node[anchor=west,font=\fontsize{15}{16}\selectfont\bfseries,text=#5] at (#1,#2) {#3};
   \node[anchor=west,smallbody,text width=2.9cm] at (#1,#2-0.48) {#4};
 }
+

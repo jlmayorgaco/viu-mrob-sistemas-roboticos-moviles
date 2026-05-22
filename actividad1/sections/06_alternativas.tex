@@ -4,12 +4,12 @@ Se compararon seis familias de robots o vehículos móviles. La comparación se 
 
 \begin{longtable}{P{0.20\textwidth}P{0.30\textwidth}P{0.18\textwidth}P{0.22\textwidth}}
 \toprule
-\textbf{Alternativa} & \textbf{Ventajas} & \textbf{Limitaciones} & \textbf{Decisión}\\
+Alternativa & Ventajas & Limitaciones & Decisión\\
 \midrule
 \endhead
-AGV & Fiable para rutas repetitivas, tecnología madura, coste predecible. & Menor flexibilidad, dependencia de rutas fijas o infraestructura, difícil adaptación a cambios de layout. & Descartado como opción principal; válido solo para corredores muy estables.\\
+AGV & Fiable para rutas repetitivas, tecnología madura, coste predecible. & Menor flexibilidad, dependencia de rutas fijas o infraestructura, difícil adaptación a cambios de layout. & Descartado como opción principal , válido solo para corredores muy estables.\\
 AMR diferencial & Navegación flexible, buena disponibilidad comercial, integración con flota. & Maniobra peor en espacios estrechos que una base omnidireccional; el acoplamiento lateral exige más espacio o maniobras. & Alternativa válida, pero no óptima para estaciones congestionadas.\\
-AMR omnidireccional & Movimiento lateral, alta maniobrabilidad y buen trabajo cerca de estaciones y útiles grandes. & Mayor coste y complejidad mecánica que una base diferencial sencilla. & \textbf{Seleccionado}.\\
+AMR omnidireccional & Movimiento lateral, alta maniobrabilidad y buen trabajo cerca de estaciones y útiles grandes. & Mayor coste y complejidad mecánica que una base diferencial sencilla. & Seleccionado.\\
 Robot con orugas & Buen contacto en terrenos irregulares y capacidad de superar obstáculos. & Excesivo para suelo industrial interior, peor higiene, posible daño al pavimento, maniobra poco fina. & Descartado.\\
 Dron & Rápido para inspección visual en altura. & Riesgo de seguridad, ruido, autonomía limitada, restricciones en interior industrial y carga prácticamente nula. & Descartado para logística y FOD en estaciones.\\
 Robot con patas & Alta movilidad teórica en entornos complejos. & Coste alto, complejidad, riesgo de aceptación, innecesario en nave con pavimento regular. & Descartado.\\
@@ -18,21 +18,21 @@ Robot con patas & Alta movilidad teórica en entornos complejos. & Coste alto, c
 
 \section{Matriz ponderada de selección}
 
-La selección se apoya en una matriz ponderada. La puntuación va de 1 a 5, donde 5 indica mejor ajuste al caso. La plataforma omnidireccional gana porque en esta planta pesa más maniobrar bien junto a estaciones que comprar el vehículo más barato.
+La selección se apoya en una matriz ponderada. La puntuación va de 1 a 5, donde 5 indica mejor ajuste al caso. La plataforma omnidireccional queda primera porque la maniobra junto a estaciones pesa más que el coste unitario.
 
 \begingroup
 \small
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{0.22\textwidth}rrrrrrr}
 \toprule
-\textbf{Alternativa} & \textbf{Man. 25\%} & \textbf{Seg. 20\%} & \textbf{Traz. 15\%} & \textbf{Mad. 15\%} & \textbf{Coste 15\%} & \textbf{Sim. 10\%} & \textbf{Total}\\
+Alternativa & Man. 25\% & Seg. 20\% & Traz. 15\% & Mad. 15\% & Coste 15\% & Sim. 10\% & Total\\
 \midrule
 \endhead
-AGV & 2 & 4 & 2 & 5 & 4 & 2 & 3,05\\
-AMR dif. MiR/Omron & 3 & 4 & 4 & 5 & 4 & 4 & 3,85\\
-\textbf{AMR omni industrial} & \textbf{5} & \textbf{4} & \textbf{4} & \textbf{4} & \textbf{3} & \textbf{5} & \textbf{4,25}\\
+AGV & 2 & 4 & 2 & 5 & 4 & 2 & 3,15\\
+AMR dif. MiR/Omron & 3 & 4 & 4 & 5 & 4 & 4 & 3,90\\
+AMR omni industrial & 5 & 4 & 4 & 4 & 3 & 5 & 4,20\\
 Robot con orugas & 1 & 2 & 1 & 2 & 1 & 2 & 1,45\\
-Dron & 2 & 1 & 2 & 2 & 2 & 2 & 1,75\\
+Dron & 2 & 1 & 2 & 2 & 2 & 2 & 1,80\\
 Robot con patas & 2 & 2 & 2 & 2 & 1 & 2 & 1,85\\
 \bottomrule
 \caption{Matriz ponderada de alternativas robóticas. Man.: maniobrabilidad; Seg.: seguridad; Traz.: trazabilidad/integración; Mad.: madurez comercial; Sim.: representabilidad en CoppeliaSim.}
@@ -44,6 +44,6 @@ En la tabla, \textit{AMR omni industrial} corresponde a una plataforma tipo RB-K
 
 \section{Robot seleccionado}
 
-La elección es una \textbf{plataforma AMR omnidireccional de 200--300 kg}, representable en CoppeliaSim con KUKA YouBot, KUKA Omnirob o una base holonómica equivalente. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg indicada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística: movimiento omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
+Se selecciona una plataforma AMR omnidireccional industrial de 200--300 kg. CoppeliaSim valida la cinemática con KUKA YouBot, KUKA Omnirob o una base holonómica equivalente; la compra exige una base con carga, autonomía y seguridad industrial. La especificación técnica toma como referencia una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}, con tracción omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg indicada en la ficha del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística: tracción omnidireccional, 300 kg de carga y 1,4 m/s \cite{agiloxOdm}.
 
 La base omnidireccional da tres ventajas concretas: puede alinearse con estaciones sin giros amplios, puede corregir lateralmente su posición al aproximarse a útiles o mesas, y reduce maniobras innecesarias en zonas compartidas con operarios. En un entorno aeronáutico interior, estas ventajas pesan más que la simplicidad de un AGV de ruta fija o una base diferencial de compra más directa.

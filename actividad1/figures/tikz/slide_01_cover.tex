@@ -1,19 +1,35 @@
 \begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm]
 \begin{scope}[shift={(current page.south west)}]
   \fill[Navy] (0,0) rectangle (16,9);
-  \fill[Navy2] (9.7,0) -- (16,0) -- (16,9) -- (12.7,9) -- cycle;
-  \foreach \x in {-1,0.0,...,16}{\draw[white!4,line width=0.25pt] (\x,0) -- (\x+5,9);}
-  \foreach \y in {0.5,1.0,...,8.5}{\draw[white!5,line width=0.18pt] (9.5,\y) -- (16,\y);}
-  \node[anchor=west,font=\fontsize{7}{8}\selectfont\bfseries,text=Cyan] at (0.86,7.92) {LUNABOTICS \textbullet{} OFERTA T\'ECNICA Y COMERCIAL};
-  \node[anchor=west,font=\fontsize{26}{28}\selectfont\bfseries,text=white,text width=8.7cm,align=left] at (0.84,6.82) {Sistema AMR-FOD-Kitting};
-  \node[anchor=west,font=\fontsize{13}{15}\selectfont\bfseries,text=white!78,text width=7.8cm,align=left] at (0.90,5.46) {Automatizaci\'on intralog\'istica para la l\'inea HTP A320 y secci\'on 19.1};
-  \draw[Cyan,line width=1.2pt] (0.92,4.78) -- (4.7,4.78);
-  \node[anchor=west,font=\fontsize{7.2}{8.5}\selectfont,text=white!82,text width=7.3cm,align=left] at (0.92,3.92) {Actividad 1 \textbullet{} Sistemas Rob\'oticos M\'oviles\\Universidad Internacional de Valencia\\Profesor: Jose I. I\~niguez\\Autor: Jorge Luis Mayorga Taborda\\Entrega: 26 de mayo de 2026};
-  \floorgrid{10.15}{3.72}{1.06}{Cyan}
-  \tailicon{10.3}{1.75}{1.08}
-  \roboticon{13.55}{5.26}{1.05}
-  \node[anchor=center,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=white] at (13.58,6.43) {AMR omnidireccional};
-  \node[anchor=west,font=\fontsize{6.2}{7.3}\selectfont,text=white!70,text width=4.1cm,align=left] at (9.92,0.78) {Coordina kits, herramientas, registro e inspecci\'on FOD.};
+
+  % Primary visual: real plant context, kept quiet so the title owns the slide.
+  \begin{scope}
+    \clip (9.25,0) rectangle (16,9);
+    \node[anchor=center] at (12.55,4.55) {\includegraphics[height=9.25cm]{../figures/source/alestis_htp_nave.png}};
+    \fill[Navy2,opacity=0.50] (9.25,0) rectangle (16,9);
+  \end{scope}
+  \draw[Cyan,line width=1.0pt] (9.25,0.72) -- (9.25,8.34);
+
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Cyan] at (0.88,7.94) {LUNABOTICS \textbullet{} OFERTA T\'ECNICA Y COMERCIAL};
+  \node[anchor=east] at (15.25,8.24) {\includegraphics[width=1.34cm]{../images/logo-viu-w.png}};
+
+  \node[anchor=west,font=\fontsize{25.5}{27.0}\selectfont\bfseries,text=white,text width=8.10cm,align=left] at (0.86,6.70) {Sistema\\AMR-FOD-Kitting};
+  \node[anchor=west,font=\fontsize{12.0}{13.5}\selectfont\bfseries,text=white!82,text width=7.70cm,align=left] at (0.92,4.72) {Automatizaci\'on intralog\'istica para HTP A320 y secci\'on 19.1};
+  \draw[Cyan,line width=1.15pt] (0.94,4.06) -- (4.92,4.06);
+
+  \node[anchor=west,font=\fontsize{7.2}{8.4}\selectfont,text=white!78,text width=7.25cm,align=left] at (0.94,3.18) {Actividad 1 \textbullet{} Sistemas Rob\'oticos M\'oviles\\Profesor: Jos\'e I. I\~niguez\\Autor: Jorge Luis Mayorga Taborda\\Entrega: 26 de mayo de 2026};
+
+  \node[anchor=west,font=\fontsize{6.6}{7.5}\selectfont\bfseries,text=Cyan] at (0.94,1.36) {TESIS};
+  \node[anchor=west,font=\fontsize{8.2}{9.3}\selectfont\bfseries,text=white,text width=6.95cm,align=left] at (0.94,0.88) {Medir un piloto AMR antes de escalar la flota.};
+
+  \fill[white,opacity=0.92,rounded corners=5pt] (9.88,1.78) rectangle (14.55,3.42);
+  \draw[Amber,line width=0.55pt,rounded corners=5pt] (9.88,1.78) rectangle (14.55,3.42);
+  \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Amber] at (10.16,3.08) {CASO PILOTO};
+  \node[anchor=west,font=\fontsize{12.0}{13.0}\selectfont\bfseries,text=Navy] at (10.16,2.58) {HTP A320 · 19.1};
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Ink,text width=3.92cm] at (10.18,2.08) {Kits, RFID/QR, registro de entregas e inspecci\'on FOD.};
+
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=white!72,text width=3.82cm,align=left] at (9.88,0.94) {Foto base: Alestis HTP. Propuesta MROB-VIU 2026.};
+
   \webcamplaceholder
 \end{scope}
 \end{tikzpicture}

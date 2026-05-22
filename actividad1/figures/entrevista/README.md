@@ -1,10 +1,8 @@
 # Capturas de entrevista
 
-Antes de entregar en el campus, exporta las capturas reales de la conversación con ChatGPT y guárdalas en esta carpeta con estos nombres:
+Esta carpeta contiene las capturas reales de la conversación con ChatGPT usadas como evidencia de la entrevista.
 
-- `captura_01.png`: prompt oficial introducido.
-- `captura_02.png`: respuestas sobre HTP, sección 19.1 y flujo de planta.
-- `captura_03.png`: desviación hacia Cádiz y vuelta al proceso productivo.
-- `captura_04.png`: conclusiones sobre AMR, FOD, trazabilidad y piloto.
+- `screenshot_chatgpt_sc1.png`: prompt oficial y presentación inicial.
+- `screenshot_chatgpt_sc2.png` a `screenshot_chatgpt_sc11.png`: respuestas sobre HTP, sección 19.1, FOD, flujo de planta, Cádiz, AMR y piloto.
 
-El informe carga estos archivos automáticamente si existen. No conviene sustituirlos por capturas reconstruidas: la guía pide evidencia visual de la conversación.
+El informe carga estos archivos automáticamente en el Anexo A.2.

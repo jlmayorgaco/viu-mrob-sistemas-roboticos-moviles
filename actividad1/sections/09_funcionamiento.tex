@@ -3,19 +3,32 @@
 El flujo diario se diseña para que el robot apoye al operario sin introducir pasos innecesarios. La operación normal sigue la secuencia siguiente:
 
 \begin{enumerate}
-  \item \textbf{Planificación de misión.} El supervisor, la estación o el planificador genera una misión de entrega, retorno o inspección.
-  \item \textbf{Carga de kit o herramienta.} El personal de logística coloca el material en el módulo portacargas del AMR.
-  \item \textbf{Lectura RFID/QR.} El robot valida identificadores de kit, herramienta, orden y destino.
-  \item \textbf{Navegación hasta estación.} El AMR calcula ruta, evita obstáculos y ajusta velocidad según zona.
-  \item \textbf{Entrega.} El robot se posiciona de forma lateral u orientada según la estación y avisa al operario.
-  \item \textbf{Confirmación.} El operario confirma en HMI, tablet o lector QR; el sistema registra la transacción.
-  \item \textbf{Inspección FOD si aplica.} El robot captura imagen de la zona o ejecuta una ronda definida.
-  \item \textbf{Retorno o nueva misión.} El AMR devuelve útiles usados, va a carga o acepta la siguiente tarea.
+  \item Planificación de misión. El supervisor, la estación o el planificador genera una misión de entrega, retorno o inspección.
+  \item Carga de kit o herramienta. El personal de logística coloca el material en el módulo portacargas del AMR.
+  \item Lectura RFID/QR. El robot valida identificadores de kit, herramienta, orden y destino.
+  \item Navegación hasta estación. El AMR calcula ruta, evita obstáculos y ajusta velocidad según zona.
+  \item Entrega. El robot se posiciona de forma lateral u orientada según la estación y avisa al operario.
+  \item Confirmación. El operario confirma en HMI, tablet o lector QR; el sistema registra la transacción.
+  \item Inspección FOD si aplica. El robot captura imagen de la zona o ejecuta una ronda definida.
+  \item Retorno o nueva misión. El AMR devuelve útiles usados, va a carga o acepta la siguiente tarea.
 \end{enumerate}
 
 \section{Gestión de excepciones}
 
-Si el robot detecta un obstáculo persistente, una lectura RFID incoherente, una zona bloqueada o una alarma de seguridad, la misión pasa a estado de excepción. La HMI muestra la causa y propone reintento, reasignación, llamada a operario o retirada del robot. Sin esta gestión de excepciones, un fallo cotidiano puede bloquear pasillos, ocultar el estado real de una entrega o detener misiones posteriores.
+Si el robot detecta un obstáculo persistente, una lectura RFID incoherente, una zona bloqueada o una alarma de seguridad, la misión pasa a estado de excepción. La HMI muestra la causa y propone reintento, reasignación, llamada a operario o retirada del robot. Sin esta gestión, un fallo cotidiano puede bloquear pasillos, ocultar el estado real de una entrega o detener misiones posteriores.
+
+\begin{longtable}{P{0.24\textwidth}P{0.36\textwidth}P{0.30\textwidth}}
+\toprule
+Nivel & Condición & Acción\\
+\midrule
+\endhead
+Replanificación local & Obstáculo temporal o pasillo ocupado menos de 60 s. & El AMR reduce velocidad, espera o calcula ruta alternativa.\\
+Intervención de supervisor & Obstáculo persistente, WiFi perdido más de 60 s o lectura RFID incoherente. & La HMI bloquea la misión, avisa al responsable y permite reasignar robot.\\
+Retirada manual & Robot parado en zona crítica, batería insuficiente o fallo de seguridad. & Procedimiento LOTO, liberación de freno según fabricante y retirada fuera del pasillo.\\
+\bottomrule
+\caption{Árbol operativo de excepciones para evitar bloqueos de planta.}
+\label{tab:excepciones-operativas}
+\end{longtable}
 
 \section{Datos generados para validación}
 

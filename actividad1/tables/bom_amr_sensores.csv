@@ -1,10 +1,10 @@
 partida_por_amr,cantidad,importe_eur_estimado,base_calculo
-Plataforma AMR omnidireccional 200-300 kg,1,52000,Clase RB-KAIROS/AGILOX equivalente; MiR250 de 44284 EUR se usa como benchmark inferior de AMR 250 kg
+Plataforma AMR omnidireccional 200-300 kg,1,52000,Caso base dentro de rango 52000-75000 EUR; MiR250 de 44284 EUR se usa como benchmark inferior de AMR 250 kg
 Modulo kitting bandejas fijaciones proteccion carga,1,8500,Diseno mecanico ligero para kits herramientas consumibles y utiles moderados
 LiDAR de navegacion,1,1500,Referencia Hokuyo UST-10LX y accesorios de montaje
 Camara RGB-D FOD,1,300,Referencia Intel RealSense D435i para prototipo de vision/depth
 RFID QR antenas etiquetas iniciales cableado,1,3200,Zebra FX9600 como referencia mas antenas QR y consumibles iniciales
-Escaner seguridad bumpers parada emergencia,1,7000,Referencia SICK microScan3 mas elementos de parada y validacion basica
+Escaner seguridad bumpers parada emergencia,1,7000,Hardware adicional o validacion del safety pack de fabrica incluyendo campos E-stop y pruebas
 HMI tablet comunicaciones por robot,1,3500,Samsung Tab Active5 conectividad industrial cliente HMI y configuracion
 Puesta a punto por robot y parametrizacion,1,2500,Calibracion inicial SLAM campos de seguridad docking lectura RFID y pruebas FAT/SAT por unidad
 Paquete AMR-FOD-Kitting,1,78500,Total normalizado por robot sin IVA

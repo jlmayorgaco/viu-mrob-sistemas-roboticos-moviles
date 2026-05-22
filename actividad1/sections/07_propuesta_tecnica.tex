@@ -2,17 +2,17 @@
 
 \section{Sistema AMR-FOD-Kitting para línea HTP A320}
 
-Lunabotics oferta un sistema de robots móviles autónomos para suministro coordinado, control de entregas e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. En el día a día, el robot tiene que llevar cada kit o herramienta al punto correcto y registrar la entrega. Parece sencillo, pero coordinarlo con el ritmo de planta no lo es.
+Lunabotics ofrece un sistema de robots móviles autónomos para suministro coordinado, control de entregas e inspección preventiva. El AMR enlaza zonas de preparación, estaciones del HTP A320, áreas de retorno de útiles y puntos de supervisión. En el día a día, el robot lleva cada kit o herramienta al punto correcto, registra la entrega y reduce las salidas del operario fuera de la estación por logística auxiliar.
 
 \section{Modelo de robot y criterio de selección}
 
-El diseño distingue cuatro niveles: modelo de simulación, modelo técnico seleccionado, benchmarks de mercado y plataforma final de compra. En CoppeliaSim se trabaja con una base tipo KUKA YouBot/KUKA Omnirob, suficiente para representar una cinemática omnidireccional con ruedas mecanum/suecas y ensayar maniobras laterales cerca de estaciones. Como referencia técnica de implantación se adopta una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}: AMR interior omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg según la ficha técnica del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se conserva como alternativa comercial de intralogística para dollies, con accionamiento omnidireccional, 300 kg de carga y velocidad máxima de 1,4 m/s \cite{agiloxOdm}.
+El diseño distingue cuatro niveles: modelo de simulación, modelo técnico seleccionado, benchmarks de mercado y plataforma final de compra. La selección académica usa robots móviles disponibles en CoppeliaSim: KUKA YouBot como modelo principal de cinemática mecanum y KUKA Omnirob o una base omnidireccional equivalente como alternativas de simulación. La referencia técnica de implantación es una clase \textit{Robotnik RB-KAIROS/RB-KAIROS+}: AMR interior omnidireccional, arquitectura ROS 2 y carga útil de hasta 250 kg según la ficha técnica del fabricante \cite{robotnikRbKairos,robotnikRbKairosDatasheet}. AGILOX ODM se mantiene como alternativa comercial de intralogística para dollies, con tracción omnidireccional, 300 kg de carga y velocidad máxima de 1,4 m/s \cite{agiloxOdm}.
 
-MiR250 y Omron LD-250 se usan como benchmarks de AMR de 250 kg. El MiR250 publica 250 kg de carga, hasta 2 m/s, uso interior y superficie de carga compacta \cite{mir250Specs}; el Omron LD-250 publica 250 kg, 1,2 m/s, navegación natural, sensores de seguridad y E-stop \cite{omronLd250}. Esas referencias acotan coste, madurez y capacidades de mercado. El requisito que manda en esta oferta sigue siendo la maniobra lateral cerca de estación.
+MiR250 y Omron LD-250 se usan como benchmarks de AMR de 250 kg. El MiR250 publica 250 kg de carga, hasta 2 m/s, uso interior y superficie de carga compacta \cite{mir250Specs}; el Omron LD-250 publica 250 kg, 1,2 m/s, navegación natural, sensores de seguridad y E-stop \cite{omronLd250}. Esas referencias acotan coste, madurez y capacidades de mercado. En la línea HTP, la diferencia la marca la aproximación lateral a estaciones con carros próximos: una base diferencial puede funcionar en pasillos limpios, pero pierde margen cuando debe entregar sin girar toda la carga.
 
 \begin{longtable}{P{0.18\textwidth}P{0.25\textwidth}P{0.31\textwidth}P{0.16\textwidth}}
 \toprule
-\textbf{Rol en la propuesta} & \textbf{Modelo/referencia} & \textbf{Dato técnico relevante} & \textbf{Uso}\\
+Rol en la propuesta & Modelo/referencia & Dato técnico relevante & Uso\\
 \midrule
 \endhead
 Simulación académica & KUKA YouBot / KUKA Omnirob o base mecanum equivalente & Ruedas mecanum/suecas, movimiento longitudinal, lateral y giro sobre el eje vertical. & Validar cinemática, rutas y aproximación a estación en CoppeliaSim.\\
@@ -26,16 +26,16 @@ Referencia industrial pesada & KUKA omniMove & Plataforma omnidireccional para c
 \label{tab:modelos-robot}
 \end{longtable}
 
-El robot se selecciona por su capacidad de maniobra junto a estaciones. Debe entrar y salir sin giros amplios, mantenerse orientado hacia el punto de entrega, corregir lateralmente su posición y compartir pasillos con operarios. Esta decisión conecta con el temario: las ruedas omnidireccionales dan más maniobrabilidad que una base diferencial, aunque exigen mayor control, buena odometría, compensación de deslizamiento y validación de seguridad.
+La elección responde a una restricción operativa de maniobra junto a estaciones. En estaciones con carros, útiles y estructuras grandes alrededor, se adopta una envolvente operativa objetivo inferior a 1,2 m para aproximación lateral. Una base diferencial de 250 kg suele necesitar más espacio para reorientarse antes de entregar; una base mecanum puede corregir \(v_y\) sin girar toda la carga. La contrapartida es técnica: más sensibilidad al deslizamiento, ruedas que requieren inspección preventiva y control de velocidad por rueda bien ajustado.
 
 \section{Opciones de compra y decisión de ingeniería}
 
 \begin{longtable}{P{0.22\textwidth}P{0.23\textwidth}P{0.25\textwidth}P{0.20\textwidth}}
 \toprule
-\textbf{Opción} & \textbf{Fortaleza} & \textbf{Riesgo/condición} & \textbf{Decisión}\\
+Opción & Fortaleza & Riesgo/condición & Decisión\\
 \midrule
 \endhead
-RB-KAIROS-class & Coincide con cinemática omnidireccional, ROS 2, SLAM y carga de 250 kg. & Requiere cotización formal, safety pack y adaptación portakits. & \textbf{Base técnica recomendada}.\\
+RB-KAIROS-class & Coincide con cinemática omnidireccional, ROS 2, SLAM y carga de 250 kg. & Requiere cotización formal, safety pack y adaptación portakits. & Base técnica recomendada.\\
 AGILOX ODM-class & Producto intralogístico maduro, omnidireccional y orientado a dollies. & Menos abierto para experimentación académica; integración depende de proveedor. & Alternativa comercial seria.\\
 MiR250 / Omron LD-250 & Muy buenos benchmarks de AMR 250 kg y flota. & Pierden ventaja cuando la estación exige acoplamiento lateral con orientación fija. & Referencia de coste/capacidad.\\
 KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y sobredimensionamiento para kits, herramientas y consumibles. & No recomendado para este alcance.\\
@@ -53,44 +53,83 @@ KUKA omniMove & Referencia pesada y aeronáutica para cargas XXL. & Sobrecoste y
 
 \section{Especificación de plataforma objetivo}
 
-La plataforma objetivo se define por requisitos de operación. El integrador podría seleccionar un chasis industrial equivalente si respeta la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. Así no se confunde el robot usado en simulación con el equipo que se compraría para una nave aeronáutica.
+La plataforma objetivo se define por requisitos de operación. El integrador podría seleccionar un chasis industrial equivalente si respeta la cinemática omnidireccional, la carga útil moderada y la separación entre navegación, seguridad y proceso. En simulación se valida la cinemática; en compra se exige un AMR industrial con seguridad y soporte de fabricante.
 
 \begin{longtable}{P{0.22\textwidth}P{0.33\textwidth}P{0.35\textwidth}}
 \toprule
-\textbf{Decisión de diseño} & \textbf{Especificación propuesta} & \textbf{Justificación técnica}\\
+Decisión de diseño & Especificación propuesta & Justificación técnica\\
 \midrule
 \endhead
-Locomoción & Base holonómica con cuatro ruedas mecanum/suecas, control de \(v_x\), \(v_y\) y \(\omega\). & Permite aproximación lateral a estaciones, corrección fina sin reorientar la carga y menor ocupación de pasillo que una base diferencial.\\
+Locomoción & Base holonómica con cuatro ruedas mecanum/suecas, control de \(v_x\), \(v_y\) y \(\omega\). & Da aproximación lateral a estaciones, corrección fina sin reorientar la carga y menor ocupación de pasillo que una base diferencial.\\
 Carga y módulo & Clase 200--300 kg con bandeja portakits, puntos de amarre, balizas y posibilidad de cajones o estantería baja. & Cubre kits, herramientas, consumibles y útiles moderados.\\
 Motorización & Motores BLDC o servomotores eléctricos con reductora, encoder por rueda, supervisión de corriente y temperatura. & El temario de motores favorece accionamientos eléctricos compactos, eficientes y con realimentación para control de velocidad/posición.\\
-Control de bajo nivel & Conversión cinemática inversa de velocidad de cuerpo a velocidad de rueda; lazo cerrado por encoder; límites de aceleración. & La omnidireccionalidad mejora la maniobra, pero penaliza si no se controla el deslizamiento y la saturación de motores.\\
-Control de navegación & Fusión LiDAR--IMU--encoders para pose; SLAM/mapa; ruta global A*/Dijkstra; evitación local DWA o campos potenciales. & Conecta la arquitectura con localización, planificación y anticolisión del curso.\\
+Control de bajo nivel & Conversión cinemática inversa de velocidad de cuerpo a velocidad de rueda; lazo cerrado por encoder; límites de aceleración. & La omnidireccionalidad mejora la maniobra, pero penaliza el rendimiento si no se controla el deslizamiento y la saturación de motores.\\
+Control de navegación & Fusión LiDAR--IMU--encoders para pose; mapa base con zonas dinámicas; ruta global A* con Dijkstra como caso base; planificador local TEB/Nav2. & Conecta la arquitectura con localización, planificación y anticolisión del curso. DWA y campos potenciales quedan como referencias académicas, no como primera opción de implantación.\\
 Seguridad funcional & Escáner láser de seguridad, bumpers, E-stop físico, campos de protección, reducción de velocidad por zona y estado seguro ante fallo. & La parada de seguridad se implementa aparte del LiDAR de navegación y de la cámara FOD.\\
-Energía y disponibilidad & Batería industrial con retorno automático a carga, reserva mínima operativa y mantenimiento preventivo de ruedas/sensores. & Los actuadores consumen batería y se degradan; el plan de flota debe considerar autonomía, carga y desgaste.\\
+Localización fina & Marcadores QR/AprilTag en estaciones críticas o balizas UWB si el piloto muestra deriva de localización. & El SLAM resuelve navegación general; la entrega junto al puesto puede requerir referencia local para repetir posición.\\
+Energía y disponibilidad & Autonomía objetivo de turno (6--8 h), retorno automático a carga, recarga oportunista y reserva mínima operativa del 20\%. & Los actuadores consumen batería y se degradan; el plan de flota debe considerar autonomía, carga y desgaste.\\
 Interfaz e integración & HMI/tablet, WiFi industrial, base de datos de misiones e integración gradual con MES/ERP. & El piloto debe dejar evidencia operativa y preparar el crecimiento sin exigir integración total desde el primer día.\\
 \bottomrule
 \caption{Especificación técnica de la plataforma AMR omnidireccional objetivo.}
 \label{tab:especificacion-amr-objetivo}
 \end{longtable}
 
-La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simular cinemática, MiR250/LD-250 para fijar el orden de magnitud comercial y AMR omnidireccional industrial como plataforma final. Con ese seguimiento de requisitos, el presupuesto no fuerza una compra incompatible con el criterio técnico. Las referencias de 250 kg dimensionan coste y carga; la licitación exigiría base holonómica o mecanum equivalente.
+La decisión técnica mantiene tres niveles: \textit{YouBot/Omnirob} para simular cinemática, MiR250/LD-250 para fijar el orden de magnitud comercial y AMR omnidireccional industrial como plataforma final. Las referencias de 250 kg dimensionan coste y carga porque algunos útiles, carros bajos, calibres y kits protegidos pueden superar el rango de 30--50 kg cuando se mueven como conjunto. Si el levantamiento real demostrara cargas inferiores a 100 kg, la fase de compra debería abrir una alternativa más ligera.
+
+\section{Dimensionamiento de flota}
+
+El número de robots se calcula desde misiones diarias y tiempo de ciclo. Para 80 HTP/mes, suponiendo 20 días productivos al mes, la línea trabaja alrededor de 4 HTP/día. El piloto no cubre toda la línea: valida una zona y una familia de misiones. La fase de 7 robots sí se dimensiona para cubrir el flujo auxiliar principal de la línea HTP; la fase de 17 robots se reserva para cobertura multi-zona, turnos ampliados o extensión a otros flujos logísticos.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{P{0.24\textwidth}rP{0.44\textwidth}}
+\toprule
+Tipo de misión por HTP & Misiones/HTP & Contenido\\
+\midrule
+Entrega de kits y consumibles & 14 & Fijaciones, sellantes, protección, documentación de trabajo y reposiciones programadas.\\
+Herramientas y útiles & 10 & Herramientas controladas, calibres, útiles ligeros o moderados y carros bajos.\\
+Retorno y retirada & 9 & Devolución de útiles usados, contenedores, embalajes y material no consumido.\\
+Rondas FOD y excepciones & 8 & Rondas preventivas, verificación visual, incidencias y entregas urgentes.\\
+\midrule
+Total base & 41 & Misiones auxiliares por HTP antes de margen de variabilidad.\\
+\bottomrule
+\end{tabularx}
+\caption{Supuesto de demanda logística por HTP para dimensionar la flota.}
+\label{tab:misiones-htp}
+\end{table}
+
+Con 4 HTP/día, el caso base genera \(4 \times 41 = 164\) misiones/día. Se añade un margen operativo del 15\% por incidencias, cambios de prioridad y rondas adicionales, lo que lleva la demanda de diseño a unas 189 misiones/día. Si la misión media dura 12 minutos, un AMR disponible el 70\% de un turno de 8 horas puede cubrir:
+
+\[
+M_{\mathrm{robot}}=\frac{8 \cdot 60 \cdot 0{,}70}{12}\approx 28 \;\text{misiones/día}
+\]
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{P{0.20\textwidth}r r r X}
+\toprule
+Escenario & Demanda & Capacidad/robot & Robots & Interpretación\\
+\midrule
+Piloto & 20--30 misiones/día & 25--28 & 1 & Una zona, pocas estaciones y medición de tiempos reales.\\
+Línea HTP & 189 misiones/día & 28 & 7 & \(189/28=6{,}75\); se redondea a 7 para cubrir picos y carga.\\
+Cobertura extendida & 420--500 misiones/día & 28 & 15--17 & Varias zonas, rondas FOD simultáneas, turnos ampliados y reserva de mantenimiento.\\
+\bottomrule
+\end{tabularx}
+\caption{Dimensionamiento académico de flota por capacidad de misión.}
+\label{tab:dimensionamiento-flota}
+\end{table}
 
 \section{Funciones principales}
 
-\begin{itemize}
-  \item Transporte interno de kits, herramientas, consumibles y útiles de carga moderada.
-  \item Lectura RFID/QR de bandejas, herramientas, órdenes y puntos de entrega.
-  \item Entrega confirmada con HMI, tablet de estación o escaneo de operario autorizado.
-  \item Inspección preventiva FOD en rutas o zonas definidas.
-  \item Retorno de útiles usados y aviso de incidencias de material.
-  \item Registro de misiones, eventos, tiempos y excepciones para análisis posterior.
-\end{itemize}
+El sistema cubre el transporte interno de kits, herramientas, consumibles y útiles de carga moderada. En cada misión lee RFID/QR de bandejas, herramientas, órdenes y puntos de entrega; después registra la confirmación desde HMI, tablet de estación o escaneo de operario autorizado.
+
+La misma plataforma puede ejecutar rondas preventivas FOD en rutas definidas y devolver útiles usados al área logística. Si aparece una incidencia de material, la misión queda marcada con evento, tiempo, estación y estado final para revisión posterior.
 
 \section{Sensores y componentes}
 
-El paquete sensorial se divide en tres grupos. Para navegación se usan LiDAR 2D/3D, IMU y encoders: con ellos el AMR estima pose, actualiza mapa y evita obstáculos geométricos. Para seguridad se reservan escáner láser certificado, bumpers y parada de emergencia, con campos de protección y reducción de velocidad por zona. Para proceso se integran cámara RGB-D o cámara industrial, lectura RFID/QR, HMI/tablet y base de datos de misiones.
+El paquete sensorial separa navegación, seguridad y proceso. Para navegación se usan LiDAR 2D/3D, IMU y encoders: con ellos el AMR estima pose, actualiza mapa y evita obstáculos geométricos. Para seguridad se reservan escáner láser certificado, bumpers y parada de emergencia, con campos de protección y reducción de velocidad por zona. Para proceso se integran cámara RGB-D o cámara industrial, lectura RFID/QR, HMI/tablet y base de datos de misiones. La Intel RealSense D435i se usa como referencia de piloto y coste; si las pruebas FOD requieren mayor resolución, iluminación controlada o distancia de trabajo superior, se sustituye por cámara industrial tipo Basler/FLIR/Zivid en la oferta final.
 
-La cámara aporta evidencia visual de rondas FOD y el lector RFID/QR cierra la entrega en origen y destino. La HMI permite solicitar misiones, aceptar entregas y consultar estado. La WiFi industrial une robot, supervisor, gestor de flota y base de datos. La decisión práctica es separar lo que sirve para navegar, lo que sirve para parar con seguridad y lo que sirve para demostrar el registro de entregas.
+La cámara aporta evidencia visual de rondas FOD y el lector RFID/QR cierra la entrega en origen y destino. La HMI permite solicitar misiones, aceptar entregas y consultar estado. La WiFi industrial une robot, supervisor, gestor de flota y base de datos. En estaciones donde el mapa cambie por útiles o carros, se añaden marcas AprilTag/QR o UWB como apoyo de localización fina. El diseño separa tres funciones: navegación, parada segura y registro de entregas.
 
 \section{Arquitectura sensorial por capas}
 
@@ -98,11 +137,11 @@ La arquitectura separa sensores de navegación, seguridad y proceso. El LiDAR de
 
 \begin{longtable}{P{0.20\textwidth}P{0.24\textwidth}P{0.22\textwidth}P{0.24\textwidth}}
 \toprule
-\textbf{Capa} & \textbf{Componentes} & \textbf{Variable medida} & \textbf{Decisión que habilita}\\
+Capa & Componentes & Variable medida & Decisión que habilita\\
 \midrule
 \endhead
 Localización & Encoders, IMU, LiDAR 2D/3D & Odometría, orientación, nube/distancia a obstáculos. & Estimar pose, actualizar mapa y ejecutar SLAM.\\
-Planificación & Mapa, gestor de misiones, LiDAR & Ruta global, ruta local, zonas bloqueadas. & Usar A*/Dijkstra para ruta global y DWA/campos potenciales para evitación local.\\
+Planificación & Mapa, gestor de misiones, LiDAR & Ruta global, ruta local, zonas bloqueadas. & Usar A* para ruta global y TEB/Nav2 como planificador local; DWA y campos potenciales quedan como referencia conceptual.\\
 Seguridad & Escáner láser de seguridad, bumpers, E-stop & Invasión de campo protegido, contacto, alarma manual. & Reducir velocidad, parar, bloquear misión o retirar AMR.\\
 Proceso & RGB-D/industrial, RFID, QR, HMI & Evidencia visual, identificador de kit, punto de entrega y confirmación humana. & Registrar entrega, ronda FOD y excepción.\\
 Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiempos, alarmas, KPIs. & Priorizar misiones, auditar eventos y decidir escalado.\\
@@ -113,10 +152,52 @@ Supervisión & WiFi industrial, base de datos, dashboard & Estado de flota, tiem
 
 \section{Actuadores, motorización y control}
 
-La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La maniobrabilidad manda en esta elección: la misión prevista es mover kits, herramientas y útiles moderados.
+La plataforma es un AMR eléctrico de ruedas omnidireccionales, dentro del temario de robots móviles con ruedas, efectores, actuadores y controladores. Cada rueda mecanum/sueca usa motor eléctrico con controlador de velocidad, encoder y supervisión de corriente/temperatura. El control de bajo nivel convierte consignas longitudinales, laterales y angulares en velocidades de rueda. El nivel de navegación limita aceleraciones, radios de seguridad y velocidades máximas por zona. La elección se apoya en la envolvente de estación: aproximación lateral, orientación fija del portakits y menor interferencia con carros próximos.
 
-Los actuadores se concentran en locomoción y servicio auxiliar: mover la base, accionar elementos simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura. Esta separación entre locomoción, seguridad y proceso evita sobredimensionar el sistema.
+Los actuadores se concentran en locomoción y servicio auxiliar, como mover la base, accionar elementos simples del módulo portacargas si se incorporan, activar señales luminosas/acústicas y ejecutar parada segura.
 
 \section{Modo de operación seguro}
 
-El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de protección configurables y ejecuta parada segura si se invade el campo de seguridad. Las rutas se validan en CoppeliaSim y posteriormente en planta con pruebas controladas. La supervisión permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.
+El AMR circula a velocidad limitada en zonas compartidas, reduce velocidad al aproximarse a estaciones, mantiene zonas de protección configurables y ejecuta parada segura si se invade el campo de seguridad. Como criterio de diseño, se toma ISO 3691-4 \cite{iso36914} para dimensionar campos de seguridad, distancia de frenado y velocidad: hasta 0,3 m/s en aproximaciones con personal cercano y hasta 1,2 m/s en pasillos despejados, siempre condicionado a la validación del escáner de seguridad y a las pruebas SAT. Las rutas se validan primero en CoppeliaSim y después en planta con pruebas controladas. La supervisión permite bloquear zonas, priorizar misiones urgentes y retirar un robot de servicio si aparece una alarma.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{0.92\textwidth}{P{0.24\textwidth}P{0.22\textwidth}P{0.22\textwidth}X}
+\toprule
+Zona & Velocidad & Distancia teórica & Uso\\
+\midrule
+Aproximación con personal & 0,3 m/s & 0,03 m con \(a=1{,}5\,m/s^2\) & Entrega en estación, retirada de útil y paso junto a operario.\\
+Pasillo despejado & 1,2 m/s & 0,48 m con \(a=1{,}5\,m/s^2\) & Tramos abiertos, siempre con campo de protección ajustado por SAT.\\
+\bottomrule
+\end{tabularx}
+\caption{Distancia mínima de frenado por cálculo \(d=v^2/(2a)\). La distancia de seguridad real debe sumar tiempo de reacción del escáner, latencia de control y margen normativo.}
+\label{tab:frenado-amr}
+\end{table}
+
+\section{Cinemática mecanum de referencia}
+
+Para una base mecanum ideal, la conversión de velocidad de cuerpo a velocidad de rueda puede representarse como:
+
+\[
+\begin{bmatrix}
+\omega_{FL}\\
+\omega_{FR}\\
+\omega_{RL}\\
+\omega_{RR}
+\end{bmatrix}
+=
+\frac{1}{r}
+\begin{bmatrix}
+1 & -1 & -(l_x+l_y)\\
+1 & 1 & (l_x+l_y)\\
+1 & 1 & -(l_x+l_y)\\
+1 & -1 & (l_x+l_y)
+\end{bmatrix}
+\begin{bmatrix}
+v_x\\
+v_y\\
+\omega
+\end{bmatrix}.
+\]
+
+La matriz sigue la convención habitual para una base mecanum ideal \cite{lynchPark2017}; en planta se ajusta con límites de aceleración, compensación de deslizamiento, odometría fusionada con IMU/LiDAR y mantenimiento preventivo de ruedas mecanum. En entornos con polvo, virutas o restos de sellante, esas ruedas requieren inspección frecuente porque son más sensibles que una rueda convencional.
