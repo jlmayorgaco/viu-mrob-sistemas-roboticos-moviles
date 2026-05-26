@@ -1,73 +1,89 @@
-\chapter{Validacion}
+\chapter{Validacion y trazabilidad}
 
-La validacion combina observacion visual, indicadores numericos y pruebas repetidas. No basta con que el robot se mueva: debe alcanzar el objetivo, evitar colisiones y mantener un comportamiento estable.
+La validacion se diseno para demostrar comportamiento, no solo compilacion. Se
+evalua si la escena existe, si los objetos clave estan presentes, si los scripts
+estan embebidos, si las tareas se completan, si Bill se mueve, si las acciones
+visuales ocurren, si el sistema anticolision se activa, si el estimador queda
+acotado y si los sensores publican rayos visibles.
 
-\section{Trazabilidad guia y temas de clase}
+\section{Checklist automatizado}
 
-\begin{longtable}{P{0.28\textwidth}P{0.34\textwidth}P{0.28\textwidth}}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{P{0.40\textwidth}P{0.45\textwidth}P{0.08\textwidth}}
 \toprule
-\textbf{Fuente revisada} & \textbf{Exigencia o concepto} & \textbf{Como queda cubierto}\\
+\textbf{Bloque} & \textbf{Chequeo} & \textbf{Estado}\\
 \midrule
 \endhead
-Guia Actividad 2 & Pioneer P3DX programado en CoppeliaSim/Lua. & Escena `.ttt` final con script Lua embebido en `PioneerP3DX`.\\
-Guia Actividad 2 & Parte 1: atraccion hacia `mannequin` mediante campos potenciales. & Fuerza atractiva, rumbo con `atan2`, saturacion de velocidad y parada por tolerancia.\\
-Guia Actividad 2 & Parte 2: avance hacia objetivo con evitacion de obstaculos. & Fuerzas repulsivas de sensores, reduccion de velocidad, recuperacion anti-bloqueo y telemetria de riesgo.\\
-Guia Actividad 2 & Integrar Pioneer en una celda robotizada coordinada. & Celda con docking/carga, HMI, transportadores, palets, vallas, zona robotizada, waypoints, eventos y senales de coordinacion.\\
-Guia Actividad 2 & Entregar PDF y PowerPoint. & \path{main.pdf}, \path{slides.pdf} y \path{Actividad2_Pioneer_CoppeliaSim.pptx}.\\
-Tema 1 & Robots moviles con ruedas y traccion diferencial. & Modelo cinematico diferencial y conversion \(v,\omega\) a velocidades de rueda.\\
-Tema 2 & Sensores, actuadores, controladores e incertidumbre. & 16 ultrasonidos, 6 sensores virtuales, ruido/fallo sensorial, control por ruedas, bateria, saturaciones y senales internas.\\
-Tema 3 & Control y navegacion en robotica movil. & Maquina de estados `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`.\\
-Tema 4 & Campos potenciales, DWA, A*, Dijkstra, RRT y SLAM como contexto de navegacion. & Se implementa el metodo pedido de campos potenciales en el Pioneer y se anade una extension de flota con A* cooperativo y reservas temporales.\\
-Tema 4 & Seguridad y pruebas simuladas antes del despliegue. & Validacion headless con escenarios S1-S8, zonas de velocidad, HMI y JSON de resultados reproducible.\\
-Extension profesional & Navegacion multi-robot cooperativa. & 3 AMR auxiliares con A* en grilla, reservas celda-tiempo, reservas arista-tiempo, bateria y recarga.\\
-Extension profesional & Presentacion evaluable de la escena. & Placas de demo, labels runtime, camaras nombradas y marcadores visuales de trazabilidad con guia/PPTs.\\
+Escena & Existe \path{Sim_T2_Phase1_Basic.ttt} y contiene R1, B1, T1, T2, C1. & OK\\
+Warehouse & Dos mesas, dos shelves, obstaculos y panel de tareas. & OK\\
+Scripts & Controlador R1 y manager B1 adjuntos en la escena. & OK\\
+Tareas & Entrega y retorno de T1/T2; cuatro tareas completadas. & OK\\
+Bill & Movimiento entre estaciones y acciones de tomar/trabajar/entregar. & OK\\
+Percepcion & 16 sensores activos y rayos visualizados. & OK\\
+Seguridad & Modo \texttt{AVOIDING} observado y riesgo de obstaculo publicado. & OK\\
+Estimacion & Kalman activo, mapa SLAM actualizado y error acotado. & OK\\
+Planificacion & \texttt{SLAM\_WAYPOINT} observado. & OK\\
+Bateria & Tarea aceptada por bateria y retorno a carga. & OK\\
 \bottomrule
 \end{longtable}
+\endgroup
 
-\begin{longtable}{P{0.28\textwidth}P{0.42\textwidth}P{0.20\textwidth}}
-\toprule
-\textbf{Prueba} & \textbf{Criterio} & \textbf{Estado esperado}\\
-\midrule
-\endhead
-Atraccion a objetivo & El robot reduce distancia hasta entrar en tolerancia. & Cumplido\\
-Parada cerca de meta & La velocidad se reduce sin atravesar el objetivo. & Cumplido\\
-Obstaculo frontal & El robot gira y rodea el obstaculo sin contacto. & Cumplido\\
-Obstaculos laterales & El robot mantiene distancia minima. & Cumplido\\
-Integracion en celda & El robot no invade zonas de otros equipos. & Cumplido\\
-Organizacion visual & Piso texturizado, senalizacion industrial, carriles y grilla/rutas A* visibles. & Cumplido\\
-Demo evaluable & Labels de guia, camaras nombradas y marcadores de trazabilidad visibles en la escena. & Cumplido\\
-Flota A* & Tres robots auxiliares planifican rutas sin ocupar la misma celda-tiempo ni cruzar aristas opuestas. & Cumplido\\
-Bateria de flota & Los robots consumen bateria, regresan a carga y terminan recargados. & Cumplido\\
-\bottomrule
-\end{longtable}
+\section{Timeline de la mision}
 
-\section{Resultado de validacion automatizada}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_slam_task_timeline.png}
+  \caption{Timeline exportado de la simulacion: estados de tarea, movimiento, planner y acciones de Bill durante la mision.}
+  \label{fig:task-timeline}
+\end{figure}
 
-La escena final se valido ejecutando CoppeliaSim en modo headless mediante el generador \path{build_professional_scene.py}. El ensayo arranca el Pioneer desde la zona de espera, activa la senal \texttt{missionReady}, fuerza los escenarios temporizados y mide la distancia hasta el objetivo \texttt{mannequin}.
+La mision no es instantanea porque Bill introduce esperas reales de proceso. R1
+debe detenerse mientras Bill trabaja T1 o T2 y debe esperar a que B1 llegue a
+WS2 antes de buscar T2. Esta espera se refleja en el modo \texttt{WAIT\_B1}.
 
-\begin{longtable}{P{0.45\textwidth}P{0.35\textwidth}}
-\toprule
-\textbf{Indicador} & \textbf{Resultado}\\
-\midrule
-\endhead
-Distancia inicial al objetivo & 4,328 m\\
-Distancia final al objetivo & 0,739 m\\
-Estado final del controlador & ARRIVED\\
-Sensores activos & 22, incluidos 6 sensores virtuales adicionales\\
-Escenarios ejecutados & S1 a S8: ruta, obstaculo movil, parada, objetivo dinamico, pasillo estrecho, degradacion sensorial, bateria baja y aproximacion final\\
-Estados observados & ROUTE, AVOIDING, RECOVERY, HOLD y ARRIVED\\
-Distancia minima a obstaculo registrada & 0,191 m\\
-Telemetria industrial validada & Bateria, zonas de velocidad, HMI, estacion de carga y fallo sensorial\\
-Acabado visual validado & Textura de piso, senalizacion de seguridad, carriles, grilla A* y rutas coloreadas\\
-Ayudas de demo validadas & 7 labels runtime, placas visuales, camaras de inspeccion y marcadores guia/PPTs\\
-Flota cooperativa & 3 robots AMR auxiliares con A* y reservas temporales\\
-Planes A* generados & 16\\
-Conflictos evitados por reservas & 8\\
-Eventos de carga de flota & 4\\
-Robots con mision completada y recargados & 3/3\\
-Estado final de flota & R1 READY, R2 READY y R3 READY\\
-Escena validada & \path{Actividad2_Pioneer_Profesional_10_10.ttt}\\
-\bottomrule
-\end{longtable}
+\section{Senales exportadas}
 
-La validacion confirma que el robot reduce la distancia al objetivo, alcanza la tolerancia de seguimiento, mantiene activo el sistema anticolisiones, supera eventos de celda y publica telemetria interna mediante las senales `pioneerState`, `pioneerArrived`, `pioneerDistanceToTarget`, `pioneerMinObstacleDistance`, `pioneerObstacleRisk`, `pioneerSensorCount`, `pioneerRouteIndex`, `pioneerScenario`, `pioneerBatteryLevel`, `pioneerBatteryMode`, `pioneerSpeedZone` y `pioneerSensorFaultActive`. Tambien verifica la extension cooperativa con `fleetRobotsTotal`, `fleetAStarPlansReady`, `fleetAStarPlanCount`, `fleetReservationConflictsAvoided`, `fleetChargingEvents`, `fleetMissionComplete`, `fleetRechargedCount`, `fleetAllComplete`, `fleetMinBattery` y `fleetStateSummary`. Finalmente comprueba las ayudas de presentacion con `demoOverlayLabels`, placas de demo y camaras de inspeccion para facilitar la correccion en CoppeliaSim.
+Las senales principales usadas para logs y plots son:
+
+\begin{itemize}
+  \item Tarea: \texttt{phase1TaskState}, \texttt{phase1TaskId},
+  \texttt{phase1CompletedTaskCount}.
+  \item Movimiento: \texttt{phase1MotionMode}, \texttt{phase1PlannerMode},
+  \texttt{phase1DistanceToTarget}.
+  \item Seguridad: \texttt{phase1MinObstacleDistance},
+  \texttt{phase1ObstacleRisk}, \texttt{phase1SensorRayCount}.
+  \item Estimacion: \texttt{phase1EstimatedPose}, \texttt{phase1PoseError},
+  \texttt{phase1KalmanCovariance}.
+  \item Mapeo: \texttt{phase1SlamLandmarkCount},
+  \texttt{phase1SlamUpdates}, \texttt{phase1GridOccupiedCells}.
+  \item Bill: \texttt{phase1B1Station}, \texttt{phase1B1Action},
+  \texttt{phase1B1MovedDistance}.
+  \item Energia: \texttt{phase1BatteryLevel}, \texttt{phase1BatteryMode},
+  \texttt{phase1Charging}.
+\end{itemize}
+
+\section{Reproducibilidad}
+
+El flujo reproducible queda:
+
+\begin{enumerate}
+  \item Construir y validar escena:
+  \path{python actividad2/coppeliasim/build_phase1_basic_scene.py}.
+  \item Exportar corrida base:
+  \path{python actividad2/coppeliasim/run_phase1_slam_export.py}.
+  \item Comparar SLAM:
+  \path{python actividad2/coppeliasim/run_phase1_slam_comparison.py}.
+  \item Generar plots:
+  \path{python actividad2/coppeliasim/plot_phase1_slam_comparison.py}.
+  \item Compilar informe:
+  \path{pdflatex -> bibtex -> pdflatex -> pdflatex}.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_slam_overview.png}
+  \caption{Resumen visual de la corrida base: pose, error, bateria, obstaculos, planner y estados principales.}
+  \label{fig:slam-overview}
+\end{figure}

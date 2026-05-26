@@ -1,18 +1,84 @@
-\chapter{Modelo del robot Pioneer}
+\chapter{Modelo del robot y control}
 
-El Pioneer P3DX se modela como robot diferencial. Su movimiento se controla mediante dos ruedas motrices: izquierda y derecha. A partir de una velocidad lineal deseada \(v\) y una velocidad angular deseada \(\omega\), las velocidades de rueda pueden aproximarse como:
+El Pioneer P3DX se modela como robot diferencial. El controlador calcula una
+velocidad lineal \(v\) y una velocidad angular \(\omega\), y las transforma a
+velocidades de rueda izquierda y derecha:
 
 \[
 v_L = v - \frac{L}{2}\omega,\qquad
 v_R = v + \frac{L}{2}\omega
 \]
 
-donde \(L\) es la distancia entre ruedas. En CoppeliaSim estas velocidades se transforman a velocidad angular de motor dividiendo por el radio de rueda \(r\):
+Si \(r\) es el radio de rueda, las consignas enviadas a los motores de
+CoppeliaSim son:
 
 \[
-\omega_L = \frac{v_L}{r},\qquad \omega_R = \frac{v_R}{r}
+\omega_L = \frac{v_L}{r},\qquad
+\omega_R = \frac{v_R}{r}
 \]
 
-\section{Sensores}
+En la implementacion se usan \(r=\SI{0.0975}{m}\) y
+\(L=\SI{0.331}{m}\). Las velocidades se saturan para proteger la simulacion y
+mantener trayectorias reproducibles.
 
-Para la segunda parte se emplean sensores de proximidad frontales o laterales. Cada lectura de obstaculo se transforma en una componente repulsiva. La suma de atraccion al objetivo y repulsion de obstaculos produce un vector de movimiento reactivo. Este enfoque es sencillo y adecuado para la actividad, aunque puede presentar minimos locales, oscilaciones o trayectorias suboptimas \cite{siegwart2011,tzafestas2014}.
+\section{Seguimiento de objetivo}
+
+Para navegar hacia un rack, mesa o cargador, se calcula primero la posicion del
+objetivo en coordenadas globales y luego el error respecto a la pose estimada
+del robot:
+
+\[
+e_x = x_g-\hat{x},\qquad e_y = y_g-\hat{y},\qquad
+d = \sqrt{e_x^2+e_y^2}
+\]
+
+El rumbo deseado es:
+
+\[
+\theta_g = \operatorname{atan2}(e_y,e_x)
+\]
+
+y el error angular usado por el controlador es:
+
+\[
+e_\theta = \operatorname{wrap}(\theta_g-\hat{\theta})
+\]
+
+La consigna base se corrige con un termino lateral y con una contribucion de
+evitacion de obstaculos. En forma compacta:
+
+\[
+v = f_d(d-d_f)\cos(e_\theta),\qquad
+\omega = f_\theta(e_\theta) + f_{lat}(e_y^{body}) + f_{obs}
+\]
+
+donde \(d_f\) es la distancia de seguimiento y \(f_{obs}\) resume el giro
+repulsivo derivado de sensores.
+
+\section{Modos de control evaluados}
+
+El benchmark de control se ejecuto con cinco modos: P, PI, PID, LQR y NMPC. La
+parte principal defendible academicamente en esta entrega es P/PI/PID junto con
+la estimacion y evitacion de obstaculos. Los modos LQR y NMPC se conservan en
+los logs como aproximaciones reducidas dentro del script, utiles para comparar
+suavidad y consumo, pero no se presentan como un solver LQR/NMPC industrial.
+
+\begin{longtable}{P{0.17\textwidth}P{0.35\textwidth}P{0.36\textwidth}}
+\toprule
+\textbf{Modo} & \textbf{Idea} & \textbf{Uso en la escena}\\
+\midrule
+\endhead
+P & Control proporcional sobre distancia y heading. & Simple, estable y facil de explicar, pero con mayor tiempo activo y ruta mas larga.\\
+PI & Agrega integral de distancia/heading. & Fue el mejor por el score ponderado de la comparacion de controladores.\\
+PID & Incluye derivadas para amortiguar cambios. & Buen compromiso general; se uso como modo base en varias exportaciones SLAM.\\
+LQR & Realimentacion lineal reducida de error lateral y heading. & Se conserva como aproximacion academica ligera, no como diseno completo por Riccati.\\
+NMPC & Penalizacion heuristica de riesgo y heading. & No usa solver no lineal; se reporta como modo predictivo reducido para comparacion.\\
+\bottomrule
+\end{longtable}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_controller_comparison.png}
+  \caption{Comparacion de modos de control exportada desde CoppeliaSim. Todos completan la tarea; PI obtiene el mejor score global en los pesos definidos.}
+  \label{fig:controller-comparison}
+\end{figure}

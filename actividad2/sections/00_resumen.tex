@@ -2,7 +2,37 @@
 \addcontentsline{toc}{chapter}{Resumen ejecutivo}
 
 \begin{summarybox}
-Este informe documenta la Actividad 2 de Sistemas Roboticos Moviles: programacion y control de un robot terrestre tipo Pioneer P3DX en CoppeliaSim/Lua. La actividad se organiza en dos bloques tecnicos: desplazamiento hacia un objetivo mediante campos potenciales y modificacion del comportamiento para evitar obstaculos durante la navegacion.
+Este documento presenta la Actividad 2 como una simulacion reproducible en
+CoppeliaSim/Lua. La escena final \path{Sim_T2_Phase1_Basic.ttt} modela un
+warehouse con un robot Pioneer P3DX identificado como R1, una persona movil B1
+(Bill), dos estaciones de herramienta T1/T2, dos mesas de trabajo, obstaculos,
+una estacion de carga C1 y una cola de tareas de entrega/retorno de piezas.
 \end{summarybox}
 
-El trabajo se plantea como una base de entrega profesional. Se describen el entorno de simulacion, el modelo cinematico diferencial del Pioneer, la logica de atraccion hacia el objetivo, la incorporacion de fuerzas repulsivas, la integracion en una celda robotizada y el plan de validacion. Los archivos de escena proporcionados por la asignatura se conservan en `coppeliasim/` para mantener trazabilidad local del ejercicio.
+La contribucion principal no es una escena decorativa, sino un ciclo completo de
+robotica movil: lectura de sensores tipo LiDAR/proximidad, estimacion de pose,
+construccion de mapa, planificacion local, evitacion de obstaculos, control de
+velocidades diferenciales, gestion de bateria y coordinacion con una persona
+movil. La validacion automatizada confirma que R1 completa cuatro tareas:
+
+\begin{itemize}
+  \item \texttt{task1:\{T1 -> B1@WS1\}}: R1 recoge T1 en el rack y la entrega a Bill.
+  \item \texttt{task2:\{B1@WS1(T1) -> Rack\_T1\}}: Bill trabaja la pieza y R1 la devuelve al shelf.
+  \item \texttt{task3:\{T2 -> B1@WS2\}}: Bill se desplaza a la segunda mesa y solicita T2.
+  \item \texttt{task4:\{B1@WS2(T2) -> Rack\_T2\}}: R1 recoge la pieza trabajada y la almacena.
+\end{itemize}
+
+El benchmark compara cuatro estimadores/mappers reducidos, implementados dentro
+de CoppeliaSim y alimentados por las mismas senales: \texttt{KALMAN\_LANDMARK},
+\texttt{GMAPPING\_GRID}, \texttt{HECTOR\_GRID\_MATCHING} y
+\texttt{CARTOGRAPHER\_SUBMAP}. Se declara explicitamente que no se ejecutan los
+paquetes ROS originales; se trata de implementaciones academicas reducidas,
+inspiradas en los metodos clasicos de la literatura.
+
+El resultado final de validacion de la escena principal fue satisfactorio:
+cuatro tareas completadas, retorno a carga, 16 sensores activos, rayos de sensor
+visualizados, evitacion reactiva activa, SLAM activo, planificacion por waypoint
+SLAM y error final de pose acotado a \SI{0.031}{m}. En la comparacion de SLAM,
+el modo Kalman-landmark obtiene el menor RMSE de posicion
+(\SI{0.0316}{m}), mientras que Cartographer-submap produce el mapa mas rico en
+estructura temporal con 10 submaps y 1 cierre de ciclo simplificado.

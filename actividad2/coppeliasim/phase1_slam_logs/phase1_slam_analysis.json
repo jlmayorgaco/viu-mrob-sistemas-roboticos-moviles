@@ -1,0 +1,189 @@
+{
+  "duration_s": 110.8,
+  "samples": 824,
+  "estimator": {
+    "rmse_x_m": 0.02224,
+    "rmse_y_m": 0.02195,
+    "rmse_position_m": 0.03125,
+    "mean_position_error_m": 0.02958,
+    "median_position_error_m": 0.0296,
+    "p95_position_error_m": 0.0471,
+    "max_position_error_m": 0.06272,
+    "rmse_theta_rad": 0.01809,
+    "mean_reported_pose_error_m": 0.02778,
+    "max_reported_pose_error_m": 0.04591,
+    "mean_covariance": 0.00081,
+    "max_covariance": 0.00278
+  },
+  "mapping": {
+    "landmarks_final": 16,
+    "landmarks_from_final_map": 16,
+    "slam_updates": 2615,
+    "updates_per_second": 23.601,
+    "updates_per_landmark": 163.44,
+    "first_landmark_times_s": [
+      [
+        1,
+        1.05
+      ],
+      [
+        2,
+        1.05
+      ],
+      [
+        3,
+        1.05
+      ],
+      [
+        4,
+        1.05
+      ],
+      [
+        5,
+        1.05
+      ],
+      [
+        6,
+        4.95
+      ],
+      [
+        7,
+        19.9
+      ],
+      [
+        8,
+        89.55
+      ],
+      [
+        9,
+        91.2
+      ],
+      [
+        10,
+        98.4
+      ],
+      [
+        11,
+        99.6
+      ],
+      [
+        12,
+        100.2
+      ],
+      [
+        13,
+        108.0
+      ],
+      [
+        14,
+        108.45
+      ],
+      [
+        15,
+        109.35
+      ],
+      [
+        16,
+        109.65
+      ]
+    ],
+    "landmark_seen_counts": {
+      "O1": 420,
+      "O2": 440,
+      "O3": 49,
+      "O4": 76,
+      "O5": 36,
+      "O6": 295,
+      "O7": 147,
+      "O8": 312,
+      "O9": 314,
+      "O10": 113,
+      "O11": 127,
+      "O12": 55,
+      "O13": 116,
+      "O14": 49,
+      "O15": 43,
+      "O16": 16
+    }
+  },
+  "planning_and_safety": {
+    "planner_mode_durations_s": {
+      "DIRECT": 105.55,
+      "DIRECT_AFTER_WAYPOINT": 0.9,
+      "SLAM_WAYPOINT": 4.35
+    },
+    "motion_mode_durations_s": {
+      "ARRIVED_TARGET": 0.35,
+      "AVOIDING": 21.95,
+      "MANIPULATING": 5.3,
+      "ROUTE": 9.6,
+      "SLAM_PATH": 0.15,
+      "WAIT_B1": 73.45
+    },
+    "min_obstacle_m": 0.19551,
+    "max_obstacle_risk": 0.46877,
+    "battery_start_pct": 96.0,
+    "battery_final_pct": 76.21563,
+    "battery_used_pct": 19.78437,
+    "completed_tasks": 3,
+    "final_task_state": "CHARGING"
+  },
+  "pose_error_by_motion_mode": {
+    "ARRIVED_TARGET": {
+      "samples": 4,
+      "mean_m": 0.02695,
+      "p95_m": 0.03183,
+      "max_m": 0.03258
+    },
+    "AVOIDING": {
+      "samples": 159,
+      "mean_m": 0.02646,
+      "p95_m": 0.03863,
+      "max_m": 0.04121
+    },
+    "MANIPULATING": {
+      "samples": 42,
+      "mean_m": 0.02885,
+      "p95_m": 0.03667,
+      "max_m": 0.03701
+    },
+    "ROUTE": {
+      "samples": 73,
+      "mean_m": 0.02822,
+      "p95_m": 0.04129,
+      "max_m": 0.04591
+    },
+    "SLAM_PATH": {
+      "samples": 1,
+      "mean_m": 0.03142,
+      "p95_m": 0.03142,
+      "max_m": 0.03142
+    },
+    "WAIT_B1": {
+      "samples": 545,
+      "mean_m": 0.02802,
+      "p95_m": 0.03941,
+      "max_m": 0.04114
+    }
+  },
+  "pose_error_by_planner_mode": {
+    "DIRECT": {
+      "samples": 789,
+      "mean_m": 0.02776,
+      "p95_m": 0.03946,
+      "max_m": 0.04591
+    },
+    "DIRECT_AFTER_WAYPOINT": {
+      "samples": 6,
+      "mean_m": 0.0256,
+      "p95_m": 0.03522,
+      "max_m": 0.03571
+    },
+    "SLAM_WAYPOINT": {
+      "samples": 29,
+      "mean_m": 0.0288,
+      "p95_m": 0.03896,
+      "max_m": 0.03945
+    }
+  }
+}

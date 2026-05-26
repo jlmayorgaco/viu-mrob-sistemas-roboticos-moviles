@@ -1,0 +1,50 @@
+"""Run Phase 1 Basic repeatedly and export comparable SLAM datasets.
+
+The environment does not provide ROS slam_gmapping, Hector, or Cartographer.
+These modes are CoppeliaSim implementations/surrogates fed by the same
+proximity/LiDAR-like readings, task sequence, robot, and controller.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from run_phase1_slam_export import LOG_DIR, run
+
+
+RUNS = (
+    ("GMAPPING_GRID", "gmapping_grid"),
+    ("HECTOR_GRID_MATCHING", "hector_grid_matching"),
+    ("CARTOGRAPHER_SUBMAP", "cartographer_submap"),
+    ("KALMAN_LANDMARK", "kalman_landmark"),
+)
+
+COMPARISON_JSON = LOG_DIR / "phase1_slam_comparison_summary.json"
+
+
+def main() -> int:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    results: list[dict[str, object]] = []
+
+    for algorithm, tag in RUNS:
+        csv_path = LOG_DIR / f"phase1_slam_{tag}.csv"
+        summary_json = LOG_DIR / f"phase1_slam_{tag}_summary.json"
+        result = run(algorithm, csv_path, summary_json)
+        results.append(result)
+
+    comparison = {
+        "runs": results,
+        "completed": all(bool(result["completed"]) for result in results),
+        "outputs": {
+            "csv": [str(LOG_DIR / f"phase1_slam_{tag}.csv") for _, tag in RUNS],
+            "summary_json": [str(LOG_DIR / f"phase1_slam_{tag}_summary.json") for _, tag in RUNS],
+        },
+    }
+    COMPARISON_JSON.write_text(json.dumps(comparison, indent=2), encoding="utf-8")
+    print(json.dumps(comparison, indent=2))
+    return 0 if comparison["completed"] else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

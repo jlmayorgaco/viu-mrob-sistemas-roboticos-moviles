@@ -1,0 +1,747 @@
+"""Build and validate Sim_T2_Phase1_Basic.ttt.
+
+Phase 1 scope:
+- One Pioneer robot acting as R1.
+- One mobile person B1.
+- Two tool stations, T1 and T2.
+- One charger C1.
+- Task sequence:
+  task1 = {T1 -> B1@WorkTable1}
+  task2 = {B1@WorkTable1(T1) -> Rack_T1}
+  task3 = {T2 -> B1@WorkTable2}
+  task4 = {B1@WorkTable2(T2) -> Rack_T2}
+- EKF-SLAM obstacle mapping, waypoint path planning, reactive obstacle
+  avoidance, battery/charging and localization telemetry.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import os
+import sys
+from pathlib import Path
+from typing import Iterable
+
+
+ROOT = Path(__file__).resolve().parents[2]
+COPPELIA_DIR = Path(r"C:\Program Files\CoppeliaRobotics\CoppeliaSimEdu")
+BASE_SCENE = ROOT / "actividad2" / "coppeliasim" / "Actividad2_2_Pioneer.ttt"
+OUTPUT_SCENE = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase1_Basic.ttt"
+VALIDATION_JSON = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase1_Basic_validation.json"
+R1_CONTROLLER = ROOT / "actividad2" / "coppeliasim" / "phase1_r1_task_controller.lua"
+B1_MANAGER = ROOT / "actividad2" / "coppeliasim" / "phase1_b1_walking_manager.lua"
+
+B1_WAYPOINTS = [
+    (-2.12, 1.10),
+    (-1.50, 1.10),
+    (-1.50, -1.60),
+    (-0.40, -1.60),
+    (0.80, -1.60),
+    (2.12, -1.10),
+    (1.50, -1.10),
+    (1.50, 1.10),
+    (0.70, 1.10),
+    (-0.70, 1.10),
+    (-2.12, 1.10),
+]
+
+
+def load_coppeliasim():
+    os.add_dll_directory(str(COPPELIA_DIR))
+    sys.path.append(str(COPPELIA_DIR / "programming" / "coppeliaSimClientPython"))
+    import builtins
+
+    builtins.coppeliasim_library = str(COPPELIA_DIR / "coppeliaSimHeadless.dll")
+
+    from coppeliasim.lib import appDir, simDeinitialize, simInitialize, simLoop
+    import coppeliasim.bridge
+
+    simInitialize(appDir().encode("utf-8"), 0)
+    coppeliasim.bridge.load()
+    sim = coppeliasim.bridge.require("sim")
+    return sim, simLoop, simDeinitialize
+
+
+def safe_get(sim, path: str) -> int:
+    try:
+        handle = sim.getObject(path)
+    except Exception:
+        return -1
+    return handle if handle is not None else -1
+
+
+def all_objects(sim) -> list[int]:
+    handles: list[int] = []
+    i = 0
+    while True:
+        handle = sim.getObjects(i, sim.handle_all)
+        if handle == -1:
+            break
+        handles.append(handle)
+        i += 1
+    return handles
+
+
+def set_color(sim, handle: int, color: Iterable[float]) -> None:
+    rgb = list(color)
+    try:
+        sim.setShapeColor(handle, None, sim.colorcomponent_ambient_diffuse, rgb)
+    except Exception:
+        sim.setObjectColor(handle, 0, sim.colorcomponent_ambient_diffuse, rgb)
+
+
+def create_box(
+    sim,
+    alias: str,
+    size: tuple[float, float, float],
+    position: tuple[float, float, float],
+    color: tuple[float, float, float],
+    parent: int,
+    *,
+    yaw: float = 0.0,
+    respondable: bool = True,
+    detectable: bool = True,
+) -> int:
+    handle = sim.createPrimitiveShape(sim.primitiveshape_cuboid, list(size), 2)
+    sim.setObjectAlias(handle, alias)
+    sim.setObjectPosition(handle, list(position))
+    sim.setObjectOrientation(handle, [0.0, 0.0, yaw])
+    set_color(sim, handle, color)
+    sim.setObjectInt32Param(handle, sim.shapeintparam_static, 1)
+    sim.setObjectInt32Param(handle, sim.shapeintparam_respondable, 1 if respondable else 0)
+
+    special = sim.objectspecialproperty_renderable
+    if detectable:
+        special += sim.objectspecialproperty_collidable
+        special += sim.objectspecialproperty_measurable
+        special += sim.objectspecialproperty_detectable_all
+    sim.setObjectSpecialProperty(handle, special)
+    sim.setObjectParent(handle, parent, True)
+    return handle
+
+
+def create_cylinder(
+    sim,
+    alias: str,
+    diameter: float,
+    height: float,
+    position: tuple[float, float, float],
+    color: tuple[float, float, float],
+    parent: int,
+    *,
+    yaw: float = 0.0,
+    respondable: bool = True,
+    detectable: bool = True,
+) -> int:
+    handle = sim.createPrimitiveShape(sim.primitiveshape_cylinder, [diameter, diameter, height], 2)
+    sim.setObjectAlias(handle, alias)
+    sim.setObjectPosition(handle, list(position))
+    sim.setObjectOrientation(handle, [0.0, 0.0, yaw])
+    set_color(sim, handle, color)
+    sim.setObjectInt32Param(handle, sim.shapeintparam_static, 1)
+    sim.setObjectInt32Param(handle, sim.shapeintparam_respondable, 1 if respondable else 0)
+
+    special = sim.objectspecialproperty_renderable
+    if detectable:
+        special += sim.objectspecialproperty_collidable
+        special += sim.objectspecialproperty_measurable
+        special += sim.objectspecialproperty_detectable_all
+    sim.setObjectSpecialProperty(handle, special)
+    sim.setObjectParent(handle, parent, True)
+    return handle
+
+
+def create_dummy(sim, alias: str, position: tuple[float, float, float], parent: int, size: float = 0.06) -> int:
+    handle = sim.createDummy(size, None)
+    sim.setObjectAlias(handle, alias)
+    sim.setObjectPosition(handle, list(position))
+    sim.setObjectParent(handle, parent, True)
+    return handle
+
+
+def create_path_segment(
+    sim,
+    alias: str,
+    start: tuple[float, float],
+    end: tuple[float, float],
+    parent: int,
+    color: tuple[float, float, float],
+) -> int:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length = math.hypot(dx, dy)
+    yaw = math.atan2(dy, dx)
+    mid = ((start[0] + end[0]) * 0.5, (start[1] + end[1]) * 0.5, 0.014)
+    return create_box(
+        sim,
+        alias,
+        (length, 0.040, 0.012),
+        mid,
+        color,
+        parent,
+        yaw=yaw,
+        respondable=False,
+        detectable=False,
+    )
+
+
+def create_work_desk(
+    sim,
+    alias: str,
+    position: tuple[float, float, float],
+    color: tuple[float, float, float],
+    parent: int,
+) -> None:
+    x, y, _z = position
+    wood = color
+    dark = (0.12, 0.11, 0.10)
+    metal = (0.23, 0.25, 0.26)
+    accent = (0.48, 0.58, 0.68)
+
+    create_box(sim, alias, (0.96, 0.58, 0.08), (x, y, 0.31), wood, parent)
+    for suffix, dx, dy in (
+        ("Leg_FL", -0.39, -0.22),
+        ("Leg_FR", 0.39, -0.22),
+        ("Leg_BL", -0.39, 0.22),
+        ("Leg_BR", 0.39, 0.22),
+    ):
+        create_box(sim, f"{alias}_{suffix}", (0.06, 0.06, 0.50), (x + dx, y + dy, 0.25), metal, parent)
+    create_box(sim, f"{alias}_Drawer", (0.34, 0.08, 0.12), (x - 0.21, y - 0.31, 0.24), dark, parent)
+    create_box(sim, f"{alias}_BackRail", (0.88, 0.05, 0.10), (x, y + 0.30, 0.39), metal, parent)
+    create_box(sim, f"{alias}_WorkPad", (0.40, 0.26, 0.018), (x + 0.18, y, 0.36), accent, parent)
+
+
+def create_material_piece(
+    sim,
+    tool_alias: str,
+    position: tuple[float, float, float],
+    parent: int,
+) -> int:
+    x, y, z = position
+    handle = create_dummy(sim, tool_alias, position, parent, size=0.035)
+
+    if tool_alias == "T1":
+        steel = (0.64, 0.67, 0.68)
+        edge = (0.34, 0.36, 0.37)
+        dark = (0.12, 0.13, 0.14)
+        amber = (0.95, 0.70, 0.12)
+
+        create_box(sim, f"{tool_alias}_Machined_Plate", (0.30, 0.15, 0.032), (x, y, z), steel, handle, respondable=False, detectable=False)
+        create_box(sim, f"{tool_alias}_Left_Rib", (0.036, 0.18, 0.050), (x - 0.13, y, z + 0.020), edge, handle, respondable=False, detectable=False)
+        create_box(sim, f"{tool_alias}_Right_Rib", (0.036, 0.18, 0.050), (x + 0.13, y, z + 0.020), edge, handle, respondable=False, detectable=False)
+        create_cylinder(sim, f"{tool_alias}_Center_Boss", 0.088, 0.032, (x, y, z + 0.033), dark, handle, respondable=False, detectable=False)
+        for i, (dx, dy) in enumerate(((-0.095, -0.046), (0.095, -0.046), (-0.095, 0.046), (0.095, 0.046)), start=1):
+            create_cylinder(sim, f"{tool_alias}_Bolt_{i}", 0.030, 0.018, (x + dx, y + dy, z + 0.034), amber, handle, respondable=False, detectable=False)
+    else:
+        board = (0.05, 0.30, 0.18)
+        copper = (0.88, 0.48, 0.16)
+        plastic = (0.08, 0.10, 0.13)
+        blue = (0.22, 0.68, 0.92)
+        gray = (0.62, 0.64, 0.66)
+
+        create_box(sim, f"{tool_alias}_Composite_Board", (0.28, 0.16, 0.026), (x, y, z), board, handle, respondable=False, detectable=False)
+        create_box(sim, f"{tool_alias}_Copper_Rail_A", (0.20, 0.018, 0.012), (x, y - 0.043, z + 0.024), copper, handle, respondable=False, detectable=False)
+        create_box(sim, f"{tool_alias}_Copper_Rail_B", (0.20, 0.018, 0.012), (x, y + 0.043, z + 0.024), copper, handle, respondable=False, detectable=False)
+        create_box(sim, f"{tool_alias}_Connector", (0.055, 0.13, 0.050), (x - 0.103, y, z + 0.030), plastic, handle, respondable=False, detectable=False)
+        create_cylinder(sim, f"{tool_alias}_Blue_Capacitor", 0.054, 0.060, (x + 0.088, y - 0.030, z + 0.045), blue, handle, respondable=False, detectable=False)
+        create_cylinder(sim, f"{tool_alias}_Metal_Pin", 0.032, 0.050, (x + 0.082, y + 0.045, z + 0.040), gray, handle, respondable=False, detectable=False)
+
+    return handle
+
+
+def create_tool_shelf(
+    sim,
+    shelf_alias: str,
+    tool_alias: str,
+    position: tuple[float, float],
+    shelf_color: tuple[float, float, float],
+    tool_color: tuple[float, float, float],
+    parent: int,
+    *,
+    approach_offset_y: float,
+    storage_offset_y: float = -0.04,
+) -> None:
+    x, y = position
+    frame = (0.16, 0.18, 0.20)
+    shelf = shelf_color
+
+    create_dummy(sim, shelf_alias, (x, y + approach_offset_y, 0.22), parent, size=0.055)
+    create_dummy(sim, f"{shelf_alias}_Storage", (x, y + storage_offset_y, 0.28), parent, size=0.045)
+    create_box(sim, f"P1_ToolShelf_{tool_alias}_Back", (0.82, 0.06, 0.70), (x, y + 0.18, 0.39), frame, parent)
+    for suffix, dx in (("Left", -0.42), ("Right", 0.42)):
+        create_box(sim, f"P1_ToolShelf_{tool_alias}_{suffix}_Post", (0.05, 0.10, 0.78), (x + dx, y, 0.39), frame, parent)
+    for level, z in enumerate((0.18, 0.36, 0.54), start=1):
+        create_box(sim, f"P1_ToolShelf_{tool_alias}_Level_{level}", (0.88, 0.34, 0.045), (x, y, z), shelf, parent)
+    create_box(sim, f"P1_ToolShelf_{tool_alias}_Label", (0.50, 0.035, 0.09), (x, y - 0.20, 0.66), tool_color, parent)
+    create_box(sim, f"P1_ToolShelf_{tool_alias}_Bin_A", (0.20, 0.18, 0.10), (x - 0.24, y - 0.03, 0.425), (0.33, 0.36, 0.38), parent)
+    create_box(sim, f"P1_ToolShelf_{tool_alias}_Bin_B", (0.20, 0.18, 0.10), (x + 0.24, y - 0.03, 0.425), (0.33, 0.36, 0.38), parent)
+    create_material_piece(sim, tool_alias, (x, y + storage_offset_y, 0.280), parent)
+
+
+def remove_previous_phase1(sim) -> None:
+    prefixes = (
+        "/P1_",
+        "/Phase1_",
+        "/Rack_T1",
+        "/Rack_T2",
+        "/T1",
+        "/T2",
+        "/C1",
+        "/Landmark_",
+        "/Sim_T2_Phase1_",
+        "/GoalStation",
+        "/mannequin",
+    )
+    script_aliases = {
+        "/PioneerP3DX/Script",
+        "/PioneerP3DX/Pioneer_Basic_Controller",
+        "/PioneerP3DX/Pioneer_Professional_Controller",
+        "/PioneerP3DX/Phase1_R1_Task_Controller",
+        "/Bill/Script",
+        "/B1/Script",
+        "/Sim_T2_Phase1_Basic_Cell/Phase1_B1_Walking_Manager",
+        "/Sim_T2_Phase1_Basic_Cell/Phase1_Documentation",
+    }
+
+    candidates: list[tuple[int, str]] = []
+    for handle in all_objects(sim):
+        try:
+            alias = sim.getObjectAlias(handle, 1)
+        except Exception:
+            continue
+        if alias.startswith(prefixes) or alias in script_aliases or "/Phase1_" in alias:
+            candidates.append((handle, alias))
+
+    for handle, _alias in sorted(candidates, key=lambda item: item[1].count("/"), reverse=True):
+        try:
+            sim.removeObject(handle)
+        except Exception:
+            pass
+
+
+def make_b1_visual_target_only(sim) -> None:
+    for handle in all_objects(sim):
+        try:
+            alias = sim.getObjectAlias(handle, 1)
+            object_type = sim.getObjectType(handle)
+        except Exception:
+            continue
+        if alias != "/B1" and not alias.startswith("/B1/"):
+            continue
+        if object_type != sim.object_shape_type:
+            continue
+        try:
+            sim.setObjectInt32Param(handle, sim.shapeintparam_respondable, 0)
+            sim.setObjectSpecialProperty(
+                handle,
+                sim.objectspecialproperty_renderable + sim.objectspecialproperty_measurable,
+            )
+        except Exception:
+            pass
+
+
+def add_phase1_warehouse(sim) -> int:
+    group = sim.createDummy(0.045, None)
+    sim.setObjectAlias(group, "Sim_T2_Phase1_Basic_Cell")
+
+    create_box(
+        sim,
+        "P1_Warehouse_Floor",
+        (5.30, 5.10, 0.010),
+        (0.0, -0.05, -0.008),
+        (0.64, 0.67, 0.68),
+        group,
+        respondable=False,
+        detectable=False,
+    )
+
+    tile = 0.53
+    for ix in range(10):
+        for iy in range(9):
+            shade = 0.70 if (ix + iy) % 2 == 0 else 0.60
+            create_box(
+                sim,
+                f"P1_Floor_Tile_{ix + 1:02d}_{iy + 1:02d}",
+                (tile - 0.012, tile - 0.012, 0.004),
+                (-2.385 + ix * tile, -2.17 + iy * tile, 0.0),
+                (shade, shade + 0.012, shade + 0.016),
+                group,
+                respondable=False,
+                detectable=False,
+            )
+
+    wall = (0.05, 0.12, 0.18)
+    create_box(sim, "P1_Warehouse_Wall_North", (5.30, 0.06, 0.52), (0.0, 2.42, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_South", (5.30, 0.06, 0.52), (0.0, -2.52, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_West", (0.06, 4.95, 0.52), (-2.64, -0.05, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_East", (0.06, 4.95, 0.52), (2.64, -0.05, 0.26), wall, group, respondable=False)
+
+    # Obstacles intentionally placed near, but not fully blocking, the robot route.
+    create_box(sim, "P1_Obstacle_Pallet_A", (0.34, 0.42, 0.30), (-0.74, -1.05, 0.15), (0.58, 0.34, 0.14), group)
+    create_box(sim, "P1_Obstacle_Pillar_B", (0.28, 0.28, 0.62), (-0.18, -0.42, 0.31), (0.16, 0.18, 0.20), group)
+    create_box(sim, "P1_Obstacle_Crate_C", (0.42, 0.34, 0.34), (0.54, 0.82, 0.17), (0.54, 0.40, 0.18), group)
+
+    create_work_desk(sim, "P1_WorkTable_1", (-2.12, 1.76, 0.0), (0.34, 0.24, 0.18), group)
+    create_dummy(sim, "WS1_Tool_Drop", (-2.12, 1.10, 0.36), group, size=0.055)
+    create_dummy(sim, "WS1_Work_Surface", (-2.12, 1.76, 0.42), group, size=0.045)
+    create_work_desk(sim, "P1_WorkTable_2", (2.12, -1.76, 0.0), (0.24, 0.32, 0.20), group)
+    create_dummy(sim, "WS2_Tool_Drop", (2.12, -1.10, 0.36), group, size=0.055)
+    create_dummy(sim, "WS2_Work_Surface", (2.12, -1.76, 0.42), group, size=0.045)
+
+    create_tool_shelf(
+        sim,
+        "Rack_T1",
+        "T1",
+        (-1.46, -2.04),
+        (0.28, 0.33, 0.36),
+        (0.95, 0.70, 0.12),
+        group,
+        approach_offset_y=0.52,
+        storage_offset_y=0.04,
+    )
+    create_dummy(sim, "Landmark_Rack_T1", (-1.46, -2.04, 0.62), group, size=0.045)
+
+    create_tool_shelf(
+        sim,
+        "Rack_T2",
+        "T2",
+        (1.46, 2.00),
+        (0.30, 0.34, 0.38),
+        (0.22, 0.68, 0.92),
+        group,
+        approach_offset_y=-0.52,
+    )
+    create_dummy(sim, "Landmark_Rack_T2", (1.46, 2.00, 0.62), group, size=0.045)
+
+    create_box(
+        sim,
+        "P1_C1_ChargePad",
+        (0.74, 0.74, 0.018),
+        (-0.10, -2.06, 0.010),
+        (0.08, 0.32, 0.62),
+        group,
+        respondable=False,
+        detectable=False,
+    )
+    create_dummy(sim, "C1", (-0.10, -2.06, 0.16), group, size=0.075)
+    create_dummy(sim, "Landmark_C1", (-0.10, -2.06, 0.50), group, size=0.045)
+
+    create_box(
+        sim,
+        "P1_TaskQueue_Panel",
+        (1.10, 0.06, 0.48),
+        (-2.04, 2.22, 0.64),
+        (0.04, 0.06, 0.08),
+        group,
+        respondable=False,
+        detectable=False,
+    )
+    create_box(sim, "P1_TaskQueue_task1_T1_to_B1_WS1", (0.82, 0.07, 0.10), (-2.04, 2.18, 0.76), (0.94, 0.66, 0.16), group, respondable=False, detectable=False)
+    create_box(sim, "P1_TaskQueue_task2_return_T1", (0.82, 0.07, 0.10), (-2.04, 2.18, 0.60), (0.92, 0.46, 0.12), group, respondable=False, detectable=False)
+    create_box(sim, "P1_TaskQueue_task3_T2_to_B1_WS2", (0.82, 0.07, 0.10), (-2.04, 2.18, 0.44), (0.18, 0.52, 0.88), group, respondable=False, detectable=False)
+    create_box(sim, "P1_Kalman_EKF_Status", (0.82, 0.07, 0.10), (-2.04, 2.18, 0.28), (0.12, 0.52, 0.86), group, respondable=False, detectable=False)
+
+    for index, start in enumerate(B1_WAYPOINTS):
+        end = B1_WAYPOINTS[(index + 1) % len(B1_WAYPOINTS)]
+        create_path_segment(sim, f"P1_B1_Path_Segment_{index + 1:02d}", start, end, group, (0.10, 0.44, 0.78))
+        create_box(
+            sim,
+            f"P1_B1_Waypoint_{index + 1:02d}",
+            (0.16, 0.16, 0.016),
+            (start[0], start[1], 0.025),
+            (0.12, 0.54, 0.82),
+            group,
+            respondable=False,
+            detectable=False,
+        )
+
+    create_dummy(sim, "Landmark_Warehouse_NE", (2.20, 2.00, 0.28), group, size=0.045)
+    create_dummy(sim, "Landmark_Warehouse_SW", (-2.20, -2.10, 0.28), group, size=0.045)
+    return group
+
+
+def set_initial_layout(sim) -> None:
+    pioneer = safe_get(sim, "/PioneerP3DX")
+    bill = safe_get(sim, "/Bill")
+    camera = safe_get(sim, "/DefaultCamera")
+    plant = safe_get(sim, "/indoorPlant")
+
+    if pioneer >= 0:
+        sim.setObjectAlias(pioneer, "PioneerP3DX")
+        sim.setObjectPosition(pioneer, [-0.10, -2.06, 0.1388])
+        sim.setObjectOrientation(pioneer, [0.0, 0.0, math.radians(92.0)])
+    if bill >= 0:
+        sim.setObjectAlias(bill, "B1")
+        sim.setObjectPosition(bill, [B1_WAYPOINTS[0][0], B1_WAYPOINTS[0][1], 0.0])
+        sim.setObjectOrientation(bill, [0.0, 0.0, math.radians(90.0)])
+        make_b1_visual_target_only(sim)
+    if plant >= 0:
+        sim.setObjectPosition(plant, [2.28, 0.55, 0.165])
+    if camera >= 0:
+        sim.setObjectPosition(camera, [3.75, -4.70, 3.55])
+        sim.setObjectOrientation(camera, [math.radians(61.0), 0.0, math.radians(40.0)])
+
+
+def attach_scripts(sim, group: int) -> None:
+    robot = safe_get(sim, "/PioneerP3DX")
+    b1 = safe_get(sim, "/B1")
+    if robot < 0:
+        raise RuntimeError("PioneerP3DX was not found in the base scene")
+    if b1 < 0:
+        raise RuntimeError("B1/Bill was not found in the base scene")
+
+    controller_text = R1_CONTROLLER.read_text(encoding="utf-8")
+    controller = sim.createScript(sim.scripttype_simulation, controller_text, 0, "lua")
+    sim.setObjectAlias(controller, "Phase1_R1_Task_Controller")
+    sim.setObjectParent(controller, robot, False)
+
+    b1_text = B1_MANAGER.read_text(encoding="utf-8")
+    b1_script = sim.createScript(sim.scripttype_simulation, b1_text, 0, "lua")
+    sim.setObjectAlias(b1_script, "Phase1_B1_Walking_Manager")
+    sim.setObjectParent(b1_script, group, False)
+
+    documentation = """-- VIU SRM Task 2 Phase 1 - Basic warehouse scene
+-- File: Sim_T2_Phase1_Basic.ttt
+-- Minimal validation scenario before scaling to B1/B2/B3 and R1/R2/R3.
+-- Actors:
+--   R1 = PioneerP3DX
+--   B1 = mobile Bill/person
+--   T1/T2 = tools stored in two opposite tool stations
+--   C1 = charging station
+--   WorkTable1/WorkTable2 = Bill working stations
+-- Task queue:
+--   task1:{T1->B1@WS1}
+--   task2:{B1@WS1(T1)->Rack_T1}
+--   task3:{T2->B1@WS2}
+--   task4:{B1@WS2(T2)->Rack_T2}
+-- Demonstrated behavior:
+--   EKF-SLAM obstacle mapping, waypoint path planning, reactive obstacle
+--   avoidance, battery feasibility check, pickup, delivery, tool return and charging.
+"""
+    doc = sim.createScript(sim.scripttype_passive, documentation, 0, "lua")
+    sim.setObjectAlias(doc, "Phase1_Documentation")
+    sim.setObjectParent(doc, group, True)
+
+
+def sim_step(sim, sim_loop) -> None:
+    if sim.getSimulationState() == sim.simulation_stopped:
+        return
+    current = sim.getSimulationTime()
+    for _ in range(80):
+        sim_loop(None, 0)
+        if current != sim.getSimulationTime() or sim.getSimulationState() == sim.simulation_stopped:
+            break
+
+
+def read_string_signal(sim, name: str, default: str = "") -> str:
+    value = sim.getStringSignal(name)
+    if value is None:
+        return default
+    return str(value)
+
+
+def read_float_signal(sim, name: str, default: float = 0.0) -> float:
+    value = sim.getFloatSignal(name)
+    if value is None:
+        return default
+    return float(value)
+
+
+def read_int_signal(sim, name: str, default: int = 0) -> int:
+    value = sim.getInt32Signal(name)
+    if value is None:
+        return default
+    return int(value)
+
+
+def validate_scene(sim, sim_loop) -> dict:
+    robot = safe_get(sim, "/PioneerP3DX")
+    b1 = safe_get(sim, "/B1")
+    tool1 = safe_get(sim, "/T1")
+    tool2 = safe_get(sim, "/T2")
+    c1 = safe_get(sim, "/C1")
+    if min(robot, b1, tool1, tool2, c1) < 0:
+        raise RuntimeError("Cannot validate without /PioneerP3DX, /B1, /T1, /T2 and /C1")
+
+    sim.startSimulation()
+
+    task_states_seen: set[str] = set()
+    motion_modes_seen: set[str] = set()
+    battery_modes_seen: set[str] = set()
+    b1_stations_seen: set[str] = set()
+    b1_actions_seen: set[str] = set()
+    planner_modes_seen: set[str] = set()
+    min_obstacle_seen = math.inf
+    max_risk = 0.0
+    max_pose_error = 0.0
+    max_slam_landmarks = 0
+    task_complete_seen = False
+    charging_seen = False
+
+    for _ in range(3600):
+        sim_step(sim, sim_loop)
+        t = sim.getSimulationTime()
+        if t > 145:
+            break
+
+        task_state = read_string_signal(sim, "phase1TaskState", "UNKNOWN")
+        motion_mode = read_string_signal(sim, "phase1MotionMode", "UNKNOWN")
+        battery_mode = read_string_signal(sim, "phase1BatteryMode", "UNKNOWN")
+        b1_station = read_string_signal(sim, "phase1B1Station", "UNKNOWN")
+        b1_action = read_string_signal(sim, "phase1B1Action", "UNKNOWN")
+        planner_mode = read_string_signal(sim, "phase1PlannerMode", "UNKNOWN")
+        risk = read_float_signal(sim, "phase1ObstacleRisk", 0.0)
+        min_obstacle = read_float_signal(sim, "phase1MinObstacleDistance", -1.0)
+        pose_error = read_float_signal(sim, "phase1PoseError", 0.0)
+        slam_landmarks = read_int_signal(sim, "phase1SlamLandmarkCount", 0)
+
+        task_states_seen.add(task_state)
+        motion_modes_seen.add(motion_mode)
+        battery_modes_seen.add(battery_mode)
+        b1_stations_seen.add(b1_station)
+        b1_actions_seen.add(b1_action)
+        planner_modes_seen.add(planner_mode)
+        max_risk = max(max_risk, risk)
+        max_pose_error = max(max_pose_error, pose_error)
+        max_slam_landmarks = max(max_slam_landmarks, slam_landmarks)
+        if min_obstacle > 0:
+            min_obstacle_seen = min(min_obstacle_seen, min_obstacle)
+        if read_int_signal(sim, "phase1TaskComplete", 0) == 1:
+            task_complete_seen = True
+        if read_int_signal(sim, "phase1Charging", 0) == 1 or task_state == "CHARGING":
+            charging_seen = True
+        if task_complete_seen and charging_seen and t > 22:
+            break
+
+    final_task_state = read_string_signal(sim, "phase1TaskState", "UNKNOWN")
+    final_motion_mode = read_string_signal(sim, "phase1MotionMode", "UNKNOWN")
+    final_battery = read_float_signal(sim, "phase1BatteryLevel", -1.0)
+    final_pose_error = read_float_signal(sim, "phase1PoseError", -1.0)
+    b1_moved = read_float_signal(sim, "phase1B1MovedDistance", 0.0)
+    compliance = read_string_signal(sim, "phase1Compliance", "")
+    battery_task_accepted = read_int_signal(sim, "phase1BatteryTaskAccepted", 0)
+    tool1_delivered = read_int_signal(sim, "phase1Tool1Delivered", 0)
+    tool1_returned = read_int_signal(sim, "phase1Tool1Returned", 0)
+    tool2_delivered = read_int_signal(sim, "phase1Tool2Delivered", 0)
+    tool2_returned = read_int_signal(sim, "phase1Tool2Returned", 0)
+    completed_task_count = read_int_signal(sim, "phase1CompletedTaskCount", 0)
+    kalman_active = read_int_signal(sim, "phase1KalmanActive", 0)
+    sensor_count = read_int_signal(sim, "phase1SensorCount", 0)
+    sensor_ray_count = read_int_signal(sim, "phase1SensorRayCount", 0)
+    sensor_rays_visible = read_int_signal(sim, "phase1SensorRaysVisible", 0)
+    slam_landmark_count = read_int_signal(sim, "phase1SlamLandmarkCount", 0)
+    slam_updates = read_int_signal(sim, "phase1SlamUpdates", 0)
+
+    sim.stopSimulation()
+    while sim.getSimulationState() != sim.simulation_stopped:
+        sim_loop(None, 0)
+
+    if min_obstacle_seen == math.inf:
+        min_obstacle_seen = -1.0
+
+    checks = {
+        "scene_exists": OUTPUT_SCENE.exists() and OUTPUT_SCENE.stat().st_size > 1_000_000,
+        "r1_pioneer_present": robot >= 0,
+        "b1_person_present": b1 >= 0,
+        "t1_tool_present": tool1 >= 0,
+        "t2_tool_present": tool2 >= 0,
+        "material_piece_visuals_present": safe_get(sim, "/T1/T1_Machined_Plate") >= 0
+        and safe_get(sim, "/T1/T1_Center_Boss") >= 0
+        and safe_get(sim, "/T2/T2_Composite_Board") >= 0
+        and safe_get(sim, "/T2/T2_Blue_Capacitor") >= 0,
+        "c1_charger_present": c1 >= 0,
+        "warehouse_present": safe_get(sim, "/Sim_T2_Phase1_Basic_Cell") >= 0,
+        "two_worktables_present": safe_get(sim, "/P1_WorkTable_1") >= 0
+        and safe_get(sim, "/P1_WorkTable_2") >= 0,
+        "two_tool_stations_present": safe_get(sim, "/Rack_T1") >= 0
+        and safe_get(sim, "/Rack_T2") >= 0,
+        "obstacles_present": safe_get(sim, "/P1_Obstacle_Pallet_A") >= 0
+        and safe_get(sim, "/P1_Obstacle_Pillar_B") >= 0,
+        "task_queue_present": safe_get(sim, "/P1_TaskQueue_task1_T1_to_B1_WS1") >= 0
+        and safe_get(sim, "/P1_TaskQueue_task2_return_T1") >= 0
+        and safe_get(sim, "/P1_TaskQueue_task3_T2_to_B1_WS2") >= 0,
+        "r1_controller_attached": safe_get(sim, "/PioneerP3DX/Phase1_R1_Task_Controller") >= 0,
+        "b1_walk_script_attached": safe_get(sim, "/Sim_T2_Phase1_Basic_Cell/Phase1_B1_Walking_Manager") >= 0,
+        "task_accepted_by_battery": battery_task_accepted == 1,
+        "t1_delivery_seen": tool1_delivered == 1 and "DELIVER_T1_WS1" in task_states_seen,
+        "t1_return_seen": tool1_returned == 1 and "RETURN_T1_RACK" in task_states_seen,
+        "t2_delivery_seen": tool2_delivered == 1 and "DELIVER_T2_WS2" in task_states_seen,
+        "t2_return_seen": tool2_returned == 1 and "RETURN_T2_RACK" in task_states_seen,
+        "full_task_sequence_complete": task_complete_seen and completed_task_count >= 4,
+        "return_to_charge_seen": "TO_CHARGE" in task_states_seen or charging_seen,
+        "charging_seen": charging_seen,
+        "b1_moved_between_tables": b1_moved >= 2.40 and "WS1" in b1_stations_seen and "WS2" in b1_stations_seen,
+        "b1_visual_work_actions_seen": "WORKING_T1_ON_WS1_TABLE" in b1_actions_seen
+        and "WORKING_T2_ON_WS2_TABLE" in b1_actions_seen,
+        "b1_visual_handoff_actions_seen": any(action.startswith("TAKING_T1") for action in b1_actions_seen)
+        and any(action.startswith("READY_TO_TAKE_T2") or action.startswith("TAKING_T2") for action in b1_actions_seen),
+        "obstacle_avoidance_active": "AVOIDING" in motion_modes_seen or max_risk > 0.05,
+        "kalman_active": kalman_active == 1,
+        "ekf_slam_obstacle_map_active": max_slam_landmarks >= 3 and slam_updates >= 5,
+        "slam_path_planning_active": "SLAM_WAYPOINT" in planner_modes_seen,
+        "kalman_error_bounded": 0 <= final_pose_error <= 0.28 and max_pose_error <= 0.42,
+        "sensor_suite_active": sensor_count >= 16,
+        "sensor_rays_visualized": sensor_rays_visible == 1 and sensor_ray_count >= sensor_count,
+        "compliance_signal_present": "two_worktables" in compliance
+        and "ekf_slam_obstacle_map" in compliance
+        and "slam_path_planning" in compliance
+        and "battery_charge" in compliance,
+    }
+
+    result = {
+        "scene": str(OUTPUT_SCENE),
+        "final_task_state": final_task_state,
+        "final_motion_mode": final_motion_mode,
+        "task_states_seen": sorted(task_states_seen),
+        "motion_modes_seen": sorted(motion_modes_seen),
+        "battery_modes_seen": sorted(battery_modes_seen),
+        "b1_stations_seen": sorted(b1_stations_seen),
+        "b1_actions_seen": sorted(b1_actions_seen),
+        "planner_modes_seen": sorted(planner_modes_seen),
+        "battery_level": round(final_battery, 2),
+        "b1_moved_distance_m": round(b1_moved, 3),
+        "completed_task_count": completed_task_count,
+        "slam_landmark_count": slam_landmark_count,
+        "slam_updates": slam_updates,
+        "max_slam_landmarks": max_slam_landmarks,
+        "min_obstacle_seen_m": round(min_obstacle_seen, 3),
+        "max_obstacle_risk": round(max_risk, 3),
+        "final_pose_error_m": round(final_pose_error, 3),
+        "max_pose_error_m": round(max_pose_error, 3),
+        "sensor_count": sensor_count,
+        "sensor_ray_count": sensor_ray_count,
+        "checks": checks,
+    }
+    result["passed"] = all(checks.values())
+    return result
+
+
+def main() -> int:
+    for path in (BASE_SCENE, R1_CONTROLLER, B1_MANAGER):
+        if not path.exists():
+            raise FileNotFoundError(path)
+
+    sim, sim_loop, sim_deinitialize = load_coppeliasim()
+    try:
+        if sim.loadScene(str(BASE_SCENE)) < 0:
+            raise RuntimeError(f"Could not load {BASE_SCENE}")
+        for _ in range(3):
+            sim_loop(None, 0)
+
+        remove_previous_phase1(sim)
+        group = add_phase1_warehouse(sim)
+        set_initial_layout(sim)
+        attach_scripts(sim, group)
+
+        sim.saveScene(str(OUTPUT_SCENE))
+        validation = validate_scene(sim, sim_loop)
+        VALIDATION_JSON.write_text(json.dumps(validation, indent=2), encoding="utf-8")
+        print(json.dumps(validation, indent=2))
+        return 0 if validation["passed"] else 2
+    finally:
+        sim_deinitialize()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

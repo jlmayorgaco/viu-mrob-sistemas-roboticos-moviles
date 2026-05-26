@@ -1,11 +1,32 @@
 \chapter{Conclusiones}
 
-La Actividad 2 permite aplicar conceptos basicos de robotica movil en un entorno de simulacion controlado. La solucion por campos potenciales es adecuada para la implementacion solicitada porque traduce de forma directa la posicion del objetivo y las lecturas de obstaculos en consignas de movimiento.
+La simulacion cumple el objetivo de la Actividad 2 y extiende el ejercicio base
+de Pioneer hacia una celda de trabajo mas realista. R1 no solo se desplaza hacia
+un objetivo: interpreta una cola de tareas, coordina entregas con Bill, transporta
+T1/T2, espera procesos humanos, devuelve piezas al shelf correcto, evita
+obstaculos, estima su pose, actualiza un mapa y termina en la estacion de carga.
 
-El robot Pioneer P3DX resulta apropiado por su modelo diferencial sencillo, disponibilidad en CoppeliaSim y facilidad para incorporar sensores de proximidad. La solucion final amplifica el ejemplo de clase con una maquina de estados, ruta por waypoints, sensores virtuales, recuperacion anti-bloqueo, telemetria interna, bateria, zonas de velocidad, HMI y eventos de celda.
+El filtro Kalman-landmark es el metodo mas conveniente para defender la version
+basica del escenario. Es simple, reproducible, presenta el menor RMSE de
+posicion y genera un mapa compacto suficiente para planificacion local. Las
+variantes de grilla tipo GMapping, Hector y Cartographer enriquecen el benchmark
+porque muestran enfoques populares de SLAM LiDAR: ocupacion por log-odds, scan
+matching y submaps con loop closure. Sin embargo, deben presentarse como
+implementaciones reducidas en CoppeliaSim, no como ejecucion de paquetes ROS.
 
-El resultado cubre las dos partes del enunciado: atraccion al objetivo `mannequin` y evitacion de colisiones durante la navegacion. Ademas, incorpora coordinacion de celda mediante senales, parada de seguridad, obstaculo movil, objetivo dinamico, degradacion sensorial y bateria baja, lo que evidencia una ampliacion funcional del script visto en clase.
+El sistema anticolisiones funciona como una capa reactiva clara: cuando los
+sensores detectan obstaculos cercanos, el robot reduce velocidad, modifica el
+giro y publica riesgo. La capa de waypoint SLAM mejora este comportamiento al
+introducir desvios locales cuando el mapa detecta bloqueo entre R1 y el objetivo.
 
-Como ampliacion profesional, se anadio una flota auxiliar de tres AMR con A* cooperativo, reservas celda-tiempo/arista-tiempo, estaciones de carga y ciclo de descarga-recarga. Esta parte conecta los contenidos de navegacion global y coordinacion multi-robot de los PPTs con una demostracion ejecutable dentro de la misma escena.
+Respecto a control, la comparacion P/PI/PID/LQR/NMPC se mantiene como analisis
+complementario. PI obtuvo el mejor score ponderado de los logs disponibles, pero
+la defensa academica principal debe centrarse en los metodos clasicos
+efectivamente trazables: cinematica diferencial, control proporcional/PID,
+evitacion reactiva, Kalman y mapeo de ocupacion/landmarks.
 
-Como limitacion, los campos potenciales pueden sufrir minimos locales y oscilaciones. Por ello se han documentado parametros, saturaciones, estados de recuperacion y validacion automatizada. Para una version industrial podria profundizarse en DWA para seleccion de velocidades factibles y localizacion probabilistica tipo Kalman, Montecarlo o SLAM.
+Como trabajo futuro, el escenario puede escalarse a B1/B2/B3 y R1/R2/R3 con un
+asignador de tareas por cola y reservas temporales. Tambien podria conectarse a
+ROS 2 para ejecutar paquetes reales de \texttt{slam\_toolbox}, Cartographer o
+Hector/GMapping equivalentes, comparar contra ground truth y separar la capa de
+simulacion de la capa de algoritmo.

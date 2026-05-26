@@ -1,33 +1,94 @@
-\chapter{Parte 2: sistema anticolisiones}
+\chapter{Estimacion y SLAM}
 
-La segunda parte modifica el comportamiento anterior para que el robot esquive obstaculos mientras mantiene atraccion hacia el objetivo. Se añade una fuerza repulsiva asociada a sensores de proximidad:
+El estimador no ``une puntos'' de forma geometrica. Ejecuta un ciclo clasico:
+predice la pose con odometria diferencial, corrige con mediciones ruidosas y
+usa esa pose corregida para transformar lecturas de sensor a coordenadas del
+warehouse. A partir de esas detecciones se actualiza un mapa compacto de
+landmarks o una grilla de ocupacion, segun el algoritmo seleccionado.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_estimator_pipeline.png}
+  \caption{Pipeline usado por la escena: odometria y sensores alimentan estimacion, mapa, planificacion local y control de R1.}
+  \label{fig:estimator-pipeline}
+\end{figure}
+
+\section{Prediccion de pose}
+
+Con velocidades odometricas \(v_k,\omega_k\), el modelo diferencial discreto es:
 
 \[
-\vec{F}_{rep} =
+\begin{aligned}
+\hat{x}_{k}^{-} &= \hat{x}_{k-1}^{+} + v_k\cos(\hat{\theta}_{k-1}^{+})\Delta t\\
+\hat{y}_{k}^{-} &= \hat{y}_{k-1}^{+} + v_k\sin(\hat{\theta}_{k-1}^{+})\Delta t\\
+\hat{\theta}_{k}^{-} &= \operatorname{wrap}(\hat{\theta}_{k-1}^{+}+\omega_k\Delta t)
+\end{aligned}
+\]
+
+La covarianza se propaga con el Jacobiano \(G_k\):
+
+\[
+P_k^- = G_k P_{k-1}^+ G_k^\top + Q_k
+\]
+
+\section{Correccion Kalman}
+
+La correccion usa la forma clasica del filtro de Kalman \cite{kalman1960}:
+
+\[
+K_k = P_k^-H_k^\top(H_kP_k^-H_k^\top + R_k)^{-1}
+\]
+
+\[
+\hat{x}_k^+ = \hat{x}_k^- + K_k(z_k-H_k\hat{x}_k^-),\qquad
+P_k^+ = (I-K_kH_k)P_k^-
+\]
+
+En el modo \texttt{KALMAN\_LANDMARK}, las detecciones de obstaculo se asocian
+por cercania. Si una lectura cae dentro del radio de asociacion de una landmark,
+se actualiza esa landmark con una ganancia escalar; si no, se crea una landmark
+nueva hasta un maximo configurado.
+
+\section{GMapping reducido}
+
+GMapping se basa en filtros de particulas Rao-Blackwellizados y mapas de grilla
+\cite{grisetti2007}. En esta simulacion no se ejecuta \texttt{slam\_gmapping};
+se implementa una version reducida de grilla de ocupacion con log-odds. Para
+cada rayo, las celdas atravesadas se actualizan como libres y la celda de
+impacto como ocupada:
+
+\[
+L_t(c)=\operatorname{clip}\left(L_{t-1}(c)+
 \begin{cases}
-k_{rep}\left(\frac{1}{d}-\frac{1}{d_0}\right)\frac{1}{d^2}\hat{u}_{obs}, & d < d_0\\
-0, & d \ge d_0
-\end{cases}
+l_{occ}, & c=c_{hit}\\
+l_{free}, & c\in ray
+\end{cases}\right)
 \]
 
-donde \(d\) es la distancia al obstaculo, \(d_0\) el umbral de influencia y \(\hat{u}_{obs}\) la direccion de alejamiento.
+La grilla resultante se usa tanto para publicar telemetria como para alimentar
+el planner local.
 
-\section{Combinacion de fuerzas}
+\section{Hector reducido}
 
-La fuerza total se calcula como:
+Hector SLAM destaca por scan matching contra una grilla sin depender fuertemente
+de odometria \cite{kohlbrecher2011}. En esta escena se implementa una busqueda
+local discreta alrededor de la pose estimada. Para cada candidato
+\((x,y,\theta)\) se proyectan los puntos del scan y se evalua el score contra la
+grilla:
 
 \[
-\vec{F}_{total} = \vec{F}_{att} + \sum_i \vec{F}_{rep,i}
+s(x,y,\theta)=\frac{1}{N}\sum_{i=1}^{N} L\left(x+r_i\cos(\theta+\beta_i),
+y+r_i\sin(\theta+\beta_i)\right)
 \]
 
-El vector resultante determina el rumbo deseado. Si un obstaculo aparece frontalmente, la componente repulsiva modifica el angulo de giro y reduce la velocidad. Para evitar movimientos inestables se aplican saturaciones y un filtro simple sobre la consigna.
+Si el mejor score supera un umbral, la pose se corrige parcialmente hacia ese
+candidato. Por eso el metodo se reporta como \texttt{HECTOR\_GRID\_MATCHING},
+no como Hector ROS completo.
 
-\section{Casos de prueba}
+\section{Cartographer reducido}
 
-\begin{itemize}
-  \item Obstaculo aislado entre robot y objetivo.
-  \item Pasillo estrecho con margen suficiente.
-  \item Objetivo movil representado por Bill.
-  \item Obstaculo inesperado durante la aproximacion.
-  \item Escenario sin obstaculos para comprobar que no se degrada la Parte 1.
-\end{itemize}
+Google Cartographer organiza el mapeo en submaps y cierres de ciclo para reducir
+deriva acumulada \cite{hess2016}. La version usada aqui mantiene submaps
+temporales, crea nuevos submaps por distancia o periodo y aplica un cierre de
+ciclo simplificado cuando la pose vuelve cerca de un submap antiguo con score
+suficiente. En el benchmark produjo 10 submaps y 1 loop closure.

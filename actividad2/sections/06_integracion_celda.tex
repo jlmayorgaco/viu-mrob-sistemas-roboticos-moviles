@@ -1,47 +1,116 @@
-\chapter{Integracion en celda robotizada}
+\chapter{Resultados experimentales}
 
-El enunciado pide anadir el robot Pioneer con su script a una celda robotizada para que trabaje coordinado con otros sistemas. La escena final implementa esa integracion en una aplicacion logistica de asistencia e inspeccion: el Pioneer sale de una zona segura, recorre una ruta de servicio, evita elementos de la celda y termina siguiendo al objetivo `mannequin` como equivalente operativo de Bill.
+Los resultados se obtuvieron ejecutando CoppeliaSim de forma automatizada desde
+Python. Cada corrida exporta senales de la simulacion a CSV/JSON y luego los
+scripts de plot generan las graficas del informe. Esto permite repetir la
+validacion sin depender de observacion manual.
 
-\section{Interaccion con la celda}
+\section{Validacion funcional de la escena}
+
+La validacion principal de \path{Sim_T2_Phase1_Basic.ttt} termino con
+\texttt{passed=true}. Los indicadores mas relevantes fueron:
+
+\begin{longtable}{P{0.42\textwidth}P{0.34\textwidth}}
+\toprule
+\textbf{Indicador} & \textbf{Resultado}\\
+\midrule
+\endhead
+Estado final de tarea & \texttt{CHARGING}\\
+Modo final de movimiento & \texttt{ARRIVED\_TARGET}\\
+Tareas completadas & 4/4\\
+Distancia caminada por Bill & \SI{7.854}{m}\\
+Bateria final R1 & 71,88\%\\
+Sensores activos & 16\\
+Rayos de sensor visualizados & 16\\
+Landmarks/celdas SLAM finales & 22 en validacion principal\\
+Actualizaciones SLAM & 4822\\
+Error final de pose & \SI{0.031}{m}\\
+Error maximo de pose & \SI{0.044}{m}\\
+Distancia minima positiva a obstaculo & \SI{0.079}{m}\\
+Riesgo maximo de obstaculo & 0,762\\
+\bottomrule
+\end{longtable}
+
+Tambien se verificaron condiciones cualitativas: Bill se mueve entre WS1 y WS2,
+Bill ejecuta acciones visuales de tomar/trabajar/entregar, los shelves y mesas
+estan presentes, las piezas T1/T2 tienen geometria visual no generica, la cola
+de tareas se publica, el robot vuelve a carga y el planner SLAM activa
+\texttt{SLAM\_WAYPOINT} al detectar bloqueo local.
+
+\section{Desempeno del estimador Kalman-landmark}
+
+En la exportacion especifica del estimador, la escena usa PID como controlador
+base y \texttt{KALMAN\_LANDMARK} como algoritmo SLAM. Los resultados fueron:
 
 \begin{itemize}
-  \item El robot parte de una zona segura de espera y docking.
-  \item La ruta se organiza mediante waypoints internos hasta la estacion objetivo.
-  \item El controlador acepta `mannequin`, Bill o `GoalStation` como referencias de mision.
-  \item La celda contiene vallas, transportadores, palets, una zona de trabajo robotizada y zonas visuales de seguridad.
-  \item El acabado visual incluye piso industrial texturizado con baldosas, carriles, franjas de seguridad, bahia de carga y grilla A* marcada.
-  \item Se anaden placas de demo, labels runtime y camaras nombradas para que el evaluador identifique rapidamente guia, campos potenciales, anticolision, HMI, carga y flota A*.
-  \item El robot combina los 16 ultrasonidos del Pioneer con 6 sensores virtuales adicionales para anticipar obstaculos.
-  \item La celda incorpora estacion de carga, telemetria de bateria, zonas de velocidad y un HMI visual con estado, bateria, zona activa y fallo sensorial.
-  \item Como extension de celda se incorpora una flota auxiliar de 3 AMR con navegacion A* cooperativa, reservas temporales, estaciones de carga y ciclo de descarga/recarga de bateria.
-  \item La llegada se registra mediante `pioneerArrived`, `pioneerState`, `pioneerRouteIndex` y distancia final al objetivo.
+  \item RMSE de posicion: \SI{0.03125}{m}.
+  \item Error medio de posicion: \SI{0.02958}{m}.
+  \item Error P95: \SI{0.04710}{m}.
+  \item Error maximo: \SI{0.06272}{m}.
+  \item RMSE de orientacion: \SI{0.01809}{rad}.
+  \item Covarianza media publicada: 0,00081.
+  \item Landmarks finales: 16.
+  \item Actualizaciones Kalman/SLAM: 2615.
 \end{itemize}
 
-\section{Coordinacion y eventos}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_slam_estimator_performance.png}
+  \caption{Desempeno del estimador Kalman-landmark: error de pose, covarianza publicada, landmarks y actualizaciones.}
+  \label{fig:estimator-performance}
+\end{figure}
 
-La coordinacion se realiza con senales internas de CoppeliaSim. La senal `missionReady` habilita o bloquea el movimiento, `pioneerArrived` informa a la celda de que el robot llego, `pioneerScenario` identifica el escenario activo y `pioneerObstacleRisk` resume la criticidad de obstaculos detectados.
+\section{Comparacion de algoritmos SLAM}
 
-La escena incluye el script `VIU\_Scenario\_Event\_Manager`, que activa eventos temporizados para demostrar comportamiento robusto:
+La comparacion se ejecuto con el mismo escenario, sensores, tareas y controlador
+para los cuatro modos de SLAM. La Tabla~\ref{tab:slam-comparison} resume los
+valores principales.
 
-\begin{itemize}
-  \item S1: inicio de ruta desde la zona segura.
-  \item S2: pallet movil cruzando el carril de aproximacion.
-  \item S3: parada por enclavamiento de seguridad.
-  \item S4: objetivo dinamico en la estacion final.
-  \item S5: paso estrecho temporal.
-  \item S6: degradacion sensorial con ruido y fallo intermitente fronto-lateral.
-  \item S7: bateria baja simulada con limitacion de velocidad y actualizacion del HMI.
-  \item S8: aproximacion final y restauracion de la celda.
-\end{itemize}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{P{0.26\textwidth}P{0.16\textwidth}P{0.16\textwidth}P{0.18\textwidth}P{0.16\textwidth}}
+\caption{Benchmark SLAM reducido en CoppeliaSim.}\label{tab:slam-comparison}\\
+\toprule
+\textbf{Metrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Metrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\midrule
+\endhead
+Completado & Si & Si & Si & Si\\
+Duracion [s] & 102,60 & 102,50 & 101,65 & 101,60\\
+Ruta [m] & 10,906 & 10,880 & 10,774 & 10,771\\
+RMSE pos. [m] & 0,04135 & 0,04072 & 0,03842 & \textbf{0,03160}\\
+Error P95 [m] & 0,05697 & 0,06485 & 0,05673 & \textbf{0,04959}\\
+Error max. [m] & 0,07722 & 0,11112 & 0,09340 & \textbf{0,06433}\\
+Features finales & 63 & 56 & 55 & 15\\
+Updates SLAM & 1457 & 1426 & 1432 & 1447\\
+Submaps & 0 & 0 & \textbf{10} & 0\\
+Loop closures & 0 & 0 & \textbf{1} & 0\\
+Bateria usada [\%] & 16,82 & 16,78 & 16,66 & \textbf{16,63}\\
+\bottomrule
+\end{longtable}
+\endgroup
 
-Estos eventos fuerzan estados `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`, por lo que la simulacion no se limita a un caso ideal, sino que prueba el robot en condiciones representativas de una celda automatizada.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_slam_algorithm_comparison.png}
+  \caption{Comparacion grafica de los cuatro modos SLAM reducidos: precision, mapa, actualizaciones y bateria.}
+  \label{fig:slam-comparison}
+\end{figure}
 
-Para reforzar la relacion con los PPTs del curso, la escena incluye marcadores de trazabilidad para modelo diferencial, sensores e incertidumbre, maquina de estados, campos potenciales, A* cooperativo, bateria y validacion. Estos marcadores no sustituyen el comportamiento funcional: sirven como lectura visual de la solucion durante la correccion.
+\section{Lectura de resultados}
 
-\section{Extension multi-robot cooperativa}
+Kalman-landmark fue el mejor en error de pose y consumo, porque el escenario es
+pequeno y las landmarks son suficientes para navegar. GMapping y Hector generan
+mapas mas densos, utiles para justificar grilla de ocupacion y scan matching,
+pero pagan un pequeno incremento en error y complejidad. Cartographer-submap
+consigue un equilibrio interesante: menor ruta que GMapping/Hector, estructura
+por submaps y un cierre de ciclo simplificado, aunque no supera el RMSE de
+Kalman-landmark en esta celda compacta.
 
-Ademas del Pioneer principal exigido por la guia, la escena incluye tres robots AMR auxiliares (`VIU\_Fleet\_Robot\_1`, `VIU\_Fleet\_Robot\_2` y `VIU\_Fleet\_Robot\_3`) para demostrar coordinacion de flota en la misma celda. Esta capa no sustituye el controlador por campos potenciales del Pioneer: lo complementa con una prueba adicional de planificacion cooperativa.
-
-El script `multi\_robot\_astar\_manager.lua` ejecuta A* sobre una grilla discreta de la celda. Cada robot planifica hacia su estacion objetivo y el gestor reserva celdas en el tiempo para evitar que dos robots ocupen el mismo espacio en el mismo instante. Tambien se reservan transiciones entre celdas para evitar cruces opuestos o intercambios simultaneos de posicion.
-
-La flota incorpora baterias independientes. Durante la mision cada AMR consume bateria; cuando termina o cuando se fuerza el retorno, vuelve a su estacion de carga, entra en modo `CHARGING`, recupera energia y queda en estado `READY`. Esta logica permite validar descarga, retorno autonomo, recarga y reincorporacion sin interferir con la tarea principal del Pioneer.
+La conclusion tecnica es que para esta fase basica conviene defender
+\texttt{KALMAN\_LANDMARK} como estimador principal y usar GMapping/Hector/
+Cartographer como comparacion academica de mapas LiDAR reducidos.

@@ -1,21 +1,64 @@
-\chapter{Entorno CoppeliaSim}
+\chapter{Escenario CoppeliaSim}
 
-CoppeliaSim permite simular robots moviles, sensores, cuerpos rigidos y scripts de control en una escena 3D. Para esta actividad se emplea un robot tipo Pioneer P3DX, comun en docencia por su modelo diferencial sencillo y por la disponibilidad de ejemplos de sensores de proximidad.
+La escena se construyo automaticamente con el script
+\path{actividad2/coppeliasim/build_phase1_basic_scene.py}. Este generador carga
+la escena base de la asignatura, elimina restos de pruebas anteriores, crea la
+celda warehouse, ubica a R1 y B1, agrega shelves, mesas, obstaculos, piezas
+visuales y embebe los controladores Lua finales. El mismo script ejecuta una
+validacion headless y guarda los resultados en JSON.
 
-Los archivos originales de la asignatura se han copiado a la carpeta `coppeliasim/`:
+\section{Elementos del warehouse}
 
-\begin{itemize}
-  \item `Actividad2\_1\_Pioneer.ttt`: base para la parte de desplazamiento hacia objetivo.
-  \item `Actividad2\_2\_Pioneer.ttt`: base para la parte de evitacion de colisiones.
-  \item `Actividad2\_Pioneer\_Profesional\_10\_10.ttt`: escena final generada para la entrega, con celda robotizada, dummy `mannequin`, estacion objetivo, zonas de seguridad, obstaculos de celda, eventos temporizados y controlador profesional embebido en el Pioneer.
-\end{itemize}
+\begin{longtable}{P{0.22\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
+\toprule
+\textbf{Elemento} & \textbf{Alias en escena} & \textbf{Funcion}\\
+\midrule
+\endhead
+Robot movil & \texttt{/PioneerP3DX} & R1 ejecuta la cola de tareas, navega, evita obstaculos, transporta herramientas y vuelve a carga.\\
+Persona movil & \texttt{/B1} & Bill trabaja en dos mesas; se mueve entre WS1 y WS2 y solicita herramientas.\\
+Herramienta/pieza 1 & \texttt{/T1} & Pieza mecanizada visual, entregada en WS1 y devuelta a Rack\_T1.\\
+Herramienta/pieza 2 & \texttt{/T2} & Pieza tipo placa electronica/compuesta, entregada en WS2 y devuelta a Rack\_T2.\\
+Estacion de carga & \texttt{/C1} & Punto final de retorno y recarga del robot.\\
+Mesas de trabajo & \texttt{/P1\_WorkTable\_1}, \texttt{/P1\_WorkTable\_2} & Superficies donde Bill toma la pieza, la trabaja y la devuelve a R1.\\
+Shelves & \texttt{/Rack\_T1}, \texttt{/Rack\_T2} & Estaciones de almacenamiento opuestas para T1 y T2.\\
+Obstaculos & Pallet, pilar y crate & Elementos detectables para activar evitacion reactiva y mapeo.\\
+\bottomrule
+\end{longtable}
 
-\section{Configuracion recomendada}
+\section{Bill como actor movil}
 
-Antes de ejecutar el script definitivo se recomienda comprobar nombres de objetos, jerarquia del robot, alias de motores, sensores de proximidad, objeto objetivo y sistema de coordenadas de la escena. Esta verificacion evita errores tipicos al copiar codigo de ejemplo: handles nulos, signos invertidos en las ruedas o lectura de objetivo respecto al marco incorrecto.
+B1 no es un obstaculo estatico: representa una persona que se desplaza entre
+estaciones de trabajo. El script \path{phase1_b1_walking_manager.lua} define
+las estaciones WS1/WS2 como datos, publica la estacion actual, informa que
+herramienta necesita y anima las acciones de tomar, trabajar y entregar. La
+orientacion de Bill se calcula con:
 
-\section{Escena final de entrega}
+\[
+\theta_B = \operatorname{atan2}(y_{k+1}-y_k,\;x_{k+1}-x_k)
+\]
 
-La escena final se ha construido a partir de `Actividad2\_2\_Pioneer.ttt` y se guarda como un archivo nuevo, sin sobrescribir las escenas originales. El controlador `Pioneer\_Professional\_Controller` queda asociado al modelo `PioneerP3DX` y utiliza una ruta de waypoints hacia el dummy `mannequin`, con Bill y `GoalStation` como alternativas. La celda incluye una zona de espera, transportadores, palets, area de trabajo robotizada, vallas de seguridad, estacion de carga, HMI visual, waypoints de validacion, seis sensores virtuales adicionales y un gestor de escenarios.
+De esta forma Bill camina orientado hacia la direccion de movimiento. Cuando
+esta en una mesa, su yaw se orienta hacia la superficie de trabajo para evitar
+que parezca trabajar de lado o de espaldas.
 
-El gestor `VIU\_Scenario\_Event\_Manager` activa eventos de prueba durante la simulacion: arranque de ruta, pallet movil, parada por enclavamiento de seguridad, objetivo dinamico, pasillo estrecho, degradacion de sensor, bateria baja con limitacion de velocidad y aproximacion final. Estos eventos fuerzan estados de control `ROUTE`, `AVOIDING`, `RECOVERY`, `HOLD` y `ARRIVED`, por lo que la escena demuestra tanto los campos potenciales de la parte 1 como la extension anticolisiones y de integracion en celda de la parte 2.
+\section{Cola de tareas}
+
+La cola de tareas se representa mediante senales internas de CoppeliaSim y una
+maquina de estados en el controlador R1. El flujo completo se resume en la
+Figura~\ref{fig:state-machine}. Las tareas no se disparan todas al mismo
+tiempo: R1 espera a que Bill termine T1 y se desplace a WS2 antes de iniciar T2.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase1_state_machine.png}
+  \caption{Maquina de estados resumida del controlador R1 para entrega, trabajo de Bill, retorno de herramienta y carga.}
+  \label{fig:state-machine}
+\end{figure}
+
+\section{Piezas visuales}
+
+Para evitar cubos genericos, T1 y T2 se construyen como conjuntos de primitivas:
+T1 parece una pieza mecanizada con placa, nervios, boss central y pernos; T2
+parece una placa compuesta/electronica con railes, conector y capacitor. Esto
+mejora la lectura visual y permite que las capturas del escenario comuniquen
+que se estan manipulando herramientas/piezas reales, no marcadores abstractos.

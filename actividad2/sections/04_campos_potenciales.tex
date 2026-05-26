@@ -1,35 +1,63 @@
-\chapter{Parte 1: navegacion por campos potenciales}
+\chapter{Evitacion de obstaculos y planificacion local}
 
-La primera parte consiste en hacer que el robot avance hacia un objetivo. El objetivo puede ser un objeto \textit{mannequin}, Bill u otro dummy definido en la escena. La idea es calcular la posicion relativa entre robot y objetivo y convertirla en velocidad de avance y giro.
+La navegacion combina dos capas. La primera es reactiva: los sensores de
+proximidad generan reduccion de velocidad y giro de escape si un obstaculo se
+aproxima al frente o a los laterales. La segunda es deliberativa local: el mapa
+SLAM se consulta para decidir si conviene desviarse mediante un waypoint
+intermedio antes de volver al objetivo.
 
-\section{Ley de control}
+\section{Campo reactivo de obstaculos}
 
-Sea \((x_r,y_r)\) la posicion del robot y \((x_g,y_g)\) la posicion del objetivo. El vector de atraccion se define como:
+Para cada sensor con deteccion positiva se calcula una influencia normalizada:
 
 \[
-\vec{F}_{att} = k_{att}\begin{bmatrix}x_g-x_r\\y_g-y_r\end{bmatrix}
+\alpha_i =
+\begin{cases}
+\left(\dfrac{d_0-d_i}{d_0}\right)^2, & 0 < d_i < d_0\\
+0, & d_i \ge d_0
+\end{cases}
 \]
 
-El angulo deseado se obtiene con \(\operatorname{atan2}(y_g-y_r,x_g-x_r)\). La velocidad angular se calcula con el error entre el angulo deseado y la orientacion actual del robot. Para evitar movimientos bruscos se saturan \(v\) y \(\omega\).
+donde \(d_i\) es la distancia medida y \(d_0\) el rango de influencia. La
+contribucion angular se aproxima con el lado del sensor:
 
-\section{Pseudocodigo}
+\[
+\omega_{obs} = -\sum_i \operatorname{sgn}(y_i)\,k_{rep}\,\alpha_i\,w_i
+\]
 
-\begin{lstlisting}
-target = sim.getObject('/mannequin')
-robot  = sim.getObject('/PioneerP3DX')
+El factor \(w_i\) aumenta el peso de sensores frontales y reduce el de sensores
+traseros. Si un obstaculo esta dentro de una distancia critica frontal, el robot
+entra en modo \texttt{AVOIDING}, reduce \(v\) y gira en el sentido de menor
+riesgo.
 
--- En cada paso de simulacion:
-robotPos  = sim.getObjectPosition(robot, -1)
-targetPos = sim.getObjectPosition(target, -1)
-dx = targetPos[1] - robotPos[1]
-dy = targetPos[2] - robotPos[2]
-desiredHeading = math.atan2(dy, dx)
-headingError = normalizeAngle(desiredHeading - robotYaw)
-v = clamp(kv * math.sqrt(dx*dx + dy*dy), 0, vmax)
-w = clamp(kw * headingError, -wmax, wmax)
-setWheelSpeeds(v, w)
-\end{lstlisting}
+\section{Visualizacion de sensores}
 
-\section{Criterios de exito}
+Los 16 sensores ultrasonicos del Pioneer se visualizan como rayos. Cuando no hay
+impacto, el rayo se dibuja hasta el rango nominal; cuando hay obstaculo, se
+dibuja hasta el punto detectado. Esta visualizacion cumple una funcion doble:
+permite validar que la percepcion local existe y ayuda a explicar por que el
+robot modifica su trayectoria ante pallets, pilares o cajas.
 
-El robot debe avanzar hacia el objetivo, reducir velocidad cerca de la meta, evitar oscilaciones excesivas y detenerse dentro de una tolerancia definida. La entrega final debera incluir capturas de la escena y, si es posible, una grafica de distancia al objetivo.
+\section{Waypoint de planificacion SLAM}
+
+El planificador no ejecuta A* global en esta fase. Usa una regla simple y
+trazable: si una landmark o celda ocupada cae demasiado cerca del segmento
+directo entre la pose estimada y el objetivo, se generan dos candidatos laterales
+a distancia \(d_{off}\). Se elige el candidato con menor coste:
+
+\[
+J(q) = \|q-\hat{x}_{R1}\| + \|x_g-q\| + \lambda\,C_{obs}(q)
+\]
+
+donde \(C_{obs}\) penaliza candidatos cercanos a obstaculos mapeados. Si se
+activa este desvio, la senal \texttt{phase1PlannerMode} publica
+\texttt{SLAM\_WAYPOINT}; al alcanzar el waypoint, el sistema vuelve a ruta
+directa.
+
+\section{Lectura operacional}
+
+Esta arquitectura es deliberadamente KISS: no pretende resolver planificacion
+global optima, sino lograr un comportamiento robusto, explicable y suficiente
+para la celda pequena. El robot no necesita reconstruir todo el mundo antes de
+moverse; actualiza el mapa mientras avanza y usa esa informacion para evitar
+bloqueos locales.
