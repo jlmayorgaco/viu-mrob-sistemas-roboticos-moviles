@@ -104,7 +104,7 @@ E = \sum_k (P_L+P_R+P_\theta)\Delta t .
 \]
 
 Los parámetros usados fueron \(m=\SI{16.5}{kg}\), \(I_z=\SI{0.72}{kg.m^2}\),
-\(F_r=\SI{2.8}{N}\) y \(b_\omega=0{,}006~\text{W\,rad}^{-2}\text{s}^{2}\). En esa expresión, \(a=\dot{v}\) es la
+\(F_r=\SI{2.8}{N}\) y \(b_\omega=\SI{0.006}{kg\,m^2\,s^{-1}}\) (amortiguamiento viscoso rotacional, unidades SI: N\,m\,s). En esa expresión, \(a=\dot{v}\) es la
 aceleración lineal estimada entre muestras y \(\dot{\omega}\) es la aceleración
 angular. Esta magnitud se usa como indicador relativo entre controladores dentro
 de la misma escena; no representa una estimación eléctrica de batería.
@@ -132,9 +132,10 @@ u_{PID}=K_p e_d + K_i\sum_{k=0}^{n} e_d(k)\Delta t
 + K_d\frac{e_d(k)-e_d(k-1)}{\Delta t}.
 \]
 
-El término proporcional responde al error instantáneo, el integral corrige
-error estacionario cuando Bill mantiene movimiento, y el derivativo amortigua
-saltos bruscos. En ejecución, todos los modos añaden una corrección de evitación
+El término proporcional responde al error instantáneo; el integral acumula
+el retardo sistemático del seguidor y lo elimina en régimen permanente,
+tanto si el objetivo se mueve como si está detenido; el derivativo amortigua
+cambios bruscos del error. En ejecución, todos los modos añaden una corrección de evitación
 de obstáculos al ángulo de giro:
 \[
 \omega = \omega_{\text{controlador}} + \omega_{obs},
@@ -192,6 +193,14 @@ B=
 0 & -1
 \end{bmatrix}.
 \]
+
+La segunda fila de \(B\) es \([0,\;0]\) porque en la linealización del unicycle
+alrededor de la trayectoria de referencia en el marco de Frenet, el error
+lateral satisface \(\dot{e}_{lat}=v_{ref}e_{yaw}-\omega_{ref}e_{long}\):
+ninguna entrada \((\Delta v,\Delta\omega)\) actúa directamente sobre \(e_{lat}\).
+El error lateral solo se puede reducir indirectamente, a través del canal
+de error de rumbo \(e_{yaw}\), lo que el LQR compensa asignando un peso alto
+a \(e_{lat}\) en la matriz \(Q\) (\(Q_{22}=80\)).
 
 \[
 A_d=I+\Delta t A,\qquad B_d=\Delta t B.
@@ -265,6 +274,17 @@ q_d e_d(k)^2 + q_t\|p^\star_k-p_k\|^2
 + q_f\|p^\star_N-p_N\|^2 .
 \end{aligned}
 \]
+
+El coste incluye dos términos de posición con roles distintos: \(q_d e_d^2\)
+penaliza el error escalar de distancia a Bill (mantiene el radio correcto
+respecto al objetivo, pero no corrige la desviación lateral); \(q_t\|p^\star-p\|^2\)
+penaliza la distancia euclídea al punto \(p^\star\), introduciendo una corrección
+lateral suave que alinea el robot detrás de Bill. Ambos son necesarios: sin
+\(q_t\) el robot mantiene el radio pero puede quedar desplazado lateralmente;
+sin \(q_d\) el seguimiento del radio depende íntegramente de la posición de
+\(p^\star\), con menor robustez ante errores de predicción de Bill.
+El valor \(q_t=7{,}0\ll q_d=48{,}0\) asegura que la corrección lateral no
+interfiera con la regulación de distancia.
 
 Los pesos usados en el script fueron
 \(q_d=48{,}0\), \(q_t=7{,}0\), \(q_\psi=1{,}2\),
