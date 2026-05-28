@@ -175,6 +175,7 @@ local lastSubmapX = 0
 local lastSubmapY = 0
 local lastSubmapLink = ''
 local loopClosureLinks = {}
+local loopClosureEdges = {}   -- restricciones de cierre para el grafo de poses
 local plannerWaypointActive = 0
 local plannerWaypointX = 0
 local plannerWaypointY = 0
@@ -596,6 +597,7 @@ local function initSlamState()
     end
     loopClosures = 0
     loopClosureLinks = {}
+    loopClosureEdges = {}
     submapDistanceSinceLast = 0
     lastSubmapT = sim.getSimulationTime()
     lastSubmapX = p[1]
@@ -728,37 +730,97 @@ local function scanMatchScoreForPose(x, y, theta)
     return score / used
 end
 
+-- Interpolación bilineal del mapa de ocupación log-odds y su gradiente.
+-- Devuelve (valor, grad_x, grad_y) en coordenadas del mundo.
+local function gridInterpolate(wx, wy)
+    local fx = (wx + cfg.gridHalfExtent) / cfg.gridResolution
+    local fy = (wy + cfg.gridHalfExtent) / cfg.gridResolution
+    local ix0 = math.floor(fx)
+    local iy0 = math.floor(fy)
+    local tx = fx - ix0
+    local ty = fy - iy0
+    local function L(ix, iy)
+        local cell = gridMap[gridKey(ix, iy)]
+        return cell and (cell.logOdds or 0) or 0
+    end
+    local v00, v10 = L(ix0, iy0), L(ix0+1, iy0)
+    local v01, v11 = L(ix0, iy0+1), L(ix0+1, iy0+1)
+    local val = (1-tx)*(1-ty)*v00 + tx*(1-ty)*v10 + (1-tx)*ty*v01 + tx*ty*v11
+    local inv = 1.0 / cfg.gridResolution
+    local gx  = inv * (-(1-ty)*v00 + (1-ty)*v10 - ty*v01 + ty*v11)
+    local gy  = inv * (-(1-tx)*v00 - tx*v10 + (1-tx)*v01 + tx*v11)
+    return val, gx, gy
+end
+
+-- Scan matching Gauss-Newton (Hector SLAM real).
+-- Maximiza S(ξ) = Σᵢ M(Tξ(pᵢ))/N por descenso de gradiente de segundo orden.
+-- Jacobianos analíticos del modelo unicycle; sistema 3×3 resuelto por la regla de Cramer.
+local function gaussNewtonScanMatch(maxIter)
+    if #lastScanPoints < 3 then
+        return slamState[1], slamState[2], slamState[3], 0
+    end
+    local x, y, th = slamState[1], slamState[2], slamState[3]
+    local totalScore = 0
+    for _ = 1, maxIter do
+        local H11,H12,H13 = 0,0,0
+        local H22,H23,H33 = 0,0,0
+        local b1,b2,b3    = 0,0,0
+        totalScore = 0
+        local n = 0
+        for _, pt in ipairs(lastScanPoints) do
+            local ang = th + pt.bearing
+            local wx  = x + pt.range * math.cos(ang)
+            local wy  = y + pt.range * math.sin(ang)
+            local val, gx, gy = gridInterpolate(wx, wy)
+            -- Jacobiano ∂(wx,wy)/∂(x,y,θ)
+            local dth_x = -pt.range * math.sin(ang)
+            local dth_y =  pt.range * math.cos(ang)
+            -- Gradiente de la puntuación: j = [gx, gy, gx*dθx+gy*dθy]
+            local j1 = gx
+            local j2 = gy
+            local j3 = gx*dth_x + gy*dth_y
+            -- Hessiano Gauss-Newton: H += jᵀj
+            H11=H11+j1*j1; H12=H12+j1*j2; H13=H13+j1*j3
+            H22=H22+j2*j2; H23=H23+j2*j3; H33=H33+j3*j3
+            b1=b1+j1*val; b2=b2+j2*val; b3=b3+j3*val
+            totalScore = totalScore + val
+            n = n + 1
+        end
+        if n == 0 then break end
+        local inv_n = 1.0/n
+        H11=H11*inv_n+0.002; H22=H22*inv_n+0.002; H33=H33*inv_n+0.002
+        H12=H12*inv_n; H13=H13*inv_n; H23=H23*inv_n
+        b1=b1*inv_n; b2=b2*inv_n; b3=b3*inv_n
+        totalScore = totalScore*inv_n
+        -- Resolver H*Δξ = b mediante regla de Cramer
+        local det = H11*(H22*H33-H23*H23) - H12*(H12*H33-H23*H13) + H13*(H12*H23-H22*H13)
+        if math.abs(det) < 1e-10 then break end
+        local id = 1.0/det
+        local dx  = id*((H22*H33-H23*H23)*b1 + (H13*H23-H12*H33)*b2 + (H12*H23-H22*H13)*b3)
+        local dy  = id*((H13*H23-H12*H33)*b1 + (H11*H33-H13*H13)*b2 + (H12*H13-H11*H23)*b3)
+        local dth = id*((H12*H23-H13*H22)*b1 + (H12*H13-H11*H23)*b2 + (H11*H22-H12*H12)*b3)
+        dx  = clamp(dx,  -0.10, 0.10)
+        dy  = clamp(dy,  -0.10, 0.10)
+        dth = clamp(dth, -0.08, 0.08)
+        x = x+dx; y = y+dy; th = normalizeAngle(th+dth)
+        if math.sqrt(dx*dx+dy*dy) < 0.0008 and math.abs(dth) < 0.0015 then break end
+    end
+    return x, y, th, totalScore
+end
+
+-- Scan matching Hector SLAM: reemplaza la búsqueda exhaustiva por Gauss-Newton.
 local function applyGridScanMatching(searchXY, searchTheta, gain)
     if #lastScanPoints < 3 then return false end
-
-    local baseX = slamState[1]
-    local baseY = slamState[2]
-    local baseTheta = slamState[3]
-    local best = {x = baseX, y = baseY, theta = baseTheta, score = scanMatchScoreForPose(baseX, baseY, baseTheta)}
-    local xyCandidates = {0, searchXY, -searchXY, 0.5 * searchXY, -0.5 * searchXY}
-    local thetaCandidates = {0, searchTheta, -searchTheta, 0.5 * searchTheta, -0.5 * searchTheta}
-
-    for _, dx in ipairs(xyCandidates) do
-        for _, dy in ipairs(xyCandidates) do
-            for _, dtheta in ipairs(thetaCandidates) do
-                local candidateTheta = normalizeAngle(baseTheta + dtheta)
-                local score = scanMatchScoreForPose(baseX + dx, baseY + dy, candidateTheta)
-                if score > best.score then
-                    best = {x = baseX + dx, y = baseY + dy, theta = candidateTheta, score = score}
-                end
-            end
-        end
-    end
-
-    scanMatchScore = best.score
-    if best.score < cfg.hectorMatchMinScore then return false end
-
-    slamState[1] = baseX + gain * (best.x - baseX)
-    slamState[2] = baseY + gain * (best.y - baseY)
-    slamState[3] = normalizeAngle(baseTheta + gain * normalizeAngle(best.theta - baseTheta))
-    slamCov[1][1] = clamp((slamCov[1][1] or 0.03) * 0.92, 0.0006, 0.10)
-    slamCov[2][2] = clamp((slamCov[2][2] or 0.03) * 0.92, 0.0006, 0.10)
-    slamCov[3][3] = clamp((slamCov[3][3] or 0.02) * 0.94, 0.0006, 0.10)
+    local nx, ny, nth, score = gaussNewtonScanMatch(5)
+    scanMatchScore = score
+    if score < cfg.hectorMatchMinScore then return false end
+    slamState[1] = slamState[1] + gain*(nx - slamState[1])
+    slamState[2] = slamState[2] + gain*(ny - slamState[2])
+    slamState[3] = normalizeAngle(slamState[3] + gain*normalizeAngle(nth - slamState[3]))
+    local q = clamp(score/0.5, 0.88, 1.0)
+    slamCov[1][1] = clamp((slamCov[1][1] or 0.03)*q, 0.0006, 0.10)
+    slamCov[2][2] = clamp((slamCov[2][2] or 0.03)*q, 0.0006, 0.10)
+    slamCov[3][3] = clamp((slamCov[3][3] or 0.02)*q, 0.0006, 0.10)
     return true
 end
 
@@ -769,6 +831,41 @@ local function addCartographerSubmap(t)
     lastSubmapT = t
     lastSubmapX = slamState[1]
     lastSubmapY = slamState[2]
+end
+
+-- Optimización del grafo de poses (Gauss-Seidel sobre las restricciones de cierre).
+-- Cada arista almacena la pose relativa medida entre dos submapas;
+-- la optimización ajusta las poses de todos los submapas para satisfacer globalmente
+-- todas las restricciones, propagando la corrección de cierre al estado del robot.
+local function optimizePoseGraph(iterations)
+    if #loopClosureEdges == 0 then return end
+    local lr = 0.14
+    for _ = 1, iterations do
+        for _, edge in ipairs(loopClosureEdges) do
+            local si = submaps[edge.from]
+            local sj = submaps[edge.to]
+            if si and sj then
+                -- Error entre pose relativa actual y pose relativa medida
+                local ex  = (sj.x - si.x) - edge.rx
+                local ey  = (sj.y - si.y) - edge.ry
+                local eth = normalizeAngle((sj.theta - si.theta) - edge.rth)
+                -- Corrección simétrica (gradiente desacoplado, igual peso a cada nodo)
+                si.x     = si.x     + lr * ex
+                si.y     = si.y     + lr * ey
+                si.theta = normalizeAngle(si.theta + lr * eth)
+                sj.x     = sj.x     - lr * ex
+                sj.y     = sj.y     - lr * ey
+                sj.theta = normalizeAngle(sj.theta - lr * eth)
+            end
+        end
+    end
+    -- Corregir el estado del robot para que sea consistente con el submapa activo
+    local active = submaps[#submaps]
+    if active then
+        slamState[1] = slamState[1] + 0.12 * (active.x - slamState[1])
+        slamState[2] = slamState[2] + 0.12 * (active.y - slamState[2])
+        slamState[3] = normalizeAngle(slamState[3] + 0.08 * normalizeAngle(active.theta - slamState[3]))
+    end
 end
 
 local function updateCartographerSubmaps(t, dt)
@@ -787,11 +884,12 @@ local function updateCartographerSubmaps(t, dt)
         addCartographerSubmap(t)
     end
 
+    -- Detección de cierre de ciclo y registro de restricción de grafo de poses
     for i, sm in ipairs(submaps) do
         if i < #submaps - 1 and t - (sm.t or 0) > 22.0 then
             local lx = slamState[1] - sm.x
             local ly = slamState[2] - sm.y
-            local d = math.sqrt(lx * lx + ly * ly)
+            local d  = math.sqrt(lx*lx + ly*ly)
             local link = tostring(i) .. '-' .. tostring(#submaps)
             if d < cfg.loopClosureRadius
                 and not loopClosureLinks[link]
@@ -801,9 +899,17 @@ local function updateCartographerSubmaps(t, dt)
                 loopClosures = loopClosures + 1
                 lastSubmapLink = link
                 loopClosureLinks[link] = true
-                slamState[1] = slamState[1] + 0.10 * (sm.x - slamState[1])
-                slamState[2] = slamState[2] + 0.10 * (sm.y - slamState[2])
-                slamState[3] = normalizeAngle(slamState[3] + 0.06 * normalizeAngle((sm.theta or slamState[3]) - slamState[3]))
+                -- Registrar la restricción como arista del grafo de poses:
+                -- pose relativa medida de sm (nodo i) al submapa activo (nodo #submaps)
+                loopClosureEdges[#loopClosureEdges + 1] = {
+                    from = i,
+                    to   = #submaps,
+                    rx   = slamState[1] - sm.x,
+                    ry   = slamState[2] - sm.y,
+                    rth  = normalizeAngle(slamState[3] - sm.theta),
+                }
+                -- Optimizar el grafo: 8 iteraciones Gauss-Seidel
+                optimizePoseGraph(8)
                 break
             end
         end
