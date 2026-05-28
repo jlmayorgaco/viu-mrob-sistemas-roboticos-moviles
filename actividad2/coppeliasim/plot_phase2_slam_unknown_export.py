@@ -9,8 +9,13 @@ import re
 from pathlib import Path
 from statistics import fmean
 
+import matplotlib
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,6 +23,8 @@ LOG_DIR = ROOT / "actividad2" / "coppeliasim" / "phase2_slam_logs"
 CSV_PATH = LOG_DIR / "phase2_slam_unknown_export.csv"
 SUMMARY_JSON = LOG_DIR / "phase2_slam_unknown_summary.json"
 OVERVIEW_PNG = LOG_DIR / "phase2_slam_unknown_overview.png"
+OVERVIEW_A_PNG = LOG_DIR / "phase2_slam_unknown_overview_a.png"
+OVERVIEW_B_PNG = LOG_DIR / "phase2_slam_unknown_overview_b.png"
 SNAPSHOTS_PNG = LOG_DIR / "phase2_slam_mapping_snapshots.png"
 SIGNALS_PNG = LOG_DIR / "phase2_slam_unknown_signals.png"
 ANALYSIS_JSON = LOG_DIR / "phase2_slam_unknown_analysis.json"
@@ -470,6 +477,87 @@ def plot_overview(rows: list[dict[str, float | int | str]]) -> None:
     plt.close(fig)
 
 
+def plot_overview_split(rows: list[dict[str, float | int | str]]) -> None:
+    final = rows[-1]
+    landmarks = parse_landmarks(row_map_string(final))
+    waypoints = decimated_waypoints(rows)
+    evidence_key = "mapping_evidence_pct" if "mapping_evidence_pct" in rows[-1] else "map_revealed_pct"
+
+    fig, axes = plt.subplots(1, 2, figsize=(13.8, 5.2))
+    fig.suptitle("Phase 2 — trayectoria y crecimiento de mapa", fontsize=13, fontweight="bold")
+
+    ax = axes[0]
+    draw_static_context(ax)
+    ax.plot(values(rows, "robot_x"), values(rows, "robot_y"), color="#1f5fa8", linewidth=2.0, label="R1 real")
+    ax.plot(values(rows, "est_x"), values(rows, "est_y"), color="#10a37f", linewidth=1.4, linestyle="--", label="R1 estimado")
+    ax.plot(values(rows, "b1_x"), values(rows, "b1_y"), color="#111827", linewidth=1.8, label="B1")
+    ax.plot(values(rows, "dynamic_pallet_x"), values(rows, "dynamic_pallet_y"), color="#c9472c", linewidth=1.7, label="pallet dinámico")
+    active_blocker = [row for row in rows if int(row["temporary_blocker_active"]) == 1]
+    if active_blocker:
+        ax.scatter(values(active_blocker, "temporary_blocker_x"), values(active_blocker, "temporary_blocker_y"), s=10, color="#d19a21", alpha=0.35, label="blocker activo")
+    if waypoints:
+        ax.scatter([p[0] for p in waypoints], [p[1] for p in waypoints], s=28, marker="D", color="#7e4aa8", label="waypoints SLAM")
+    if landmarks:
+        ax.scatter([p[1] for p in landmarks], [p[2] for p in landmarks], s=56, marker="x", color="#c9472c", label="landmarks mapeados")
+    ax.set_title("Trayectoria y mapa final", fontsize=11)
+    ax.set_xlabel("x [m]")
+    ax.set_ylabel("y [m]")
+    ax.set_xlim(-2.85, 2.85)
+    ax.set_ylim(-2.65, 2.55)
+    ax.set_aspect("equal", adjustable="box")
+    ax.grid(True, alpha=0.24)
+    ax.legend(loc="best", fontsize=8)
+
+    ax = axes[1]
+    ax.plot(values(rows, "t"), values(rows, evidence_key), color="#10a37f", linewidth=2.0, label="evidencia mapa")
+    ax2 = ax.twinx()
+    ax2.step(values(rows, "t"), values(rows, "slam_landmarks"), where="post", color="#c9472c", linewidth=1.5, label="landmarks")
+    ax.set_title("Crecimiento del mapa", fontsize=11)
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("[%]")
+    ax2.set_ylabel("landmarks")
+    ax.grid(True, alpha=0.24)
+    ax.legend(loc="upper left", fontsize=8)
+    ax2.legend(loc="lower right", fontsize=8)
+
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(OVERVIEW_A_PNG, dpi=180)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(1, 2, figsize=(13.8, 5.2))
+    fig.suptitle("Phase 2 — obstáculos y replanning", fontsize=13, fontweight="bold")
+
+    ax = axes[0]
+    ax.plot(values(rows, "t"), values(rows, "min_obstacle"), color="#1f5fa8", linewidth=1.3, label="distancia obstáculo")
+    ax2 = ax.twinx()
+    ax2.plot(values(rows, "t"), values(rows, "obstacle_risk"), color="#c9472c", linewidth=1.5, label="riesgo")
+    ax.fill_between(values(rows, "t"), 0, values(rows, "temporary_blocker_active"), color="#d19a21", alpha=0.15, transform=ax.get_xaxis_transform(), label="blocker activo")
+    ax.set_title("Lecturas de obstáculos", fontsize=11)
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("m")
+    ax2.set_ylabel("riesgo [0-1]")
+    ax.grid(True, alpha=0.24)
+    ax.legend(loc="upper left", fontsize=8)
+    ax2.legend(loc="upper right", fontsize=8)
+
+    ax = axes[1]
+    ax.step(values(rows, "t"), values(rows, "replan_triggers"), where="post", color="#7e4aa8", linewidth=1.8, label="replanning")
+    ax.step(values(rows, "t"), values(rows, "obstacle_crossings"), where="post", color="#c9472c", linewidth=1.5, label="cruces pallet")
+    ax2 = ax.twinx()
+    ax2.plot(values(rows, "t"), values(rows, "battery"), color="#217a3f", linewidth=1.3, label="batería")
+    ax.set_title("Replanning y misión", fontsize=11)
+    ax.set_xlabel("t [s]")
+    ax.set_ylabel("eventos")
+    ax2.set_ylabel("batería [%]")
+    ax.grid(True, alpha=0.24)
+    ax.legend(loc="upper left", fontsize=8)
+    ax2.legend(loc="upper right", fontsize=8)
+
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.savefig(OVERVIEW_B_PNG, dpi=180)
+    plt.close(fig)
+
+
 def plot_snapshots(rows: list[dict[str, float | int | str]]) -> None:
     evidence_key = "mapping_evidence_pct" if "mapping_evidence_pct" in rows[-1] else "map_revealed_pct"
     snapshots = [
@@ -551,6 +639,7 @@ def main() -> int:
     write_analysis_markdown(analysis)
 
     plot_overview(rows)
+    plot_overview_split(rows)
     plot_snapshots(rows)
     plot_signals(rows)
     evidence_key = "mapping_evidence_pct" if "mapping_evidence_pct" in rows[-1] else "map_revealed_pct"
@@ -559,7 +648,7 @@ def main() -> int:
         "csv": str(CSV_PATH),
         "summary": str(SUMMARY_JSON),
         "analysis": [str(ANALYSIS_JSON), str(ANALYSIS_MD)],
-        "plots": [str(OVERVIEW_PNG), str(SNAPSHOTS_PNG), str(SIGNALS_PNG)],
+        "plots": [str(OVERVIEW_PNG), str(OVERVIEW_A_PNG), str(OVERVIEW_B_PNG), str(SNAPSHOTS_PNG), str(SIGNALS_PNG)],
         "rows": len(rows),
         "final_mapping_evidence_pct": float(rows[-1][evidence_key]),
         "final_landmarks": int(rows[-1]["slam_landmarks"]),
