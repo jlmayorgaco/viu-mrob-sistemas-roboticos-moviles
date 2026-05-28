@@ -1,21 +1,109 @@
-\chapter{Estimacion y SLAM}
+\chapter{Estimación y SLAM}
 
-El estimador no ``une puntos'' de forma geometrica. Ejecuta un ciclo clasico:
-predice la pose con odometria diferencial, corrige con mediciones ruidosas y
-usa esa pose corregida para transformar lecturas de sensor a coordenadas del
-warehouse. A partir de esas detecciones se actualiza un mapa compacto de
-landmarks o una grilla de ocupacion, segun el algoritmo seleccionado.
+El estimador sigue el ciclo clásico de predicción y corrección. Primero propaga
+la pose con odometría diferencial; después corrige esa pose con mediciones
+ruidosas del simulador y lleva las lecturas de sensor a coordenadas del
+warehouse. Con esas detecciones se actualiza un mapa compacto de landmarks o una
+grid de ocupación, según el algoritmo seleccionado \cite{thrun2005}.
+
+La pose que entrega CoppeliaSim tiene seis componentes:
+\([x,y,z,\alpha,\beta,\gamma]\). El estimador usa solo la proyección plana
+\([x,y,\theta]\), con \(\theta=\gamma\). La altura, roll y pitch se descartan
+porque el Pioneer permanece sobre el piso de la celda y la tarea se formula en
+2D.
+
+\section{Sensores: LiDAR, ultrasonidos y rayos de proximidad}
+
+Un LiDAR 2D real emite muchos pulsos láser en ángulos conocidos. Para cada ángulo
+recibe una distancia, normalmente por tiempo de vuelo, y forma un escaneo polar:
+\[
+\mathcal{S}_k=\{(r_i,\beta_i)\}_{i=1}^{N}.
+\]
+Cada par dice: ``en el ángulo \(\beta_i\), el primer obstáculo está a distancia
+\(r_i\)''. Con la pose del robot, ese punto se transforma al marco global:
+\[
+p_i^W =
+\begin{bmatrix}\hat{x}\\\hat{y}\end{bmatrix}+
+R(\hat{\theta})
+\begin{bmatrix}
+r_i\cos\beta_i\\
+r_i\sin\beta_i
+\end{bmatrix}.
+\]
+
+El Pioneer usado aquí no lleva un LiDAR físico 2D. La escena usa los 16 sensores
+ultrasónicos/proximidad del modelo P3DX, dibujados como rayos para que se vea
+qué detecta cada sensor. Conceptualmente se tratan igual que un escaneo de baja
+resolución: cada sensor tiene un ángulo fijo \(\beta_i\), devuelve una distancia
+\(r_i\) si hay impacto y se transforma al mapa con la pose estimada. La
+diferencia está en la densidad y la precisión: un LiDAR aporta muchos más rayos
+y contornos más continuos; el arreglo del Pioneer da pocas direcciones y por eso
+los mapas de esta actividad son aproximaciones locales.
+
+Esta aclaración importa para interpretar las figuras de SLAM. Cuando el trabajo
+habla de \textit{scan}, rayos o reconstrucción, se refiere a los rayos de
+proximidad simulados, no a un LiDAR físico añadido al robot. Las variantes
+GMapping, Hector y Cartographer se implementan sobre esos datos para comparar
+representaciones, no para declarar equivalencia con sus paquetes ROS completos.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_estimator_pipeline.png}
-  \caption{Pipeline usado por la escena: odometria y sensores alimentan estimacion, mapa, planificacion local y control de R1.}
+  \caption{Secuencia de estimación, mapa, planificación local y control de R1.}
   \label{fig:estimator-pipeline}
 \end{figure}
 
-\section{Prediccion de pose}
+\section{Datos usados para comparar SLAM}
 
-Con velocidades odometricas \(v_k,\omega_k\), el modelo diferencial discreto es:
+Los cuatro métodos reciben las mismas entradas: odometría diferencial, pose
+ruidosa de referencia para cerrar el estimador, rayos de proximidad y el mismo
+objetivo de navegación. La comparación no mide paquetes ROS completos, sino
+cuatro representaciones implementadas en Lua para la misma
+celda: rasgos compactos, grid de ocupación, ajuste local por scan matching y
+submapas.
+
+La medición ruidosa de pose no viene de un sensor físico de CoppeliaSim ni de
+un generador gaussiano aleatorio. Se toma la pose real plana del simulador y se
+le añade una perturbación acotada y reproducible: amplitud
+\(\SI{0.030}{m}\) en \(x,y\) y \(\SI{0.018}{rad}\) en yaw para
+\texttt{KALMAN\_LANDMARK}. La covarianza de medición que usa la corrección queda
+parametrizada con \(\sigma_{xy}=\SI{0.055}{m}\) y
+\(\sigma_{\theta}=\SI{0.045}{rad}\). Para detecciones de obstáculo se usaron
+\(\sigma_r=\SI{0.075}{m}\) y \(\sigma_{\beta}=\SI{0.10}{rad}\). Esto mantiene
+repetible la comparación; no pretende modelar el ruido exacto de un sensor real.
+
+La diferencia está en qué guarda cada algoritmo y cómo eso afecta al
+planificador. Kalman-landmark guarda pocos puntos fusionados; GMapping guarda
+probabilidades por celda; Hector corrige la pose buscando el scan que mejor
+encaja con la grid; Cartographer divide el mundo en submapas y registra
+cierres de ciclo. Por eso la comparación no se reduce a ``número de rasgos'': un
+landmark y una celda ocupada no tienen el mismo significado físico.
+
+\section{Por qué hace falta Kalman}
+
+La odometría diferencial predice bien durante pocos instantes, pero acumula error:
+un pequeño desajuste de rueda, saturación o giro se convierte en deriva de
+\(x,y,\theta\). Las mediciones de sensor tampoco son perfectas; un impacto puede
+aparecer desplazado por ruido, discretización o por estar mirando un borde. El
+filtro de Kalman se usa para combinar esas dos fuentes en vez de creer ciegamente
+en una sola.
+
+La idea práctica es simple. Primero se predice dónde debería estar el robot con
+el modelo de movimiento y los comandos de rueda. Después llega una medición
+ruidosa y se calcula cuánto corregir. Si la predicción tiene mucha incertidumbre
+\(P\), la ganancia \(K\) da más peso a la medición. Si la medición es poco fiable
+\(R\), \(K\) corrige menos. En la escena esto mantiene una pose suave para el
+controlador y evita que un rayo aislado mueva el mapa de forma brusca.
+
+En esta actividad Kalman no se usa porque sea el único método posible, sino
+porque encaja con una celda pequeña y con pocos obstáculos: mantiene una pose
+estable, fusiona detecciones cercanas como landmarks y da al planner una lista
+compacta de puntos peligrosos. Su límite es claro: no dibuja paredes ni
+superficies completas como una grid de ocupación.
+
+\section{Predicción de pose}
+
+Con velocidades odométricas \(v_k,\omega_k\), el modelo diferencial discreto es:
 
 \[
 \begin{aligned}
@@ -31,9 +119,9 @@ La covarianza se propaga con el Jacobiano \(G_k\):
 P_k^- = G_k P_{k-1}^+ G_k^\top + Q_k
 \]
 
-\section{Correccion Kalman}
+\section{Corrección Kalman-landmark}
 
-La correccion usa la forma clasica del filtro de Kalman \cite{kalman1960}:
+La formulación de referencia sigue el filtro de Kalman \cite{kalman1960}:
 
 \[
 K_k = P_k^-H_k^\top(H_kP_k^-H_k^\top + R_k)^{-1}
@@ -44,18 +132,51 @@ K_k = P_k^-H_k^\top(H_kP_k^-H_k^\top + R_k)^{-1}
 P_k^+ = (I-K_kH_k)P_k^-
 \]
 
-En el modo \texttt{KALMAN\_LANDMARK}, las detecciones de obstaculo se asocian
-por cercania. Si una lectura cae dentro del radio de asociacion de una landmark,
-se actualiza esa landmark con una ganancia escalar; si no, se crea una landmark
-nueva hasta un maximo configurado.
+En la escena, la pose se corrige con una medición ruidosa generada desde
+CoppeliaSim, y las detecciones de obstáculo se asocian por cercanía. Si una
+lectura cae dentro del radio de asociación de un landmark, esa landmark se
+actualiza con una ganancia escalar; las lecturas no asociadas crean landmarks hasta el
+máximo configurado. \texttt{KALMAN\_LANDMARK} se denomina así porque no estima
+una covarianza conjunta entre pose y mapa, como sí haría un EKF-SLAM completo.
 
-\section{GMapping reducido}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=0.70cm and 0.65cm,
+  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=3.0cm, minimum height=0.82cm, align=center, font=\small},
+  map/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=3.0cm, minimum height=0.82cm, align=center, font=\small},
+  note/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=3.0cm, minimum height=0.72cm, align=center, font=\small}
+]
+\node[block] (odom) {Odometría\\\(v_k,\omega_k,\Delta t\)};
+\node[block, right=of odom] (pred) {Predicción\\\(\hat{x}_k^-,P_k^-\)};
+\node[block, right=of pred] (innov) {Innovación\\\(z_k-H\hat{x}_k^-\)};
+\node[block, right=of innov] (corr) {Corrección\\\(K_k\), \(\hat{x}_k^+\)};
+\node[map, below=of innov] (lm) {Mapa compacto\\landmarks fusionadas};
+\node[note, below=of pred] (assoc) {Asociación\\por cercanía};
+\draw[->, thick, color=UniPrimaryDeep] (odom) -- (pred);
+\draw[->, thick, color=UniPrimaryDeep] (pred) -- (innov);
+\draw[->, thick, color=UniPrimaryDeep] (innov) -- (corr);
+\draw[->, thick, color=GoodGreen!70!black] (corr) |- (lm);
+\draw[->, thick, color=WarnAmber!80!black] (lm) -- (assoc);
+\draw[->, thick, color=WarnAmber!80!black] (assoc) -- (innov);
+\end{tikzpicture}
+\caption{Particularidad de Kalman-landmark: corrige la pose y fusiona pocas detecciones como rasgos; no mantiene una covarianza conjunta pose--mapa como un EKF-SLAM completo.}
+\label{fig:slam-kalman-diagram}
+\end{figure}
 
-GMapping se basa en filtros de particulas Rao-Blackwellizados y mapas de grilla
-\cite{grisetti2007}. En esta simulacion no se ejecuta \texttt{slam\_gmapping};
-se implementa una version reducida de grilla de ocupacion con log-odds. Para
-cada rayo, las celdas atravesadas se actualizan como libres y la celda de
-impacto como ocupada:
+En un entorno pequeño, esta opción mantiene estabilidad: al fusionar
+lecturas cercanas, el mapa no crece sin control y el planner recibe
+obstáculos puntuales fáciles de filtrar. La desventaja es visual: no reconstruye
+superficies completas, de modo que una pared larga aparece como pocos rasgos y
+no como una frontera continua.
+
+\section{GMapping en grid}
+
+GMapping se basa en filtros de partículas Rao-Blackwellizados y mapas de grid
+\cite{grisetti2007}. En esta simulación implementamos una grid de ocupación
+con log-odds, donde \(L(c)=\log(p(c)/(1-p(c)))\). Para cada rayo, las celdas
+atravesadas se marcan como libres y la celda de impacto como ocupada:
 
 \[
 L_t(c)=\operatorname{clip}\left(L_{t-1}(c)+
@@ -65,30 +186,172 @@ l_{free}, & c\in ray
 \end{cases}\right)
 \]
 
-La grilla resultante se usa tanto para publicar telemetria como para alimentar
-el planner local.
+Los incrementos \(l_{occ}>0\) y \(l_{free}<0\) se acotan con
+\(\operatorname{clip}\) para evitar probabilidades saturadas por lecturas
+aisladas.
 
-\section{Hector reducido}
+La grid resultante se usa tanto para telemetría como para el planificador
+local. En Lua, el recorrido de celdas se obtiene muestreando el
+segmento entre el sensor y el punto detectado con paso menor que la resolución
+de la grid. Es una variante simple de ray-casting, suficiente para marcar las
+celdas libres antes de la celda de impacto.
 
-Hector SLAM destaca por scan matching contra una grilla sin depender fuertemente
-de odometria \cite{kohlbrecher2011}. En esta escena se implementa una busqueda
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=0.72cm and 0.75cm,
+  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=2.85cm, minimum height=0.78cm, align=center, font=\small},
+  grid/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=2.85cm, minimum height=0.78cm, align=center, font=\small},
+  warn/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=2.85cm, minimum height=0.78cm, align=center, font=\small}
+]
+\node[block] (scan) {Rayos de sensor\\alcance + impacto};
+\node[block, right=of scan] (ray) {Ray casting\\celdas atravesadas};
+\node[grid, right=of ray] (logodds) {Log-odds\\libre / ocupada};
+\node[grid, right=of logodds] (map) {Grid SLAM\\celdas activas};
+\node[warn, below=of logodds] (plan) {Planner local\\bloqueos por celda};
+\draw[->, thick, color=UniPrimaryDeep] (scan) -- (ray);
+\draw[->, thick, color=UniPrimaryDeep] (ray) -- (logodds);
+\draw[->, thick, color=GoodGreen!70!black] (logodds) -- (map);
+\draw[->, thick, color=WarnAmber!80!black] (map) -- (plan);
+\draw[->, thick, color=WarnAmber!80!black] (plan.west) -| (scan.south);
+\end{tikzpicture}
+\caption{Particularidad de GMapping implementado: la información principal es una grid de ocupación. Cada rayo libera celdas antes del impacto y refuerza la celda ocupada.}
+\label{fig:slam-gmapping-diagram}
+\end{figure}
+
+El GMapping original usa un filtro de partículas Rao-Blackwellizado para
+mantener hipótesis de trayectoria. En esta actividad se conservó la idea que
+interesa para el planificador, la grid de ocupación, y se redujo el resto para
+que el coste computacional fuera razonable dentro del script de CoppeliaSim. Esa
+regla explica por qué GMapping genera muchos más elementos de mapa que
+Kalman-landmark, pero no necesariamente menor error de pose.
+
+\section{Hector con ajuste local}
+
+Hector SLAM usa \textit{scan matching} contra una grid y depende menos de la
+odometría \cite{kohlbrecher2011}. En esta escena implementamos una búsqueda
 local discreta alrededor de la pose estimada. Para cada candidato
-\((x,y,\theta)\) se proyectan los puntos del scan y se evalua el score contra la
-grilla:
+\((x,y,\theta)\) se proyectan los puntos del scan y se evalúa el puntaje contra la
+grid:
 
 \[
 s(x,y,\theta)=\frac{1}{N}\sum_{i=1}^{N} L\left(x+r_i\cos(\theta+\beta_i),
 y+r_i\sin(\theta+\beta_i)\right)
 \]
 
-Si el mejor score supera un umbral, la pose se corrige parcialmente hacia ese
-candidato. Por eso el metodo se reporta como \texttt{HECTOR\_GRID\_MATCHING},
-no como Hector ROS completo.
+Si el mejor puntaje supera un umbral, la pose se corrige parcialmente hacia ese
+candidato. \path{HECTOR_GRID_MATCHING} usa una búsqueda discreta pequeña para
+que el cálculo quepa dentro del script Lua. Hector en ROS trabaja con
+Gauss-Newton multi-resolución; se usa una versión reducida y revisable para
+esta escena.
 
-\section{Cartographer reducido}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=0.68cm and 0.62cm,
+  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small},
+  score/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small},
+  warn/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small}
+]
+\node[block] (pose) {Pose inicial\\\(\hat{x},\hat{y},\hat{\theta}\)};
+\node[block, right=of pose] (window) {Ventana local\\\(\Delta x,\Delta y,\Delta\theta\)};
+\node[block, right=of window] (project) {Proyectar scan\\sobre la grid};
+\node[score, right=of project] (score) {Puntaje\\\(s(x,y,\theta)\)};
+\node[warn, below=of project] (best) {Mejor candidato\\corrección parcial};
+\draw[->, thick, color=UniPrimaryDeep] (pose) -- (window);
+\draw[->, thick, color=UniPrimaryDeep] (window) -- (project);
+\draw[->, thick, color=GoodGreen!70!black] (project) -- (score);
+\draw[->, thick, color=WarnAmber!80!black] (score) |- (best);
+\draw[->, thick, color=WarnAmber!80!black] (best) -| (pose);
+\end{tikzpicture}
+\caption{Particularidad de Hector: busca la pose local cuyo scan encaja mejor con la grid. La odometría inicializa la búsqueda, pero la corrección viene del ajuste scan--mapa.}
+\label{fig:slam-hector-diagram}
+\end{figure}
 
-Google Cartographer organiza el mapeo en submaps y cierres de ciclo para reducir
-deriva acumulada \cite{hess2016}. La version usada aqui mantiene submaps
-temporales, crea nuevos submaps por distancia o periodo y aplica un cierre de
-ciclo simplificado cuando la pose vuelve cerca de un submap antiguo con score
-suficiente. En el benchmark produjo 10 submaps y 1 loop closure.
+Esto hace que Hector sea útil cuando los rayos tienen geometría suficiente para
+alinearse con el mapa. Si el entorno observado es pobre, simétrico o con pocos
+impactos, varios candidatos reciben puntajes parecidos y la corrección tiende a
+oscilar. Por esa razón el script aplica solo una fracción de la corrección y
+mantiene umbrales para no mover la pose ante coincidencias débiles.
+
+\section{Cartographer con submapas}
+
+Google Cartographer organiza el mapeo en submapas y cierres de ciclo para
+reducir deriva acumulada \cite{hess2016}. La implementación local mantiene
+submapas temporales, crea submapas adicionales por distancia o periodo y aplica un
+cierre de ciclo sencillo cuando la pose vuelve cerca de un submapa antiguo con
+puntaje por encima del umbral. En la comparación actual produjo 13 submapas y 4
+cierres de ciclo.
+
+En concreto, un submapa se considera antiguo si no es el activo ni el anterior y
+si han pasado más de \(\SI{22}{s}\) desde su creación. El cierre se acepta solo
+si la distancia al submapa es menor que \(\SI{0.45}{m}\), hay al menos tres
+submapas de separación, el puntaje de coincidencia de scan supera \(0.35\) y no
+se ha registrado ya ese enlace. La corrección aplicada es parcial
+\((10\%\) en \(x,y\), \(6\%\) en yaw\()\), precisamente para evitar que un falso
+positivo rompa la trayectoria.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=0.70cm and 0.70cm,
+  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=2.75cm, minimum height=0.78cm, align=center, font=\small},
+  submap/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=2.75cm, minimum height=0.78cm, align=center, font=\small},
+  loop/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=2.75cm, minimum height=0.78cm, align=center, font=\small}
+]
+\node[block] (scan) {Scan actual\\pose local};
+\node[submap, right=of scan] (active) {Submapa activo\\acumula celdas};
+\node[submap, right=of active] (new) {Submapa adicional\\por distancia/tiempo};
+\node[loop, below=of active] (candidate) {Candidato antiguo\\cercanía + puntaje};
+\node[loop, right=of candidate] (closure) {Cierre de ciclo\\ajuste local};
+\draw[->, thick, color=UniPrimaryDeep] (scan) -- (active);
+\draw[->, thick, color=GoodGreen!70!black] (active) -- (new);
+\draw[->, thick, color=WarnAmber!80!black] (new) |- (candidate);
+\draw[->, thick, color=WarnAmber!80!black] (candidate) -- (closure);
+\draw[->, thick, color=WarnAmber!80!black] (closure) -| (active);
+\end{tikzpicture}
+\caption{Particularidad de Cartographer-submap: el mapa no se guarda como una sola grid monolítica, sino como submapas locales con posibles cierres cuando R1 vuelve a zonas conocidas.}
+\label{fig:slam-cartographer-diagram}
+\end{figure}
+
+El mapa conserva estructura temporal: registra qué zona
+se construyó en cada tramo y detecta retornos a regiones ya visitadas. El coste
+es una lógica más delicada para navegación local. Si una celda antigua queda
+cerca de la ruta, el planner la sobreinterpreta como bloqueo; por eso en
+Phase 2 se añadieron filtros de persistencia, distancia al robot y recuperación
+directa.
+
+\section{Qué método usar y por qué}
+
+Los cuatro métodos responden a preguntas distintas. Kalman-landmark pregunta
+``¿dónde está el robot y qué puntos cercanos debo evitar?''. GMapping pregunta
+``¿qué celdas del plano están libres u ocupadas?''. Hector pregunta ``¿qué
+pequeña corrección de pose hace que el escaneo actual encaje mejor con el mapa?''.
+Cartographer pregunta ``¿cómo divido el recorrido en submapas y reconozco zonas
+visitadas de nuevo?''.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}P{0.20\textwidth}P{0.28\textwidth}P{0.25\textwidth}Y@{}}
+\toprule
+\textbf{Método} & \textbf{Conviene cuando} & \textbf{No conviene cuando} & \textbf{Lectura en esta actividad}\\
+\midrule
+Kalman-landmark & Se necesita pose estable y pocos obstáculos puntuales. & Se requiere una pared o contorno continuo del entorno. & Mejor RMSE y menor duración; opción base para la celda compacta.\\
+GMapping/log-odds & El planner necesita saber qué celdas están ocupadas. & Se espera estimación completa de trayectoria por partículas. & Útil como grid de ocupación ligera; no implementa el GMapping completo.\\
+Hector/scan-to-map & Hay suficiente geometría para alinear el scan contra el mapa. & Los rayos son pocos, simétricos o con impactos pobres. & Da buena precisión de rasgos en Phase 2, pero puede oscilar si el scan no discrimina candidatos.\\
+Cartographer & El robot recorre zonas amplias y vuelve a regiones ya vistas. & La escena es pequeña y el coste de gestionar submapas supera el beneficio. & Logra mayor cobertura y cierres, pero tarda más y exige filtros para no bloquear la ruta.\\
+\bottomrule
+\end{tabularx}
+\caption{Criterio de selección entre las variantes SLAM implementadas.}
+\label{tab:slam-selection}
+\end{table}
+
+Con los datos de la actividad, la elección operativa es Kalman-landmark para
+controlar el Pioneer en esta celda. Las grids y submapas se mantienen para
+comparar cómo cambia el mapa cuando se prioriza ocupación, ajuste local o
+estructura temporal.

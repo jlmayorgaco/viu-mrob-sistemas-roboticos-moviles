@@ -1,0 +1,28 @@
+qa_started phase1
+joints_registered 10
+size /P1_Warehouse_Floor 10.60 10.20
+pos /P1_WorkTable_1 -3.65 3.75 0.31
+pos /P1_WorkTable_2 3.65 -3.75 0.31
+pos /Rack_T1 -3.20 -3.50 0.22
+pos /Rack_T2 3.20 3.50 0.22
+pos /WS1_Tool_Drop -3.65 3.05 0.36
+pos /WS2_Tool_Drop 3.65 -3.05 0.36
+sofa P1_Operator_Sofa seat -4.60 0.10 back -4.87 0.10 front -4.36 0.10
+object_sanity monitored=458 out=0 tilted=0 below=0 duplicate_leaves=0
+kind phase1
+endAt 120.0
+states TRANSIT_TO_WS1,TRANSIT_TO_WS2,WORKING_WS1,WORKING_WS2
+joint leftLegJoint actual_range 0.575 target_range 0.600 min -0.285 max 0.291
+joint leftKneeJoint actual_range 0.370 target_range 0.380 min 0.000 max 0.370
+joint leftAnkleJoint actual_range 0.000 target_range 0.000 min 0.000 max 0.000
+joint leftShoulderJoint actual_range 0.693 target_range 0.700 min -0.676 max 0.016
+joint rightLegJoint actual_range 0.575 target_range 0.600 min -0.291 max 0.285
+joint leftElbowJoint actual_range 0.329 target_range 0.330 min -0.000 max 0.329
+joint rightElbowJoint actual_range 0.309 target_range 0.310 min -0.000 max 0.309
+joint rightShoulderJoint actual_range 0.674 target_range 0.680 min -0.657 max 0.018
+joint rightAnkleJoint actual_range 0.000 target_range 0.000 min 0.000 max 0.000
+joint rightKneeJoint actual_range 0.369 target_range 0.380 min 0.000 max 0.369
+motion_summary char_move 9.513 robot_move 8.006 speed_max 0.360 shoulders 1.367 elbows 0.638 legs 1.151 knees 0.740 ankles 0.000
+motion_targets knees 0.760
+motion_symmetry leg_delta 0.000 shoulder_delta 0.019
+OK

@@ -1,0 +1,50 @@
+{
+  "duration_s": 124.3,
+  "samples": 914,
+  "unknown_map_prior_known": false,
+  "final_task_state": "CHARGING",
+  "completed_task_count": 4,
+  "phase2_motion_model": "deterministic_periodic",
+  "phase2_moved_objects": "P2_Dynamic_Pallet;P2_Temporary_Blocker",
+  "mapping": {
+    "final_evidence_pct": 89.204,
+    "max_evidence_pct": 89.204,
+    "time_to_25pct_s": 2.4,
+    "time_to_50pct_s": 87.15,
+    "time_to_75pct_s": 98.4,
+    "landmarks_final": 22,
+    "landmarks_from_final_map": 22,
+    "phase2_obstacle_recall_proxy": 1.0,
+    "phase2_feature_precision_proxy": 0.273,
+    "slam_updates": 5208,
+    "frontier_count": 6,
+    "unknown_cells_declared": 32
+  },
+  "dynamic_obstacles": {
+    "pallet_crossings": 9,
+    "temporary_blocker_active_samples": 271,
+    "replan_triggers": 15,
+    "planner_recovery_count": 0,
+    "max_obstacle_risk": 0.803,
+    "min_obstacle_m": 0.052
+  },
+  "estimator": {
+    "mean_pose_error_m": 0.02809,
+    "p95_pose_error_m": 0.03971,
+    "max_pose_error_m": 0.04511
+  },
+  "durations": {
+    "planner_modes_s": {
+      "DIRECT": 105.35,
+      "DIRECT_AFTER_WAYPOINT": 13.55,
+      "SLAM_WAYPOINT": 5.4
+    },
+    "motion_modes_s": {
+      "ARRIVED_TARGET": 0.45,
+      "AVOIDING": 40.7,
+      "MANIPULATING": 7.1,
+      "ROUTE": 2.0,
+      "WAIT_B1": 74.05
+    }
+  }
+}

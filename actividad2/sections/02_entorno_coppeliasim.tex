@@ -1,64 +1,184 @@
 \chapter{Escenario CoppeliaSim}
 
-La escena se construyo automaticamente con el script
-\path{actividad2/coppeliasim/build_phase1_basic_scene.py}. Este generador carga
-la escena base de la asignatura, elimina restos de pruebas anteriores, crea la
-celda warehouse, ubica a R1 y B1, agrega shelves, mesas, obstaculos, piezas
-visuales y embebe los controladores Lua finales. El mismo script ejecuta una
-validacion headless y guarda los resultados en JSON.
+La escena se genera con
+\path{actividad2/coppeliasim/build_phase1_basic_scene.py}. Ese script carga la
+base de la asignatura, limpia restos de pruebas anteriores, coloca la celda,
+ubica a R1 y B1, añade estanterías, mesas, sofá, obstáculos y piezas visuales, y
+deja integrados los controladores Lua. Al final lanza una validación sin interfaz
+gráfica y guarda un JSON reproducible con estado, métricas y objetos verificados.
 
 \section{Elementos del warehouse}
 
-\begin{longtable}{P{0.22\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{P{0.22\textwidth}P{0.30\textwidth}P{0.36\textwidth}}
 \toprule
-\textbf{Elemento} & \textbf{Alias en escena} & \textbf{Funcion}\\
+\textbf{Elemento} & \textbf{Alias en escena} & \textbf{Función}\\
 \midrule
-\endhead
-Robot movil & \texttt{/PioneerP3DX} & R1 ejecuta la cola de tareas, navega, evita obstaculos, transporta herramientas y vuelve a carga.\\
-Persona movil & \texttt{/B1} & Bill trabaja en dos mesas; se mueve entre WS1 y WS2 y solicita herramientas.\\
+Robot móvil & \texttt{/PioneerP3DX} & R1 ejecuta la cola de tareas, navega, evita obstáculos, transporta herramientas y vuelve a carga.\\
+Persona móvil & \texttt{/B1}, Bill & Modelo de persona de CoppeliaSim renombrado para actuar como \texttt{People/mannequin}; trabaja en dos mesas, camina entre WS1 y WS2 y solicita herramientas.\\
 Herramienta/pieza 1 & \texttt{/T1} & Pieza mecanizada visual, entregada en WS1 y devuelta a Rack\_T1.\\
-Herramienta/pieza 2 & \texttt{/T2} & Pieza tipo placa electronica/compuesta, entregada en WS2 y devuelta a Rack\_T2.\\
-Estacion de carga & \texttt{/C1} & Punto final de retorno y recarga del robot.\\
+Herramienta/pieza 2 & \texttt{/T2} & Pieza tipo placa electrónica/compuesta, entregada en WS2 y devuelta a Rack\_T2.\\
+Estación de carga & \texttt{/C1} & Punto final de retorno y recarga del robot.\\
 Mesas de trabajo & \texttt{/P1\_WorkTable\_1}, \texttt{/P1\_WorkTable\_2} & Superficies donde Bill toma la pieza, la trabaja y la devuelve a R1.\\
-Shelves & \texttt{/Rack\_T1}, \texttt{/Rack\_T2} & Estaciones de almacenamiento opuestas para T1 y T2.\\
-Obstaculos & Pallet, pilar y crate & Elementos detectables para activar evitacion reactiva y mapeo.\\
+Sofá de operador & \texttt{/P1\_Operator\_Sofa\_*} & Elemento de descanso y referencia espacial dentro de la celda, ubicado fuera de la ruta principal.\\
+Estanterías & \texttt{/Rack\_T1}, \texttt{/Rack\_T2} & Estaciones de almacenamiento opuestas para T1 y T2.\\
+Obstáculos & Pallet, pilar y caja & Elementos detectables para activar evitación reactiva y mapeo.\\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\end{table}
 
-\section{Bill como actor movil}
+\section{Cómo funciona el Pioneer dentro de CoppeliaSim}
 
-B1 no es un obstaculo estatico: representa una persona que se desplaza entre
-estaciones de trabajo. El script \path{phase1_b1_walking_manager.lua} define
-las estaciones WS1/WS2 como datos, publica la estacion actual, informa que
-herramienta necesita y anima las acciones de tomar, trabajar y entregar. La
-orientacion de Bill se calcula con:
+El Pioneer P3DX de la escena se maneja como una plataforma diferencial. Tiene dos
+ruedas motrices laterales: si las dos ruedas giran a la misma velocidad, el robot
+avanza recto; si una rueda gira más rápido que la otra, el robot cambia de
+rumbo; si una avanza y la otra retrocede, puede girar casi sobre su propio
+centro. Por eso el controlador no envía una posición final directamente al
+robot. En cada ciclo calcula una velocidad lineal \(v\) y una velocidad angular
+\(\omega\), las convierte en velocidades de rueda y las aplica a los motores de
+CoppeliaSim.
+
+El ciclo de control es siempre el mismo:
+
+\begin{enumerate}
+  \item Leer la pose estimada de R1, el estado de Bill, el objetivo de la tarea y
+  los sensores de proximidad.
+  \item Actualizar el estimador y el mapa local con las detecciones del ciclo.
+  \item Decidir si el objetivo directo es seguro o si conviene pasar por un
+  \texttt{SLAM\_WAYPOINT}.
+  \item Calcular \(v\) y \(\omega\) con atracción al objetivo, corrección de
+  rumbo y repulsión de obstáculos.
+  \item Convertir \(v,\omega\) a rueda izquierda y derecha, saturar los mandos y
+  registrar telemetría.
+\end{enumerate}
+
+Este bucle explica por qué el documento separa escena, cinemática, campos
+potenciales, anticolisión y SLAM. No son módulos aislados: todos alimentan la
+misma decisión de velocidad que se envía al Pioneer.
+
+\section{Bill como actor móvil}
+
+Bill camina entre las dos estaciones, pide herramientas y trabaja la pieza en la
+mesa que toca. El script \path{phase1_b1_walking_manager.lua} define WS1/WS2,
+escribe la estación actual, indica qué herramienta necesita y anima las acciones
+de tomar, trabajar y entregar. La orientación se calcula con:
 
 \[
 \theta_B = \operatorname{atan2}(y_{k+1}-y_k,\;x_{k+1}-x_k)
 \]
 
-De esta forma Bill camina orientado hacia la direccion de movimiento. Cuando
-esta en una mesa, su yaw se orienta hacia la superficie de trabajo para evitar
-que parezca trabajar de lado o de espaldas.
+Bill mira hacia donde camina. En las mesas se orienta hacia la superficie de
+trabajo para mantener coherencia visual entre la animación y la tarea ejecutada.
 
 \section{Cola de tareas}
 
-La cola de tareas se representa mediante senales internas de CoppeliaSim y una
-maquina de estados en el controlador R1. El flujo completo se resume en la
-Figura~\ref{fig:state-machine}. Las tareas no se disparan todas al mismo
-tiempo: R1 espera a que Bill termine T1 y se desplace a WS2 antes de iniciar T2.
+La cola de tareas se mueve con señales internas de CoppeliaSim y una máquina de
+estados dentro del controlador de R1. La Figura~\ref{fig:state-machine} resume
+la máquina de estados. R1 espera a que Bill termine T1 y llegue a WS2 antes de
+buscar T2; esta sincronización evita que la segunda entrega empiece antes de una
+solicitud válida.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_state_machine.png}
-  \caption{Maquina de estados resumida del controlador R1 para entrega, trabajo de Bill, retorno de herramienta y carga.}
+  \caption{Máquina de estados resumida del controlador R1 para entrega, trabajo de Bill, retorno de herramienta y carga.}
   \label{fig:state-machine}
+\end{figure}
+
+\section{Integración del código}
+
+El código de la escena se concentra en percepción, coordinación de
+tareas y registro de datos. El \texttt{mannequin} queda como persona móvil
+\texttt{/B1}; los sensores entregan datos a la evitación y al mapa; B1 tiene su propio
+manager, con tiempos de trabajo y movimiento; y los exportadores guardan CSV y JSON
+para revisar control, seguridad y SLAM con datos reproducibles.
+
+\begin{lstlisting}[caption={Lectura de sensores y evitación reactiva en Lua.},label={lst:sensor-avoidance}]
+for _, s in ipairs(sensors) do
+    local ok, distance, point, object = sim.readProximitySensor(s.handle)
+    if ok and ok > 0 and distance > 0 then
+        addSensorRay(s, distance, point, true)
+        if object ~= b1 then
+            registerSlamDetection(s, distance, point)
+        end
+        if distance < cfg.avoidRange then
+            local influence = ((cfg.avoidRange - distance) / cfg.avoidRange)^2
+            steer = steer - sign(s.y) * cfg.kRepulsion * influence
+            slow = math.max(slow, influence)
+        end
+    else
+        addSensorRay(s, cfg.sensorVizRange, nil, false)
+    end
+end
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Fragmento de la máquina de estados de T1 y T2.},label={lst:task-fsm}]
+local TaskHandlers = {
+    PICKUP_T1 = function()
+        pickupTool(t1, 'T1', 'TO_WS1_DELIVER_T1')
+    end,
+    DELIVER_T1_WS1 = function()
+        deliverToolToBill(t1, ws1WorkSurface, 1,
+            'task1:{T1->B1@WS1}', 'WAIT_B1_WORK_T1')
+    end,
+    WAIT_B1_WS2_REQUEST_T2 = function()
+        stopRobot('WAIT_B1')
+        if readStringSignal('phase1B1Station', 'NONE') == 'WS2' then
+            setTaskState('TO_PICKUP_T2')
+        end
+    end,
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Selección de objetivo directo o punto intermedio SLAM.},label={lst:slam-waypoint}]
+local targetWorld = readWorldPosition(target)
+local goalX, goalY = targetWorld[1], targetWorld[2]
+local planX, planY = plannedWaypointTo(goalX, goalY, tolerance)
+local dx, dy = planX - estX, planY - estY
+local heading = normalizeAngle(atan2(dy, dx) - estTheta)
+local obstacleSteer, obstacleSlow, minObstacle, hardStop = readObstacleField()
+local v, w = computeCommand(distance, heading, lateral,
+                            obstacleSteer, obstacleSlow, hardStop)
+setWheelSpeeds(v, w)
+\end{lstlisting}
+
+\section{Capturas de la simulación}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase1_overview_oriented.png}
+    \caption{Escena completa en CoppeliaSim.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase1_sensor_rays_avoidance_oriented.png}
+    \caption{Rayos de sensor y evitación local.}
+  \end{subfigure}
+
+  \vspace{0.5em}
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase1_bill_working_oriented.png}
+    \caption{Bill trabajando frente a la mesa.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase1_handoff_t1_oriented.png}
+    \caption{Entrega de herramienta entre R1 y Bill.}
+  \end{subfigure}
+  \caption{Capturas 3D de la escena ejecutada en CoppeliaSim.}
+  \label{fig:coppeliasim-captures}
 \end{figure}
 
 \section{Piezas visuales}
 
-Para evitar cubos genericos, T1 y T2 se construyen como conjuntos de primitivas:
-T1 parece una pieza mecanizada con placa, nervios, boss central y pernos; T2
-parece una placa compuesta/electronica con railes, conector y capacitor. Esto
-mejora la lectura visual y permite que las capturas del escenario comuniquen
-que se estan manipulando herramientas/piezas reales, no marcadores abstractos.
+T1 y T2 se hicieron con primitivas para evitar geometrías genéricas. T1 lleva
+placa, nervios, boss central y pernos; T2 representa una placa compuesta/electrónica
+con raíles, conector y capacitor. La geometría diferenciada distingue
+cada herramienta durante la ejecución y en las capturas.

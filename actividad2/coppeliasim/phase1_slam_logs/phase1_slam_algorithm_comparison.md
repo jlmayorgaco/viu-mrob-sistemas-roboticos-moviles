@@ -1,34 +1,34 @@
-# Comparacion SLAM - Phase 1 Basic
+# Comparación SLAM - Phase 1 Basic
 
 ## Alcance
 
-No se ejecutaron paquetes ROS reales (`slam_gmapping`, `hector_mapping` o Google Cartographer) porque el entorno Windows no tiene `rosrun` ni `ros2`. La comparacion usa modos implementados en CoppeliaSim con los mismos sensores, tarea, controlador y escenario:
+La comparación usa modos implementados en CoppeliaSim con los mismos sensores, tarea, controlador y escenario. Los nombres GMapping, Hector y Cartographer identifican el enfoque usado en cada variante, no la ejecución de paquetes ROS externos:
 
-- `GMAPPING_GRID`: mapper tipo GMapping basado en grilla de ocupacion con actualizacion log-odds por rayos LiDAR/proximidad.
-- `HECTOR_GRID_MATCHING`: scan matching local contra grilla de ocupacion, inspirado en Hector SLAM.
-- `CARTOGRAPHER_SUBMAP`: grilla con submaps y loop-closure simplificado, inspirado en Google Cartographer.
-- `KALMAN_LANDMARK`: localizacion Kalman/EKF reducida y landmarks de obstaculos actualizados con Kalman.
+- `GMAPPING_GRID`: mapeo tipo GMapping basado en grid de ocupación con actualización log-odds por rayos de proximidad.
+- `HECTOR_GRID_MATCHING`: ajuste local de escaneos contra grid de ocupación, inspirado en Hector SLAM.
+- `CARTOGRAPHER_SUBMAP`: grid con submapas y cierres de ciclo locales, inspirado en Google Cartographer.
+- `KALMAN_LANDMARK`: localización Kalman/EKF y rasgos de obstáculos actualizados con Kalman.
 
 ## Resultados
 
-| Metrica | GMAPPING_GRID | HECTOR_GRID_MATCHING | CARTOGRAPHER_SUBMAP | KALMAN_LANDMARK |
+| Métrica | GMAPPING_GRID | HECTOR_GRID_MATCHING | CARTOGRAPHER_SUBMAP | KALMAN_LANDMARK |
 |---|---:|---:|---:|---:|
 | Completado | True | True | True | True |
-| Duracion [s] | 102.6 | 102.5 | 101.65 | 101.6 |
-| Longitud de ruta [m] | 10.906 | 10.88 | 10.774 | 10.771 |
-| RMSE posicion [m] | 0.04135 | 0.04072 | 0.03842 | 0.0316 |
-| Error P95 [m] | 0.05697 | 0.06485 | 0.05673 | 0.04959 |
-| Error maximo [m] | 0.07722 | 0.11112 | 0.0934 | 0.06433 |
-| Features/celdas finales | 63 | 56 | 55 | 15 |
-| Updates SLAM | 1457 | 1426 | 1432 | 1447 |
-| Submaps | 0 | 0 | 10 | 0 |
-| Loop closures | 0 | 0 | 1 | 0 |
-| Distancia minima obstaculo [m] | 0.28405 | 0.2826 | 0.28451 | 0.29035 |
-| Riesgo maximo | 0.28735 | 0.29455 | 0.29144 | 0.27995 |
-| Bateria usada [%] | 16.82153 | 16.78037 | 16.65956 | 16.63498 |
+| Duración [s] | 125.6 | 123.55 | 125.25 | 121.45 |
+| Longitud de ruta [m] | 15.997 | 15.233 | 15.968 | 15.763 |
+| RMSE posición [m] | 0.04117 | 0.04445 | 0.04149 | 0.03142 |
+| Error P95 [m] | 0.05718 | 0.07596 | 0.06026 | 0.0467 |
+| Error máximo [m] | 0.07354 | 0.10862 | 0.07362 | 0.05824 |
+| Rasgos/celdas finales | 94 | 84 | 91 | 20 |
+| Actualizaciones SLAM | 4514 | 4470 | 4474 | 4275 |
+| Submapas | 0 | 0 | 13 | 0 |
+| Cierres de ciclo | 0 | 0 | 4 | 0 |
+| Distancia mínima a obstáculo [m] | 0.05407 | 0.1288 | 0.0595 | 0.10396 |
+| Riesgo máximo | 0.80407 | 0.59926 | 0.80463 | 0.69276 |
+| Batería usada [%] | 24.62225 | 23.6279 | 24.49654 | 24.01627 |
 
-## Lectura tecnica
+## Interpretación técnica
 
-`GMAPPING_GRID`, `HECTOR_GRID_MATCHING` y `CARTOGRAPHER_SUBMAP` producen mapas de ocupacion. `KALMAN_LANDMARK` produce un mapa compacto de puntos de obstaculo. Hector se diferencia por usar scan matching local contra la grilla. Cartographer se diferencia por mantener submaps y registrar cierres de ciclo simplificados. Para navegacion local en este escenario pequeno, todos son validos como comparacion controlada, pero deben presentarse como implementaciones reducidas dentro de CoppeliaSim.
+`GMAPPING_GRID`, `HECTOR_GRID_MATCHING` y `CARTOGRAPHER_SUBMAP` producen mapas de ocupación. `KALMAN_LANDMARK` produce un mapa compacto de puntos de obstáculo. Hector usa ajuste local de escaneos contra la grid. Cartographer mantiene submapas y registra cierres de ciclo locales. La comparación queda acotada a CoppeliaSim y a los sensores de proximidad de la escena.
 
-Conclusion recomendada: reportar los resultados como benchmark academico reproducible, no como ejecucion de paquetes ROS originales.
+Conclusión: los resultados comparan cuatro estrategias de estimación y mapeo dentro de la misma misión simulada.

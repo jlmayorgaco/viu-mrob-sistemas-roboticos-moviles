@@ -1,12 +1,14 @@
-\chapter{Validacion y trazabilidad}
+\chapter{Validación}
 
-La validacion se diseno para demostrar comportamiento, no solo compilacion. Se
-evalua si la escena existe, si los objetos clave estan presentes, si los scripts
-estan embebidos, si las tareas se completan, si Bill se mueve, si las acciones
-visuales ocurren, si el sistema anticolision se activa, si el estimador queda
-acotado y si los sensores publican rayos visibles.
+La validación revisa comportamiento y archivos presentes. El checklist mira
+escena, objetos de la escena, scripts integrados, tareas completadas, movimiento de
+Bill, acciones visuales, anticolisión, error del estimador y rayos de sensor.
+Generamos las capturas 3D desde CoppeliaSim con
+\path{capture_coppeliasim_screenshots.lua}; son las imágenes de las
+Figuras~\ref{fig:coppeliasim-captures} y
+\ref{fig:phase2-coppeliasim-captures}.
 
-\section{Checklist automatizado}
+\section{Validación por checklist}
 
 \begingroup
 \footnotesize
@@ -17,73 +19,59 @@ acotado y si los sensores publican rayos visibles.
 \midrule
 \endhead
 Escena & Existe \path{Sim_T2_Phase1_Basic.ttt} y contiene R1, B1, T1, T2, C1. & OK\\
-Warehouse & Dos mesas, dos shelves, obstaculos y panel de tareas. & OK\\
+Mannequin & B1 (Bill) se usa como persona móvil tipo \texttt{People/mannequin}. & OK\\
+Warehouse & Dos mesas, dos estanterías, sofá, obstáculos y panel de tareas. & OK\\
 Scripts & Controlador R1 y manager B1 adjuntos en la escena. & OK\\
-Tareas & Entrega y retorno de T1/T2; cuatro tareas completadas. & OK\\
+Tareas & Entrega y retorno de T1 y T2; cuatro tareas completadas. & OK\\
 Bill & Movimiento entre estaciones y acciones de tomar/trabajar/entregar. & OK\\
-Percepcion & 16 sensores activos y rayos visualizados. & OK\\
-Seguridad & Modo \texttt{AVOIDING} observado y riesgo de obstaculo publicado. & OK\\
-Estimacion & Kalman activo, mapa SLAM actualizado y error acotado. & OK\\
-Planificacion & \texttt{SLAM\_WAYPOINT} observado. & OK\\
-Bateria & Tarea aceptada por bateria y retorno a carga. & OK\\
+Percepción & 16 sensores activos y rayos visualizados. & OK\\
+Seguridad & Modo \texttt{AVOIDING} observado y señal de riesgo activa. & OK\\
+Estimación & Kalman activo, mapa SLAM actualizado y error acotado. & OK\\
+Planificación & \texttt{SLAM\_WAYPOINT} observado. & OK\\
+Batería & Tarea aceptada por batería y retorno a carga. & OK\\
+Capturas CoppeliaSim & Vista general, entrega, trabajo de B1, rayos de sensores y replanificación Phase 2. & OK\\
+Phase 2 & Mapa desconocido, tarima móvil, bloque temporal, cuatro SLAM completados y recuperación del planner registrada. & OK\\
+Deck editable & Existe \path{slides/Actividad2_Pioneer_CoppeliaSim.pptx} junto con su PDF exportado. & OK\\
 \bottomrule
 \end{longtable}
 \endgroup
 
-\section{Timeline de la mision}
+\section{Timeline de la misión}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_task_timeline.png}
-  \caption{Timeline exportado de la simulacion: estados de tarea, movimiento, planner y acciones de Bill durante la mision.}
+  \caption{Timeline exportado de la simulación: estados de tarea, movimiento, planner y acciones de Bill durante la misión.}
   \label{fig:task-timeline}
 \end{figure}
 
-La mision no es instantanea porque Bill introduce esperas reales de proceso. R1
-debe detenerse mientras Bill trabaja T1 o T2 y debe esperar a que B1 llegue a
-WS2 antes de buscar T2. Esta espera se refleja en el modo \texttt{WAIT\_B1}.
-
-\section{Senales exportadas}
-
-Las senales principales usadas para logs y plots son:
-
-\begin{itemize}
-  \item Tarea: \texttt{phase1TaskState}, \texttt{phase1TaskId},
-  \texttt{phase1CompletedTaskCount}.
-  \item Movimiento: \texttt{phase1MotionMode}, \texttt{phase1PlannerMode},
-  \texttt{phase1DistanceToTarget}.
-  \item Seguridad: \texttt{phase1MinObstacleDistance},
-  \texttt{phase1ObstacleRisk}, \texttt{phase1SensorRayCount}.
-  \item Estimacion: \texttt{phase1EstimatedPose}, \texttt{phase1PoseError},
-  \texttt{phase1KalmanCovariance}.
-  \item Mapeo: \texttt{phase1SlamLandmarkCount},
-  \texttt{phase1SlamUpdates}, \texttt{phase1GridOccupiedCells}.
-  \item Bill: \texttt{phase1B1Station}, \texttt{phase1B1Action},
-  \texttt{phase1B1MovedDistance}.
-  \item Energia: \texttt{phase1BatteryLevel}, \texttt{phase1BatteryMode},
-  \texttt{phase1Charging}.
-\end{itemize}
-
-\section{Reproducibilidad}
-
-El flujo reproducible queda:
-
-\begin{enumerate}
-  \item Construir y validar escena:
-  \path{python actividad2/coppeliasim/build_phase1_basic_scene.py}.
-  \item Exportar corrida base:
-  \path{python actividad2/coppeliasim/run_phase1_slam_export.py}.
-  \item Comparar SLAM:
-  \path{python actividad2/coppeliasim/run_phase1_slam_comparison.py}.
-  \item Generar plots:
-  \path{python actividad2/coppeliasim/plot_phase1_slam_comparison.py}.
-  \item Compilar informe:
-  \path{pdflatex -> bibtex -> pdflatex -> pdflatex}.
-\end{enumerate}
+La misión incluye esperas de proceso. R1 se detiene mientras Bill trabaja T1 o
+T2 y espera a que B1 llegue a WS2 antes de buscar T2. Esa espera aparece como
+\texttt{WAIT\_B1}; sin ese estado, la escena presenta movimiento sin
+respetar la secuencia lógica de entrega.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_overview.png}
-  \caption{Resumen visual de la corrida base: pose, error, bateria, obstaculos, planner y estados principales.}
+  \caption{Panel de la ejecución base: pose, error, batería, obstáculos, planner y estados principales.}
   \label{fig:slam-overview}
 \end{figure}
+
+\section{Incidencias corregidas}
+
+Durante la validación se corrigieron tres incidencias. La primera fue de
+sincronización: R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que
+la tarea no representaba una entrega real. Se corrigió dejando el estado
+\texttt{WAIT\_B1\_WS2\_REQUEST\_T2} bloqueado
+hasta leer \texttt{phase1B1Station=WS2}.
+
+La segunda incidencia se registró en Phase 2. Algunas celdas de grid antiguas quedaban
+demasiado cerca del objetivo y el planner entraba en un ciclo de desvíos
+cortos. El planner pasó a ignorar obstáculos pegados al objetivo, exigir hits
+persistentes para planificar y activar una ventana \texttt{RECOVERY\_DIRECT}
+cuando no había progreso.
+
+La tercera incidencia correspondió al ajuste tipo Hector: con pocos impactos de sensor, varios
+candidatos de pose recibían puntajes parecidos y la corrección podía oscilar.
+Por eso se dejó una ventana discreta pequeña, un umbral mínimo de score y una
+ganancia parcial, en vez de aplicar el mejor candidato completo.

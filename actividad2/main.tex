@@ -1,8 +1,8 @@
 \documentclass[11pt,oneside]{report}
 \usepackage{viu-mrob-activity}
 \usepackage{amsmath,amssymb,siunitx,float,caption,subcaption,listings}
-\sisetup{output-decimal-marker={,},group-separator={.},group-minimum-digits=4}
-\graphicspath{{figures/}{figures/phase1/}{images/institutional/}}
+\sisetup{output-decimal-marker={,},group-digits=false}
+\graphicspath{{figures/}{figures/phase1/}{images/institutional/}{coppeliasim/phase2_slam_logs/}}
 
 \lstdefinelanguage{Lua}{
   morekeywords={function,end,if,then,else,elseif,for,while,do,local,return,and,or,not},
@@ -21,14 +21,14 @@
   showstringspaces=false
 }
 
-\SetVIUMaster{Master Universitario en Robotica y Automatizacion de Procesos Industriales}
-\SetVIUSubject{Sistemas Roboticos Moviles}
+\SetVIUMaster{Máster Universitario en Robótica y Automatización de Procesos Industriales}
+\SetVIUSubject{Sistemas Robóticos Móviles}
 \SetVIUActivityType{Actividad 2}
-\SetVIUActivityTitle{Simulacion de warehouse con Pioneer, Bill, herramientas y SLAM en CoppeliaSim/Lua}
+\SetVIUActivityTitle{Simulación de celda warehouse con Pioneer, mannequin Bill, herramientas y SLAM en CoppeliaSim y Lua}
 \SetVIUProfessor{\begin{tabular}[t]{@{}l@{}}Jose I. Iniguez\\\tiny\nolinkurl{jinigueza@professor.universidadviu.com}\end{tabular}}
 \SetVIUAuthor{Jorge Luis Mayorga Taborda}
-\SetVIUDate{25 de mayo de 2026}
-\SetVIUGroup{Warehouse R1--B1--T1/T2}
+\SetVIUDate{26 de mayo de 2026}
+\SetVIUGroup{Warehouse R1--B1--T1 y T2}
 
 \begin{document}
 \MakeVIUActivityTitle
@@ -36,18 +36,20 @@
 \listoffigures
 \clearpage
 
-\input{sections/00_resumen}
 \input{sections/01_introduccion}
 \input{sections/02_entorno_coppeliasim}
 \input{sections/03_modelo_robot}
+\input{sections/03b_seguimiento_bill}
 \input{sections/04_campos_potenciales}
 \input{sections/05_anticolisiones}
 \input{sections/06_integracion_celda}
+\input{sections/06b_phase2_unknown_slam}
 \input{sections/07_validacion}
 \input{sections/08_conclusiones}
 
 \cleardoublepage
-\addcontentsline{toc}{chapter}{Bibliografia}
+\renewcommand{\bibname}{Referencias}
+\addcontentsline{toc}{chapter}{Referencias}
 \bibliographystyle{ieeetr}
 \bibliography{references}
 

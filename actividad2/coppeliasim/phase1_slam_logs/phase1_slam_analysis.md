@@ -1,37 +1,37 @@
-# Analisis Phase 1 Basic - estimacion, SLAM y planificacion
+# Análisis Phase 1 Basic - estimación, SLAM y planificación
 
-## Que hace el estimador
+## Qué hace el estimador
 
-El estimador no une puntos de forma geometrica. Usa un ciclo clasico de prediccion y correccion. Primero predice la pose del Pioneer con el modelo cinematico diferencial y la odometria de ruedas. Luego corrige esa pose con una medicion de pose simulada con ruido mediante una ganancia tipo Kalman. Con la pose estimada, cada lectura de proximidad se transforma de coordenadas locales del sensor a coordenadas globales del almacen.
+El estimador implementa un ciclo clásico de predicción y corrección. Primero predice la pose del Pioneer con el modelo cinemático diferencial y la odometría de ruedas. Luego corrige esa pose con una medición simulada con ruido mediante una ganancia tipo Kalman. Con la pose estimada, cada lectura de proximidad se transforma de coordenadas locales del sensor a coordenadas globales del almacén.
 
-Para el mapa se usa asociacion por cercania: si una deteccion cae cerca de una landmark existente, esa landmark se actualiza con un filtro Kalman escalar; si no cae cerca, se crea una nueva landmark. Por eso el resultado es un mapa disperso de obstaculos, no una grilla de ocupacion ni un Graph-SLAM completo.
+Para el mapa se usa asociación por cercanía: si una detección cae cerca de una landmark existente, esa landmark se actualiza con un filtro Kalman escalar; si cae fuera del radio de asociación, se crea una nueva landmark. El resultado es un mapa disperso de obstáculos adecuado para navegación local en esta celda.
 
-## Desempeno numerico
+## Desempeño numérico
 
-- RMSE posicion: 0.03125 m
-- Error medio de posicion: 0.02958 m
-- Error P95 de posicion: 0.0471 m
-- Error maximo de posicion: 0.06272 m
-- RMSE orientacion: 0.01809 rad
+- RMSE posición: 0.03149 m
+- Error medio de posición: 0.02981 m
+- Error P95 de posición: 0.0476 m
+- Error máximo de posición: 0.05626 m
+- RMSE orientación: 0.01987 rad
 - Covarianza media publicada: 0.00081
 
-## Mapeo y planificacion
+## Mapeo y planificación
 
-- Landmarks finales: 16
-- Actualizaciones SLAM/Kalman: 2615
-- Frecuencia media de actualizacion: 23.601 updates/s
-- Actualizaciones por landmark: 163.44
-- Duracion por modo de planificador: {'DIRECT': 105.55, 'DIRECT_AFTER_WAYPOINT': 0.9, 'SLAM_WAYPOINT': 4.35}
-- Duracion por modo de movimiento: {'ARRIVED_TARGET': 0.35, 'AVOIDING': 21.95, 'MANIPULATING': 5.3, 'ROUTE': 9.6, 'SLAM_PATH': 0.15, 'WAIT_B1': 73.45}
+- Landmarks finales: 20
+- Actualizaciones SLAM/Kalman: 4295
+- Frecuencia media de actualización: 35.306 actualizaciones/s
+- Actualizaciones por landmark: 214.75
+- Duración por modo de planificador: {'DIRECT': 105.4, 'DIRECT_AFTER_WAYPOINT': 14.0, 'SLAM_WAYPOINT': 2.25}
+- Duración por modo de movimiento: {'ARRIVED_TARGET': 0.4, 'AVOIDING': 35.9, 'MANIPULATING': 7.1, 'ROUTE': 4.25, 'WAIT_B1': 74.0}
 
 ## Seguridad operacional
 
-- Distancia minima positiva a obstaculo: 0.19551 m
-- Riesgo maximo de obstaculo: 0.46877
-- Bateria inicial/final: 96.0% -> 76.21563%
-- Tareas completadas: 3
+- Distancia mínima positiva a obstáculo: 0.09656 m
+- Riesgo máximo de obstáculo: 0.71277
+- Batería inicial/final: 96.0% -> 71.79783%
+- Tareas completadas: 4
 - Estado final: CHARGING
 
-## Lectura para la guia
+## Interpretación para la guía
 
-El comportamiento es defendible como una implementacion clasica reducida: EKF para localizacion de pose, filtro Kalman para landmarks de obstaculos, asociacion por distancia y planificacion por waypoint cuando el mapa detecta bloqueo en la ruta directa. No debe presentarse como SLAM denso de mapa completo ni como EKF-SLAM con matriz de covarianza completa robot-landmarks.
+El comportamiento corresponde a una implementación clásica dentro de CoppeliaSim: EKF para localización de pose, filtro Kalman para landmarks de obstáculos, asociación por distancia y planificación por punto intermedio cuando el mapa detecta bloqueo en la ruta directa.

@@ -1,12 +1,12 @@
-# Sistemas Roboticos Moviles - VIU
+# Sistemas Robóticos Móviles - VIU
 
-Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Moviles**.
+Repositorio organizado por actividades de la asignatura **Sistemas Robóticos Móviles**.
 
 ## Estado
 
-- `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentacion PDF, PowerPoint visual, presupuesto y tablas auxiliares.
-- `actividad2/`: entrega separada con informe PDF, presentacion PDF/PPTX, escena CoppeliaSim final, scripts Lua/Python y validacion JSON.
-- `docs/enunciado/`: guias y archivos base proporcionados para la asignatura.
+- `actividad1/`: entrega submit-ready con informe PDF, fuentes LaTeX, presentación PDF, PowerPoint visual, presupuesto y tablas auxiliares.
+- `actividad2/`: entrega separada con informe PDF, presentación PDF/PPTX, escenas CoppeliaSim validadas, scripts Lua/Python y validación JSON.
+- `docs/enunciado/`: guías y archivos base proporcionados para la asignatura.
 - `docs/ppt/`: presentaciones y temas cubiertos en el curso.
 
 ## Estructura
@@ -41,12 +41,12 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 |   |-- coppeliasim/
 |   |   |-- Actividad2_1_Pioneer.ttt
 |   |   |-- Actividad2_2_Pioneer.ttt
-|   |   |-- Actividad2_Pioneer_Profesional_10_10.ttt
-|   |   |-- Actividad2_Pioneer_Profesional_10_10_validation.json
-|   |   |-- build_professional_scene.py
-|   |   |-- pioneer_professional_controller.lua
-|   |   |-- scenario_event_manager.lua
-|   |   `-- multi_robot_astar_manager.lua
+|   |   |-- Sim_T2_Phase1_Basic.ttt
+|   |   |-- Sim_T2_Phase1_Basic_validation.json
+|   |   |-- Sim_T2_Phase2_SLAM_Unknown.ttt
+|   |   |-- Sim_T2_Phase2_SLAM_Unknown_validation.json
+|   |   |-- build_phase1_basic_scene.py
+|   |   `-- build_phase2_unknown_slam_scene.py
 |   |-- references.bib
 |   `-- README.md
 `-- docs/
@@ -67,7 +67,7 @@ Repositorio organizado por actividades de la asignatura **Sistemas Roboticos Mov
 
 ## Actividad 1
 
-La entrega final esta en `actividad1/`.
+La entrega final está en `actividad1/`.
 
 Entregables directos:
 
@@ -77,7 +77,7 @@ Entregables directos:
 - `actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis.ttt`
 - `actividad1/coppeliasim/Actividad1_AMR_FOD_Kitting_HTP_Alestis_validation.json`
 
-Compilacion completa:
+Compilación completa:
 
 ```powershell
 cd actividad1
@@ -97,15 +97,17 @@ python coppeliasim/build_activity1_scene.py
 
 ## Actividad 2
 
-La segunda actividad esta aislada en `actividad2/` para no mezclar entregables.
+La segunda actividad está aislada en `actividad2/` para no mezclar entregables.
 
 Entregables directos:
 
 - `actividad2/main.pdf`
 - `actividad2/slides/slides.pdf`
 - `actividad2/slides/Actividad2_Pioneer_CoppeliaSim.pptx`
-- `actividad2/coppeliasim/Actividad2_Pioneer_Profesional_10_10.ttt`
-- `actividad2/coppeliasim/Actividad2_Pioneer_Profesional_10_10_validation.json`
+- `actividad2/coppeliasim/Sim_T2_Phase1_Basic.ttt`
+- `actividad2/coppeliasim/Sim_T2_Phase1_Basic_validation.json`
+- `actividad2/coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt`
+- `actividad2/coppeliasim/Sim_T2_Phase2_SLAM_Unknown_validation.json`
 
 ```powershell
 cd actividad2
@@ -114,4 +116,4 @@ make all
 
 ## Limpieza
 
-El repositorio ignora auxiliares de LaTeX (`*.aux`, `*.log`, `*.toc`, etc.) y carpetas de previsualizacion. Los PDFs y el PPTX final de la Actividad 1 se mantienen versionados para entrega.
+El repositorio ignora auxiliares de LaTeX (`*.aux`, `*.log`, `*.toc`, etc.) y carpetas de previsualización. Los PDFs y el PPTX final de la Actividad 1 se mantienen versionados para entrega.

@@ -1,0 +1,2670 @@
+Máster Universitario en Robótica y Automatización de Procesos Industriales
+
+Sistemas Robóticos Móviles
+
+Actividad 2
+Simulación de celda warehouse con Pioneer, mannequin Bill,
+herramientas y SLAM en CoppeliaSim y Lua
+Entrega práctica de Warehouse R1–B1–T1 y T2
+
+Estudiante
+Jorge Luis Mayorga Taborda
+Profesor Jose I. Iniguez
+jinigueza@professor.universidadviu.com
+
+Fecha 26 de mayo de 2026, antes de las 23:59
+
+Actividad 2
+
+Índice general
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+Introducción
+
+5
+
+1.1
+
+Alcance de los algoritmos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+5
+
+1.2
+
+Vista general del resultado . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+6
+
+Escenario CoppeliaSim
+
+7
+
+2.1
+
+Elementos del warehouse . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+7
+
+2.2
+
+Bill como actor móvil . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+2.3
+
+Cola de tareas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+2.4
+
+Integración del código . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+2.5
+
+Capturas de la simulación . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+2.6
+
+Piezas visuales . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+Modelo del robot y control
+
+11
+
+3.1
+
+Seguimiento de objetivo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+11
+
+3.2
+
+Modos de control evaluados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+
+Seguimiento de Bill y comparación de controladores
+
+14
+
+4.1
+
+Geometría de seguimiento . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+
+4.2
+
+Modelo cinemático usado por todos los modos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+4.3
+
+P, PI y PID . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+17
+
+4.4
+
+LQR discreto. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+17
+
+4.5
+
+NMPC por disparo directo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+
+4.6
+
+Resultados de seguimiento . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+Campos potenciales, evitación de obstáculos y planificación local
+
+22
+
+5.1
+
+Campo atractivo hacia Bill . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+
+5.2
+
+Campo reactivo de obstáculos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+
+5.3
+
+Visualización de sensores . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+
+5.4
+
+Punto intermedio de planificación SLAM . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+
+Estimación y SLAM
+
+24
+
+6.1
+
+Datos usados para comparar SLAM . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+24
+
+6.2
+
+Predicción de pose . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+6.3
+
+Corrección Kalman-landmark . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+6.4
+
+GMapping en grid . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+Página 2 de 47
+
+Actividad 2
+
+7
+
+8
+
+9
+
+6.5
+
+Hector con ajuste local . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+27
+
+6.6
+
+Cartographer con submapas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+27
+
+Resultados experimentales
+
+29
+
+7.1
+
+Validación funcional de la escena . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+
+7.2
+
+Desempeño del estimador Kalman-landmark . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+
+7.3
+
+Comparación de algoritmos SLAM . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+
+7.4
+
+Interpretación de resultados . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+31
+
+Phase 2: SLAM con mapa desconocido
+
+33
+
+8.1
+
+Recuperación ante bloqueo local . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+34
+
+8.2
+
+Comparación de métodos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+
+8.3
+
+Discusión técnica . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+Validación
+
+37
+38
+
+9.1
+
+Validación por checklist . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+
+9.2
+
+Timeline de la misión . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+
+9.3
+
+Incidencias corregidas . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+
+Conclusiones
+
+41
+
+Referencias
+
+42
+
+A
+
+43
+
+Anexos
+A.1
+
+Archivos principales . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+
+A.2
+
+Parámetros relevantes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+
+A.3
+
+Fragmentos Lua propios . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+
+A.4
+
+Comparación de control . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
+
+A.5
+
+Notas de alcance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+47
+
+Índice de figuras
+1.1 Vista superior de la celda base Sim_T2_Phase1_Basic. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+2.1
+
+6
+
+Máquina de estados resumida del controlador R1 para entrega, trabajo de Bill, retorno
+de herramienta y carga. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+8
+
+2.2
+
+Capturas 3D de la escena ejecutada en CoppeliaSim. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+3.1
+
+Comparación de modos de control exportada desde CoppeliaSim. Todos completan la
+tarea; PI obtiene el mejor puntaje ponderado con los pesos definidos. . . . . . . . . . . . . . . . . . 13
+
+Página 3 de 47
+
+MROB–VIU • Índice de figuras
+
+4.1
+
+Actividad 2
+
+Escena de seguimiento: Bill define un objetivo móvil y R1 regula distancia, rumbo y
+suavidad de ruedas. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+4.2
+
+14
+
+Capturas de ejecución de Actividad2_1_Basic_Follower.ttt: Bill recorre una trayectoria circular y R1 mantiene una distancia de seguimiento estable. . . . . . . . . . . . . . . . . . 15
+
+4.3
+
+Referencia móvil del seguidor: el robot controla un punto detrás de Bill y no el centro
+de la persona. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+4.4
+
+Comparación temporal de P, PI, PID, LQR y NMPC en la escena de seguimiento de Bill. 20
+
+4.5
+
+Coste físico aproximado del seguidor: potencia instantánea y energía acumulada en las
+ruedas. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+4.6
+
+Suavidad de comandos del seguidor: variación de las órdenes de rueda y cambios de
+sentido. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+21
+
+6.1
+
+Secuencia de estimación, mapa, planificación local y control de R1. . . . . . . . . . . . . . . . . . . .
+
+24
+
+6.2
+
+Particularidad de Kalman-landmark: corrige la pose y fusiona pocas detecciones como
+rasgos; no mantiene una covarianza conjunta pose–mapa como un EKF-SLAM completo. 26
+
+6.3
+
+Particularidad de GMapping implementado: la información principal es una grid de
+ocupación. Cada rayo libera celdas antes del impacto y refuerza la celda ocupada. . . . . . 26
+
+6.4
+
+Particularidad de Hector: busca la pose local cuyo scan encaja mejor con la grid. La
+odometría inicializa la búsqueda, pero la corrección viene del ajuste scan–mapa. . . . . . . .
+
+6.5
+
+27
+
+Particularidad de Cartographer-submap: el mapa no se guarda como una sola grid
+monolítica, sino como submapas locales con posibles cierres cuando R1 vuelve a zonas
+conocidas. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+
+7.1
+
+Resultados del estimador Kalman-landmark. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+
+7.2
+
+Comparación gráfica de los cuatro modos SLAM: trayectoria, precisión, crecimiento del
+mapa y resumen de error. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+31
+
+8.1
+
+Capturas 3D de la escena Phase 2 ejecutada en CoppeliaSim. . . . . . . . . . . . . . . . . . . . . . . . . 33
+
+8.2
+
+Capturas de ejecución de Phase 2 con mapa desconocido y obstáculos en la celda. . . . . .
+
+8.3
+
+Comparación de métodos en Phase 2. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+
+8.4
+
+Reconstrucción del mapa al mismo instante común, 𝑡 = 60 s. . . . . . . . . . . . . . . . . . . . . . . . . . 36
+
+34
+
+9.1 Timeline exportado de la simulación: estados de tarea, movimiento, planner y acciones
+de Bill durante la misión. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
+9.2
+
+Panel de la ejecución base: pose, error, batería, obstáculos, planner y estados principales. 40
+
+A.1 Métricas complementarias de control: tiempos, trayectoria, suavidad, batería, riesgo y
+error de pose. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+Página 4 de 47
+
+47
+
+Actividad 2
+
+1
+Introducción
+El trabajo implementa un Pioneer en CoppeliaSim y Lua y comprueba que se mueve dentro de una
+celda robotizada con evitación de obstáculos. La escena representa un caso de fábrica sencillo: R1
+asiste a B1, llamado Bill, una persona tomada del modelo disponible en CoppeliaSim y usada como
+mannequin operativo. El robot lleva piezas o herramientas a dos mesas, espera mientras Bill trabaja,
+las recoge, las devuelve a su estantería y termina en carga.
+El ciclo básico incluye coordinación temporal, evitación local, diferenciación entre estantería y bloqueo,
+retorno de herramienta y regreso a carga. La escena principal se guardó como:
+actividad2/coppeliasim/Sim_T2_Phase1_Basic.ttt
+
+1.1 Alcance de los algoritmos
+Los algoritmos corren dentro de CoppeliaSim y Lua. Su alcance es acotado respecto a paquetes ROS
+completos: Kalman-landmark combina odometría, corrección de pose con mediciones ruidosas y rasgos
+compactos de obstáculo. GMapping, Hector y Cartographer se implementan como versiones simplificadas
+para comparar tres formas de mapa: grid de ocupación, scan matching local y submapas con cierre de
+ciclo.
+
+Página 5 de 47
+
+MROB–VIU • Capítulo 1. Introducción
+
+Actividad 2
+
+1.2 Vista general del resultado
+
+Figura 1.1: Vista superior de la celda base Sim_T2_Phase1_Basic.
+
+Página 6 de 47
+
+Actividad 2
+
+2
+Escenario CoppeliaSim
+La escena se genera con actividad2/coppeliasim/build_phase1_basic_scene.py. Ese script
+carga la base de la asignatura, limpia restos de pruebas anteriores, coloca la celda, ubica a R1 y B1,
+añade estanterías, mesas, sofá, obstáculos y piezas visuales, y deja integrados los controladores Lua. Al
+final lanza una validación sin interfaz gráfica y guarda un JSON reproducible con estado, métricas y
+objetos verificados.
+
+2.1 Elementos del warehouse
+Elemento
+
+Alias en escena
+
+Función
+
+Robot móvil
+
+/PioneerP3DX
+
+R1 ejecuta la cola de tareas, navega,
+evita obstáculos, transporta
+herramientas y vuelve a carga.
+
+Persona móvil
+
+/B1, Bill
+
+Modelo de persona de CoppeliaSim
+renombrado para actuar como
+People/mannequin; trabaja en dos
+mesas, camina entre WS1 y WS2 y
+solicita herramientas.
+
+Herramienta/pieza 1
+
+/T1
+
+Pieza mecanizada visual, entregada en
+WS1 y devuelta a Rack_T1.
+
+Herramienta/pieza 2
+
+/T2
+
+Pieza tipo placa electrónica/compuesta,
+entregada en WS2 y devuelta a
+Rack_T2.
+
+Estación de carga
+
+/C1
+
+Punto final de retorno y recarga del
+robot.
+
+Mesas de trabajo
+
+/P1_WorkTable_1,
+/P1_WorkTable_2
+
+Superficies donde Bill toma la pieza, la
+trabaja y la devuelve a R1.
+
+Sofá de operador
+
+/P1_Operator_Sofa_*
+
+Elemento de descanso y referencia
+espacial dentro de la celda, ubicado
+fuera de la ruta principal.
+
+Estanterías
+
+/Rack_T1, /Rack_T2
+
+Estaciones de almacenamiento opuestas
+para T1 y T2.
+
+Obstáculos
+
+Pallet, pilar y caja
+
+Elementos detectables para activar
+evitación reactiva y mapeo.
+
+Página 7 de 47
+
+MROB–VIU • Capítulo 2. Escenario CoppeliaSim
+
+Actividad 2
+
+2.2 Bill como actor móvil
+Bill camina entre las dos estaciones, pide herramientas y trabaja la pieza en la mesa que toca. El
+script phase1_b1_walking_manager.lua define WS1/WS2, escribe la estación actual, indica qué
+herramienta necesita y anima las acciones de tomar, trabajar y entregar. La orientación se calcula con:
+𝜃𝐵 = atan2(𝑦𝑘+1 − 𝑦𝑘 , 𝑥𝑘+1 − 𝑥𝑘 )
+Bill mira hacia donde camina. En las mesas se orienta hacia la superficie de trabajo para mantener
+coherencia visual entre la animación y la tarea ejecutada.
+
+2.3 Cola de tareas
+La cola de tareas se mueve con señales internas de CoppeliaSim y una máquina de estados dentro del
+controlador de R1. La Figura 2.1 resume la máquina de estados. R1 espera a que Bill termine T1 y
+llegue a WS2 antes de buscar T2; esta sincronización evita que la segunda entrega empiece antes de
+una solicitud válida.
+
+Figura 2.1: Máquina de estados resumida del controlador R1 para entrega, trabajo de Bill, retorno de
+herramienta y carga.
+
+2.4 Integración del código
+El código de la escena se concentra en percepción, coordinación de tareas y registro de datos. El
+mannequin queda como persona móvil /B1; los sensores entregan datos a la evitación y al mapa; B1
+tiene su propio manager, con tiempos de trabajo y movimiento; y los exportadores guardan CSV y
+JSON para revisar control, seguridad y SLAM con datos reproducibles.
+Página 8 de 47
+
+MROB–VIU • Capítulo 2. Escenario CoppeliaSim
+
+Actividad 2
+
+Listing 2.1: Lectura de sensores y evitación reactiva en Lua.
+for _ , s in ipairs ( sensors ) do
+local ok , distance , point , object = sim . readProximitySensor ( s . handle )
+if ok and ok > 0 and distance > 0 then
+addSensorRay (s , distance , point , true )
+if object ~= b1 then
+re giste rSla mDet ectio n (s , distance , point )
+end
+if distance < cfg . avoidRange then
+local influence = (( cfg . avoidRange - distance ) / cfg . avoidRange ) ^2
+steer = steer - sign ( s . y ) * cfg . kRepulsion * influence
+slow = math . max ( slow , influence )
+end
+else
+addSensorRay (s , cfg . sensorVizRange , nil , false )
+end
+end
+
+Listing 2.2: Fragmento de la máquina de estados de T1 y T2.
+local TaskHandlers = {
+PICKUP_T1 = function ()
+pickupTool ( t1 , ’T1 ’ , ’ TO_WS1_DELIVER_T1 ’)
+end ,
+DELIVER_T1_WS1 = function ()
+deliverToolToBill ( t1 , ws1WorkSurface , 1 ,
+’ task1 :{ T1 - > B1@WS1 } ’ , ’ WAIT_B1_WORK_T1 ’)
+end ,
+W A I T _ B 1_ WS2 _R EQ UES T_ T2 = function ()
+stopRobot ( ’ WAIT_B1 ’)
+if readStringSignal ( ’ phase1B1Station ’ , ’ NONE ’) == ’WS2 ’ then
+setTaskState ( ’ TO_PICKUP_T2 ’)
+end
+end ,
+}
+
+Listing 2.3: Selección de objetivo directo o punto intermedio SLAM.
+local
+local
+local
+local
+local
+local
+local
+
+targetWorld = readWorldPosition ( target )
+goalX , goalY = targetWorld [1] , targetWorld [2]
+planX , planY = plannedWaypointTo ( goalX , goalY , tolerance )
+dx , dy = planX - estX , planY - estY
+heading = normalizeAngle ( atan2 ( dy , dx ) - estTheta )
+obstacleSteer , obstacleSlow , minObstacle , hardStop = readObstacleField ()
+v , w = computeCommand ( distance , heading , lateral ,
+obstacleSteer , obstacleSlow , hardStop )
+setWheelSpeeds (v , w )
+
+Página 9 de 47
+
+MROB–VIU • Capítulo 2. Escenario CoppeliaSim
+
+Actividad 2
+
+2.5 Capturas de la simulación
+
+(a) Escena completa en CoppeliaSim.
+
+(b) Rayos de sensor y evitación local.
+
+(c) Bill trabajando frente a la mesa.
+
+(d) Entrega de herramienta entre R1 y Bill.
+
+Figura 2.2: Capturas 3D de la escena ejecutada en CoppeliaSim.
+
+2.6 Piezas visuales
+T1 y T2 se hicieron con primitivas para evitar geometrías genéricas. T1 lleva placa, nervios, boss central
+y pernos; T2 representa una placa compuesta/electrónica con raíles, conector y capacitor. La geometría
+diferenciada distingue cada herramienta durante la ejecución y en las capturas.
+
+Página 10 de 47
+
+Actividad 2
+
+3
+Modelo del robot y control
+El Pioneer P3DX se trata como robot diferencial. El controlador calcula una velocidad lineal 𝑣 y una
+velocidad angular 𝜔, y de ahí salen las velocidades de rueda izquierda y derecha:
+𝐿
+𝜔,
+2
+
+𝑣𝐿 = 𝑣 −
+
+𝑣𝑅 = 𝑣 +
+
+𝐿
+𝜔
+2
+
+Se adopta la convención usual de CoppeliaSim para esta escena: 𝜔 > 0 incrementa el yaw del robot en
+sentido antihorario visto desde arriba. Con esa convención, la rueda derecha recibe mayor velocidad que
+la izquierda durante un giro positivo.
+Si 𝑟 es el radio de rueda, las consignas enviadas a los motores de CoppeliaSim son:
+𝜔𝐿 =
+
+𝑣𝐿
+,
+𝑟
+
+𝜔𝑅 =
+
+𝑣𝑅
+𝑟
+
+En la implementación se usan 𝑟 = 0,0975 m y 𝐿 = 0,331 m, valores compatibles con el Pioneer P3-DX
+[1]. Las velocidades se saturan para mantener los comandos dentro de un rango físico y conservar la
+repetibilidad de las ejecuciones.
+
+3.1 Seguimiento de objetivo
+Para navegar hacia un rack, mesa o cargador, se calcula primero la posición del objetivo en coordenadas
+globales y luego el error respecto a la pose estimada del robot:
+𝑒𝑥 = 𝑥𝑔 − 𝑥
+^,
+
+𝑒𝑦 = 𝑦𝑔 − 𝑦^,
+
+𝑑=
+
+√︁
+
+𝑒2𝑥 + 𝑒2𝑦
+
+El rumbo deseado es:
+𝜃𝑔 = atan2(𝑒𝑦 , 𝑒𝑥 )
+y el error angular usado por el controlador es:
+^
+𝑒𝜃 = wrap(𝜃𝑔 − 𝜃)
+La consigna base se corrige con un término lateral y con una contribución de evitación de obstáculos:
+𝑣 = 𝑓𝑑 (𝑑 − 𝑑𝑓 ) cos(𝑒𝜃 ),
+
+𝜔 = 𝑓𝜃 (𝑒𝜃 ) + 𝑓𝑙𝑎𝑡 (𝑒𝑏𝑜𝑑𝑦
+) + 𝑓𝑜𝑏𝑠
+𝑦
+
+Página 11 de 47
+
+MROB–VIU • Capítulo 3. Modelo del robot y control
+
+Actividad 2
+
+donde 𝑑𝑓 es la distancia de seguimiento y 𝑓𝑜𝑏𝑠 resume el giro repulsivo derivado de sensores.
+
+3.2 Modos de control evaluados
+Se probaron cinco modos: P, PI, PID, LQR y NMPC. Los controladores P, PI y PID se usan como
+referencia clásica junto con la estimación y la evitación. LQR y NMPC se incluyeron con alcance
+acotado: LQR usa una ganancia discreta calculada fuera de CoppeliaSim mediante Riccati; NMPC usa
+disparo directo con búsqueda local de comandos.
+Modo
+
+Idea
+
+Uso en la escena
+
+P
+
+Control proporcional sobre distancia
+
+Estructura simple y estable, con
+
+y rumbo.
+
+mayor tiempo activo y ruta más
+larga.
+
+PI
+PID
+
+Agrega integral de distancia y
+
+Obtiene el menor puntaje ponderado
+
+rumbo.
+
+en la comparación de controladores.
+
+Incluye derivadas para amortiguar
+
+Buen compromiso general; se usó
+
+saltos.
+
+como modo base en varias
+exportaciones SLAM.
+
+LQR
+
+Realimentación lineal de error
+
+Ganancia discreta calculada por
+
+longitudinal, lateral y rumbo.
+
+Riccati e integrada en Lua para el
+seguidor de Bill.
+
+NMPC
+
+Control predictivo no lineal por
+
+Evalúa secuencias de 𝑣, 𝜔 con
+
+disparo directo.
+
+restricciones y coste de suavidad
+mediante búsqueda local.
+
+Página 12 de 47
+
+MROB–VIU • Capítulo 3. Modelo del robot y control
+
+Actividad 2
+
+Figura 3.1: Comparación de modos de control exportada desde CoppeliaSim. Todos completan la tarea;
+PI obtiene el mejor puntaje ponderado con los pesos definidos.
+
+Página 13 de 47
+
+Actividad 2
+
+4
+Seguimiento de Bill y comparación de
+controladores
+Antes de integrarlo en la celda completa, se probó el seguimiento de Bill en Actividad2_1_Basic_
+Follower.ttt. Bill camina con aceleración y frenado, y el Pioneer sigue un punto detrás de la persona.
+Si se apunta al centro del cuerpo, el robot tiende a acercarse demasiado; por eso la referencia va detrás
+de Bill.
+
+Figura 4.1: Escena de seguimiento: Bill define un objetivo móvil y R1 regula distancia, rumbo y suavidad
+de ruedas.
+
+Página 14 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+(a) Vista general de la escena.
+
+Actividad 2
+
+(b) Seguimiento sobre la trayectoria circular.
+
+Figura 4.2: Capturas de ejecución de Actividad2_1_Basic_Follower.ttt: Bill recorre una trayectoria
+circular y R1 mantiene una distancia de seguimiento estable.
+
+4.1 Geometría de seguimiento
+Si 𝑝𝐵 = [𝑥𝐵 , 𝑦𝐵 ]𝑇 es la posición de Bill, 𝜃𝐵 su orientación y 𝑑𝑑𝑒𝑠 la separación deseada, el punto de
+referencia se calcula como:
+⎡
+
+cos 𝜃𝐵
+
+𝑝⋆ = 𝑝𝐵 − 𝑑𝑑𝑒𝑠 ⎣
+
+sin 𝜃𝐵
+
+⎤
+⎦,
+
+𝑑𝑑𝑒𝑠 = 0,82 m.
+
+El error de distancia se mide con respecto a Bill, mientras que el error de rumbo se calcula desde el
+robot hacia Bill:
+𝑒𝑑 = ‖𝑝𝐵 − 𝑝𝑅 ‖ − 𝑑𝑑𝑒𝑠 ,
+
+𝑒𝜓 = wrap (atan2(𝑦𝐵 − 𝑦𝑅 , 𝑥𝐵 − 𝑥𝑅 ) − 𝜃𝑅 ) .
+
+Página 15 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+Actividad 2
+
+Figura 4.3: Referencia móvil del seguidor: el robot controla un punto detrás de Bill y no el centro de la
+persona.
+
+4.2 Modelo cinemático usado por todos los modos
+El movimiento plano del Pioneer se aproxima con el modelo unicycle:
+𝑥˙ = 𝑣 cos 𝜃,
+
+𝑦˙ = 𝑣 sin 𝜃,
+
+𝜃˙ = 𝜔.
+
+La conversión a velocidades angulares de rueda usa el radio 𝑟 y la distancia entre ruedas 𝐿:
+
+𝜔𝐿 =
+
+𝑣 − 𝐿2 𝜔
+,
+𝑟
+
+𝜔𝑅 =
+
+𝑣 + 𝐿2 𝜔
+,
+𝑟
+
+𝑟 = 0,0975 m,
+
+𝐿 = 0,331 m.
+
+Estas mismas señales se usan para calcular potencia aproximada, energía, variación de comando y
+suavidad de control.
+La energía de la Tabla 4.1 se calcula como una métrica mecánica aproximada. Se obtiene en Lua con la
+potencia de avance de cada rueda, fricción de rodadura, un término viscoso de rueda y potencia de
+guiñada:
+
+Página 16 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+Actividad 2
+
+⃒
+⃒
+⃒𝑚
+⃒ 𝐹𝑟
+⃒
+𝑃𝐿 = ⃒ 𝑎 𝑣𝐿 ⃒⃒ +
+|𝑣𝐿 | + 𝑏𝜔 𝜔𝐿2 ,
+2
+2
+⃒
+⃒
+⃒𝑚
+⃒ 𝐹𝑟
+2
+⃒
+𝑃𝑅 = ⃒ 𝑎 𝑣𝑅 ⃒⃒ +
+|𝑣𝑅 | + 𝑏𝜔 𝜔𝑅
+,
+2
+2
+∑︁
+
+𝑃𝜃 = |𝐼𝑧 𝜔𝜔|,
+˙
+
+𝐸=
+
+(𝑃𝐿 + 𝑃𝑅 + 𝑃𝜃 )Δ𝑡.
+
+𝑘
+
+Los parámetros usados fueron 𝑚 = 16,5 kg, 𝐼𝑧 = 0,72 kg m2 , 𝐹𝑟 = 2,8 N y 𝑏𝜔 = 0.006 W/(rad/s)2 . En
+esa expresión, 𝑎 = 𝑣˙ es la aceleración lineal estimada entre muestras y 𝜔˙ es la aceleración angular. Esta
+magnitud se usa como indicador relativo entre controladores dentro de la misma escena; no representa
+una estimación eléctrica de batería.
+𝑚
+Los términos 𝑚
+2 𝑎 𝑣𝐿 y 2 𝑎 𝑣𝑅 reparten aproximadamente la potencia inercial lineal, no como un modelo
+
+dinámico completo de rueda. La inercia real actúa sobre el centro de masa y se transmite por los
+contactos; se reparte por rueda solo para obtener una métrica relativa sensible a frenazos, inversiones
+de sentido y oscilaciones de comando.
+
+4.3 P, PI y PID
+Los controladores clásicos se aplican sobre 𝑒𝑑 y se combinan con una realimentación de rumbo:
+
+𝑢𝑃 = 𝐾𝑝 𝑒𝑑 ,
+
+𝑢𝑃 𝐼 = 𝐾𝑝 𝑒𝑑 + 𝐾𝑖
+
+𝑛
+∑︁
+
+𝑒𝑑 (𝑘)Δ𝑡,
+
+𝑘=0
+
+𝑢𝑃 𝐼𝐷 = 𝐾𝑝 𝑒𝑑 + 𝐾𝑖
+
+𝑛
+∑︁
+
+𝑒𝑑 (𝑘)Δ𝑡 + 𝐾𝑑
+
+𝑘=0
+
+𝑒𝑑 (𝑘) − 𝑒𝑑 (𝑘 − 1)
+.
+Δ𝑡
+
+El término proporcional responde al error instantáneo, el integral corrige error estacionario cuando Bill
+mantiene movimiento, y el derivativo amortigua saltos bruscos. En ejecución, todos los modos pasan
+por saturaciones de velocidad y de aceleración para evitar saltos en la escena.
+
+4.4 LQR discreto
+El modo LQR del seguidor regula el error local alrededor del punto 𝑝⋆ , siguiendo la forma clásica de
+control cuadrático lineal [2]. El estado se define en el marco del robot:
+[︁
+
+𝑥𝐿 = 𝑒𝑙𝑜𝑛𝑔 𝑒𝑙𝑎𝑡 𝑒𝑦𝑎𝑤
+
+]︁𝑇
+
+,
+
+[︁
+
+𝑢 = Δ𝑣 Δ𝜔
+
+]︁𝑇
+
+.
+
+Con 𝑣𝑟𝑒𝑓 = 0,22 m/s, radio local de giro 𝜌𝑟𝑒𝑓 = 1,55 m, 𝜔𝑟𝑒𝑓 = 𝑣𝑟𝑒𝑓 /𝜌𝑟𝑒𝑓 y Δ𝑡 = 0,05 s, la linealización
+usada en compute_follower_lqr_gain.py es:
+⎡
+
+0
+
+⎢
+⎢
+⎣
+
+𝐴 = ⎢−𝜔𝑟𝑒𝑓
+0
+
+𝜔𝑟𝑒𝑓
+
+0
+
+⎤
+
+⎡
+
+−1
+
+0
+
+0
+
+⎥
+⎥
+𝑣𝑟𝑒𝑓 ⎥ ,
+⎦
+
+𝐵=⎢ 0
+
+⎢
+⎢
+⎣
+
+⎥
+⎥
+0 ⎥.
+⎦
+
+0
+
+0
+
+Página 17 de 47
+
+0
+
+−1
+
+⎤
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+𝐴𝑑 = 𝐼 + Δ𝑡𝐴,
+
+Actividad 2
+
+𝐵𝑑 = Δ𝑡𝐵.
+
+El script resuelve la ecuación algebraica de Riccati discreta con:
+𝑄 = diag(35, 80, 18),
+
+𝑅 = diag(6, 3),
+
+𝐾 = (𝐵𝑑𝑇 𝑃 𝐵𝑑 + 𝑅)−1 𝐵𝑑𝑇 𝑃 𝐴𝑑 .
+Los pesos proceden de una calibración empírica sobre el seguimiento de Bill, no de una identificación
+formal del Pioneer. Se penalizó más el error lateral (𝑞𝑙𝑎𝑡 = 80) que el longitudinal (𝑞𝑙𝑜𝑛𝑔 = 35), porque
+el robot admite permitirse ir algo adelantado o retrasado, pero no cruzarse lateralmente con la referencia
+móvil. El coste de giro en 𝑅 se dejó menor que el de avance para que el regulador prefiriera corregir
+rumbo antes de cambiar mucho la velocidad.
+La ley aplicada en Lua usa 𝑢 = −𝐾𝑥𝐿 , con saturación posterior de 𝑣 y 𝜔.
+La matriz integrada en Lua fue:
+⎡
+
+−2.3496
+
+1.2925
+
+0.2427
+
+−4.3570 −2.6887
+
+𝐾=⎣
+
+0.1203
+
+⎤
+⎦.
+
+Esta parte corresponde a un LQR discreto real, de orden bajo y aplicado al seguimiento local de Bill.
+
+4.5 NMPC por disparo directo
+El modo NMPC se implementa como control predictivo no lineal por disparo directo. Mantiene una
+secuencia de 𝑣𝑘 , 𝜔𝑘 , simula el modelo hacia adelante y mejora esa secuencia con dos pasadas de
+búsqueda local, siguiendo la estructura general de MPC [3]. La optimización se resuelve sobre la
+secuencia de comandos; IPOPT y CasADi no se usan en esta implementación.
+𝑥𝑘+1 = 𝑥𝑘 + 𝑣𝑘 cos(𝜃𝑘 )Δ𝑡,
+
+𝑦𝑘+1 = 𝑦𝑘 + 𝑣𝑘 sin(𝜃𝑘 )Δ𝑡,
+
+𝜃𝑘+1 = 𝜃𝑘 + 𝜔𝑘 Δ𝑡.
+La función de coste usada por el script penaliza error de distancia, error al punto 𝑝⋆ , rumbo, esfuerzo,
+potencia de rueda y variación de comando:
+
+𝐽=
+
+𝑁
+−1
+∑︁
+
+(𝑞𝑑 𝑒𝑑 (𝑘)2 + 𝑞𝑡 ‖𝑝⋆𝑘 − 𝑝𝑘 ‖2 + 𝑞𝜓 𝑒𝜓 (𝑘)2
+
+𝑘=0
+2
+2
++ 𝑟𝑣 𝑣𝑘2 + 𝑟𝜔 𝜔𝑘2 + 𝑟𝑤 (𝜔𝐿,𝑘
++ 𝜔𝑅,𝑘
+)
+
++ 𝑠𝑣 Δ𝑣𝑘2 + 𝑠𝜔 Δ𝜔𝑘2 ) + 𝑞𝑓 ‖𝑝⋆𝑁 − 𝑝𝑁 ‖2 .
+Página 18 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+Actividad 2
+
+Los pesos usados en el script fueron 𝑞𝑑 = 48.0, 𝑞𝑡 = 7.0, 𝑞𝜓 = 1.2, 𝑟𝑣 = 1.4, 𝑟𝜔 = 1.8, 𝑟𝑤 = 0.020,
+𝑠𝑣 = 65.0, 𝑠𝜔 = 18.0 y 𝑞𝑓 = 6.0, con horizonte 𝑁 = 10, Δ𝑡 = 0,22 s y dos iteraciones de mejora por
+ciclo.
+La búsqueda local es determinista y de vecindario: la secuencia se inicializa con los comandos del ciclo
+anterior desplazados un paso, y en cada pasada se prueban perturbaciones ±Δ𝑣 y ±Δ𝜔 sobre cada
+elemento del horizonte. En la primera pasada los pasos son Δ𝑣 = 0.065 y Δ𝜔 = 0.16; en la segunda
+bajan a 0.025 y 0.065. Solo se acepta una perturbación si reduce 𝐽. Por eso el coste es predictivo y el
+modelo es no lineal, pero el solucionador es una búsqueda local pequeña, no un SQP ni un método
+interior-point.
+Los límites de actuación se aplican durante la búsqueda:
+𝑣𝑘 ∈ [−𝑣𝑟𝑒𝑣,𝑚𝑎𝑥 , 𝑣𝑚𝑎𝑥 ],
+
+𝜔𝑘 ∈ [−𝜔𝑚𝑎𝑥 , 𝜔𝑚𝑎𝑥 ].
+
+Esta versión conserva el modelo no lineal y el coste predictivo, pero limita la optimización a una
+búsqueda local pequeña sobre comandos. El alcance queda limitado al método de disparo directo
+implementado en Lua.
+
+4.6 Resultados de seguimiento
+Modo
+
+Error mov. [m]
+
+Error final [m]
+
+Energía [J]
+
+RMS Δ𝑢
+
+Flips
+
+P
+
+0,3542
+
+0,0982
+
+49,950
+
+0,0475
+
+11
+
+PI
+
+0,2011
+
+0,1018
+
+64,419
+
+0,1318
+
+16
+
+PID
+
+0,1915
+
+0,0317
+
+102,381
+
+0,1759
+
+26
+
+LQR
+
+0,0231
+
+0,0865
+
+92,287
+
+0,0873
+
+12
+
+NMPC
+
+0,0198
+
+0,0887
+
+77,174
+
+0,0576
+
+4
+
+Cuadro 4.1: Métricas del seguidor de Bill por modo de control.
+
+Página 19 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+Actividad 2
+
+Figura 4.4: Comparación temporal de P, PI, PID, LQR y NMPC en la escena de seguimiento de Bill.
+
+Figura 4.5: Coste físico aproximado del seguidor: potencia instantánea y energía acumulada en las
+ruedas.
+
+Página 20 de 47
+
+MROB–VIU • Capítulo 4. Seguimiento de Bill y comparación de controladores
+
+Actividad 2
+
+Figura 4.6: Suavidad de comandos del seguidor: variación de las órdenes de rueda y cambios de sentido.
+P gasta menos energía y deja más error mientras Bill se mueve. PID corrige muy bien al final, cuando
+Bill ya se detuvo, aunque paga con más variación de comando y más energía. LQR y NMPC bajan el
+error medio durante el seguimiento; NMPC queda más suave en inversiones de sentido y RMS de Δ𝑢,
+porque incluye en el coste la variación de comando y el esfuerzo de rueda.
+
+Página 21 de 47
+
+Actividad 2
+
+5
+Campos potenciales, evitación de obstáculos y
+planificación local
+La navegación combina el campo atractivo hacia Bill, usado como mannequin, con una capa repulsiva
+de obstáculos y una capa local de mapa. Los sensores de proximidad reducen la velocidad y corrigen el
+giro cuando se detecta un obstáculo al frente o en los laterales. El mapa SLAM entra cuando la ruta
+directa se bloquea y se usa un punto intermedio antes de volver al objetivo.
+
+5.1 Campo atractivo hacia Bill
+La navegación define una fuerza de atracción hacia el mannequin. En la escena, Bill cumple ese papel.
+Si 𝑝𝑅 = [𝑥𝑅 , 𝑦𝑅 ]𝑇 es la posición estimada del robot y 𝑝𝐵 = [𝑥𝐵 , 𝑦𝐵 ]𝑇 la posición de Bill, se usa el
+potencial atractivo:
+1
+𝑈𝑎𝑡𝑡 (𝑝𝑅 ) = 𝑘𝑎𝑡𝑡 ‖𝑝𝐵 − 𝑝𝑅 ‖2 ,
+2
+
+𝐹𝑎𝑡𝑡 = −∇𝑈𝑎𝑡𝑡 = 𝑘𝑎𝑡𝑡 (𝑝𝐵 − 𝑝𝑅 ).
+
+El controlador no aplica la fuerza como dinámica física; la traduce a consignas de avance y giro para el
+robot diferencial:
+𝜃𝑎𝑡𝑡 = atan2(𝑦𝐵 − 𝑦𝑅 , 𝑥𝐵 − 𝑥𝑅 ),
+
+𝑒𝜃 = wrap(𝜃𝑎𝑡𝑡 − 𝜃𝑅 ),
+
+(︀
+
+)︀
+
+𝑣𝑎𝑡𝑡 = sat[0,𝑣𝑚𝑎𝑥 ] 𝑘𝑣 (‖𝑝𝐵 − 𝑝𝑅 ‖ − 𝑑𝑓 ) ,
+
+𝜔𝑎𝑡𝑡 = 𝑘𝜃 𝑒𝜃 .
+
+La expresión anterior define la atracción hacia Bill. La repulsión de obstáculos modifica 𝜔𝑎𝑡𝑡 y limita
+𝑣𝑎𝑡𝑡 , pero no sustituye el objetivo principal de seguir a Bill.
+
+5.2 Campo reactivo de obstáculos
+Para cada sensor con detección positiva se calcula una influencia normalizada. La idea viene de campos
+potenciales artificiales y comportamiento Braitenberg [4, 5], aplicada a los sensores de proximidad del
+Pioneer:
+El script base usa una tabla Braitenberg con pesos fijos por sensor. Se mantiene la relación sensor–motor
+y el peso depende de la distancia. Una lectura lejana apenas toca las ruedas; una lectura cercana fuerza
+más giro y reduce 𝑣.
+
+Página 22 de 47
+
+MROB–VIU • Capítulo 5. Campos potenciales, evitación de obstáculos y planificación local
+
+𝛼𝑖 =
+
+⎧(︂
+)︂2
+⎪
+⎨ 𝑑0 − 𝑑𝑖
+,
+
+0 < 𝑑𝑖 < 𝑑0
+
+⎪
+⎩
+
+𝑑𝑖 ≥ 𝑑0
+
+𝑑0
+
+0,
+
+Actividad 2
+
+donde 𝑑𝑖 es la distancia medida y 𝑑0 el rango de influencia. La contribución angular se aproxima con el
+lado del sensor:
+𝜔𝑜𝑏𝑠 = −
+
+∑︁
+
+sgn(𝑦𝑖 ) 𝑘𝑟𝑒𝑝 𝛼𝑖 𝑤𝑖
+
+𝑖
+
+El factor 𝑤𝑖 aumenta el peso de sensores frontales y reduce el de sensores traseros. El signo de 𝑦𝑖 indica
+la dirección lateral del sensor en el marco del robot. Si un obstáculo está dentro de una distancia crítica
+frontal, el robot entra en modo AVOIDING, reduce 𝑣 y gira en el sentido de menor riesgo.
+La convención de signo usada en el script es la habitual del modelo unicycle: 𝜔 > 0 incrementa el
+yaw en sentido antihorario y aumenta la velocidad de la rueda derecha respecto de la izquierda. Con
+𝑦𝑖 > 0 para sensores del lado izquierdo, el signo negativo de 𝜔𝑜𝑏𝑠 hace que un obstáculo a la izquierda
+produzca giro horario, es decir, alejamiento hacia la derecha. Para sensores del lado derecho ocurre lo
+contrario.
+
+5.3 Visualización de sensores
+Los 16 sensores ultrasónicos del Pioneer se dibujan como rayos. Sin impacto, el rayo llega al rango
+nominal; con obstáculo, termina en el punto detectado. Esta visualización relaciona detección, giro
+reactivo y separación frente a pallet, pilar o caja.
+
+5.4 Punto intermedio de planificación SLAM
+En esta fase se usa una regla local de punto intermedio. Si un landmark o una celda ocupada cae
+demasiado cerca del segmento directo entre la pose estimada y el objetivo, se generan candidatos
+laterales a distancia 𝑑𝑜𝑓 𝑓 . Se elige el candidato con menor coste:
+𝐽(𝑞) = ‖𝑞 − 𝑥
+^𝑅1 ‖ + ‖𝑥𝑔 − 𝑞‖ + 𝜆 𝐶𝑜𝑏𝑠 (𝑞)
+donde 𝐶𝑜𝑏𝑠 penaliza candidatos cercanos a obstáculos mapeados. Si se activa este desvío, la señal
+phase1PlannerMode toma el valor SLAM_WAYPOINT; al alcanzar ese punto, el sistema vuelve a ruta
+directa.
+
+Página 23 de 47
+
+Actividad 2
+
+6
+Estimación y SLAM
+El estimador sigue el ciclo clásico de predicción y corrección. Primero propaga la pose con odometría
+diferencial; después corrige esa pose con mediciones ruidosas del simulador y lleva las lecturas de sensor
+a coordenadas del warehouse. Con esas detecciones se actualiza un mapa compacto de landmarks o
+una grid de ocupación, según el algoritmo seleccionado [6].
+La pose que entrega CoppeliaSim tiene seis componentes: [𝑥, 𝑦, 𝑧, 𝛼, 𝛽, 𝛾]. El estimador usa solo la
+proyección plana [𝑥, 𝑦, 𝜃], con 𝜃 = 𝛾. La altura, roll y pitch se descartan porque el Pioneer permanece
+sobre el piso de la celda y la tarea se formula en 2D.
+
+Figura 6.1: Secuencia de estimación, mapa, planificación local y control de R1.
+
+6.1 Datos usados para comparar SLAM
+Los cuatro métodos reciben las mismas entradas: odometría diferencial, pose ruidosa de referencia para
+cerrar el estimador, rayos de proximidad y el mismo objetivo de navegación. La comparación no mide
+paquetes ROS completos, sino cuatro representaciones implementadas en Lua para la misma celda:
+rasgos compactos, grid de ocupación, ajuste local por scan matching y submapas.
+La medición ruidosa de pose no viene de un sensor físico de CoppeliaSim ni de un generador gaussiano
+aleatorio. Se toma la pose real plana del simulador y se le añade una perturbación acotada y reproducible:
+
+Página 24 de 47
+
+MROB–VIU • Capítulo 6. Estimación y SLAM
+
+Actividad 2
+
+amplitud 0,030 m en 𝑥, 𝑦 y 0,018 rad en yaw para KALMAN_LANDMARK. La covarianza de medición que
+usa la corrección queda parametrizada con 𝜎𝑥𝑦 = 0,055 m y 𝜎𝜃 = 0,045 rad. Para detecciones de
+obstáculo se usaron 𝜎𝑟 = 0,075 m y 𝜎𝛽 = 0,10 rad. Esto mantiene repetible la comparación; no pretende
+modelar el ruido exacto de un sensor real.
+La diferencia está en qué guarda cada algoritmo y cómo eso afecta al planificador. Kalman-landmark
+guarda pocos puntos fusionados; GMapping guarda probabilidades por celda; Hector corrige la pose
+buscando el scan que mejor encaja con la grid; Cartographer divide el mundo en submapas y registra
+cierres de ciclo. Por eso la comparación no se reduce a “número de rasgos”: un landmark y una celda
+ocupada no tienen el mismo significado físico.
+
+6.2 Predicción de pose
+Con velocidades odométricas 𝑣𝑘 , 𝜔𝑘 , el modelo diferencial discreto es:
+^+
+𝑥
+^−
+^+
+𝑘 =𝑥
+𝑘−1 + 𝑣𝑘 cos(𝜃𝑘−1 )Δ𝑡
++
++
+𝑦^𝑘− = 𝑦^𝑘−1
++ 𝑣𝑘 sin(𝜃^𝑘−1
+)Δ𝑡
++
+𝜃^𝑘− = wrap(𝜃^𝑘−1
++ 𝜔𝑘 Δ𝑡)
+
+La covarianza se propaga con el Jacobiano 𝐺𝑘 :
++
+𝑃𝑘− = 𝐺𝑘 𝑃𝑘−1
+𝐺⊤
+𝑘 + 𝑄𝑘
+
+6.3 Corrección Kalman-landmark
+La formulación de referencia sigue el filtro de Kalman [7]:
+𝐾𝑘 = 𝑃𝑘− 𝐻𝑘⊤ (𝐻𝑘 𝑃𝑘− 𝐻𝑘⊤ + 𝑅𝑘 )−1
+
+𝑥
+^+
+^−
+^−
+𝑘 =𝑥
+𝑘 + 𝐾𝑘 (𝑧𝑘 − 𝐻𝑘 𝑥
+𝑘 ),
+
+𝑃𝑘+ = (𝐼 − 𝐾𝑘 𝐻𝑘 )𝑃𝑘−
+
+En la escena, la pose se corrige con una medición ruidosa generada desde CoppeliaSim, y las detecciones
+de obstáculo se asocian por cercanía. Si una lectura cae dentro del radio de asociación de un landmark,
+esa landmark se actualiza con una ganancia escalar; las lecturas no asociadas crean landmarks hasta el
+máximo configurado. KALMAN_LANDMARK se denomina así porque no estima una covarianza conjunta
+entre pose y mapa, como sí haría un EKF-SLAM completo.
+
+Página 25 de 47
+
+MROB–VIU • Capítulo 6. Estimación y SLAM
+
+Odometría
+𝑣𝑘 , 𝜔𝑘 , Δ𝑡
+
+Actividad 2
+
+Predicción
+−
+𝑥
+^−
+𝑘 , 𝑃𝑘
+
+Innovación
+𝑧𝑘 − 𝐻 𝑥
+^−
+𝑘
+
+Corrección
+𝐾𝑘 , 𝑥
+^+
+𝑘
+
+Asociación
+por cercanía
+
+Mapa compacto
+landmarks fusionadas
+
+Figura 6.2: Particularidad de Kalman-landmark: corrige la pose y fusiona pocas detecciones como rasgos;
+no mantiene una covarianza conjunta pose–mapa como un EKF-SLAM completo.
+En un entorno pequeño, esta opción mantiene estabilidad: al fusionar lecturas cercanas, el mapa no
+crece sin control y el planner recibe obstáculos puntuales fáciles de filtrar. La desventaja es visual: no
+reconstruye superficies completas, de modo que una pared larga aparece como pocos rasgos y no como
+una frontera continua.
+
+6.4 GMapping en grid
+GMapping se basa en filtros de partículas Rao-Blackwellizados y mapas de grid [8]. En esta simulación
+implementamos una grid de ocupación con log-odds, donde 𝐿(𝑐) = log(𝑝(𝑐)/(1 − 𝑝(𝑐))). Para cada
+rayo, las celdas atravesadas se marcan como libres y la celda de impacto como ocupada:
+⎛
+
+𝐿𝑡 (𝑐) = clip ⎝𝐿𝑡−1 (𝑐) +
+
+⎧
+⎨𝑙𝑜𝑐𝑐 ,
+
+𝑐 = 𝑐ℎ𝑖𝑡
+
+⎩𝑙
+
+𝑐 ∈ 𝑟𝑎𝑦
+
+𝑓 𝑟𝑒𝑒 ,
+
+⎞
+⎠
+
+Los incrementos 𝑙𝑜𝑐𝑐 > 0 y 𝑙𝑓 𝑟𝑒𝑒 < 0 se acotan con clip para evitar probabilidades saturadas por lecturas
+aisladas.
+La grid resultante se usa tanto para telemetría como para el planificador local. En Lua, el recorrido de
+celdas se obtiene muestreando el segmento entre el sensor y el punto detectado con paso menor que
+la resolución de la grid. Es una variante simple de ray-casting, suficiente para marcar las celdas libres
+antes de la celda de impacto.
+Rayos de sensor
+alcance + impacto
+
+Ray casting
+celdas atravesadas
+
+Log-odds
+libre / ocupada
+
+Grid SLAM
+celdas activas
+
+Planner local
+bloqueos por celda
+
+Figura 6.3: Particularidad de GMapping implementado: la información principal es una grid de ocupación.
+Cada rayo libera celdas antes del impacto y refuerza la celda ocupada.
+El GMapping original usa un filtro de partículas Rao-Blackwellizado para mantener hipótesis de
+trayectoria. En esta actividad se conservó la idea que interesa para el planificador, la grid de ocupación,
+y se redujo el resto para que el coste computacional fuera razonable dentro del script de CoppeliaSim.
+Esa regla explica por qué GMapping genera muchos más elementos de mapa que Kalman-landmark,
+pero no necesariamente menor error de pose.
+Página 26 de 47
+
+MROB–VIU • Capítulo 6. Estimación y SLAM
+
+Actividad 2
+
+6.5 Hector con ajuste local
+Hector SLAM usa scan matching contra una grid y depende menos de la odometría [9]. En esta escena
+implementamos una búsqueda local discreta alrededor de la pose estimada. Para cada candidato (𝑥, 𝑦, 𝜃)
+se proyectan los puntos del scan y se evalúa el puntaje contra la grid:
+
+𝑠(𝑥, 𝑦, 𝜃) =
+
+𝑁
+1 ∑︁
+𝐿 (𝑥 + 𝑟𝑖 cos(𝜃 + 𝛽𝑖 ), 𝑦 + 𝑟𝑖 sin(𝜃 + 𝛽𝑖 ))
+𝑁 𝑖=1
+
+Si el mejor puntaje supera un umbral, la pose se corrige parcialmente hacia ese candidato. HECTOR_
+GRID_MATCHING usa una búsqueda discreta pequeña para que el cálculo quepa dentro del script Lua.
+Hector en ROS trabaja con Gauss-Newton multi-resolución; se usa una versión reducida y revisable
+para esta escena.
+Pose inicial
+𝑥
+^, 𝑦^, 𝜃^
+
+Ventana local
+Δ𝑥, Δ𝑦, Δ𝜃
+
+Proyectar scan
+sobre la grid
+
+Puntaje
+𝑠(𝑥, 𝑦, 𝜃)
+
+Mejor candidato
+corrección parcial
+
+Figura 6.4: Particularidad de Hector: busca la pose local cuyo scan encaja mejor con la grid. La
+odometría inicializa la búsqueda, pero la corrección viene del ajuste scan–mapa.
+Esto hace que Hector sea útil cuando los rayos tienen geometría suficiente para alinearse con el mapa.
+Si el entorno observado es pobre, simétrico o con pocos impactos, varios candidatos reciben puntajes
+parecidos y la corrección tiende a oscilar. Por esa razón el script aplica solo una fracción de la corrección
+y mantiene umbrales para no mover la pose ante coincidencias débiles.
+
+6.6 Cartographer con submapas
+Google Cartographer organiza el mapeo en submapas y cierres de ciclo para reducir deriva acumulada
+[10]. La implementación local mantiene submapas temporales, crea submapas adicionales por distancia
+o periodo y aplica un cierre de ciclo sencillo cuando la pose vuelve cerca de un submapa antiguo con
+puntaje por encima del umbral. En la comparación actual produjo 13 submapas y 4 cierres de ciclo.
+En concreto, un submapa se considera antiguo si no es el activo ni el anterior y si han pasado más
+de 22 s desde su creación. El cierre se acepta solo si la distancia al submapa es menor que 0,45 m,
+hay al menos tres submapas de separación, el puntaje de coincidencia de scan supera 0.35 y no se ha
+registrado ya ese enlace. La corrección aplicada es parcial (10 % en 𝑥, 𝑦, 6 % en yaw), precisamente
+para evitar que un falso positivo rompa la trayectoria.
+
+Página 27 de 47
+
+MROB–VIU • Capítulo 6. Estimación y SLAM
+
+Scan actual
+pose local
+
+Actividad 2
+
+Submapa activo
+acumula celdas
+
+Submapa adicional
+por distancia/tiempo
+
+Candidato antiguo
+cercanía + puntaje
+
+Cierre de ciclo
+ajuste local
+
+Figura 6.5: Particularidad de Cartographer-submap: el mapa no se guarda como una sola grid monolítica,
+sino como submapas locales con posibles cierres cuando R1 vuelve a zonas conocidas.
+El mapa conserva estructura temporal: registra qué zona se construyó en cada tramo y detecta retornos
+a regiones ya visitadas. El coste es una lógica más delicada para navegación local. Si una celda antigua
+queda cerca de la ruta, el planner la sobreinterpreta como bloqueo; por eso en Phase 2 se añadieron
+filtros de persistencia, distancia al robot y recuperación directa.
+
+Página 28 de 47
+
+Actividad 2
+
+7
+Resultados experimentales
+Los resultados proceden de ejecuciones de CoppeliaSim lanzadas desde Python. Cada ejecución exporta
+señales a CSV y JSON, y de ahí salen las tablas y figuras. Las capturas renderizadas desde CoppeliaSim
+complementan las gráficas y vinculan cada métrica con la escena simulada.
+
+7.1 Validación funcional de la escena
+La validación principal de Sim_T2_Phase1_Basic.ttt terminó con passed=true. Los indicadores
+más relevantes fueron:
+Indicador
+
+Resultado
+
+Estado final de tarea
+
+CHARGING
+
+Modo final de movimiento
+
+ARRIVED_TARGET
+
+Tareas completadas
+
+4/4
+
+Distancia caminada por Bill
+
+7,843 m
+
+Batería final R1
+
+66,76 %
+
+Sensores activos
+
+16
+
+Rayos de sensor visualizados
+
+16
+
+Landmarks/celdas SLAM finales
+
+24 en validación principal
+
+Actualizaciones SLAM
+
+8532
+
+Error final de pose
+
+0,030 m
+
+Error máximo de pose
+
+0,045 m
+
+Distancia mínima positiva a obstáculo
+
+0,056 m
+
+Riesgo máximo de obstáculo
+
+0,829
+
+Junto con las métricas, se comprobó la ejecución en la escena: Bill se mueve entre WS1 y WS2,
+toma y entrega piezas, trabaja en la mesa, aparecen estanterías, mesas y sofá, T1 y T2 tienen
+geometría reconocible, la cola de tareas queda registrada, el robot vuelve a carga y el planificador activa
+SLAM_WAYPOINT cuando detecta un bloqueo local.
+
+7.2 Desempeño del estimador Kalman-landmark
+En la exportación específica del estimador, la escena usa PID como controlador base y KALMAN_LANDMARK
+como algoritmo SLAM. Los resultados fueron:
+Página 29 de 47
+
+MROB–VIU • Capítulo 7. Resultados experimentales
+
+Actividad 2
+
+RMSE de posición: 0,03149 m.
+Error medio de posición: 0,02981 m.
+Error P95: 0,04760 m.
+Error máximo: 0,05626 m.
+RMSE de orientación: 0,01987 rad.
+Covarianza media estimada: 0,00081.
+Landmarks finales: 20.
+Actualizaciones Kalman/SLAM: 4295.
+El número de elementos del mapa depende de la representación. En Kalman-landmark son rasgos
+puntuales fusionados; en las variantes de grid son celdas ocupadas o grupos de celdas. La validación
+funcional cerró con 24 rasgos y la exportación específica Kalman-landmark con 20, mientras que las
+grids acabaron con mapas más densos.
+
+Figura 7.1: Resultados del estimador Kalman-landmark.
+
+7.3 Comparación de algoritmos SLAM
+La comparación usa el mismo escenario, sensores, tareas y controlador para los cuatro modos de SLAM.
+La Tabla 7.2 recoge los valores principales.
+Los tiempos y longitudes de ruta salen parecidos porque el plan de misión, los puntos de entrega y el
+controlador de movimiento son los mismos. Cambia la representación del mapa usada por los bloqueos
+
+Página 30 de 47
+
+MROB–VIU • Capítulo 7. Resultados experimentales
+
+Actividad 2
+
+y los puntos intermedios. Por eso la columna de rasgos exige cuidado: en Kalman son landmarks
+fusionadas; en las grids son celdas o grupos de celdas ocupadas.
+Cuadro 7.2: Comparación SLAM en CoppeliaSim.
+Métrica
+
+GMapping
+
+Hector
+
+Cartographer
+
+Kalman
+
+Completado
+
+Sí
+
+Duración [s]
+
+125,60
+
+Sí
+
+Sí
+
+Sí
+
+123,55
+
+125,25
+
+121,45
+
+Ruta [m]
+
+15,997
+
+15,233
+
+15,968
+
+15,763
+
+RMSE pos. [m]
+
+0,04117
+
+0,04445
+
+0,04149
+
+0,03142
+
+Error P95 [m]
+
+0,05718
+
+0,07596
+
+0,06026
+
+0,04670
+
+Error max. [m]
+
+0,07354
+
+0,10862
+
+0,07362
+
+0,05824
+
+Rasgos finales
+
+94
+
+84
+
+91
+
+20
+
+Actualizaciones SLAM
+
+4514
+
+4470
+
+4474
+
+4275
+
+Submapas
+
+0
+
+0
+
+13
+
+0
+
+Cierres de ciclo
+
+0
+
+0
+
+4
+
+0
+
+Batería usada [ %]
+
+24,62
+
+23,63
+
+24,50
+
+24,02
+
+Figura 7.2: Comparación gráfica de los cuatro modos SLAM: trayectoria, precisión, crecimiento del
+mapa y resumen de error.
+
+7.4 Interpretación de resultados
+Kalman-landmark obtuvo el menor error de pose y el menor consumo. En una celda pequeña, las
+landmarks fusionadas son suficientes para navegar. GMapping y Hector generan mapas más densos y
+comparan grid de ocupación con scan matching; pagan con algo más de error y más trabajo de ajuste.
+
+Página 31 de 47
+
+MROB–VIU • Capítulo 7. Resultados experimentales
+
+Actividad 2
+
+Cartographer-submap redujo la ruta frente a GMapping y Hector y registró estructura por submapas
+con 4 cierres de ciclo locales, aunque su RMSE quedó por encima de Kalman-landmark.
+Para la escena base usamos KALMAN_LANDMARK como estimador base. Los otros tres métodos quedan
+para comparar mapas calculados con los mismos rayos de proximidad.
+
+Página 32 de 47
+
+Actividad 2
+
+8
+Phase 2: SLAM con mapa desconocido
+La escena Sim_T2_Phase2_SLAM_Unknown.ttt parte de la celda validada y arranca con parte del
+entorno oculto. R1 ve cajas, paredes, una tarima móvil y un bloque temporal a través de los sensores
+de proximidad dibujados como rayos. El controlador actualiza el mapa que va armando y lo usa para
+activar puntos intermedios locales.
+Solo P2_Dynamic_Pallet y P2_Temporary_Blocker se mueven por script, con trayectorias periódicas
+deterministas. Las crates y los marcadores de zona desconocida quedan fijos.
+La métrica de actividad de mapa en Phase 2 cuenta rasgos detectados, celdas ocupadas y actualizaciones
+SLAM. Una mayor actividad no implica necesariamente mejor geometría; por eso la cobertura contra la
+referencia geométrica se revisa aparte con exhaustividad de obstáculos y precisión de rasgos frente a
+esos obstáculos.
+
+(a) Inicio con zona desconocida.
+
+(b) Replanificación ante obstáculo dinámico.
+
+Figura 8.1: Capturas 3D de la escena Phase 2 ejecutada en CoppeliaSim.
+
+Página 33 de 47
+
+MROB–VIU • Capítulo 8. Phase 2: SLAM con mapa desconocido
+
+Actividad 2
+
+(a) Zona desconocida, Bill y primer bloque no modelado. (b) Plano general de la ruta y los elementos de la celda.
+
+(c) Lecturas de proximidad frente al sofá.
+
+Figura 8.2: Capturas de ejecución de Phase 2 con mapa desconocido y obstáculos en la celda.
+
+8.1 Recuperación ante bloqueo local
+En Phase 2, las variantes de grid podían quedar atrapadas en estados de recogida, con alternancia
+prolongada entre AVOIDING y SLAM_WAYPOINT. El planner trataba como bloqueo cualquier celda
+ocupada cerca del segmento al objetivo, incluso cuando la celda estaba pegada al robot, a la estantería
+o al punto de recogida.
+El planner aplica cinco reglas para evitar ese ciclo:
+Las celdas de grid necesitan varias detecciones antes de influir en la planificación.
+Los obstáculos muy cercanos al robot o al objetivo no fuerzan un punto intermedio.
+Los candidatos de desvío reciben penalización si salen del área útil del warehouse.
+Tras alcanzar un punto intermedio, R1 mantiene una ventana breve de ruta directa para evitar
+replanificar contra el mismo obstáculo.
+Si una variante de grid se queda varios segundos sin reducir distancia al objetivo, se activa
+RECOVERY_DIRECT: la planificación ignora el mapa durante una ventana corta y conserva la evitación
+reactiva.
+
+Página 34 de 47
+
+MROB–VIU • Capítulo 8. Phase 2: SLAM con mapa desconocido
+
+Actividad 2
+
+Con estas reglas los cuatro modos completan la misión en Phase 2. En la ejecución final, Cartographer
+activó una recuperación del planificador; GMapping, Hector y Kalman terminaron sin usarla.
+
+8.2 Comparación de métodos
+En Phase 2 los cuatro métodos se someten al mismo problema: arrancar con mapa incompleto, descubrir
+obstáculos no modelados y seguir navegando mientras una tarima se mueve. La comparación no se
+ordena por cantidad de mapa, sino por la representación que mantiene la misión sin bloqueo:
+Kalman-landmark prioriza pose estable y pocos rasgos; GMapping prioriza ocupación por celda;
+Hector intenta corregir pose por coincidencia scan–grid; Cartographer conserva submapas y
+cierres de ciclo, pero introduce más condiciones para evaluar si una celda antigua bloquea o no la
+ruta.
+Cuadro 8.1: Comparación Phase 2 con mapa desconocido y obstáculos dinámicos.
+Métrica
+
+GMapping
+
+Hector
+
+Cartographer
+
+Kalman
+
+Completado
+
+Sí
+
+Sí
+
+Sí
+
+Sí
+
+Duración [s]
+
+128,00
+
+129,40
+
+138,65
+
+124,80
+
+Ruta [m]
+
+15,905
+
+15,735
+
+16,441
+
+15,752
+
+RMSE pos. [m]
+
+0,04220
+
+0,04587
+
+0,03930
+
+0,03185
+
+Error P95 [m]
+
+0,05638
+
+0,07590
+
+0,05773
+
+0,03985
+
+Actividad de mapa [ %]
+
+94,851
+
+94,930
+
+95,327
+
+94,613
+
+Rasgos finales
+
+36
+
+36
+
+36
+
+24
+
+Exhaustividad aprox. final
+
+1,000
+
+1,000
+
+1,000
+
+1,000
+
+Precisión aprox. final
+
+0,250
+
+0,333
+
+0,278
+
+0,250
+
+Replanificaciones
+
+19
+
+24
+
+25
+
+17
+
+Recuperaciones del
+planificador
+
+0
+
+0
+
+1
+
+0
+
+Batería usada [ %]
+
+24,576
+
+24,476
+
+25,916
+
+24,324
+
+Submapas
+
+0
+
+0
+
+13
+
+0
+
+Cierres de ciclo
+
+0
+
+0
+
+4
+
+0
+
+Página 35 de 47
+
+MROB–VIU • Capítulo 8. Phase 2: SLAM con mapa desconocido
+
+Figura 8.3: Comparación de métodos en Phase 2.
+
+Figura 8.4: Reconstrucción del mapa al mismo instante común, 𝑡 = 60 s.
+
+Página 36 de 47
+
+Actividad 2
+
+MROB–VIU • Capítulo 8. Phase 2: SLAM con mapa desconocido
+
+Actividad 2
+
+8.3 Discusión técnica
+Kalman-landmark fue el modo operativo más eficiente: terminó antes, usó menos batería y mantuvo
+el menor RMSE de pose. Su mapa es compacto, suficiente para la navegación de esta celda, aunque
+menos denso que las representaciones de grid.
+Los modos de grid generan más rasgos de mapa y aumentan rápido la actividad de mapeo. Esa métrica
+cuantifica actividad, no calidad geométrica por sí sola. Cartographer fue la mejor grid en RMSE y
+actividad final, aunque necesitó más ruta, más replanificaciones y una activación de RECOVERY_DIRECT.
+Hector obtuvo la mayor precisión aproximada final entre las grids y también registró el mayor error
+máximo de pose. GMapping completó la misión con menor duración que las otras grids.
+Para ejecutar la misión con bajo error de pose, Kalman-landmark queda como base. Para representar
+ocupación, las grids generan mapas más densos, pero su utilidad debe evaluarse junto con error de
+pose, ruta, replanificaciones y recuperaciones.
+
+Página 37 de 47
+
+Actividad 2
+
+9
+Validación
+La validación revisa comportamiento y archivos presentes. El checklist mira escena, objetos de la
+escena, scripts integrados, tareas completadas, movimiento de Bill, acciones visuales, anticolisión,
+error del estimador y rayos de sensor. Generamos las capturas 3D desde CoppeliaSim con capture_
+coppeliasim_screenshots.lua; son las imágenes de las Figuras 2.2 y 8.1.
+
+9.1 Validación por checklist
+Bloque
+
+Chequeo
+
+Escena
+
+Existe Sim_T2_Phase1_Basic.ttt y contiene R1, B1, OK
+T1, T2, C1.
+
+Mannequin
+
+B1 (Bill) se usa como persona móvil tipo
+People/mannequin.
+
+Warehouse
+
+Dos mesas, dos estanterías, sofá, obstáculos y panel de OK
+tareas.
+
+Scripts
+
+Controlador R1 y manager B1 adjuntos en la escena.
+
+OK
+
+Tareas
+
+Entrega y retorno de T1 y T2; cuatro tareas
+completadas.
+
+OK
+
+Bill
+
+Movimiento entre estaciones y acciones de
+tomar/trabajar/entregar.
+
+OK
+
+Percepción
+
+16 sensores activos y rayos visualizados.
+
+OK
+
+Seguridad
+
+Modo AVOIDING observado y señal de riesgo activa.
+
+OK
+
+Estimación
+
+Kalman activo, mapa SLAM actualizado y error
+acotado.
+
+OK
+
+Planificación
+
+SLAM_WAYPOINT observado.
+
+OK
+
+Batería
+
+Tarea aceptada por batería y retorno a carga.
+
+OK
+
+Capturas CoppeliaSim
+
+Vista general, entrega, trabajo de B1, rayos de
+sensores y replanificación Phase 2.
+
+OK
+
+Phase 2
+
+Mapa desconocido, tarima móvil, bloque temporal,
+OK
+cuatro SLAM completados y recuperación del planner
+registrada.
+
+Deck editable
+
+Existe
+slides/Actividad2_Pioneer_CoppeliaSim.pptx
+junto con su PDF exportado.
+
+Página 38 de 47
+
+Estado
+
+OK
+
+OK
+
+MROB–VIU • Capítulo 9. Validación
+
+Actividad 2
+
+9.2 Timeline de la misión
+
+Figura 9.1: Timeline exportado de la simulación: estados de tarea, movimiento, planner y acciones de
+Bill durante la misión.
+La misión incluye esperas de proceso. R1 se detiene mientras Bill trabaja T1 o T2 y espera a que B1
+llegue a WS2 antes de buscar T2. Esa espera aparece como WAIT_B1; sin ese estado, la escena presenta
+movimiento sin respetar la secuencia lógica de entrega.
+
+Página 39 de 47
+
+MROB–VIU • Capítulo 9. Validación
+
+Actividad 2
+
+Figura 9.2: Panel de la ejecución base: pose, error, batería, obstáculos, planner y estados principales.
+
+9.3 Incidencias corregidas
+Durante la validación se corrigieron tres incidencias. La primera fue de sincronización: R1 podía iniciar
+T2 antes de que Bill llegara a WS2, por lo que la tarea no representaba una entrega real. Se corrigió
+dejando el estado WAIT_B1_WS2_REQUEST_T2 bloqueado hasta leer phase1B1Station=WS2.
+La segunda incidencia se registró en Phase 2. Algunas celdas de grid antiguas quedaban demasiado
+cerca del objetivo y el planner entraba en un ciclo de desvíos cortos. El planner pasó a ignorar obstáculos
+pegados al objetivo, exigir hits persistentes para planificar y activar una ventana RECOVERY_DIRECT
+cuando no había progreso.
+La tercera incidencia correspondió al ajuste tipo Hector: con pocos impactos de sensor, varios candidatos
+de pose recibían puntajes parecidos y la corrección podía oscilar. Por eso se dejó una ventana discreta
+pequeña, un umbral mínimo de score y una ganancia parcial, en vez de aplicar el mejor candidato
+completo.
+
+Página 40 de 47
+
+Actividad 2
+
+Conclusiones
+La escena base comprueba el ciclo completo entre R1, Bill, T1 y T2: el robot entrega herramientas,
+espera el trabajo humano, recupera cada pieza, evita obstáculos y termina en carga. La misión incluye
+cola de tareas, sensores, estimación y retorno a estación.
+Con los datos exportados, Kalman-landmark se mantiene como el candidato operativo para esta celda:
+menor RMSE de posición, menor duración en Phase 2 y menos batería. Las grids tipo GMapping, Hector
+y Cartographer se usan para comparar ocupación por log-odds, scan matching y submapas con cierre
+de ciclo. Estas variantes se implementaron dentro de CoppeliaSim y Lua y usaron las mismas lecturas
+de proximidad para mantener condiciones comparables entre métodos.
+El anticolisiones funciona como capa reactiva: cuando los sensores detectan algo cerca, el robot baja
+velocidad, modifica el giro y actualiza la señal de riesgo. La capa de punto intermedio SLAM filtra
+celdas de grid poco observadas, ignora obstáculos pegados al objetivo y penaliza desvíos fuera del área
+útil. En mapas de grid añadimos una recuperación por falta de progreso, con ruta directa durante una
+ventana corta y evitación reactiva siempre activa.
+La comparación entre P, PI, PID, LQR y NMPC se conserva como análisis complementario. En el seguidor
+de Bill, PID dio el menor error final (0,0317 m), NMPC el menor error medio durante movimiento
+(0,0198 m) y LQR mantuvo buen error medio con menos variación que PID. En la misión T1 y T2, PI
+obtuvo el mejor puntaje ponderado de los CSV disponibles. LQR se aplicó como regulador discreto
+local y NMPC como control predictivo por disparo directo, resuelto con búsqueda local de comandos.
+No se declara estabilidad formal para los controladores discretos con saturación, evitación reactiva
+y cambios de objetivo. La validación queda en el plano experimental: las ejecuciones completan la
+misión y las señales exportadas no registran divergencia, pero una prueba formal exigiría analizar la
+conmutación entre modos y la capa de saturaciones.
+El sistema cubre la secuencia completa de almacén, la comparación de controladores, la validación
+de Phase 1 y la prueba Phase 2 con mapa desconocido. La misma instrumentación enlaza escenas,
+métricas y evidencias visuales sin cambiar las condiciones de comparación.
+Además de la bibliografía académica, se consultaron repositorios públicos para contrastar estructuras
+de implementación y adaptar ideas al entorno Lua de CoppeliaSim: slam_gmapping, hector_slam,
+Cartographer y PythonRobotics [11, 12, 13, 14]. Gemini se usó como apoyo de consulta e ideación
+visual; el código final, las métricas, las figuras y la redacción técnica fueron revisados y adaptados
+manualmente antes de incorporarlos al trabajo [15].
+Como trabajo futuro, el escenario podría conectarse a ROS 2 para ejecutar paquetes reales de
+slam_toolbox, Cartographer, Hector o GMapping equivalentes. La evaluación de mapas debe incorporar referencia geométrica, IoU de ocupación, precisión y exhaustividad por obstáculo y varias
+ejecuciones por método, para separar el desempeño del método de una trayectoria puntual de simulación.
+
+Página 41 de 47
+
+Actividad 2
+
+Referencias
+[1] MobileRobots Inc., Pioneer 3 Operations Manual, 2006. Manual de operación para plataformas
+Pioneer 3.
+[2] B. D. O. Anderson and J. B. Moore, Optimal Control: Linear Quadratic Methods. Prentice Hall,
+1990.
+[3] J. B. Rawlings, D. Q. Mayne, and M. M. Diehl, Model Predictive Control: Theory, Computation,
+and Design. Nob Hill Publishing, 2 ed., 2017.
+[4] O. Khatib, “Real-time obstacle avoidance for manipulators and mobile robots,” The International
+Journal of Robotics Research, vol. 5, no. 1, pp. 90–98, 1986.
+[5] V. Braitenberg, Vehicles: Experiments in Synthetic Psychology. MIT Press, 1984.
+[6] S. Thrun, W. Burgard, and D. Fox, Probabilistic Robotics. MIT Press, 2005.
+[7] R. E. Kalman, “A new approach to linear filtering and prediction problems,” Journal of Basic
+Engineering, vol. 82, no. 1, pp. 35–45, 1960.
+[8] G. Grisetti, C. Stachniss, and W. Burgard, “Improved techniques for grid mapping with raoblackwellized particle filters,” IEEE Transactions on Robotics, vol. 23, no. 1, pp. 34–46, 2007.
+[9] S. Kohlbrecher, O. von Stryk, J. Meyer, and U. Klingauf, “A flexible and scalable slam system
+with full 3d motion estimation,” in 2011 IEEE International Symposium on Safety, Security, and
+Rescue Robotics, pp. 155–160, 2011.
+[10] W. Hess, D. Kohler, H. Rapp, and D. Andor, “Real-time loop closure in 2d lidar slam,” in 2016
+IEEE International Conference on Robotics and Automation, pp. 1271–1278, 2016.
+[11] ROS Perception, “slam_gmapping,” 2026. Repositorio público consultado/adaptado: https:
+//github.com/ros-perception/slam_gmapping.
+[12] TU Darmstadt ROS Package Repository, “hector_slam,” 2026. Repositorio público consultado/adaptado: https://github.com/tu-darmstadt-ros-pkg/hector_slam.
+[13] Cartographer Project, “Cartographer,” 2026. Repositorio público consultado/adaptado: https:
+//github.com/cartographer-project/cartographer.
+[14] A. Sakai, D. Ingram, J. Dinius, K. Chawla, A. Raffin, and A. Paques, “PythonRobotics,” 2026.
+Repositorio público consultado/adaptado como referencia de algoritmos de robótica móvil: https:
+//github.com/AtsushiSakai/PythonRobotics.
+[15] Google, “Gemini,” 2026. Herramienta usada como apoyo de consulta e ideación visual; no usada
+como fuente primaria de validación técnica.
+
+Página 42 de 47
+
+Actividad 2
+
+A
+Anexos
+A.1 Archivos principales
+Archivo
+
+Función
+
+coppeliasim/Sim_T2_Phase1_Basic.ttt
+
+Escena final validada.
+
+coppeliasim/Sim_T2_Phase1_Basic_
+validation.json
+
+Resultado de validación automática.
+
+coppeliasim/build_phase1_basic_scene.
+py
+
+Generador de escena y validador.
+
+coppeliasim/phase1_r1_task_controller. Controlador principal de R1: tareas, navegación, SLAM,
+lua
+batería y telemetría.
+coppeliasim/phase1_b1_walking_manager. Movimiento y acciones visuales de B1 (Bill).
+lua
+coppeliasim/capture_coppeliasim_
+screenshots.lua
+
+Capturas 3D renderizadas desde CoppeliaSim para el informe.
+
+coppeliasim/Sim_T2_Phase2_SLAM_
+Unknown.ttt
+
+Escena con mapa desconocido, obstáculos no modelados y
+tarima móvil.
+
+coppeliasim/build_phase2_unknown_slam_ Generador y validador de Phase 2.
+scene.py
+coppeliasim/Actividad2_1_Basic_
+Follower.ttt
+
+Escena básica de seguimiento de Bill.
+
+coppeliasim/pioneer_pid_follower_
+controller.lua
+
+Controlador del seguidor con P, PI, PID, LQR y NMPC por
+disparo directo.
+
+Cuadro A.1: Escenas y controladores principales.
+
+Página 43 de 47
+
+MROB–VIU • Apéndice A. Anexos
+
+Actividad 2
+
+Archivo
+
+Función
+
+coppeliasim/run_phase1_slam_export.py
+
+Exportación CSV de la ejecución base.
+
+coppeliasim/run_phase1_slam_
+comparison.py
+
+Comparación de algoritmos SLAM implementados en Lua.
+
+coppeliasim/plot_phase1_slam_
+comparison.py
+
+Generación de gráficas de comparación SLAM.
+
+coppeliasim/phase1_slam_logs/
+
+CSV, JSON, Markdown y figuras de la comparación SLAM.
+
+coppeliasim/run_phase2_slam_unknown_
+comparison.py
+
+Exportación comparativa Phase 2 para los cuatro modos
+SLAM.
+
+coppeliasim/plot_phase2_slam_unknown_
+comparison.py
+
+Figuras y métricas de reconstrucción Phase 2.
+
+coppeliasim/phase2_slam_logs/
+
+CSV, JSON, Markdown y figuras de Phase 2.
+
+coppeliasim/phase1_controller_logs/
+
+Registros CSV y gráficas de comparación de controladores.
+
+coppeliasim/follower_pid_logs/
+
+CSV y gráficas de seguimiento de Bill.
+
+Cuadro A.2: Exportadores, registros y escena complementaria.
+
+Página 44 de 47
+
+MROB–VIU • Apéndice A. Anexos
+
+Actividad 2
+
+A.2 Parámetros relevantes
+Parámetro
+
+Valor
+
+Comentario
+
+Radio de rueda
+
+0,0975 m
+
+Conversión de velocidad lineal a angular de motor.
+
+Distancia entre ruedas
+
+0,331 m
+
+Modelo diferencial del Pioneer P3DX.
+
+Velocidad máxima
+
+0,55 m/s
+
+Saturación de avance.
+
+Velocidad angular máxima
+
+1,32 rad/s
+
+Saturación de giro.
+
+Rango de evitación
+
+0,62 m
+
+Umbral de influencia reactiva de obstáculos.
+
+Parada crítica
+
+0,12 m
+
+Distancia frontal mínima antes de detener el avance.
+
+Batería inicial
+
+96 %
+
+Valor usado en validaciones.
+
+Umbral batería baja
+
+56 %
+
+Limita velocidad si se alcanza.
+
+Umbral batería crítica
+
+26 %
+
+Modo conservador.
+
+Resolución de grid
+
+0,18 m
+
+Usada por GMapping, Hector y Cartographer en grid.
+
+Margen del planificador
+
+0,40 m
+
+Separación mínima deseada respecto al mapa.
+
+Desplazamiento lateral
+
+0,52 m
+
+Distancia lateral del punto intermedio local.
+
+Retardo de recuperación
+
+10,0 s
+
+Activa RECOVERY_DIRECT si no hay progreso hacia el
+objetivo.
+
+Duración de recuperación
+
+5,5 s
+
+Ventana en la que se suspende el mapa para planificar,
+sin apagar la evitación local.
+
+A.3 Fragmentos Lua propios
+Listing A.1: Conversión de velocidad diferencial a ruedas.
+function DifferentialDrive : setVelocity (v , w )
+local left = ( v - 0.5 * self . cfg . trackWidth * w ) / self . cfg . wheelRadius
+local right = ( v + 0.5 * self . cfg . trackWidth * w ) / self . cfg . wheelRadius
+sim . s e tJo in tT ar get Ve lo cit y ( self . handles . leftMotor , left )
+sim . s e tJo in tT ar get Ve lo cit y ( self . handles . rightMotor , right )
+end
+
+Listing A.2: Entrega, espera de trabajo humano y retorno de herramienta.
+local function deliverToolToBill ( tool , workSurface , completedCount , nextSpec ,
+nextState , afterDeliver )
+stopRobot ( ’ MANIPULATING ’)
+if delayElapsed ( cfg . manipulationDelay ) then
+carryingTool = 0
+placeToolAt ( tool , workSurface , 0.43)
+co mpletedTaskCount = math . max ( completedTaskCount , completedCount )
+currentTaskSpec = nextSpec
+setShapeColorSafe ( tool , ToolColor . onTable )
+if afterDeliver then afterDeliver () end
+setTaskState ( nextState )
+end
+end
+
+Página 45 de 47
+
+MROB–VIU • Apéndice A. Anexos
+
+Actividad 2
+
+local function waitForBillWork ( tool , workSurface , dropPoint , workDelay ,
+nextTaskId , nextSpec , nextState )
+stopRobot ( ’ WAIT_B1 ’)
+placeToolAt ( tool , workSurface , 0.43)
+if delayElapsed ( workDelay ) then
+currentTaskId = nextTaskId
+currentTaskSpec = nextSpec
+placeToolAt ( tool , dropPoint , 0.36)
+setTaskState ( nextState )
+end
+end
+
+Listing A.3: Animación de Bill trabajando con brazos hacia la mesa.
+elseif self : actionContains ( action , ’ WORKING ’) then
+pose . leftShoulder = 0.62 + 0.06 * pulse
+pose . rightShoulder = 0.60 - 0.06 * pulse
+pose . leftElbow = 0.28 + 0.05 * math . abs ( tap )
+pose . rightElbow = 0.26 + 0.05 * math . abs ( tap )
+pose . leftKnee = 0.07 + 0.03 * math . abs ( pulse )
+pose . rightKnee = pose . leftKnee
+
+A.4 Comparación de control
+Modo
+
+Dur. [s]
+
+Mov. [s]
+
+Ruta [m]
+
+Bat. [ %]
+
+Riesgo max.
+
+Puntaje
+
+P
+
+115,20
+
+37,70
+
+12,843
+
+19,804
+
+0,410
+
+0,573
+
+PI
+
+110,30
+
+31,20
+
+12,867
+
+19,516
+
+0,487
+
+0,274
+
+PID
+
+110,85
+
+31,55
+
+12,856
+
+19,784
+
+0,469
+
+0,567
+
+LQR
+
+114,15
+
+36,20
+
+12,796
+
+19,505
+
+0,401
+
+0,436
+
+NMPC
+
+112,30
+
+33,05
+
+12,788
+
+19,316
+
+0,444
+
+0,326
+
+Página 46 de 47
+
+MROB–VIU • Apéndice A. Anexos
+
+Actividad 2
+
+Figura A.1: Métricas complementarias de control: tiempos, trayectoria, suavidad, batería, riesgo y error
+de pose.
+
+A.5 Notas de alcance
+Las variantes GMapping, Hector y Cartographer son implementaciones Lua inspiradas en esos
+métodos y calculadas con los datos de los sensores de la escena.
+El sensor se representa con los 16 ultrasonidos del Pioneer visualizados como rayos. Las figuras de
+reconstrucción SLAM corresponden a esos rayos de proximidad y al arreglo ultrasónico simulado.
+phase2MappingEvidencePct mide actividad de mapeo. La IoU y la cobertura geométrica contra
+una referencia real quedan fuera de esa señal.
+La planificación local por punto intermedio resuelve bloqueos de una celda pequeña sin introducir
+una capa global adicional.
+LQR y NMPC se usan como comparaciones acotadas; el análisis central usa métodos clásicos de
+seguimiento, evitación y estimación.
+
+Página 47 de 47
+
+

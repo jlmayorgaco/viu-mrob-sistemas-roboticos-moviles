@@ -1,13 +1,14 @@
 # Actividad 2 - Sistemas Roboticos Moviles
 
-Proyecto LaTeX para la Actividad 2: programacion y control de un robot terrestre tipo Pioneer en CoppeliaSim/Lua.
+Proyecto LaTeX y escenas CoppeliaSim para la Actividad 2: programacion y control de un robot terrestre tipo Pioneer.
 
 ## Contenido
 
 - `main.tex`: informe principal.
 - `sections/`: capitulos del informe.
-- `slides/slides.tex`: presentacion PDF en LaTeX con diseno propio, no basada en plantilla de clase.
-- `coppeliasim/`: escenas `.ttt` suministradas por la asignatura y escena final generada.
+- `slides/slides.tex`: presentacion PDF en LaTeX.
+- `slides/build_editable_pptx.js`: generador del PPTX editable.
+- `coppeliasim/`: escenas `.ttt`, scripts Lua/Python, validaciones, logs CSV/JSON y figuras.
 - `references.bib`: bibliografia.
 
 Los enunciados originales estan en `../docs/enunciado/`.
@@ -30,45 +31,47 @@ pdflatex -interaction=nonstopmode -halt-on-error slides.tex
 node build_editable_pptx.js
 ```
 
-## Entrega practica CoppeliaSim
+## Escenas CoppeliaSim
 
-Archivo final:
+Escena principal del informe y de la defensa:
 
 ```text
-coppeliasim/Actividad2_Pioneer_Profesional_10_10.ttt
+coppeliasim/Sim_T2_Phase1_Basic.ttt
+coppeliasim/Sim_T2_Phase1_Basic_validation.json
 ```
 
-Version basica separada, limitada a lo que pide la guia:
+Incluye la celda warehouse con R1, Bill/B1, herramientas T1/T2, mesas WS1/WS2, racks, estacion de carga, bateria simulada, 16 sensores del Pioneer, evitacion reactiva, Kalman landmarks y cola completa de tareas. Las mesas, sofa y racks se importan desde la libreria de modelos de CoppeliaSim cuando esta disponible. La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `71.77 %`, 21 landmarks y error final de pose `0.019 m`.
+
+Escena Phase 2 para mapa desconocido:
+
+```text
+coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt
+coppeliasim/Sim_T2_Phase2_SLAM_Unknown_validation.json
+```
+
+Mantiene la mision T1/T2 y anade obstaculos no conocidos, zonas ocultas y replanificacion. La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `68.45 %`, 20 landmarks y evidencia maxima de mapeo `84.2 %`.
+
+Escena base de seguimiento de Bill:
+
+```text
+coppeliasim/Actividad2_1_Basic_Follower.ttt
+coppeliasim/Actividad2_1_Basic_Follower_validation.json
+```
+
+Se usa para comparar P, PI, PID, LQR y NMPC sobre la misma trayectoria de Bill.
+
+Escena basica de campos potenciales:
 
 ```text
 coppeliasim/Actividad2_Pioneer_basic.ttt
-```
-
-Esta version `_basic` contiene Pioneer P3DX, objetivo `mannequin`/Bill, campos potenciales, anticolision con los 16 ultrasonidos, celda robotizada minima con vallas/transportador/obstaculos y senal `missionReady`. No incluye flota A*, bateria, HMI avanzado, escenarios S1-S8 ni labels/camaras de demo. Se genero con:
-
-```powershell
-python coppeliasim\build_basic_scene.py
-```
-
-Su validacion queda en:
-
-```text
 coppeliasim/Actividad2_Pioneer_basic_validation.json
 ```
 
-Incluye Pioneer P3DX, celda robotizada, Bill/mannequin, obstaculos, zonas de seguridad, estacion de carga, HMI visual, piso industrial con textura de baldosas, carriles senalizados, franjas de seguridad, grilla A* visible, rutas de flota coloreadas, placas de demo, labels runtime, camaras de inspeccion, 16 ultrasonidos, 6 sensores virtuales adicionales, controlador Lua profesional, gestor de escenarios, flota auxiliar de 3 AMR con A* cooperativo, reservas temporales, estaciones de carga y senales de coordinacion (`missionReady`, `pioneerArrived`, `pioneerState`, `pioneerScenario`, `pioneerBatteryLevel`, `pioneerSpeedZone`, `fleetAllComplete`, `fleetChargingEvents`). Se genero con:
+Se usa como prueba compacta de seguimiento y evitacion reactiva. El controlador incluye una maniobra corta de recuperacion cuando los sensores frontales detectan bloqueo y el robot deja de progresar.
 
-```powershell
-python coppeliasim\build_professional_scene.py
-```
+## Entrega de escenas
 
-La validacion headless queda guardada en:
-
-```text
-coppeliasim/Actividad2_Pioneer_Profesional_10_10_validation.json
-```
-
-La validacion final ejecuta ruta por waypoints, pallet movil, parada de seguridad, objetivo dinamico, pasillo estrecho, degradacion de sensor, bateria baja con limitacion de velocidad y aproximacion final. Resultado actual del Pioneer: `ARRIVED`, distancia final `0,739 m`, 22 sensores activos, 8 escenarios observados, HMI activo, estacion de carga presente y telemetria de bateria/zonas validada. La extension multi-robot completa 3 misiones AMR, genera 16 planes A*, evita 8 conflictos por reservas, ejecuta 4 eventos de carga y deja 3/3 robots recargados en estado READY. Tambien se validan elementos visuales: textura de piso, senalizacion industrial, labels de demo, camaras nombradas, grilla/rutas de flota y marcadores de trazabilidad con los PPTs del curso. El informe incluye una matriz de trazabilidad contra la guia de la Actividad 2 y los temas de clase: locomocion diferencial, sensores, arquitectura/control, campos potenciales, anticolision, navegacion A* y validacion cooperativa.
+El paquete para adjuntar se prepara en `entrega_ttt/Actividad2_TTT_CoppeliaSim.zip`. Incluye las escenas `.ttt`, sus validaciones y los scripts fuente usados para construir/controlar las escenas. Para revisar la simulacion basta con abrir la `.ttt`; los scripts Python solo son necesarios si se quiere reconstruir las escenas desde cero.
 
 Presentacion:
 

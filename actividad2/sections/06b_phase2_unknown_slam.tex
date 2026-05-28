@@ -1,0 +1,165 @@
+\chapter{Phase 2: SLAM con mapa desconocido}
+
+La escena \path{Sim_T2_Phase2_SLAM_Unknown.ttt} parte de la celda validada y
+arranca con parte del entorno oculto. R1 ve cajas, paredes, una tarima móvil y
+un bloque temporal a través de los sensores de proximidad dibujados como rayos.
+El controlador actualiza el mapa que va armando y lo usa para activar puntos
+intermedios locales.
+
+Solo \texttt{P2\_Dynamic\_Pallet} y \texttt{P2\_Temporary\_Blocker} se mueven
+por script, con trayectorias
+periódicas deterministas. Las crates y los marcadores de zona desconocida quedan
+fijos.
+
+La métrica de actividad de mapa en Phase 2 cuenta rasgos detectados, celdas
+ocupadas y actualizaciones SLAM. Una mayor actividad no implica necesariamente
+mejor geometría; por eso la cobertura contra la referencia geométrica se revisa
+aparte con exhaustividad de obstáculos y precisión de rasgos frente a esos
+obstáculos.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase2_initial_unknown_oriented.png}
+    \caption{Inicio con zona desconocida.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{coppeliasim_phase2_replan_dynamic_oriented.png}
+    \caption{Replanificación ante obstáculo dinámico.}
+  \end{subfigure}
+  \caption{Capturas 3D de la escena Phase 2 ejecutada en CoppeliaSim.}
+  \label{fig:phase2-coppeliasim-captures}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{A2_T2_Phase2_SS1.png}
+    \caption{Zona desconocida, Bill y primer bloque no modelado.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{A2_T2_Phase2_SS2.png}
+    \caption{Plano general de la ruta y los elementos de la celda.}
+  \end{subfigure}
+
+  \vspace{0.35em}
+  \begin{subfigure}[b]{0.70\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{A2_T2_Phase2_SS3.png}
+    \caption{Lecturas de proximidad frente al sofá.}
+  \end{subfigure}
+  \caption{Capturas de ejecución de Phase 2 con mapa desconocido y obstáculos en la celda.}
+  \label{fig:phase2-coppeliasim-screenshots-extra}
+\end{figure}
+
+\section{Recuperación ante bloqueo local}
+
+En Phase 2, las variantes de grid podían quedar atrapadas en estados de
+recogida, con alternancia prolongada entre \texttt{AVOIDING} y
+\texttt{SLAM\_WAYPOINT}. El planner trataba como bloqueo cualquier celda ocupada
+cerca del segmento al objetivo, incluso cuando la celda estaba pegada al robot,
+a la estantería o al punto de recogida.
+
+El planner aplica cinco reglas para evitar ese ciclo:
+
+\begin{itemize}
+  \item Las celdas de grid necesitan varias detecciones antes de influir en
+  la planificación.
+  \item Los obstáculos muy cercanos al robot o al objetivo no fuerzan un punto intermedio.
+  \item Los candidatos de desvío reciben penalización si salen del área útil del
+  warehouse.
+  \item Tras alcanzar un punto intermedio, R1 mantiene una ventana breve de ruta directa
+  para evitar replanificar contra el mismo obstáculo.
+  \item Si una variante de grid se queda varios segundos sin reducir distancia
+  al objetivo, se activa \texttt{RECOVERY\_DIRECT}: la planificación ignora el
+  mapa durante una ventana corta y conserva la evitación reactiva.
+\end{itemize}
+
+Con estas reglas los cuatro modos completan la misión en Phase 2. En la ejecución
+final, Cartographer activó una recuperación del planificador; GMapping, Hector y
+Kalman terminaron sin usarla.
+
+\section{Comparación de métodos}
+
+En Phase 2 los cuatro métodos se someten al mismo problema: arrancar con mapa
+incompleto, descubrir obstáculos no modelados y seguir navegando mientras una
+tarima se mueve. La comparación no se ordena por cantidad de mapa, sino por la
+representación que mantiene la misión sin bloqueo:
+
+\begin{summarybox}
+\textbf{Kalman-landmark} prioriza pose estable y pocos rasgos; \textbf{GMapping}
+prioriza ocupación por celda; \textbf{Hector} intenta corregir pose por
+coincidencia scan--grid; \textbf{Cartographer} conserva submapas y cierres de
+ciclo, pero introduce más condiciones para evaluar si una celda antigua bloquea
+o no la ruta.
+\end{summarybox}
+
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{P{0.25\textwidth}P{0.16\textwidth}P{0.16\textwidth}P{0.18\textwidth}P{0.16\textwidth}}
+\caption{Comparación Phase 2 con mapa desconocido y obstáculos dinámicos.}\label{tab:phase2-slam-comparison}\\
+\toprule
+\textbf{Métrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Métrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\midrule
+\endhead
+Completado & Sí & Sí & Sí & Sí\\
+Duración [s] & 128,00 & 129,40 & 138,65 & \textbf{124,80}\\
+Ruta [m] & 15,905 & \textbf{15,735} & 16,441 & 15,752\\
+RMSE pos. [m] & 0,04220 & 0,04587 & 0,03930 & \textbf{0,03185}\\
+Error P95 [m] & 0,05638 & 0,07590 & 0,05773 & \textbf{0,03985}\\
+Actividad de mapa [\%] & 94,851 & 94,930 & \textbf{95,327} & 94,613\\
+Rasgos finales & 36 & 36 & 36 & 24\\
+Exhaustividad aprox. final & 1,000 & 1,000 & 1,000 & 1,000\\
+Precisión aprox. final & 0,250 & \textbf{0,333} & 0,278 & 0,250\\
+Replanificaciones & 19 & 24 & 25 & \textbf{17}\\
+Recuperaciones del planificador & 0 & 0 & 1 & 0\\
+Batería usada [\%] & 24,576 & 24,476 & 25,916 & \textbf{24,324}\\
+Submapas & 0 & 0 & \textbf{13} & 0\\
+Cierres de ciclo & 0 & 0 & \textbf{4} & 0\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase2_slam_unknown_algorithm_comparison.png}
+  \caption{Comparación de métodos en Phase 2.}
+  \label{fig:phase2-slam-comparison}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase2_slam_unknown_reconstruction_t60.png}
+  \caption{Reconstrucción del mapa al mismo instante común, \(t=\SI{60}{s}\).}
+  \label{fig:phase2-reconstruction-t60}
+\end{figure}
+
+\section{Discusión técnica}
+
+Kalman-landmark fue el modo operativo más eficiente: terminó antes, usó menos
+batería y mantuvo el menor RMSE de pose. Su mapa es compacto, suficiente para la
+navegación de esta celda, aunque menos denso que las representaciones de grid.
+
+Los modos de grid generan más rasgos de mapa y aumentan rápido la actividad de
+mapeo. Esa métrica cuantifica actividad, no calidad geométrica por sí sola.
+Cartographer fue la mejor grid en RMSE y actividad final, aunque
+necesitó más ruta, más replanificaciones y una activación de
+\texttt{RECOVERY\_DIRECT}. Hector obtuvo la mayor precisión aproximada final entre
+las grids y también registró el mayor error máximo de pose. GMapping completó
+la misión con menor duración que las otras grids.
+
+Para ejecutar la misión con bajo error de pose, Kalman-landmark queda como base.
+Para representar ocupación, las grids generan mapas más densos, pero su
+utilidad debe evaluarse junto con error de pose, ruta, replanificaciones y
+recuperaciones.

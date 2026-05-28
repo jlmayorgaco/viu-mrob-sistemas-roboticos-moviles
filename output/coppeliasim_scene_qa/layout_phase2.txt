@@ -1,0 +1,18 @@
+floor /P1_Warehouse_Floor size 10.60 x 10.20 center 0.00 -0.05
+sofa_orientation P1_Operator_Sofa facing_inside=true backX -4.87 seatX -4.60 frontX -4.36
+item work table 1 pos -3.65 3.75 size 0.96 0.58 yaw -0.0
+item work table 2 pos 3.65 -3.75 size 0.96 0.58 yaw -0.0
+item rack T1 pos -3.20 -3.50 size 0.06 0.06 yaw -0.0
+item rack T2 pos 3.20 3.50 size 0.06 0.06 yaw -0.0
+item operator sofa pos -4.60 0.10 size 0.42 1.06 yaw -0.0
+item unknown zone north pos -0.80 2.80 size 3.20 1.80 yaw -0.0
+item frontier NE rack pos 3.70 3.70 size 0.07 0.07 yaw -0.0
+min_furniture_gap 0.47 pair rack T2 <-> frontier NE rack
+wall_clear work table 1 0.82
+wall_clear work table 2 0.92
+wall_clear rack T1 1.62
+wall_clear rack T2 1.52
+wall_clear operator sofa 0.17
+wall_clear unknown zone north 0.65
+wall_clear frontier NE rack 1.31
+OK

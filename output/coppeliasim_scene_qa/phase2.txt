@@ -1,0 +1,31 @@
+kind phase2
+scene ready at t 0.00
+registered joints 10
+layout /P1_Warehouse_Floor size 10.60 10.20
+layout /P1_WorkTable_1 pos -3.65 3.75 0.31
+layout /P1_WorkTable_2 pos 3.65 -3.75 0.31
+layout /Rack_T1 pos -3.20 -3.50 0.22
+layout /Rack_T2 pos 3.20 3.50 0.22
+layout /WS1_Tool_Drop pos -3.65 3.05 0.36
+layout /WS2_Tool_Drop pos 3.65 -3.05 0.36
+sofa P1_Operator_Sofa seat -4.60 0.10 back -4.87 0.10 front -4.36 0.10
+bounds checked x[-5.60,5.60] y[-5.35,5.35]
+duplicate monitored aliases 0
+layout /P2_Frontier_01_NE_Rack pos 3.70 3.70 0.10
+layout /P2_Unknown_Zone_North_Base size 3.20 1.80
+runtime bill_move_max 9.513
+runtime robot_move_max 8.005
+runtime speed_max 0.360
+runtime states TRANSIT_TO_WS1,TRANSIT_TO_WS2,WORKING_WS1,WORKING_WS2
+runtime actions GIVING_T1_TO_R1,GIVING_T2_TO_R1,READY_TO_TAKE_T1_FROM_R1,READY_TO_TAKE_T2_FROM_R1,T1_GIVEN_TO_R1,T2_GIVEN_TO_R1,TAKING_T1_FROM_R1,TAKING_T2_FROM_R1,WAITING_FOR_T1,WAITING_FOR_T2,WALKING_TO_WS1,WALKING_TO_WS2,WORKING_T1_ON_WS1_TABLE,WORKING_T2_ON_WS2_TABLE
+joint leftElbowJoint range 0.329 min -0.000 max 0.329
+joint rightAnkleJoint range 0.000 min 0.000 max 0.000
+joint leftLegJoint range 0.572 min -0.286 max 0.286
+joint rightLegJoint range 0.572 min -0.286 max 0.286
+joint rightShoulderJoint range 0.673 min -0.657 max 0.016
+joint rightKneeJoint range 0.370 min 0.000 max 0.370
+joint leftShoulderJoint range 0.693 min -0.677 max 0.016
+joint rightElbowJoint range 0.309 min -0.000 max 0.309
+joint leftAnkleJoint range 0.000 min 0.000 max 0.000
+joint leftKneeJoint range 0.370 min 0.000 max 0.370
+OK

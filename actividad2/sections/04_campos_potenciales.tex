@@ -1,14 +1,60 @@
-\chapter{Evitacion de obstaculos y planificacion local}
+\chapter{Campos potenciales, evitación de obstáculos y planificación local}
 
-La navegacion combina dos capas. La primera es reactiva: los sensores de
-proximidad generan reduccion de velocidad y giro de escape si un obstaculo se
-aproxima al frente o a los laterales. La segunda es deliberativa local: el mapa
-SLAM se consulta para decidir si conviene desviarse mediante un waypoint
-intermedio antes de volver al objetivo.
+La navegación combina el campo atractivo hacia Bill, usado como mannequin, con
+una capa repulsiva de obstáculos y una capa local de mapa. Los sensores de
+proximidad reducen la velocidad y corrigen el giro cuando se detecta un obstáculo al frente
+o en los laterales. El mapa SLAM entra cuando la ruta directa se bloquea y se usa
+un punto intermedio antes de volver al objetivo.
 
-\section{Campo reactivo de obstaculos}
+La palabra ``campo'' no significa que CoppeliaSim aplique una fuerza física al
+Pioneer. Es una forma de construir un vector de decisión: el objetivo tira del
+robot hacia Bill y cada obstáculo cercano empuja el rumbo hacia el lado libre. El
+resultado se traduce después a \(v\) y \(\omega\), que sí son las señales que
+acaban moviendo las ruedas.
 
-Para cada sensor con deteccion positiva se calcula una influencia normalizada:
+\section{Campo atractivo hacia Bill}
+
+La navegación define una fuerza de atracción hacia el
+mannequin. En la escena, Bill cumple ese papel. Si \(p_R=[x_R,y_R]^T\)
+es la posición estimada del robot y \(p_B=[x_B,y_B]^T\) la posición de Bill, se
+usa el potencial atractivo:
+
+\[
+U_{att}(p_R)=\frac{1}{2}k_{att}\|p_B-p_R\|^2,
+\qquad
+F_{att}=-\nabla U_{att}=k_{att}(p_B-p_R).
+\]
+
+El controlador no aplica la fuerza como dinámica física; la traduce a consignas
+de avance y giro para el robot diferencial:
+
+\[
+\theta_{att}=\operatorname{atan2}(y_B-y_R,x_B-x_R),
+\qquad
+e_\theta=\operatorname{wrap}(\theta_{att}-\theta_R),
+\]
+
+\[
+v_{att}=\operatorname{sat}_{[0,v_{max}]}\bigl(k_v(\|p_B-p_R\|-d_f)\bigr),
+\qquad
+\omega_{att}=k_\theta e_\theta .
+\]
+
+La expresión anterior define la atracción hacia Bill. La repulsión de
+obstáculos modifica \(\omega_{att}\) y limita \(v_{att}\), pero no sustituye el
+objetivo principal de seguir a Bill.
+
+\section{Campo reactivo de obstáculos}
+
+Para cada sensor con detección positiva se calcula una influencia normalizada.
+La idea viene de campos potenciales artificiales y comportamiento Braitenberg
+\cite{khatib1986,braitenberg1984}, aplicada a los sensores de proximidad
+del Pioneer:
+
+El script base usa una tabla Braitenberg con pesos fijos por sensor. Se
+mantiene la relación sensor--motor y el peso depende de la distancia. Una
+lectura lejana apenas toca las ruedas; una lectura cercana fuerza más giro y
+reduce \(v\).
 
 \[
 \alpha_i =
@@ -19,45 +65,44 @@ Para cada sensor con deteccion positiva se calcula una influencia normalizada:
 \]
 
 donde \(d_i\) es la distancia medida y \(d_0\) el rango de influencia. La
-contribucion angular se aproxima con el lado del sensor:
+contribución angular se aproxima con el lado del sensor:
 
 \[
 \omega_{obs} = -\sum_i \operatorname{sgn}(y_i)\,k_{rep}\,\alpha_i\,w_i
 \]
 
 El factor \(w_i\) aumenta el peso de sensores frontales y reduce el de sensores
-traseros. Si un obstaculo esta dentro de una distancia critica frontal, el robot
+traseros. El signo de \(y_i\) indica la dirección lateral del sensor en el marco
+del robot. Si un obstáculo está dentro de una distancia crítica frontal, el robot
 entra en modo \texttt{AVOIDING}, reduce \(v\) y gira en el sentido de menor
 riesgo.
 
-\section{Visualizacion de sensores}
+La convención de signo usada en el script es la habitual del modelo unicycle:
+\(\omega>0\) incrementa el yaw en sentido antihorario y aumenta la velocidad de
+la rueda derecha respecto de la izquierda. Con \(y_i>0\) para sensores del lado
+izquierdo, el signo negativo de \(\omega_{obs}\) hace que un obstáculo a la
+izquierda produzca giro horario, es decir, alejamiento hacia la derecha. Para
+sensores del lado derecho ocurre lo contrario.
 
-Los 16 sensores ultrasonicos del Pioneer se visualizan como rayos. Cuando no hay
-impacto, el rayo se dibuja hasta el rango nominal; cuando hay obstaculo, se
-dibuja hasta el punto detectado. Esta visualizacion cumple una funcion doble:
-permite validar que la percepcion local existe y ayuda a explicar por que el
-robot modifica su trayectoria ante pallets, pilares o cajas.
+\section{Visualización de sensores}
 
-\section{Waypoint de planificacion SLAM}
+Los 16 sensores ultrasónicos del Pioneer se dibujan como rayos. Sin impacto, el
+rayo llega al rango nominal; con obstáculo, termina en el punto detectado. Esta
+visualización relaciona detección, giro reactivo y
+separación frente a pallet, pilar o caja.
 
-El planificador no ejecuta A* global en esta fase. Usa una regla simple y
-trazable: si una landmark o celda ocupada cae demasiado cerca del segmento
-directo entre la pose estimada y el objetivo, se generan dos candidatos laterales
-a distancia \(d_{off}\). Se elige el candidato con menor coste:
+\section{Punto intermedio de planificación SLAM}
+
+En esta fase se usa una regla local de punto intermedio. Si un landmark o una
+celda ocupada cae demasiado cerca del segmento directo entre la pose estimada y
+el objetivo, se generan candidatos laterales a distancia \(d_{off}\). Se elige
+el candidato con menor coste:
 
 \[
 J(q) = \|q-\hat{x}_{R1}\| + \|x_g-q\| + \lambda\,C_{obs}(q)
 \]
 
-donde \(C_{obs}\) penaliza candidatos cercanos a obstaculos mapeados. Si se
-activa este desvio, la senal \texttt{phase1PlannerMode} publica
-\texttt{SLAM\_WAYPOINT}; al alcanzar el waypoint, el sistema vuelve a ruta
+donde \(C_{obs}\) penaliza candidatos cercanos a obstáculos mapeados. Si se
+activa este desvío, la señal \texttt{phase1PlannerMode} toma el valor
+\texttt{SLAM\_WAYPOINT}; al alcanzar ese punto, el sistema vuelve a ruta
 directa.
-
-\section{Lectura operacional}
-
-Esta arquitectura es deliberadamente KISS: no pretende resolver planificacion
-global optima, sino lograr un comportamiento robusto, explicable y suficiente
-para la celda pequena. El robot no necesita reconstruir todo el mundo antes de
-moverse; actualiza el mapa mientras avanza y usa esa informacion para evitar
-bloqueos locales.

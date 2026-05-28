@@ -1,55 +1,67 @@
-\chapter{Introduccion}
+\chapter{Introducción}
 
-La Actividad 2 solicita programar un robot terrestre Pioneer en CoppeliaSim/Lua
-y validar su navegacion en una celda robotizada. La solucion desarrollada lleva
-el ejercicio a un caso de fabrica: un robot R1 debe asistir a una persona movil
-B1 (Bill), entregar herramientas/piezas en dos mesas de trabajo, recogerlas una
-vez procesadas, almacenarlas de nuevo en el shelf correcto y regresar a una
-estacion de carga si la mision queda completada.
+El trabajo implementa un Pioneer en CoppeliaSim y Lua y comprueba que se
+mueve dentro de una celda robotizada con evitación de obstáculos. La escena
+representa un caso de fábrica sencillo: R1 asiste a B1, llamado Bill, una persona
+tomada del modelo disponible en CoppeliaSim y usada como \texttt{mannequin}
+operativo. El robot lleva piezas o herramientas a dos mesas, espera mientras
+Bill trabaja, las recoge, las devuelve a su estantería y termina en carga.
 
-El escenario se diseno de forma incremental. Primero se creo una version basica
-con un solo robot, una sola persona y dos herramientas. Esta decision reduce el
-riesgo: permite validar estimacion, sensores, evitacion, rutas y bateria antes
-de escalar a varios Bill y varios robots. La escena final de esta fase se
-denomina:
+El ciclo básico incluye coordinación temporal, evitación local, diferenciación
+entre estantería y bloqueo, retorno de herramienta y regreso a carga. La escena
+principal se guardó como:
 
 \begin{center}
 \texttt{actividad2/coppeliasim/Sim\_T2\_Phase1\_Basic.ttt}
 \end{center}
 
-\section{Objetivos tecnicos}
+\section{Relación con el enunciado}
 
-\begin{itemize}
-  \item Modelar una celda tipo warehouse con dos workstations, dos tool shelves,
-  obstaculos y estacion de carga.
-  \item Programar en Lua el flujo de tareas R1--B1--T1/T2 con una cola de
-  trabajo clara y trazable.
-  \item Mantener a Bill como persona movil: camina entre estaciones, se orienta
-  en la direccion del movimiento y trabaja frente a la mesa.
-  \item Implementar evitacion reactiva de obstaculos usando sensores de
-  proximidad del Pioneer visualizados como rayos tipo LiDAR.
-  \item Incorporar estimacion de pose y mapeo: Kalman-landmark, grilla tipo
-  GMapping, scan matching tipo Hector y submaps tipo Cartographer.
-  \item Exportar datos de simulacion a CSV/JSON y generar plots para analizar
-  desempeno de control, seguridad, bateria y SLAM.
-\end{itemize}
+La guía pide programar un Pioneer P3DX en CoppeliaSim/Lua, primero para avanzar
+hacia un \texttt{mannequin} mediante campos potenciales y después para esquivar
+obstáculos mientras mantiene ese comportamiento. La entrega también exige la
+integración en una celda robotizada, un PDF y una presentación.
 
-\section{Criterio de honestidad academica}
+En este trabajo el \texttt{mannequin} se implementa como Bill/B1, el modelo de
+persona móvil disponible en CoppeliaSim. R1, el Pioneer, no solo se acerca a
+Bill: sigue una referencia detrás de la persona, transporta T1 y T2, respeta
+esperas de trabajo humano, evita pallet, pilar, caja y obstáculos de Phase 2, y
+vuelve a la estación de carga. Esa ampliación mantiene el núcleo del enunciado y
+añade una capa de validación con métricas, comparación de controladores y
+mapeo local.
 
-El informe diferencia entre algoritmos clasicos reales y aproximaciones
-reducidas de simulacion. El filtro Kalman implementa un ciclo de prediccion y
-correccion sobre la pose y landmarks compactos. Los modos GMapping, Hector y
-Cartographer no ejecutan los paquetes ROS originales; reproducen ideas
-centrales de esos metodos dentro de CoppeliaSim: grilla de ocupacion, scan
-matching local, submaps y cierre de ciclo simplificado. Esta distincion es
-importante para defender el trabajo con rigor y evitar presentar una simulacion
-educativa como un stack industrial completo.
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}P{0.33\textwidth}Y@{}}
+\toprule
+\textbf{Punto de la guía} & \textbf{Dónde queda cubierto}\\
+\midrule
+Seguir al \texttt{mannequin} & Bill/B1 actúa como objetivo móvil y como solicitante de herramientas en la celda.\\
+Campos potenciales & Capítulo de campos potenciales: atracción hacia Bill y repulsión por sensores.\\
+Anticolisión & Lectura de 16 sensores de proximidad, reducción de velocidad, giro reactivo y parada crítica.\\
+Integración en celda & Warehouse con racks, mesas WS1/WS2, herramientas T1/T2, estación de carga y máquina de estados.\\
+Ampliación del script base & Seguimiento P/PI/PID/LQR/NMPC, estimación Kalman, variantes SLAM y Phase 2 con mapa desconocido.\\
+\bottomrule
+\end{tabularx}
+\caption{Trazabilidad entre el enunciado de la Actividad 2 y la solución implementada.}
+\label{tab:traceability-guide}
+\end{table}
+
+\section{Alcance de los algoritmos}
+
+Los algoritmos corren dentro de CoppeliaSim y Lua. Su alcance es acotado respecto
+a paquetes ROS completos: Kalman-landmark combina odometría, corrección de pose
+con mediciones ruidosas y rasgos compactos de obstáculo. GMapping, Hector y
+Cartographer se implementan como versiones simplificadas para comparar tres formas
+de mapa: grid de ocupación, \textit{scan matching} local y submapas con cierre
+de ciclo.
 
 \section{Vista general del resultado}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.96\textwidth]{phase1_layout_diagram.png}
-  \caption{Vista superior reconstruida de la celda \texttt{Sim\_T2\_Phase1\_Basic}: Bill trabaja entre dos mesas, T1/T2 se almacenan en shelves opuestos y R1 planifica rutas con obstaculos y carga.}
+  \caption{Vista superior de la celda base \texttt{Sim\_T2\_Phase1\_Basic}.}
   \label{fig:phase1-layout}
 \end{figure}

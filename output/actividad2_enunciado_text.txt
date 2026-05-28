@@ -1,0 +1,71 @@
+Actividad 2: Programación y control de un robot terrestre tipo
+                 Pioneer en CoppeliaSim/Lua
+   1. Organización
+
+1.1. Datos de la actividad
+
+La presente actividad corresponde a la Actividad 2 de la asignatura de Sistemas
+Robóticos Móviles. En esta tarea, se deberá realizar la programación de un robot tipo
+Pioneer en el CoppeliaSim/Lua. Su ponderación representa el 30% de la calificación
+total del portafolio de la asignatura. El portafolio, a su vez, consta de dos actividades
+evaluadas, cada una con un peso del 30% sobre la nota final de la asignatura. A estas
+ponderaciones se sumará la calificación de la prueba final, que equivale al 40% del total.
+
+La entrega de esta actividad está programada para el martes 26 de mayo de 2026 antes
+de las 23:59 en la primera convocatoria. No realizar la entrega antes supondrá una
+calificación de 0 en el 30% correspondiente.
+
+La actividad deberá ser enviada a través de la plataforma del campus virtual.
+
+Para cualquier consulta, podéis escribir al siguiente correo electrónico:
+
+                       jinigueza@professor.universidadviu.com
+
+2. Introducción
+
+En esta actividad, vamos a programar un robot móvil tipo Pioneer P3DX en el simulador
+CoppeliaSim. La actividad se divide en dos actividades principales: La primera de ellas
+se compone de la programación del robot para que se desplace a un punto establecido;
+mientras que la segunda de ellas se compone de la programación de un sistema de
+evitación de colisiones.
+
+En particular, la primera parte de la actividad replica un ejemplo estudiado en clase. En
+dicho ejemplo se controla un robot mediante el método de campos potenciales para
+navegar de forma reactiva y directa hacia un objetivo específico.
+
+La segunda parte de la actividad construye sobre un ejemplo de código proporcionado
+en la asignatura un programa para evitar obstáculos a la vez que se emplea el método
+realizado en la primera parte.
+Programa el Pioneer para “sentir” una fuerza de atracción hacia el objeto “mannequin” en la
+simulación. Para poder realizar esto, puedes basarte en el siguiente código estudiado en
+clase:
+Añade el robot Piooner con el script para que siga a Bill a una celda robotizada, de manera
+que se integre en la aplicación robótica especifica y trabaje de forma coordinada con los
+otros sistemas que componen la celda. Puedes utilizar la celda robotizada creada en
+otras asignaturas.
+
+
+
+Parte 2: Programación de un sistema anticolisiones
+Modifica el código anterior para que el robot avance hacia el objetivo y esquive los objetos
+que se encuentre en su camino. Para poder realizar esto, puedes basarte en el siguiente
+código estudiado en clase:
+Añade el robot Piooner con el script para que siga a Bill a una celda robotizada, de manera
+que se integre en la aplicación robótica especifica y trabaje de forma coordinada con los
+otros sistemas que componen la celda. Puedes utilizar la celda robotizada creada en
+otras asignaturas.
+
+
+
+  Tareas a completar
+
+
+            •   Integración del robot móvil en la celda robotizada en CoppeliaSim.
+            •   Documento en PDF
+            •   Presentación en clase con Powerpoint.
+
+Si el script del robot móvil es exactamente igual al visto en clase y entregado a los
+alumnos la nota será aprobado. A medida que el estudiante amplie el script y por lo tanto
+las funciones del robot móvil en la celda robotizada, la nota será más alta, de manera
+proporcional a las mejoras añadidas.
+

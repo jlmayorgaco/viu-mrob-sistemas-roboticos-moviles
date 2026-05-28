@@ -5,19 +5,33 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
-\usepackage{booktabs,tabularx,array}
+\usepackage{booktabs,array}
+\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,calc}
+\hbadness=10000
 \pagestyle{empty}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\parindent}{0pt}
+\hyphenpenalty=9000
+\exhyphenpenalty=9000
+\emergencystretch=0.8em
 
-\definecolor{Deep}{HTML}{0B1F33}
-\definecolor{Ink}{HTML}{17202A}
-\definecolor{Muted}{HTML}{65717F}
-\definecolor{Paper}{HTML}{F7F8FA}
-\definecolor{Rule}{HTML}{D8DEE6}
+\definecolor{Deep}{HTML}{071826}
+\definecolor{VIUOrange}{HTML}{C97A5C}
+\definecolor{VIUOrangeDark}{HTML}{7F422F}
+\definecolor{VIUOrangeSoft}{HTML}{F3CBB9}
+\definecolor{Ink}{HTML}{0F1A2A}
+\definecolor{Muted}{HTML}{5E6C7A}
+\definecolor{Paper}{HTML}{F3F6F8}
+\definecolor{WarmPaper}{HTML}{FAF7F3}
+\definecolor{Panel}{HTML}{FCFDFE}
+\definecolor{Mist}{HTML}{E6EDF3}
+\definecolor{Grid}{HTML}{E9EFF4}
+\definecolor{Rule}{HTML}{C9D5E0}
+\definecolor{PanelEdge}{HTML}{D7E0E8}
+\definecolor{Steel}{HTML}{24364A}
 \definecolor{Copper}{HTML}{C44624}
 \definecolor{Orange}{HTML}{E8552D}
 \definecolor{Teal}{HTML}{168B8F}
@@ -25,12 +39,37 @@
 \definecolor{Green}{HTML}{2D8A4E}
 \definecolor{Amber}{HTML}{B7791F}
 \definecolor{Red}{HTML}{B83232}
-\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\definecolor{Violet}{HTML}{6D5BD0}
 \newcounter{slide}
 
 \newcommand{\Footer}{%
-  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (0.55,0.22) {Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim/Lua};
-  \node[anchor=east,font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (15.45,0.22) {\theslide/15};
+  \fill[Panel,opacity=0.96] (0,0) rectangle (16,0.50);
+  \draw[Rule,opacity=0.80,line width=0.28pt] (0.58,0.48) -- (15.42,0.48);
+  \fill[VIUOrange] (0.58,0.18) rectangle (0.88,0.24);
+  \node[anchor=west,font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (0.62,0.22) {Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua};
+  \fill[VIUOrangeSoft,rounded corners=1.8pt] (14.82,0.10) rectangle (15.43,0.38);
+  \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Ink] at (15.125,0.24) {\theslide/41};
+}
+
+\newcommand{\SectionRail}{%
+  \begingroup
+  \def\SecA{Muted}\def\SecB{Muted}\def\SecC{Muted}\def\SecD{Muted}\def\SecE{Muted}%
+  \ifnum\value{slide}<11\def\SecA{Teal}\fi
+  \ifnum\value{slide}>10\ifnum\value{slide}<22\def\SecB{Orange}\fi\fi
+  \ifnum\value{slide}>21\ifnum\value{slide}<31\def\SecC{Violet}\fi\fi
+  \ifnum\value{slide}>30\ifnum\value{slide}<40\def\SecD{Green}\fi\fi
+  \ifnum\value{slide}>39\def\SecE{VIUOrange}\fi
+  \foreach \x/\lab/\col in {
+    7.88/Escena/\SecA,
+    9.16/Control/\SecB,
+    10.44/SLAM/\SecC,
+    11.72/Fase 2/\SecD,
+    13.00/Cierre/\SecE} {
+    \fill[\col!11,rounded corners=2pt] (\x,7.50) rectangle ++(1.08,0.28);
+    \draw[\col!66,line width=0.24pt,rounded corners=2pt] (\x,7.50) rectangle ++(1.08,0.28);
+    \node[font=\fontsize{3.85}{4.35}\selectfont\bfseries,text=\col] at (\x+0.54,7.64) {\lab};
+  }
+  \endgroup
 }
 
 \newcommand{\DeckSlide}[3]{%
@@ -38,11 +77,24 @@
   \stepcounter{slide}
   \begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm]
     \begin{scope}[shift={(current page.south west)}]
-    \fill[white] (0,0) rectangle (16,9);
-    \fill[Paper] (0,8.34) rectangle (16,9);
-    \draw[Rule,line width=0.35pt] (0,8.34) -- (16,8.34);
-    \node[anchor=west,font=\fontsize{4.9}{5.6}\selectfont\bfseries,text=Copper] at (0.55,8.73) {#2};
-    \node[anchor=west,font=\fontsize{13.8}{15.0}\selectfont\bfseries,text=Deep] at (0.55,8.02) {#1};
+    \fill[WarmPaper] (0,0) rectangle (16,9);
+    \fill[Ink,opacity=0.025,rounded corners=7pt] (0.66,0.56) rectangle (15.58,7.82);
+    \fill[Panel,rounded corners=7pt] (0.44,0.76) rectangle (15.42,8.00);
+    \draw[PanelEdge,line width=0.26pt,rounded corners=7pt] (0.44,0.76) rectangle (15.42,8.00);
+    \fill[VIUOrange!5,rounded corners=6pt] (0.44,0.76) rectangle (0.64,8.00);
+    \fill[VIUOrange] (0.44,0.76) rectangle (0.49,8.00);
+    \foreach \x in {1.18,2.28,...,14.38} \draw[Grid,opacity=0.22,line width=0.09pt] (\x,1.05) -- (\x,7.64);
+    \foreach \y in {1.22,2.32,...,7.22} \draw[Grid,opacity=0.22,line width=0.09pt] (0.96,\y) -- (15.10,\y);
+    \fill[VIUOrangeSoft] (0,7.88) rectangle (16,9);
+    \fill[VIUOrangeDark,opacity=0.42] (0,7.88) rectangle (16,8.00);
+    \fill[Ink,opacity=0.035] (10.10,7.88) -- (16,7.88) -- (16,9) -- (11.65,9) -- cycle;
+    \fill[white] (0,7.92) rectangle (0.18,9);
+    \draw[Ink,opacity=0.72,line width=0.46pt] (0.70,8.04) -- (15.35,8.04);
+    \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Ink] at (0.70,8.70) {#2};
+    \node[anchor=west,font=\fontsize{12.8}{13.8}\selectfont\bfseries,text=Ink,text width=11.9cm,align=left] at (0.70,8.25) {#1};
+    \fill[Panel,opacity=0.38,rounded corners=2pt] (12.42,8.25) rectangle (15.36,8.58);
+    \node[anchor=east,font=\fontsize{4.7}{5.4}\selectfont\bfseries,text=Ink] at (15.20,8.42) {Pioneer P3DX · CoppeliaSim · SLAM};
+    \SectionRail
     #3
     \Footer
     \end{scope}
@@ -50,395 +102,1570 @@
 }
 
 \newcommand{\Metric}[5]{%
-  \node[anchor=west,font=\fontsize{17}{18}\selectfont\bfseries,text=#5] at (#1,#2) {#3};
-  \node[anchor=west,font=\fontsize{5.3}{6.1}\selectfont,text=Muted,text width=2.5cm,align=left] at (#1,#2-0.38) {#4};
+  \fill[Ink,opacity=0.035,rounded corners=4pt] ($(#1,#2)+(-0.05,-0.87)$) rectangle ++(2.92,1.15);
+  \fill[Panel,rounded corners=4pt] ($(#1,#2)+(-0.10,-0.82)$) rectangle ++(2.92,1.15);
+  \fill[#5!10,rounded corners=4pt] ($(#1,#2)+(-0.10,-0.82)$) rectangle ++(2.92,1.15);
+  \fill[#5,rounded corners=1.2pt] ($(#1,#2)+(-0.10,-0.82)$) rectangle ++(0.11,1.15);
+  \draw[#5!58,line width=0.36pt,rounded corners=4pt] ($(#1,#2)+(-0.10,-0.82)$) rectangle ++(2.92,1.15);
+  \node[anchor=west,font=\fontsize{11.2}{12.0}\selectfont\bfseries,text=#5,text width=2.62cm,align=left] at ($(#1,#2)+(0.12,-0.02)$) {#3};
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=Ink,text width=2.50cm,align=left] at ($(#1,#2)+(0.12,-0.49)$) {#4};
 }
 
 \newcommand{\Tag}[4]{%
-  \fill[#4!12,rounded corners=2.5pt] (#1,#2) rectangle ++(2.0,0.46);
-  \draw[#4!75,line width=0.35pt,rounded corners=2.5pt] (#1,#2) rectangle ++(2.0,0.46);
-  \node[font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=#4] at (#1+1.0,#2+0.23) {#3};
+  \fill[#4!13,rounded corners=2.5pt] (#1,#2) rectangle ++(2.14,0.46);
+  \draw[#4!70,line width=0.32pt,rounded corners=2.5pt] (#1,#2) rectangle ++(2.14,0.46);
+  \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=#4] at (#1+1.07,#2+0.23) {#3};
+}
+
+\newcommand{\ClaimBox}[5]{%
+  \fill[Ink,opacity=0.030,rounded corners=4pt] (#1+0.06,#2-0.06) rectangle ++(#3,#4);
+  \fill[Panel,rounded corners=4pt] (#1,#2) rectangle ++(#3,#4);
+  \fill[#5!9,rounded corners=4pt] (#1,#2) rectangle ++(#3,#4);
+  \draw[#5!65,line width=0.42pt,rounded corners=4pt] (#1,#2) rectangle ++(#3,#4);
+  \fill[#5] (#1,#2) rectangle ++(0.10,#4);
 }
 
 \newcommand{\Robot}[3]{%
   \begin{scope}[shift={(#1,#2)}]
-    \fill[#3!10,rounded corners=3pt] (-0.34,-0.22) rectangle (0.34,0.22);
-    \draw[#3,line width=0.8pt,rounded corners=3pt] (-0.34,-0.22) rectangle (0.34,0.22);
-    \fill[#3!25] (-0.18,-0.10) rectangle (0.18,0.10);
-    \draw[#3,line width=0.5pt] (0.34,0) -- (0.62,0);
-    \draw[#3!55,line width=0.45pt] (0,0) circle (0.54);
-    \draw[#3!55,line width=0.45pt] (0,0) circle (0.83);
+    \fill[#3!6] (0,0) circle (0.86);
+    \draw[#3!42,line width=0.35pt] (0,0) circle (0.58);
+    \draw[#3!28,line width=0.30pt] (0,0) circle (0.86);
+    \foreach \a in {-48,-24,0,24,48} \draw[#3!42,line width=0.35pt] (0,0) -- (\a:0.82);
+    \fill[Panel,rounded corners=3pt] (-0.42,-0.27) rectangle (0.42,0.27);
+    \draw[#3,line width=0.85pt,rounded corners=3pt] (-0.42,-0.27) rectangle (0.42,0.27);
+    \fill[#3!16,rounded corners=1.4pt] (-0.20,-0.12) rectangle (0.20,0.12);
+    \draw[#3!70,line width=0.38pt] (-0.20,-0.12) rectangle (0.20,0.12);
+    \fill[Steel!82,rounded corners=1pt] (-0.48,-0.31) rectangle (-0.36,0.31);
+    \fill[Steel!82,rounded corners=1pt] (0.36,-0.31) rectangle (0.48,0.31);
+    \fill[#3] (0.47,0) -- (0.70,0.12) -- (0.70,-0.12) -- cycle;
+    \draw[#3,line width=0.55pt,-{Latex[length=1.5mm]}] (0.30,0) -- (0.78,0);
   \end{scope}
 }
 
-\newcommand{\TinyRobot}[3]{%
-  \begin{scope}[shift={(#1,#2)}]
-    \fill[#3!12,rounded corners=2pt] (-0.22,-0.15) rectangle (0.22,0.15);
-    \draw[#3,line width=0.55pt,rounded corners=2pt] (-0.22,-0.15) rectangle (0.22,0.15);
-    \draw[#3,line width=0.45pt] (0.22,0) -- (0.40,0);
+\newcommand{\Human}[3]{%
+  \begin{scope}[shift={(#1,#2)},scale=#3]
+    \fill[Amber!18] (-0.28,-0.55) rectangle (0.52,0.05);
+    \draw[Amber!45,line width=0.35pt] (-0.28,-0.55) -- (0.52,-0.55);
+    \fill[Amber!25] (0,0.35) circle (0.12);
+    \draw[Amber,line width=0.58pt,line cap=round] (0,0.23) -- (0,-0.24);
+    \draw[Amber,line width=0.58pt,line cap=round] (0,0.04) -- (0.30,-0.02) -- (0.46,-0.10);
+    \draw[Amber,line width=0.58pt,line cap=round] (0,-0.08) -- (0.28,-0.18) -- (0.45,-0.20);
+    \draw[Amber,line width=0.58pt,line cap=round] (0,-0.24) -- (-0.18,-0.60);
+    \draw[Amber,line width=0.58pt,line cap=round] (0,-0.24) -- (0.18,-0.60);
+    \draw[Amber!75,line width=0.35pt,-{Latex[length=1.2mm]}] (0.03,0.34) -- (0.26,0.34);
   \end{scope}
+}
+
+\newcommand{\ScanFan}[4]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \foreach \a in {-55,-35,-15,5,25,45,65} {
+      \draw[#3!38,line width=0.32pt] (0,0) -- (\a:#4);
+      \fill[#3!55] (\a:#4) circle (0.018);
+    }
+    \draw[#3!42,line width=0.32pt] (-55:#4) arc[start angle=-55,end angle=65,radius=#4];
+  \end{scope}
+}
+
+\newcommand{\HazardBox}[5]{%
+  \fill[#5!12,rounded corners=2pt] (#1,#2) rectangle ++(#3,#4);
+  \draw[#5!75,line width=0.45pt,rounded corners=2pt] (#1,#2) rectangle ++(#3,#4);
+  \foreach \dx in {0.10,0.34,0.58,0.82,1.06} {
+    \draw[#5!55,line width=0.28pt] (#1+\dx,#2) -- ++(0.22,#4);
+  }
 }
 
 \begin{document}
 
-\DeckSlide{Programación y control de un Pioneer P3DX}{Actividad 2 · entrega técnica}{
-  \fill[Deep] (0,0) rectangle (16,9);
-  \foreach \x in {0,0.55,...,16} \draw[white,opacity=0.045,line width=0.2pt] (\x,0) -- (\x,9);
-  \foreach \y in {0,0.55,...,9} \draw[white,opacity=0.045,line width=0.2pt] (0,\y) -- (16,\y);
-  \node[anchor=west,font=\fontsize{5.4}{6.2}\selectfont\bfseries,text=Orange] at (0.72,8.15) {UNIVERSIDAD INTERNACIONAL DE VALENCIA};
-  \node[anchor=west,font=\fontsize{24}{26}\selectfont\bfseries,text=white,text width=7.6cm,align=left] at (0.72,6.72) {Pioneer P3DX en CoppeliaSim/Lua};
-  \node[anchor=west,font=\fontsize{8.2}{9.4}\selectfont,text=white!78,text width=6.9cm,align=left] at (0.76,5.38) {Campos potenciales, anticolisión, integración en celda, batería simulada y extensión multi-robot con A* cooperativo.};
-  \node[anchor=west,font=\fontsize{6.2}{7.3}\selectfont,text=white!72,text width=6.6cm,align=left] at (0.76,2.28) {Autor: Jorge Luis Mayorga Taborda\\Profesor: Jose I. Iñiguez\\Entrega: 26 de mayo de 2026};
-  \begin{scope}[shift={(8.55,1.20)}]
-    \fill[white,opacity=0.92,rounded corners=8pt] (0,0) rectangle (6.5,6.15);
-    \draw[Rule,line width=0.5pt,rounded corners=8pt] (0,0) rectangle (6.5,6.15);
-    \foreach \x in {0.55,1.10,...,5.95} \draw[Rule,line width=0.22pt] (\x,0.35) -- (\x,5.80);
-    \foreach \y in {0.55,1.10,...,5.60} \draw[Rule,line width=0.22pt] (0.35,\y) -- (6.15,\y);
-    \fill[Blue!10] (0.65,3.86) rectangle (2.08,4.80);
-    \fill[Amber!14] (3.88,4.12) rectangle (5.58,5.20);
-    \fill[Green!12] (4.05,0.82) rectangle (5.72,1.70);
-    \draw[Orange,line width=1.1pt,-{Latex[length=2.1mm]}] (1.02,1.12) -- (2.35,1.12) -- (2.35,3.08) -- (4.78,3.08) -- (4.78,4.58);
-    \Robot{1.02}{1.12}{Teal}
-    \node[font=\fontsize{5.2}{5.8}\selectfont\bfseries,text=Deep] at (1.35,5.28) {celda robotizada};
-    \node[font=\fontsize{4.9}{5.5}\selectfont,text=Muted] at (4.85,5.48) {objetivo};
-    \node[font=\fontsize{4.9}{5.5}\selectfont,text=Muted] at (5.00,0.55) {carga};
-  \end{scope}
+\DeckSlide{Pioneer P3DX: almacén, tareas y SLAM}{Actividad 2 · sistemas robóticos móviles}{
+  \fill[WarmPaper] (0,0) rectangle (16,9);
+  \node at (8.0,4.5) {\includegraphics[width=18cm,height=9cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_overview_oriented.png}};
+  \fill[Ink,opacity=0.60] (0,0) rectangle (7.35,9);
+  \fill[Ink,opacity=0.14] (7.35,0) rectangle (16,9);
+  \foreach \x in {0,0.55,...,16} \draw[Ink,opacity=0.030,line width=0.2pt] (\x,0) -- (\x,9);
+  \foreach \y in {0,0.55,...,9} \draw[Ink,opacity=0.030,line width=0.2pt] (0,\y) -- (16,\y);
+  \fill[VIUOrange] (0,0) rectangle (0.18,9);
+  \node[anchor=west,font=\fontsize{5.2}{6.0}\selectfont\bfseries,text=white] at (0.78,7.85)
+    {UNIVERSIDAD INTERNACIONAL DE VALENCIA};
+  \node[anchor=west,font=\fontsize{20}{22}\selectfont\bfseries,text=white,text width=6.45cm,align=left] at (0.78,6.62)
+    {Pioneer P3DX en\\CoppeliaSim y Lua};
+  \node[anchor=west,font=\fontsize{8.0}{9.3}\selectfont,text=white,text width=6.0cm,align=left] at (0.82,4.82)
+    {Celda de almacén con R1, Bill, herramientas T1/T2, evitación reactiva, control y SLAM.};
+  \draw[VIUOrangeSoft,line width=1.0pt] (0.82,4.30) -- (5.70,4.30);
+  \foreach \x/\lab/\col in {0.82/Fase 1/Teal,2.42/Fase 2/Violet,4.02/Control/Orange,5.72/SLAM/Green} {
+    \fill[\col!22,rounded corners=2.2pt] (\x,3.72) rectangle ++(1.30,0.36);
+    \draw[\col!75,line width=0.28pt,rounded corners=2.2pt] (\x,3.72) rectangle ++(1.30,0.36);
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=white] at (\x+0.65,3.90) {\lab};
+  }
+  \node[anchor=west,font=\fontsize{6.0}{7.0}\selectfont,text=white,text width=6.0cm,align=left] at (0.82,2.18)
+    {Autor: Jorge Luis Mayorga Taborda\\Profesor: Jose I. Iñiguez\\26 de mayo de 2026};
+  \node[anchor=east,font=\fontsize{4.6}{5.2}\selectfont\bfseries,text=white] at (15.12,0.72)
+    {Fondo: captura real de CoppeliaSim};
 }
 
-\DeckSlide{Qué tiene que demostrar la entrega}{lectura de la guía}{
-  \node[anchor=west,font=\fontsize{7.5}{8.5}\selectfont,text=Muted,text width=13.7cm,align=left] at (0.70,7.12)
-    {La presentación deja claro lo obligatorio y separa la mejora profesional de lo que exige estrictamente el enunciado.};
-  \foreach \x/\num/\tit/\txt/\col in {
-    0.82/1/Pioneer programado/{Script Lua embebido, lectura de objetivo, velocidad de ruedas y telemetría.}/Teal,
-    5.48/2/Campos potenciales/{Atracción a mannequin, repulsión de obstáculos y saturaciones para evitar oscilación.}/Orange,
-    10.14/3/Celda y validación/{Integración industrial, escenarios S1--S8, batería y evidencia JSON reproducible.}/Green} {
-    \fill[\col!9,rounded corners=6pt] (\x,2.15) rectangle ++(3.82,4.35);
-    \draw[\col!70,line width=0.55pt,rounded corners=6pt] (\x,2.15) rectangle ++(3.82,4.35);
-    \node[anchor=west,font=\fontsize{18}{18}\selectfont\bfseries,text=\col] at (\x+0.28,5.72) {\num};
-    \node[anchor=west,font=\fontsize{9.7}{10.7}\selectfont\bfseries,text=Deep,text width=3.18cm,align=left] at (\x+0.28,4.93) {\tit};
-    \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=3.10cm,align=left] at (\x+0.30,3.82) {\txt};
+\DeckSlide{Ruta del trabajo}{orden técnico}{
+  \node[anchor=west,font=\fontsize{6.6}{7.5}\selectfont,text=Muted,text width=13.4cm,align=left] at (0.82,7.06)
+    {La secuencia conecta requisitos de la escena, arquitectura de control, seguimiento, SLAM, métricas y limitaciones técnicas.};
+
+  \foreach \x/\num/\tit/\body/\col in {
+    0.90/01/{Escena y requisito}/{mannequin/Bill, celda de almacén, R1, T1/T2 y métricas}/Teal,
+    3.72/02/{Arquitectura y código}/{funciones Lua, FSM, sensores, planner y logger}/Orange,
+    6.54/03/{Control de seguimiento}/{P, PI, PID, LQR y NMPC con coste y pesos definidos}/Blue,
+    9.36/04/{SLAM y Fase 2}/{Kalman, grids log-odds, scan-to-map y submapas simplificados}/Violet,
+    12.18/05/{Resultados}/{tablas, límites, elección técnica y mejoras}/Green} {
+    \ClaimBox{\x}{2.42}{2.42}{3.58}{\col}
+    \node[anchor=west,font=\fontsize{15.0}{16.0}\selectfont\bfseries,text=\col] at (\x+0.22,5.44) {\num};
+    \node[anchor=west,font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Deep,text width=1.90cm,align=left] at (\x+0.22,4.58) {\tit};
+    \node[anchor=west,font=\fontsize{5.0}{5.8}\selectfont,text=Ink,text width=1.88cm,align=left] at (\x+0.22,3.42) {\body};
   }
-  \draw[Rule,line width=0.5pt] (0.82,1.42) -- (14.35,1.42);
-  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont\bfseries,text=Copper] at (0.82,1.08) {No se vende como robot industrial real: se defiende como simulación rigurosa y trazable del temario.};
+
+  \fill[Deep,rounded corners=5pt] (0.92,1.12) rectangle (14.55,1.84);
+  \node[anchor=west,font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=VIUOrangeSoft] at (1.18,1.56) {Orden};
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=white,text width=11.5cm,align=left] at (2.10,1.47)
+    {Cada bloque enlaza requisito, código, métrica y límite declarado.};
 }
 
-\DeckSlide{De dos escenas base a una demo defendible}{pipeline de trabajo}{
-  \foreach \x/\lab/\sub/\col in {
-    0.82/Escenas base/{Actividad2\_1 y Actividad2\_2}/Blue,
-    4.10/Generador Python/{construye celda, rutas y overlays}/Teal,
-    7.38/Scripts Lua/{Pioneer, eventos y flota A*}/Orange,
-    10.66/Evidencia final/{PDF, PPTX, JSON y .ttt}/Green} {
-    \fill[\col!10,rounded corners=4pt] (\x,5.02) rectangle ++(2.42,1.25);
-    \draw[\col!75,line width=0.45pt,rounded corners=4pt] (\x,5.02) rectangle ++(2.42,1.25);
-    \node[font=\fontsize{7.1}{8.0}\selectfont\bfseries,text=Deep,text width=2.10cm,align=center] at (\x+1.21,5.82) {\lab};
-    \node[font=\fontsize{4.9}{5.6}\selectfont,text=Muted,text width=2.10cm,align=center] at (\x+1.21,5.28) {\sub};
-  }
-  \foreach \x in {3.48,6.76,10.04} \draw[Copper,line width=0.8pt,-{Latex[length=2mm]}] (\x,5.64) -- ++(0.42,0);
-  \node[anchor=west,font=\fontsize{7.5}{8.7}\selectfont\bfseries,text=Deep] at (0.84,3.96) {Criterios de calidad};
-  \foreach \y/\txt in {
-    3.32/{El robot llega a objetivo y publica estado ARRIVED.},
-    2.78/{Los obstáculos activan reducción de velocidad y recuperación.},
-    2.24/{La celda tiene HMI, estación de carga, carriles y zonas de seguridad.},
-    1.70/{La flota auxiliar resuelve rutas A* sin reservas conflictivas.}} {
-    \fill[Copper] (0.92,\y+0.06) circle (0.045);
-    \node[anchor=west,font=\fontsize{6.4}{7.3}\selectfont,text=Ink] at (1.10,\y) {\txt};
-  }
-  \Metric{11.10}{3.45}{22}{sensores activos}{Teal}
-  \Metric{11.10}{2.35}{8}{escenarios S1--S8}{Orange}
-  \Metric{11.10}{1.25}{3/3}{AMR recargados}{Green}
-}
+\DeckSlide{Mapa operativo de la celda}{ruta B1/R1 y puntos de misión}{
+  \draw[Teal,line width=0.80pt] (0.82,6.76) -- (14.18,6.76);
+  \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont\bfseries,text=Deep] at (0.88,6.98)
+    {La escena se organiza alrededor del rack T1/T2, mesas WS1/WS2, Bill, R1 y la estación de carga.};
 
-\DeckSlide{Celda CoppeliaSim: geometría y misión}{plano de operación}{
-  \begin{scope}[shift={(0.82,1.05)}]
-    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.25,6.20);
-    \draw[Rule,line width=0.45pt,rounded corners=6pt] (0,0) rectangle (8.25,6.20);
-    \foreach \x in {0.55,1.10,...,7.70} \draw[Rule,line width=0.18pt] (\x,0.38) -- (\x,5.82);
-    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.18pt] (0.38,\y) -- (7.86,\y);
-    \fill[Blue!10,rounded corners=3pt] (0.58,4.25) rectangle (2.10,5.35);
-    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Blue] at (1.34,5.58) {transportador};
-    \fill[Amber!13,rounded corners=3pt] (3.62,4.38) rectangle (5.82,5.46);
-    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Amber] at (4.72,5.72) {zona robotizada};
-    \fill[Green!12,rounded corners=3pt] (6.18,0.68) rectangle (7.62,1.48);
-    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Green] at (6.90,0.46) {carga};
-    \fill[Red!9] (2.80,2.58) rectangle (3.65,3.32);
-    \fill[Red!9] (5.10,2.42) rectangle (5.88,3.20);
-    \draw[Orange,line width=1.0pt,-{Latex[length=2.2mm]}] (1.00,1.06) -- (2.30,1.06) -- (2.30,2.88) -- (4.60,2.88) -- (4.60,4.76);
-    \draw[Orange,line width=0.7pt,dashed] (4.60,4.76) -- (6.86,4.76) -- (6.86,1.10);
-    \Robot{1.00}{1.06}{Teal}
-    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (1.00,0.60) {inicio};
-    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (4.58,5.04) {mannequin};
-    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (3.22,3.55) {pallet};
-    \node[font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (5.48,3.43) {obstáculo};
-  \end{scope}
-  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (9.65,6.73) {Qué ve el profesor};
+  \node at (5.55,3.72) {\includegraphics[width=9.55cm,height=5.25cm,keepaspectratio]{../figures/phase1/phase1_layout_diagram.png}};
+
+  \node[anchor=west,font=\fontsize{7.3}{8.2}\selectfont\bfseries,text=Deep] at (10.80,6.12) {Secuencia};
   \foreach \y/\txt/\col in {
-    5.96/{Ruta nominal y retorno a carga}/Teal,
-    5.24/{Zonas de seguridad y carriles}/Orange,
-    4.52/{Obstáculos móviles y pasillo estrecho}/Red,
-    3.80/{HMI con estado, batería y fallo sensorial}/Blue,
-    3.08/{Cámaras nombradas para inspección rápida}/Green} {
-    \fill[\col] (9.72,\y+0.07) circle (0.055);
-    \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=4.6cm,align=left] at (9.95,\y) {\txt};
+    5.38/{R1 parte de carga y toma T1 en el rack.}/Teal,
+    4.62/{Bill trabaja en WS1 y después se atiende WS2.}/Green,
+    3.86/{La ruta evita pallet, pilar y caja durante el ciclo.}/Orange,
+    3.10/{Los estados exportados conectan misión, control y SLAM.}/Violet} {
+    \fill[\col] (10.88,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.6}{6.4}\selectfont,text=Ink,text width=3.52cm,align=left] at (11.10,\y) {\txt};
+  }
+  \draw[Orange,line width=0.8pt] (10.82,1.95) -- (12.10,1.95);
+  \node[anchor=west,font=\fontsize{12.0}{13.0}\selectfont\bfseries,text=Orange] at (10.82,1.72) {T1/T2};
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont,text=Ink] at (10.82,1.38) {cola de herramientas};
+  \draw[Teal,line width=0.8pt] (12.58,1.95) -- (13.90,1.95);
+  \node[anchor=west,font=\fontsize{12.0}{13.0}\selectfont\bfseries,text=Teal] at (12.58,1.72) {R1/B1};
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont,text=Ink] at (12.58,1.38) {robot y persona};
+}
+
+\DeckSlide{Requisitos y objetivos}{navegación autónoma en celda simulada}{
+  \node[anchor=west,font=\fontsize{6.8}{7.8}\selectfont,text=Muted,text width=13.5cm,align=left] at (0.82,7.08)
+    {Se modela una celda tipo almacén donde un Pioneer P3DX debe seguir a una persona, entregar herramientas, evitar obstáculos y construir una representación local del entorno.};
+  \ClaimBox{0.92}{6.38}{12.80}{0.44}{Blue}
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=Deep] at (1.16,6.64)
+    {Nomenclatura: el \textit{mannequin} de la especificación se implementa en la escena como Bill/B1; el requisito de seguimiento es el mismo.};
+
+  \draw[Teal,line width=1.0pt] (0.92,6.18) -- (0.92,5.18);
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Teal] at (1.14,6.04) {Requisito};
+  \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont,text=Ink,text width=3.55cm,align=left] at (1.14,5.50)
+    {Coordinar seguimiento, navegación diferencial, seguridad local y tareas T1/T2 en una escena con persona móvil y obstáculos.};
+
+  \draw[Green,line width=1.0pt] (5.66,6.18) -- (5.66,5.18);
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Green] at (5.88,6.04) {Implementación};
+  \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont,text=Ink,text width=3.55cm,align=left] at (5.88,5.50)
+    {Control reactivo con campos potenciales, FSM de misión, estimación Kalman y comparación de controladores.};
+
+  \draw[Violet,line width=1.0pt] (10.40,6.18) -- (10.40,5.18);
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Violet] at (10.62,6.04) {Mapa};
+  \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont,text=Ink,text width=3.55cm,align=left] at (10.62,5.50)
+    {Mapeo con Kalman-landmark, grids log-odds, scan-to-map, submapas simplificados y Fase 2 con mapa desconocido.};
+
+  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (1.02,3.55) {Objetivos evaluados};
+  \foreach \y/\txt/\col in {
+    2.88/{Regular distancia y orientación respecto a Bill mediante un punto de referencia \(p^*\).}/Teal,
+    2.22/{Planificar entregas T1/T2 con una máquina de estados reproducible.}/Green,
+    1.56/{Evitar obstáculos con sensores de proximidad, reducción de velocidad y recuperación.}/Orange,
+    0.90/{Comparar controladores y métodos SLAM con métricas comunes.}/Violet} {
+    \fill[\col] (1.32,\y+0.06) circle (0.06);
+    \node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont,text=Ink] at (1.56,\y+0.05) {\txt};
   }
 }
 
-\DeckSlide{Modelo cinemático: Pioneer diferencial}{control de ruedas}{
+\DeckSlide{Arquitectura integrada}{sensores, estimación, mapa y control}{
+  \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont,text=Muted,text width=13.5cm,align=left] at (0.82,7.10)
+    {El sistema se evalúa como un ciclo cerrado: los sensores alimentan estimación y mapa; el planificador local elige un objetivo intermedio; el controlador diferencial genera las velocidades de rueda y el logger exporta las señales.};
+
+  \foreach \x/\tit/\body/\col in {
+    0.85/{Sensores}/{16 ultrasonidos, rayos visuales y distancia mínima.}/Teal,
+    3.65/{Estimador}/{odometría, corrección y error de pose.}/Green,
+    6.45/{Mapa}/{landmarks, celdas, submapas y cierres.}/Violet,
+    9.25/{Planner}/{ruta directa o \texttt{SLAM\_WAYPOINT}.}/Orange,
+    12.05/{Control}/{P/PI/PID, LQR o NMPC.}/Blue} {
+    \draw[\col,line width=0.9pt] (\x,6.13) -- (\x,5.38);
+    \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=\col] at (\x+0.20,6.06) {\tit};
+    \node[anchor=west,font=\fontsize{5.1}{5.9}\selectfont,text=Ink,text width=1.78cm,align=left] at (\x+0.20,5.58) {\body};
+  }
+  \foreach \x in {3.30,6.10,8.90,11.70} {
+    \draw[Deep,line width=0.58pt,-{Latex[length=1.7mm]}] (\x,5.82) -- ++(0.25,0);
+  }
+
+  \foreach \x in {1.35,2.05,...,13.55} \draw[Rule,line width=0.13pt] (\x,1.74) -- (\x,4.00);
+  \foreach \y in {1.80,2.35,...,3.90} \draw[Rule,line width=0.13pt] (1.22,\y) -- (13.80,\y);
+  \Robot{2.05}{2.70}{Teal}
+  \ScanFan{2.05}{2.70}{Teal}{1.05}
+  \Human{12.10}{3.35}{0.74}
+  \HazardBox{6.40}{2.34}{0.78}{0.62}{Red}
+  \draw[Orange,line width=1.0pt,-{Latex[length=2.0mm]}] (2.25,2.82) -- (4.25,3.45) -- (6.18,3.18) -- (8.55,3.50) -- (11.70,3.36);
+  \draw[Violet,line width=0.85pt,dashed,-{Latex[length=1.8mm]}] (2.20,2.50) -- (4.40,2.05) -- (7.12,2.08) -- (9.20,2.56);
+  \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Orange] at (6.70,3.64) {ruta nominal};
+  \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Violet] at (6.60,1.86) {\texttt{SLAM\_WAYPOINT}};
+  \foreach \x/\tit/\body/\col in {
+    1.02/{\texttt{readObstacleField}}/{riesgo, giro y distancia mínima}/Teal,
+    4.25/{\texttt{registerSlamDetection}}/{impacto sensor a mundo y mapa}/Violet,
+    7.88/{\texttt{plannedWaypointTo}}/{ruta directa o punto intermedio}/Orange,
+    11.35/{\texttt{publishTelemetry}}/{CSV/JSON de estado y mapa}/Green} {
+    \draw[\col,line width=0.8pt] (\x,1.00) -- (\x+1.18,1.00);
+    \node[anchor=west,font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=\col] at (\x,0.82) {\tit};
+    \node[anchor=west,font=\fontsize{4.8}{5.5}\selectfont,text=Ink,text width=2.52cm,align=left] at (\x,0.54) {\body};
+  }
+}
+
+\DeckSlide{Almacén: R1, Bill y herramientas}{escena principal Fase 1}{
+  \begin{scope}[shift={(0.82,1.05)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.35,6.20);
+    \draw[Rule,line width=0.45pt,rounded corners=6pt] (0,0) rectangle (8.35,6.20);
+    \foreach \x in {0.55,1.10,...,7.80} \draw[Rule,line width=0.18pt] (\x,0.38) -- (\x,5.82);
+    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.18pt] (0.38,\y) -- (7.95,\y);
+    \fill[Teal!8,rounded corners=3pt] (0.48,0.48) rectangle (1.72,1.60);
+    \draw[Teal!65,line width=0.38pt,rounded corners=3pt] (0.48,0.48) rectangle (1.72,1.60);
+    \node[font=\fontsize{4.3}{4.9}\selectfont\bfseries,text=Teal] at (1.10,0.30) {dock carga};
+    \fill[Blue!10,rounded corners=3pt] (0.58,4.18) rectangle (2.12,5.26);
+    \draw[Blue!65,line width=0.38pt,rounded corners=3pt] (0.58,4.18) rectangle (2.12,5.26);
+    \foreach \yy/\lab/\col in {4.44/T1/Orange,4.86/T2/Violet} {
+      \draw[Blue!55,line width=0.28pt] (0.76,\yy) -- (1.92,\yy);
+      \fill[\col!20,rounded corners=1pt] (0.90,\yy-0.12) rectangle (1.25,\yy+0.10);
+      \node[font=\fontsize{4.0}{4.5}\selectfont\bfseries,text=\col] at (1.54,\yy-0.01) {\lab};
+    }
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Blue] at (1.35,5.52) {rack T1 y T2};
+    \fill[Green!12,rounded corners=3pt] (5.55,4.25) rectangle (7.18,5.25);
+    \fill[Green!12,rounded corners=3pt] (5.55,0.78) rectangle (7.18,1.78);
+    \draw[Green!65,line width=0.38pt,rounded corners=3pt] (5.55,4.25) rectangle (7.18,5.25);
+    \draw[Green!65,line width=0.38pt,rounded corners=3pt] (5.55,0.78) rectangle (7.18,1.78);
+    \draw[Green!55,line width=0.35pt] (5.75,4.45) -- (6.98,4.45);
+    \draw[Green!55,line width=0.35pt] (5.75,0.98) -- (6.98,0.98);
+    \fill[Orange!30] (6.08,4.56) circle (0.06);
+    \fill[Violet!30] (6.08,1.10) circle (0.06);
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Green] at (6.36,5.50) {WS1};
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Green] at (6.36,0.53) {WS2};
+    \HazardBox{3.22}{2.58}{0.73}{0.70}{Red}
+    \HazardBox{4.52}{3.52}{0.73}{0.70}{Red}
+    \draw[Orange,line width=1.0pt,-{Latex[length=2.2mm]}] (1.10,1.05) -- (1.34,4.72) -- (6.05,4.72);
+    \draw[Orange,line width=0.82pt,dashed,-{Latex[length=2.0mm]}] (6.05,4.72) -- (1.48,4.72) -- (1.48,1.05) -- (6.05,1.28);
+    \Robot{1.10}{1.05}{Teal}
+    \ScanFan{1.10}{1.05}{Teal}{1.08}
+    \Human{6.10}{4.67}{0.78}
+    \Human{6.10}{1.20}{0.78}
+    \foreach \x/\y/\n in {1.34/4.72/T1,6.05/4.72/WS1,1.48/1.05/R,6.05/1.28/WS2} {
+      \fill[Panel] (\x,\y) circle (0.16);
+      \draw[Orange,line width=0.45pt] (\x,\y) circle (0.16);
+      \node[font=\fontsize{3.6}{4.1}\selectfont\bfseries,text=Orange] at (\x,\y) {\n};
+    }
+    \node[font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (3.58,3.52) {obstáculo};
+    \node[font=\fontsize{4.8}{5.4}\selectfont,text=Muted] at (4.88,4.46) {bloqueo};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.3}{8.3}\selectfont\bfseries,text=Deep] at (9.62,6.68) {Ciclo validado};
+  \foreach \y/\txt/\col in {
+    5.88/{R1 toma T1 y la lleva a Bill en WS1}/Teal,
+    5.16/{Bill trabaja frente a la mesa, sin gestos hacia atrás}/Orange,
+    4.44/{R1 devuelve T1 al rack}/Blue,
+    3.72/{R1 repite el ciclo con T2 en WS2}/Green,
+    3.00/{R1 termina en la estación de carga}/Violet} {
+    \fill[\col] (9.72,\y+0.07) circle (0.055);
+    \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Ink,text width=4.7cm,align=left] at (9.94,\y) {\txt};
+  }
+  \Metric{9.72}{1.92}{66,76\%}{batería final Fase 1}{Green}
+  \Metric{12.10}{1.92}{0,030 m}{error final de pose}{Teal}
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \fill[Teal!8,rounded corners=4pt] (0.82,4.24) rectangle ++(6.55,2.28);
+  \draw[Teal!70,line width=0.36pt,rounded corners=4pt] (0.82,4.24) rectangle ++(6.55,2.28);
+  \node at (4.10,5.56) {\includegraphics[width=6.05cm,height=1.72cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_overview_oriented.png}};
+  \fill[Panel,opacity=0.92] (0.94,4.34) rectangle ++(6.31,0.34);
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Teal] at (1.06,4.51) {vista general de la celda};
+  \fill[Orange!8,rounded corners=4pt] (8.02,4.24) rectangle ++(6.55,2.28);
+  \draw[Orange!70,line width=0.36pt,rounded corners=4pt] (8.02,4.24) rectangle ++(6.55,2.28);
+  \node at (11.30,5.56) {\includegraphics[width=6.05cm,height=1.72cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_sensor_rays_avoidance_oriented.png}};
+  \fill[Panel,opacity=0.92] (8.14,4.34) rectangle ++(6.31,0.34);
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Orange] at (8.26,4.51) {rayos de sensor y evitación};
+  \fill[Green!8,rounded corners=4pt] (0.82,1.35) rectangle ++(6.55,2.28);
+  \draw[Green!70,line width=0.36pt,rounded corners=4pt] (0.82,1.35) rectangle ++(6.55,2.28);
+  \node at (4.10,2.67) {\includegraphics[width=6.05cm,height=1.72cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_bill_working_oriented.png}};
+  \fill[Panel,opacity=0.92] (0.94,1.45) rectangle ++(6.31,0.34);
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Green] at (1.06,1.62) {Bill trabajando frente a la mesa};
+  \fill[Violet!8,rounded corners=4pt] (8.02,1.35) rectangle ++(6.55,2.28);
+  \draw[Violet!70,line width=0.36pt,rounded corners=4pt] (8.02,1.35) rectangle ++(6.55,2.28);
+  \node at (11.30,2.67) {\includegraphics[width=6.05cm,height=1.72cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_handoff_t1_oriented.png}};
+  \fill[Panel,opacity=0.92] (8.14,1.45) rectangle ++(6.31,0.34);
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Violet] at (8.26,1.62) {interacción R1--Bill con T1};
+
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.26);
+  \draw[Rule,line width=0.30pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.26);
+  \node at (5.24,4.32) {\includegraphics[width=8.65cm,height=5.10cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_overview_oriented.png}};
+  \fill[Panel,opacity=0.96,rounded corners=3pt] (1.02,6.30) rectangle (7.30,6.66);
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont\bfseries,text=Deep] at (1.18,6.48)
+    {Escena principal: R1, Bill, rack T1/T2, mesas WS1/WS2 y estación de carga};
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (10.10,6.36) {Operación en escena};
+  \foreach \y/\txt/\col in {
+    5.58/{La misión completa se ejecuta en una celda de almacén.}/Teal,
+    4.74/{Bill permanece orientado hacia la mesa durante el trabajo.}/Green,
+    3.90/{La evitación local y el mapa SLAM se actualizan durante la misma ejecución.}/Orange,
+    3.06/{El cierre se mide con estado, batería, riesgo, pose y mapa exportados.}/Violet} {
+    \fill[\col] (10.20,\y+0.05) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,text width=4.25cm,align=left] at (10.42,\y) {\txt};
+  }
+  \Metric{10.10}{1.94}{4/4}{tareas completadas}{Green}
+  \Metric{12.40}{1.94}{0,030 m}{error final de pose}{Teal}
+}
+
+\DeckSlide{Escenas de simulación}{seguimiento, Fase 1 y Fase 2}{
+  \ClaimBox{0.78}{6.74}{13.60}{0.48}{Teal}
+  \node[anchor=west,font=\fontsize{5.9}{6.6}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {Seguimiento, entrega, evitación, replanificación y mapa quedan registrados en capturas reales.};
+
+  \newcommand{\ScenarioShot}[5]{%
+    \fill[Panel,rounded corners=4pt] (#1,#2) rectangle ++(3.12,2.22);
+    \fill[#5!8,rounded corners=4pt] (#1,#2) rectangle ++(3.12,2.22);
+    \draw[#5!68,line width=0.36pt,rounded corners=4pt] (#1,#2) rectangle ++(3.12,2.22);
+    \node at (#1+1.56,#2+1.30) {\includegraphics[width=2.82cm,height=1.46cm,keepaspectratio]{#3}};
+    \fill[Panel,opacity=0.94,rounded corners=2pt] (#1+0.12,#2+0.16) rectangle ++(2.88,0.34);
+    \node[anchor=west,font=\fontsize{4.55}{5.1}\selectfont\bfseries,text=#5] at (#1+0.24,#2+0.33) {#4};
+  }
+  \ScenarioShot{0.78}{4.24}{assets/follower_replay_clean.png}{Seguimiento de Bill}{Teal}
+  \ScenarioShot{4.42}{4.24}{../figures/phase1/coppeliasim_phase1_overview_oriented.png}{Fase 1: almacén}{Green}
+  \ScenarioShot{8.06}{4.24}{../figures/phase1/coppeliasim_phase1_sensor_rays_avoidance_oriented.png}{Evitación con rayos}{Orange}
+  \ScenarioShot{11.70}{4.24}{../figures/phase1/coppeliasim_phase1_bill_working_oriented.png}{Bill en mesa}{Violet}
+  \ScenarioShot{0.78}{1.32}{../figures/phase1/coppeliasim_phase1_handoff_t1_oriented.png}{Entrega T1}{Blue}
+  \ScenarioShot{4.42}{1.32}{../figures/phase1/coppeliasim_phase2_initial_unknown_oriented.png}{Fase 2 inicial}{Teal}
+  \ScenarioShot{8.06}{1.32}{../figures/phase1/coppeliasim_phase2_replan_dynamic_oriented.png}{Replanificación dinámica}{Orange}
+  \ScenarioShot{11.70}{1.32}{../coppeliasim/phase2_slam_logs/phase2_slam_unknown_overview.png}{Mapa desconocido}{Green}
+
+  \fill[Panel,rounded corners=6pt] (0.62,0.78) rectangle (15.24,7.26);
+  \draw[Rule,line width=0.30pt,rounded corners=6pt] (0.62,0.78) rectangle (15.24,7.26);
+  \node[anchor=west,font=\fontsize{7.6}{8.4}\selectfont\bfseries,text=Deep] at (0.98,6.48) {Tres ejecuciones registradas};
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont,text=Muted,text width=12.9cm,align=left] at (0.98,6.03)
+    {Las capturas cubren tres estados del sistema: seguimiento, entrega con evitación y mapa desconocido.};
+
+  \fill[Teal!8,rounded corners=5pt] (0.92,2.02) rectangle (5.02,5.64);
+  \draw[Teal!62,line width=0.34pt,rounded corners=5pt] (0.92,2.02) rectangle (5.02,5.64);
+  \node at (2.97,4.24) {\includegraphics[width=3.68cm,height=2.16cm,keepaspectratio]{assets/follower_replay_clean.png}};
+  \node[anchor=west,font=\fontsize{6.2}{6.9}\selectfont\bfseries,text=Teal] at (1.18,2.55) {Follower};
+  \node[anchor=west,font=\fontsize{5.35}{6.0}\selectfont,text=Ink,text width=3.35cm,align=left] at (1.18,2.22)
+    {Bill define el objetivo móvil y se comparan P, PI, PID, LQR y NMPC.};
+
+  \fill[Green!8,rounded corners=5pt] (5.58,2.02) rectangle (9.68,5.64);
+  \draw[Green!62,line width=0.34pt,rounded corners=5pt] (5.58,2.02) rectangle (9.68,5.64);
+  \node at (7.63,4.34) {\includegraphics[width=3.68cm,height=2.00cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_handoff_t1_oriented.png}};
+  \node at (7.63,3.10) {\includegraphics[width=3.68cm,height=1.10cm,keepaspectratio]{../figures/phase1/coppeliasim_phase1_sensor_rays_avoidance_oriented.png}};
+  \node[anchor=west,font=\fontsize{6.2}{6.9}\selectfont\bfseries,text=Green] at (5.84,2.55) {Fase 1};
+  \node[anchor=west,font=\fontsize{5.35}{6.0}\selectfont,text=Ink,text width=3.35cm,align=left] at (5.84,2.22)
+    {Entrega T1/T2, Bill trabajando y evitación durante la misma misión.};
+
+  \fill[Violet!8,rounded corners=5pt] (10.24,2.02) rectangle (14.34,5.64);
+  \draw[Violet!62,line width=0.34pt,rounded corners=5pt] (10.24,2.02) rectangle (14.34,5.64);
+  \node at (12.29,4.40) {\includegraphics[width=3.66cm,height=1.82cm,keepaspectratio]{../figures/phase1/coppeliasim_phase2_replan_dynamic_oriented.png}};
+  \node at (12.29,3.12) {\includegraphics[width=3.66cm,height=1.22cm,keepaspectratio]{../coppeliasim/phase2_slam_logs/phase2_slam_unknown_overview.png}};
+  \node[anchor=west,font=\fontsize{6.2}{6.9}\selectfont\bfseries,text=Violet] at (10.50,2.55) {Fase 2};
+  \node[anchor=west,font=\fontsize{5.35}{6.0}\selectfont,text=Ink,text width=3.35cm,align=left] at (10.50,2.22)
+    {Mapa desconocido, obstáculo dinámico y reconstrucción exportada.};
+}
+
+\DeckSlide{Capturas de ejecución}{Follower y Phase 2}{
+  \fill[Panel,rounded corners=6pt] (0.70,0.96) rectangle (15.16,7.24);
+  \draw[Rule,line width=0.34pt,rounded corners=6pt] (0.70,0.96) rectangle (15.16,7.24);
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (0.98,6.84)
+    {Ejecuciones registradas en CoppeliaSim};
+  \node[anchor=west,font=\fontsize{5.5}{6.2}\selectfont,text=Muted,text width=13.45cm,align=left] at (0.98,6.45)
+    {Follower registra seguimiento circular; Phase 2 registra zona desconocida, ruta de navegación, elementos de la celda y sensores de proximidad.};
+
+  \fill[Teal!7,rounded corners=5pt] (0.98,3.76) rectangle (7.35,6.08);
+  \draw[Teal!62,line width=0.32pt,rounded corners=5pt] (0.98,3.76) rectangle (7.35,6.08);
+  \node at (4.17,5.02) {\includegraphics[width=5.95cm,height=1.90cm,keepaspectratio]{../figures/phase1/A2_T1_Follower_SS1.png}};
+  \fill[Panel,opacity=0.94,rounded corners=2pt] (1.16,3.96) rectangle (7.08,4.30);
+  \node[anchor=west,font=\fontsize{4.7}{5.25}\selectfont\bfseries,text=Teal] at (1.32,4.13)
+    {Follower: trayectoria circular de Bill};
+
+  \fill[Teal!7,rounded corners=5pt] (8.04,3.76) rectangle (14.41,6.08);
+  \draw[Teal!62,line width=0.32pt,rounded corners=5pt] (8.04,3.76) rectangle (14.41,6.08);
+  \node at (11.23,5.02) {\includegraphics[width=5.95cm,height=1.90cm,keepaspectratio]{../figures/phase1/A2_T1_Follower_SS2.png}};
+  \fill[Panel,opacity=0.94,rounded corners=2pt] (8.22,3.96) rectangle (14.14,4.30);
+  \node[anchor=west,font=\fontsize{4.7}{5.25}\selectfont\bfseries,text=Teal] at (8.38,4.13)
+    {Follower: R1 regula distancia sin cortar la marcha};
+
+  \fill[Violet!7,rounded corners=5pt] (0.98,1.30) rectangle (5.20,3.38);
+  \draw[Violet!62,line width=0.30pt,rounded corners=5pt] (0.98,1.30) rectangle (5.20,3.38);
+  \node at (3.09,2.46) {\includegraphics[width=3.82cm,height=1.58cm,keepaspectratio]{../figures/phase1/A2_T2_Phase2_SS1.png}};
+  \node[anchor=west,font=\fontsize{4.45}{5.0}\selectfont\bfseries,text=Violet] at (1.18,1.58)
+    {Phase 2: obstáculo no modelado};
+
+  \fill[Green!7,rounded corners=5pt] (5.86,1.30) rectangle (10.08,3.38);
+  \draw[Green!62,line width=0.30pt,rounded corners=5pt] (5.86,1.30) rectangle (10.08,3.38);
+  \node at (7.97,2.46) {\includegraphics[width=3.82cm,height=1.58cm,keepaspectratio]{../figures/phase1/A2_T2_Phase2_SS2.png}};
+  \node[anchor=west,font=\fontsize{4.45}{5.0}\selectfont\bfseries,text=Green] at (6.06,1.58)
+    {Phase 2: vista general de la celda};
+
+  \fill[Orange!7,rounded corners=5pt] (10.74,1.30) rectangle (14.96,3.38);
+  \draw[Orange!62,line width=0.30pt,rounded corners=5pt] (10.74,1.30) rectangle (14.96,3.38);
+  \node at (12.85,2.46) {\includegraphics[width=3.82cm,height=1.58cm,keepaspectratio]{../figures/phase1/A2_T2_Phase2_SS3.png}};
+  \node[anchor=west,font=\fontsize{4.45}{5.0}\selectfont\bfseries,text=Orange] at (10.94,1.58)
+    {Phase 2: sensores frente al sofá};
+}
+
+\DeckSlide{Video de ejecución I}{seguimiento y entrega}{
+  \fill[Panel,rounded corners=6pt] (0.76,1.12) rectangle (14.82,6.86);
+  \draw[Teal!62,line width=0.60pt,dashed,rounded corners=6pt] (0.76,1.12) rectangle (14.82,6.86);
+  \fill[Teal!6,rounded corners=4pt] (1.12,1.48) rectangle (14.46,6.50);
+  \draw[Teal!38,line width=0.34pt,rounded corners=4pt] (1.12,1.48) rectangle (14.46,6.50);
+  \node[font=\fontsize{18.0}{20.0}\selectfont\bfseries,text=Teal] at (7.78,4.10) {VIDEO};
+  \node[font=\fontsize{7.2}{8.1}\selectfont\bfseries,text=Muted] at (7.78,3.60)
+    {seguimiento de Bill, entrega T1/T2 y retorno a carga};
+}
+
+\DeckSlide{Video de ejecución II}{Fase 2 y mapa desconocido}{
+  \fill[Panel,rounded corners=6pt] (0.76,1.12) rectangle (14.82,6.86);
+  \draw[Violet!62,line width=0.60pt,dashed,rounded corners=6pt] (0.76,1.12) rectangle (14.82,6.86);
+  \fill[Violet!6,rounded corners=4pt] (1.12,1.48) rectangle (14.46,6.50);
+  \draw[Violet!38,line width=0.34pt,rounded corners=4pt] (1.12,1.48) rectangle (14.46,6.50);
+  \node[font=\fontsize{18.0}{20.0}\selectfont\bfseries,text=Violet] at (7.78,4.10) {VIDEO};
+  \node[font=\fontsize{7.2}{8.1}\selectfont\bfseries,text=Muted] at (7.78,3.60)
+    {exploración, obstáculos dinámicos, replanificación y SLAM};
+}
+
+\DeckSlide{Replay de misión}{trayectoria, entrega y mapeo}{
+  \fill[Panel,rounded corners=6pt] (0.76,1.12) rectangle (9.52,6.78);
+  \draw[Rule,line width=0.42pt,rounded corners=6pt] (0.76,1.12) rectangle (9.52,6.78);
+  \node at (5.14,3.96) {\includegraphics[width=8.20cm,height=4.78cm,keepaspectratio]{assets/phase1_replay_clean_cover.png}};
+  \fill[Ink,opacity=0.62] (4.62,3.46) circle (0.42);
+  \fill[Panel] (4.50,3.24) -- (4.50,3.68) -- (4.88,3.46) -- cycle;
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (1.06,6.25) rectangle (7.88,6.58);
+  \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Deep] at (1.20,6.42)
+    {Secuencia de la misión: seguimiento, entrega, evitación y cierre};
+
+  \node[anchor=west,font=\fontsize{8.0}{8.8}\selectfont\bfseries,text=Deep] at (10.05,6.38) {Contenido del replay};
+  \foreach \y/\txt/\col in {
+    5.58/{seguimiento de Bill y orientación frontal}/Teal,
+    4.86/{entregas T1/T2 dentro del almacén}/Green,
+    4.14/{evitación local con rayos de proximidad}/Orange,
+    3.42/{mapeo SLAM y cierre de misión}/Violet} {
+    \fill[\col] (10.18,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.8}{6.6}\selectfont,text=Ink,text width=4.30cm,align=left] at (10.40,\y) {\txt};
+  }
+  \Metric{10.05}{2.78}{MP4}{replay de la ejecución principal}{Violet}
+  \Metric{10.05}{1.58}{replay}{misión reproducida con logs exportados}{Teal}
+
+  \fill[Panel,rounded corners=6pt] (0.62,0.58) rectangle (15.24,7.02);
+  \draw[Rule,line width=0.30pt,rounded corners=6pt] (0.62,0.58) rectangle (15.24,7.02);
+  \node at (5.36,4.06) {\includegraphics[width=8.50cm,height=4.92cm,keepaspectratio]{assets/phase1_replay_clean_cover.png}};
+  \fill[Ink,opacity=0.66] (5.36,4.06) circle (0.50);
+  \fill[Panel] (5.20,3.78) -- (5.20,4.34) -- (5.66,4.06) -- cycle;
+  \fill[Panel,opacity=0.96,rounded corners=3pt] (1.06,6.30) rectangle (6.95,6.66);
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont\bfseries,text=Deep] at (1.22,6.48)
+    {Replay asociado a la ejecución principal de CoppeliaSim};
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (10.12,6.22) {Secuencia};
+  \foreach \y/\txt/\col in {
+    5.42/{seguimiento de Bill con orientación frontal}/Teal,
+    4.66/{entrega y retorno de T1/T2}/Green,
+    3.90/{evitación con rayos de proximidad}/Orange,
+    3.14/{actualización SLAM y cierre en carga}/Violet} {
+    \fill[\col] (10.24,\y+0.05) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,text width=4.0cm,align=left] at (10.46,\y) {\txt};
+  }
+  \Tag{10.12}{1.88}{replay MP4}{Violet}
+  \Tag{12.54}{1.88}{logs exportados}{Teal}
+}
+
+\DeckSlide{Máquina de estados de R1}{tareas T1 y T2}{
+  \fill[Teal!5,rounded corners=5pt] (0.62,5.42) rectangle (12.63,6.62);
+  \fill[Orange!5,rounded corners=5pt] (0.62,3.67) rectangle (12.63,4.87);
+  \fill[Violet!6,rounded corners=5pt] (5.08,1.95) rectangle (8.10,3.02);
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Teal] at (0.78,6.44) {ciclo T1};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Orange] at (0.78,4.69) {ciclo T2};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (5.22,2.84) {cierre};
+  \foreach \x/\y/\name/\col in {
+    0.85/5.70/TO\_PICKUP\_T1/Teal,
+    3.90/5.70/DELIVER\_T1/Orange,
+    6.95/5.70/WAIT\_B1\_T1/Blue,
+    10.00/5.70/RETURN\_T1/Green,
+    0.85/3.95/TO\_PICKUP\_T2/Teal,
+    3.90/3.95/DELIVER\_T2/Orange,
+    6.95/3.95/WAIT\_B1\_T2/Blue,
+    10.00/3.95/RETURN\_T2/Green,
+    5.35/2.20/TO\_CHARGE/Violet} {
+    \fill[\col!10,rounded corners=4pt] (\x,\y) rectangle ++(2.36,0.68);
+    \draw[\col!75,line width=0.50pt,rounded corners=4pt] (\x,\y) rectangle ++(2.36,0.68);
+    \node[font=\fontsize{5.8}{6.4}\selectfont\bfseries,text=\col] at (\x+1.18,\y+0.34) {\texttt{\name}};
+  }
+  \foreach \a/\b/\y in {3.21/3.82/6.04,6.26/6.87/6.04,9.31/9.92/6.04,3.21/3.82/4.29,6.26/6.87/4.29,9.31/9.92/4.29} {
+    \draw[Deep,line width=0.65pt,-{Latex[length=1.8mm]}] (\a,\y) -- (\b,\y);
+  }
+  \draw[Deep,line width=0.65pt,-{Latex[length=1.8mm]}] (11.18,5.70) -- (11.18,4.80) -- (2.03,4.80) -- (2.03,4.63);
+  \draw[Deep,line width=0.65pt,-{Latex[length=1.8mm]}] (11.18,3.95) -- (11.18,2.54) -- (7.72,2.54);
+  \foreach \x/\y/\txt in {
+    3.48/6.28/pickup,
+    6.54/6.28/delivery,
+    9.60/6.28/work done,
+    3.48/4.53/pickup,
+    6.54/4.53/delivery,
+    9.60/4.53/work done} {
+    \node[font=\fontsize{4.1}{4.7}\selectfont,text=Muted] at (\x,\y) {\txt};
+  }
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Ink,text width=13.0cm,align=left] at (0.90,1.22)
+    {La FSM validada contiene la cola completa: entregar T1, esperar trabajo de Bill, devolver T1, repetir con T2 y finalizar en carga. Los modos de movimiento observados son \texttt{ROUTE}, \texttt{AVOIDING}, \texttt{MANIPULATING}, \texttt{WAIT\_B1} y \texttt{ARRIVED\_TARGET}.};
+}
+
+\DeckSlide{Funciones Lua integradas}{fragmentos del controlador}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.5cm,align=left] at (0.82,7.08)
+    {R1 lee sensores, actualiza la FSM, decide si usar punto intermedio SLAM y exporta señales para las gráficas.};
+
+  \foreach \x/\y/\tit/\col in {
+    0.85/4.78/{sensores + evitación}/Teal,
+    5.20/4.78/{FSM T1/T2}/Orange,
+    9.55/4.78/{planner local}/Violet,
+    0.85/1.58/{Bill orientado a mesa}/Green} {
+    \ClaimBox{\x}{\y}{3.85}{1.74}{\col}
+    \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=\col] at (\x+0.22,\y+1.38) {\tit};
+  }
+  \node[anchor=west,font=\ttfamily\fontsize{4.7}{5.3}\selectfont,text=Ink,text width=3.35cm,align=left] at (1.08,5.48)
+    {ok,d,pt,obj = sim.readProximitySensor(h)\\if ok>0 then\\\quad addSensorRay(s,d,pt,true)\\\quad registerSlamDetection(s,d,pt)\\\quad steer = steer - sign*y*w\\end};
+  \node[anchor=west,font=\ttfamily\fontsize{4.7}{5.3}\selectfont,text=Ink,text width=3.35cm,align=left] at (5.43,5.48)
+    {DELIVER\_T1\_WS1 = function()\\\quad deliverToolToBill(t1,ws1,\\\quad "task1:\{T1->B1@WS1\}",\\\quad "WAIT\_B1\_WORK\_T1")\\end};
+  \node[anchor=west,font=\ttfamily\fontsize{4.7}{5.3}\selectfont,text=Ink,text width=3.35cm,align=left] at (9.78,5.48)
+    {goal = readWorldPosition(target)\\planX,planY = plannedWaypointTo(goal)\\heading = atan2(dy,dx)-estTheta\\setWheelSpeeds(v,w)};
+  \node[anchor=west,font=\ttfamily\fontsize{4.7}{5.3}\selectfont,text=Ink,text width=12.20cm,align=left] at (1.08,2.30)
+    {thetaB = atan2(y\_table-y\_B, x\_table-x\_B)\\setJointTargetPosition(shoulder, forwardPose)\\setJointTargetPosition(elbow, workPose)\\setStringSignal("phase1B1Action","WORKING")};
+  \ClaimBox{9.55}{1.36}{2.35}{0.78}{Blue}
+  \node[anchor=west,font=\fontsize{7.4}{8.2}\selectfont\bfseries,text=Blue] at (9.75,1.92) {CSV/JSON};
+  \node[anchor=west,font=\fontsize{4.7}{5.4}\selectfont,text=Ink,text width=1.85cm,align=left] at (9.75,1.58)
+    {estado, ruedas, riesgo, batería, error y mapa};
+  \ClaimBox{12.15}{1.36}{2.05}{0.78}{Green}
+  \node[anchor=west,font=\fontsize{7.4}{8.2}\selectfont\bfseries,text=Green] at (12.35,1.92) {Lua};
+  \node[anchor=west,font=\fontsize{4.7}{5.4}\selectfont,text=Ink,text width=1.56cm,align=left] at (12.35,1.58)
+    {controlador R1 y manager B1 encapsulados};
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=Deep] at (0.92,6.58)
+    {Funciones usadas: lectura de sensores, registro SLAM, waypoint local y entrega a Bill.};
+  \foreach \x/\y/\sig/\body/\col in {
+    0.92/4.38/{\texttt{readObstacleField()}}/{Lee 16 sensores, calcula \texttt{risk}, \texttt{minObstacle}, giro repulsivo y reducción de velocidad.}/Teal,
+    7.55/4.38/{\texttt{registerSlamDetection(sensor,d,pt)}}/{Transforma el impacto al marco global y actualiza landmark, celda log-odds o submapa.}/Violet,
+    0.92/2.24/{\texttt{plannedWaypointTo(goal)}}/{Comprueba si la ruta directa está bloqueada y devuelve \texttt{SLAM\_WAYPOINT} o el objetivo final.}/Orange,
+    7.55/2.24/{\texttt{deliverToolToBill(tool,ws,next)}}/{Ejecuta la transición de FSM: aproxima R1, entrega T1/T2, espera a Bill y registra el estado.}/Green} {
+    \ClaimBox{\x}{\y}{6.10}{1.52}{\col}
+    \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=\col] at (\x+0.22,\y+1.02) {\sig};
+    \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink,text width=5.46cm,align=left] at (\x+0.22,\y+0.48) {\body};
+  }
+}
+
+\DeckSlide{Seguimiento de Bill}{geometría y objetivo móvil}{
+  \begin{scope}[shift={(0.82,1.20)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (7.20,5.92);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (7.20,5.92);
+    \foreach \x in {0.55,1.10,...,6.65} \draw[Rule,line width=0.18pt] (\x,0.40) -- (\x,5.55);
+    \foreach \y in {0.55,1.10,...,5.50} \draw[Rule,line width=0.18pt] (0.40,\y) -- (6.80,\y);
+    \draw[Muted!55,line width=0.45pt,-{Latex[length=1.5mm]}] (0.68,0.70) -- (1.36,0.70);
+    \draw[Muted!55,line width=0.45pt,-{Latex[length=1.5mm]}] (0.68,0.70) -- (0.68,1.38);
+    \node[font=\fontsize{4.0}{4.5}\selectfont,text=Muted] at (1.46,0.70) {$x$};
+    \node[font=\fontsize{4.0}{4.5}\selectfont,text=Muted] at (0.68,1.52) {$y$};
+    \fill[Green!10,rounded corners=2pt] (5.03,1.58) rectangle (6.46,2.08);
+    \draw[Green!55,line width=0.32pt,rounded corners=2pt] (5.03,1.58) rectangle (6.46,2.08);
+    \node[font=\fontsize{4.1}{4.7}\selectfont\bfseries,text=Green] at (5.74,1.42) {mesa};
+    \foreach \x/\y in {2.05/4.36,2.45/4.06,2.85/3.76,3.25/3.45,3.65/3.14} {
+      \fill[Orange!55] (\x,\y) circle (0.035);
+    }
+    \Robot{1.70}{4.55}{Teal}
+    \ScanFan{1.70}{4.55}{Teal}{0.86}
+    \Human{5.32}{2.45}{0.95}
+    \fill[Violet] (4.40,2.44) circle (0.08);
+    \draw[Violet,line width=0.9pt,-{Latex[length=2mm]}] (5.05,2.44) -- (4.46,2.44);
+    \draw[Violet!65,line width=0.45pt,<->] (4.40,2.14) -- (5.32,2.14);
+    \node[font=\fontsize{4.1}{4.7}\selectfont\bfseries,text=Violet] at (4.86,1.94) {$d_{des}$};
+    \draw[Orange,line width=1.1pt,-{Latex[length=2.2mm]}] (1.95,4.35) -- (4.28,2.58);
+    \draw[Teal,line width=0.60pt,dashed,-{Latex[length=1.6mm]}] (1.70,4.55) -- (4.40,2.44);
+    \draw[Amber,line width=0.70pt,-{Latex[length=1.5mm]}] (5.32,2.45) -- (5.86,2.45);
+    \node[font=\fontsize{4.1}{4.7}\selectfont\bfseries,text=Amber] at (5.96,2.62) {$\theta_B$};
+    \node[font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=Violet] at (4.35,2.08) {$p^*$};
+    \node[font=\fontsize{5.1}{5.8}\selectfont,text=Muted] at (5.55,3.05) {Bill};
+    \node[font=\fontsize{5.1}{5.8}\selectfont,text=Muted] at (1.65,4.04) {R1};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (8.75,6.28) {$p^* = p_B - d_{des}[\cos\theta_B,\sin\theta_B]^T$};
+  \node[anchor=west,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=Copper] at (8.75,5.15) {Control sobre el error};
+  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont,text=Ink,text width=5.2cm,align=left] at (8.75,4.55) {Los cinco controladores reciben la misma geometría. Cambia la ley de mando, no la trayectoria de Bill ni el logger.};
+  \Tag{8.75}{3.20}{P / PI / PID}{Orange}
+  \Tag{11.22}{3.20}{LQR}{Violet}
+  \Tag{13.05}{3.20}{NMPC}{Green}
+  \Metric{8.75}{2.18}{0,82 m}{distancia deseada usada en seguimiento}{Teal}
+  \Metric{11.90}{2.18}{mismo CSV}{comparación bajo la misma trayectoria}{Blue}
+}
+
+\DeckSlide{Cinemática diferencial}{modelo del Pioneer P3DX}{
   \begin{scope}[shift={(0.95,1.42)}]
     \fill[Paper,rounded corners=5pt] (0,0) rectangle (6.45,5.65);
     \draw[Rule,rounded corners=5pt] (0,0) rectangle (6.45,5.65);
-    \draw[Deep,line width=1.0pt,rounded corners=7pt] (2.55,2.20) rectangle (4.05,3.38);
-    \fill[Deep!8] (2.72,2.38) rectangle (3.88,3.18);
-    \draw[Deep,line width=1.0pt] (2.34,2.20) -- (2.34,3.38);
-    \draw[Deep,line width=1.0pt] (4.26,2.20) -- (4.26,3.38);
-    \draw[Teal,line width=0.9pt,-{Latex[length=2mm]}] (3.30,2.79) -- ++(1.55,0);
-    \draw[Orange,line width=0.8pt,-{Latex[length=2mm]}] (3.30,2.79) arc[start angle=0,end angle=48,radius=1.0];
+    \draw[Muted!55,line width=0.45pt,-{Latex[length=1.5mm]}] (0.65,0.70) -- (1.35,0.70);
+    \draw[Muted!55,line width=0.45pt,-{Latex[length=1.5mm]}] (0.65,0.70) -- (0.65,1.40);
+    \node[font=\fontsize{4.0}{4.5}\selectfont,text=Muted] at (1.48,0.70) {$x_R$};
+    \node[font=\fontsize{4.0}{4.5}\selectfont,text=Muted] at (0.65,1.55) {$y_R$};
+    \draw[Deep,line width=1.05pt,rounded corners=7pt] (2.55,2.18) rectangle (4.05,3.40);
+    \fill[Deep!7,rounded corners=4pt] (2.72,2.36) rectangle (3.88,3.22);
+    \fill[Teal!15] (3.30,2.79) circle (0.18);
+    \draw[Teal,line width=0.48pt] (3.30,2.79) circle (0.18);
+    \draw[Steel,line width=1.05pt,rounded corners=1pt] (2.28,2.16) rectangle (2.45,3.42);
+    \draw[Steel,line width=1.05pt,rounded corners=1pt] (4.15,2.16) rectangle (4.32,3.42);
+    \draw[Blue,line width=0.90pt,-{Latex[length=1.8mm]}] (2.36,3.52) -- (2.36,4.30);
+    \draw[Blue,line width=0.90pt,-{Latex[length=1.8mm]}] (4.24,3.52) -- (4.24,4.05);
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Blue] at (2.36,4.52) {$\omega_L$};
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Blue] at (4.24,4.25) {$\omega_R$};
+    \draw[Teal,line width=1.0pt,-{Latex[length=2mm]}] (3.30,2.79) -- ++(1.55,0);
+    \draw[Orange,line width=0.85pt,-{Latex[length=2mm]}] (3.30,2.79) arc[start angle=0,end angle=48,radius=1.0];
+    \draw[Orange!55,line width=0.42pt,dashed] (3.30,2.79) -- (2.05,4.05);
+    \fill[Orange] (2.05,4.05) circle (0.055);
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Orange] at (1.82,4.28) {ICC};
     \node[font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Teal] at (5.05,2.98) {$v$};
     \node[font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Orange] at (4.05,3.92) {$\omega$};
-    \draw[Muted,line width=0.5pt,<->] (2.34,1.74) -- (4.26,1.74);
-    \node[font=\fontsize{5.2}{5.8}\selectfont,text=Muted] at (3.30,1.50) {distancia entre ruedas \(L\)};
-    \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont\bfseries,text=Deep] at (0.48,4.92) {base diferencial};
+    \draw[Muted,line width=0.5pt,<->] (2.36,1.74) -- (4.24,1.74);
+    \node[font=\fontsize{5.2}{5.8}\selectfont,text=Muted] at (3.30,1.50) {$L=0,331$ m};
+    \draw[Muted,line width=0.45pt,<->] (4.55,2.78) -- (4.55,3.18);
+    \node[font=\fontsize{4.5}{5.0}\selectfont,text=Muted] at (4.75,2.98) {$r$};
   \end{scope}
-  \node[anchor=west,font=\fontsize{11}{12}\selectfont\bfseries,text=Deep] at (8.15,5.92) {$v_L = v - \frac{L}{2}\omega$};
-  \node[anchor=west,font=\fontsize{11}{12}\selectfont\bfseries,text=Deep] at (8.15,4.96) {$v_R = v + \frac{L}{2}\omega$};
-  \node[anchor=west,font=\fontsize{8.5}{9.5}\selectfont\bfseries,text=Copper] at (8.15,3.82) {Implicación de control};
-  \node[anchor=west,font=\fontsize{6.3}{7.3}\selectfont,text=Ink,text width=5.5cm,align=left] at (8.15,3.15)
-    {El controlador calcula velocidad lineal y angular, limita ambas magnitudes y las traduce a comandos de rueda para evitar giros bruscos en la celda.};
+  \node[anchor=west,font=\fontsize{10.8}{12}\selectfont\bfseries,text=Deep] at (8.10,5.92) {$\omega_L = \frac{v-\frac{L}{2}\omega}{r}$};
+  \node[anchor=west,font=\fontsize{10.8}{12}\selectfont\bfseries,text=Deep] at (8.10,4.92) {$\omega_R = \frac{v+\frac{L}{2}\omega}{r}$};
+  \node[anchor=west,font=\fontsize{7.0}{8.0}\selectfont\bfseries,text=Copper] at (8.10,3.72) {Parámetros usados};
+  \Metric{8.10}{2.80}{0,0975 m}{radio de rueda}{Teal}
+  \Metric{11.10}{2.80}{0,55 m/s}{saturación de avance}{Orange}
+  \Metric{8.10}{1.58}{1,32 rad/s}{saturación de giro}{Violet}
 }
 
-\DeckSlide{Campos potenciales: atracción y repulsión}{navegación local}{
+\DeckSlide{Control de seguimiento: P, PI y PID}{leyes clásicas sobre el error}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.4cm,align=left] at (0.82,7.08)
+    {Los tres modos usan el mismo error de distancia y el mismo error de rumbo. Cambia la memoria del controlador: presente, acumulado y derivada.};
+
+  \ClaimBox{0.92}{4.72}{4.25}{1.60}{Orange}
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Orange] at (1.18,5.94) {P};
+  \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=Deep] at (1.18,5.34) {$u_P = K_p e_d$};
+  \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink,text width=3.55cm,align=left] at (1.18,4.90)
+    {Responde al error instantáneo. Es estable y simple, pero deja offset.};
+
+  \ClaimBox{5.52}{4.72}{4.25}{1.60}{Teal}
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Teal] at (5.78,5.94) {PI};
+  \node[anchor=west,font=\fontsize{6.6}{7.4}\selectfont\bfseries,text=Deep,text width=3.55cm,align=left] at (5.78,5.42)
+    {$u_{PI}=K_p e_d+K_i I_d$\\
+     $I_d=\sum e_d\Delta t$};
+  \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink,text width=3.55cm,align=left] at (5.78,4.90)
+    {Añade memoria integral para corregir error sostenido durante el seguimiento.};
+
+  \ClaimBox{10.12}{4.72}{4.25}{1.60}{Green}
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Green] at (10.38,5.94) {PID};
+  \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=Deep,text width=3.55cm,align=left] at (10.38,5.44)
+    {$u_{PID}=K_p e_d+K_i I_d+K_d\dot e_d$\\
+     $I_d=\sum e_d\Delta t$};
+  \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink,text width=3.55cm,align=left] at (10.38,4.90)
+    {El término derivativo amortigua cambios bruscos, pero sube el esfuerzo.};
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (0.96,3.52) {Errores comunes a los tres modos};
+  \ClaimBox{0.92}{2.36}{4.80}{1.02}{Teal}
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont\bfseries,text=Teal] at (1.18,3.14) {Error de distancia};
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep,text width=4.15cm,align=left] at (1.18,2.78)
+    {$e_d=\|p_B-p_R\|-d_{des}$};
+
+  \ClaimBox{6.02}{2.36}{7.20}{1.02}{Violet}
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont\bfseries,text=Violet] at (6.28,3.14) {Error de rumbo};
+  \node[anchor=west,font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=Deep,text width=6.60cm,align=left] at (6.28,2.72)
+    {$\phi_B=\mathrm{atan2}(y_B-y_R,x_B-x_R)$\\
+     $e_\psi=\mathrm{wrap}(\phi_B-\theta_R)$};
+  \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,text width=12.8cm,align=left] at (1.08,1.68)
+    {La salida se convierte en \(v\) y \(\omega\), y después en \(\omega_L,\omega_R\). Todos los modos pasan por saturaciones de velocidad y aceleración antes de mandar las ruedas.};
+}
+
+\DeckSlide{Control de seguimiento: LQR discreto}{ganancia calculada fuera de Lua}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.6cm,align=left] at (0.82,7.08)
+    {LQR regula el error local alrededor de \(p^*\). La matriz \(K\) se calcula offline con Riccati discreta y Lua solo aplica la ley de control.};
+
+  \ClaimBox{0.92}{4.70}{4.25}{1.75}{Violet}
+  \node[anchor=west,font=\fontsize{6.8}{7.6}\selectfont\bfseries,text=Violet] at (1.18,6.05) {Estado y control};
+  \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep,text width=3.55cm,align=left] at (1.18,5.46)
+    {$x_L=[e_{long},e_{lat},e_{yaw}]^T$\\$u=[\Delta v,\Delta\omega]^T$};
+  \node[anchor=west,font=\fontsize{4.7}{5.4}\selectfont,text=Ink,text width=3.55cm,align=left] at (1.18,4.98)
+    {\(e_{long}\) y \(e_{lat}\): proyección de \(p^*-p_R\) en el marco de R1; \(e_{yaw}=e_\psi\).};
+
+  \ClaimBox{5.52}{4.70}{4.25}{1.75}{Blue}
+  \node[anchor=west,font=\fontsize{6.8}{7.6}\selectfont\bfseries,text=Blue] at (5.78,6.05) {Modelo discreto};
+  \node[anchor=west,font=\fontsize{8.4}{9.4}\selectfont\bfseries,text=Deep,text width=3.55cm,align=left] at (5.78,5.46)
+    {$A_d=I+\Delta t A$\\$B_d=\Delta t B$};
+
+  \ClaimBox{10.12}{4.70}{4.25}{1.75}{Green}
+  \node[anchor=west,font=\fontsize{6.8}{7.6}\selectfont\bfseries,text=Green] at (10.38,6.05) {Ley aplicada};
+  \node[anchor=west,font=\fontsize{8.6}{9.6}\selectfont\bfseries,text=Deep] at (10.38,5.48)
+    {$u=-Kx_L$};
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=Ink,text width=3.50cm,align=left] at (10.38,5.03)
+    {Luego se saturan \(v\) y \(\omega\).};
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (1.00,3.50) {Función cuadrática};
+  \node[anchor=west,font=\fontsize{8.4}{9.4}\selectfont\bfseries,text=Deep] at (1.12,2.92)
+    {$J=\sum (x_k^TQx_k+u_k^TRu_k)$};
+  \Metric{1.12}{2.02}{$Q$ diag}{35, 80 y 18 para error longitudinal, lateral y yaw}{Violet}
+  \Metric{5.28}{2.02}{$R$ diag}{6 y 3 para variación de avance y giro}{Blue}
+  \Metric{9.44}{2.02}{$\Delta t=0,05s$}{misma escala de simulación}{Teal}
+}
+
+\DeckSlide{Control de seguimiento: NMPC}{predicción con restricciones}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.6cm,align=left] at (0.82,7.08)
+    {NMPC simula el modelo no lineal hacia adelante y elige una secuencia corta de comandos. En esta implementación se resuelve por disparo directo con búsqueda local.};
+
+  \ClaimBox{0.92}{4.80}{5.70}{1.55}{Green}
+  \node[anchor=west,font=\fontsize{6.8}{7.6}\selectfont\bfseries,text=Green] at (1.18,5.98) {Modelo predictivo};
+  \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=Deep,text width=5.05cm,align=left] at (1.18,5.40)
+    {$x_{k+1}=x_k+v_k\cos\theta_k\Delta t$\\
+     $y_{k+1}=y_k+v_k\sin\theta_k\Delta t$\\
+     $\theta_{k+1}=\theta_k+\omega_k\Delta t$};
+
+  \ClaimBox{7.10}{4.42}{6.85}{1.98}{Teal}
+  \node[anchor=west,font=\fontsize{6.8}{7.6}\selectfont\bfseries,text=Teal] at (7.36,6.08) {Coste resumido};
+  \node[anchor=west,font=\fontsize{4.65}{5.35}\selectfont\bfseries,text=Deep,text width=6.25cm,align=left] at (7.36,5.28)
+    {$J=\textstyle\sum_k(c_e+c_u+c_s)+q_f\|p_N^*-p_N\|^2$\\
+     $c_e=q_de_d^2+q_t\|p_k^*-p_k\|^2+q_\psi e_\psi^2$\\
+     $c_u=r_vv_k^2+r_\omega\omega_k^2+r_w(\omega_L^2+\omega_R^2)$\\
+     $c_s=s_v\Delta v_k^2+s_\omega\Delta\omega_k^2$};
+
+  \foreach \x/\tit/\body/\col in {
+    1.05/{Horizonte}/{\(N=10\), \(\Delta t=0,22s\), dos pasadas de mejora por ciclo.}/Green,
+    5.05/{Límites}/{\(v\in[-v_{rev},v_{max}]\), \(\omega\in[-\omega_{max},\omega_{max}]\).}/Teal} {
+    \Metric{\x}{3.08}{\tit}{\body}{\col}
+  }
+  \ClaimBox{9.05}{2.28}{4.20}{1.10}{Violet}
+  \node[anchor=west,font=\fontsize{5.9}{6.6}\selectfont\bfseries,text=Violet] at (9.30,3.10)
+    {Pesos usados};
+  \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont,text=Ink,text width=3.62cm,align=left] at (9.30,2.64)
+    {\(q_d=48\), \(q_t=7\), \(q_\psi=1,2\), \(r_v=1,4\), \(r_\omega=1,8\), \(r_w=0,020\), \(s_v=65\), \(s_\omega=18\), \(q_f=6\).};
+  \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont,text=Ink,text width=12.8cm,align=left] at (1.02,1.48)
+    {La versión Lua conserva modelo no lineal, horizonte, restricciones y coste predictivo. La optimización se resuelve con una búsqueda directa pequeña para ejecutarse dentro de CoppeliaSim.};
+}
+
+\DeckSlide{Resultados de seguimiento}{comparación P, PI, PID, LQR y NMPC}{
+  \ClaimBox{0.78}{6.74}{13.60}{0.48}{Green}
+  \node[anchor=west,font=\fontsize{5.9}{6.6}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {Misión y logger constantes: PI ofrece el mejor balance operativo; NMPC minimiza ruta y batería.};
+  \fill[Panel,rounded corners=5pt] (0.70,2.30) rectangle (9.42,6.60);
+  \draw[Rule,line width=0.40pt,rounded corners=5pt] (0.70,2.30) rectangle (9.42,6.60);
+  \fill[Green!10,rounded corners=2pt] (0.84,5.08) rectangle (9.20,5.47);
+  \node[anchor=north west] at (0.85,6.55) {
+    \scriptsize
+    \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{Modo} & \textbf{Dur. [s]} & \textbf{Ruta [m]} & \textbf{Bat. [\%]} & \textbf{Riesgo} & \textbf{Puntaje}\\
+    \midrule
+    P & 115,20 & 12,843 & 19,804 & 0,410 & 0,573\\
+    PI & \textbf{110,30} & 12,867 & 19,516 & 0,487 & \textbf{0,274}\\
+    PID & 110,85 & 12,856 & 19,784 & 0,469 & 0,567\\
+    LQR & 114,15 & 12,796 & 19,505 & \textbf{0,401} & 0,436\\
+    NMPC & 112,30 & \textbf{12,788} & \textbf{19,316} & 0,444 & 0,326\\
+    \bottomrule
+    \end{tabular}
+  };
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Green] at (0.92,2.58)
+    {Fila resaltada: menor puntaje normalizado};
+  \Metric{10.40}{5.78}{PI}{mejor balance operativo}{Green}
+  \Metric{10.40}{4.58}{NMPC}{menor batería y ruta más corta}{Teal}
+  \Metric{10.40}{3.38}{LQR}{menor riesgo máximo}{Violet}
+  \fill[Panel,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \draw[PanelEdge,line width=0.35pt,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \ClaimBox{0.82}{6.64}{13.70}{0.50}{Green}
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Deep] at (1.06,6.91)
+    {Misma misión y mismo logger: la comparación pondera precisión, ruta, batería y riesgo con el mismo registro de datos.};
+  \fill[white,rounded corners=5pt] (0.86,2.00) rectangle (8.84,6.32);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (0.86,2.00) rectangle (8.84,6.32);
+  \node at (4.85,4.16) {\includegraphics[width=7.55cm,height=3.95cm,keepaspectratio]{../figures/phase1/follower_pid_comparison.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Green] at (1.08,2.26)
+    {Respuesta temporal exportada desde el logger de CoppeliaSim};
+  \Metric{9.28}{6.05}{PI}{mejor balance operativo}{Green}
+  \Metric{9.28}{4.84}{NMPC}{menor ruta y batería}{Teal}
+  \Metric{9.28}{3.63}{LQR}{menor riesgo máximo}{Violet}
+  \Metric{9.28}{2.42}{PID}{menor error final}{Orange}
+  \fill[Deep,rounded corners=5pt] (0.90,1.08) rectangle (14.60,1.76);
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=VIUOrangeSoft] at (1.12,1.47) {Métrica};
+  \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=white,text width=11.90cm,align=left] at (2.18,1.39)
+    {Puntaje = suma min--max normalizada, menor es mejor: 0,28 movimiento + 0,18 batería + 0,20 variación + 0,14 riesgo + 0,12 error de pose + 0,08 duración. Riesgo = \(\max_t\) \texttt{obstacle\_risk(t)}.};
+}
+
+\DeckSlide{Costo de ruedas, energía y suavidad}{precisión contra esfuerzo de control}{
+  \ClaimBox{0.78}{6.74}{13.60}{0.48}{Teal}
+  \node[anchor=west,font=\fontsize{5.9}{6.6}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {El menor error final no basta para comparar controladores: también se mide energía, suavidad y cambios de sentido.};
+
+  \fill[Panel,rounded corners=5pt] (0.70,2.68) rectangle (8.78,6.35);
+  \draw[Rule,line width=0.40pt,rounded corners=5pt] (0.70,2.68) rectangle (8.78,6.35);
+  \node[anchor=north west] at (0.84,6.18) {
+    \scriptsize
+    \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{Modo} & \textbf{Err. mov.} & \textbf{Err. final} & \textbf{Energía} & \textbf{RMS \(\Delta u\)} & \textbf{Flips}\\
+    \midrule
+    P & 0,3542 & 0,0982 & \textbf{49,950} & 0,0475 & 11\\
+    PI & 0,2011 & 0,1018 & 64,419 & 0,1318 & 16\\
+    PID & 0,1915 & \textbf{0,0317} & 102,381 & 0,1759 & 26\\
+    LQR & 0,0231 & 0,0865 & 92,287 & 0,0873 & 12\\
+    NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
+    \bottomrule
+    \end{tabular}
+  };
+  \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=Teal] at (0.92,2.92)
+    {Datos de \texttt{Actividad2\_1\_Basic\_Follower.ttt}};
+
+  \Metric{9.55}{5.78}{PID}{menor error final}{Green}
+  \Metric{9.55}{4.58}{NMPC}{menor error en movimiento y pocos flips}{Teal}
+  \Metric{9.55}{3.38}{P}{menor energía, peor seguimiento}{Orange}
+  \fill[Panel,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \draw[PanelEdge,line width=0.35pt,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \ClaimBox{0.82}{6.64}{13.70}{0.50}{Teal}
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Deep] at (1.06,6.91)
+    {El error final es una sola cara del problema: las ruedas revelan energía, suavidad y cambios bruscos de mando.};
+  \fill[white,rounded corners=5pt] (0.86,3.22) rectangle (5.16,6.20);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (0.86,3.22) rectangle (5.16,6.20);
+  \node at (3.01,4.70) {\includegraphics[width=3.95cm,height=2.34cm,keepaspectratio]{../figures/phase1/follower_wheel_power_comparison.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Orange] at (1.08,3.48) {Potencia y energía acumulada};
+  \fill[white,rounded corners=5pt] (5.40,3.22) rectangle (9.70,6.20);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (5.40,3.22) rectangle (9.70,6.20);
+  \node at (7.55,4.70) {\includegraphics[width=3.95cm,height=2.34cm,keepaspectratio]{../figures/phase1/follower_wheel_command_smoothness.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (5.62,3.48) {Suavidad del comando};
+  \Metric{10.56}{6.00}{PID}{menor error final, mayor esfuerzo}{Green}
+  \Metric{10.56}{4.78}{NMPC}{mejor seguimiento con pocos cambios de sentido}{Teal}
+  \Metric{10.56}{3.56}{P}{menor energía, peor seguimiento}{Orange}
+  \fill[Deep,rounded corners=5pt] (0.90,1.24) rectangle (14.50,2.42);
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=VIUOrangeSoft] at (1.18,2.06) {Control};
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=white,text width=11.90cm,align=left] at (1.18,1.70)
+    {La elección usa error, consumo y suavidad; no solo el error final.};
+}
+
+\DeckSlide{Campos potenciales y anticolisión}{navegación local}{
   \begin{scope}[shift={(0.85,1.00)}]
     \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.4,6.25);
     \draw[Rule,rounded corners=6pt] (0,0) rectangle (8.4,6.25);
-    \foreach \x in {0.55,1.10,...,7.85} \draw[Rule,line width=0.18pt] (\x,0.40) -- (\x,5.85);
-    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.18pt] (0.40,\y) -- (8.00,\y);
-    \Robot{1.40}{1.20}{Teal}
-    \fill[Green] (6.65,4.85) circle (0.13);
-    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (6.65,5.20) {objetivo};
-    \fill[Red!16] (3.25,2.85) circle (0.45);
-    \draw[Red,line width=0.65pt] (3.25,2.85) circle (0.45);
-    \fill[Red!16] (4.55,3.95) circle (0.38);
-    \draw[Red,line width=0.65pt] (4.55,3.95) circle (0.38);
-    \draw[Green,line width=1.0pt,-{Latex[length=2.2mm]}] (1.40,1.20) -- (6.30,4.65);
-    \draw[Red,line width=0.85pt,-{Latex[length=1.9mm]}] (3.25,2.85) -- ++(-1.02,-0.52);
-    \draw[Red,line width=0.85pt,-{Latex[length=1.9mm]}] (4.55,3.95) -- ++(-0.80,-0.62);
-    \draw[Orange,line width=1.1pt,-{Latex[length=2.2mm]}] (1.40,1.20) .. controls (2.18,2.24) and (3.95,2.28) .. (6.35,4.55);
-    \node[font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=Orange] at (4.42,2.18) {rumbo resultante};
+    \foreach \x in {0.55,1.10,...,7.85} \draw[Rule,line width=0.16pt] (\x,0.42) -- (\x,5.82);
+    \foreach \y in {0.55,1.10,...,5.70} \draw[Rule,line width=0.16pt] (0.42,\y) -- (8.00,\y);
+    \Robot{1.80}{1.55}{Teal}
+    \ScanFan{1.80}{1.55}{Teal}{1.02}
+    \fill[Green] (6.45,4.70) circle (0.13);
+    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (6.45,5.04) {$p^*$};
+    \Human{7.08}{4.55}{0.78}
+    \fill[Red!5] (3.86,2.08) circle (1.18);
+    \draw[Red!45,line width=0.38pt,dashed] (3.86,2.08) circle (1.18);
+    \HazardBox{3.56}{1.80}{0.60}{0.56}{Red}
+    \node[font=\fontsize{4.4}{5.0}\selectfont\bfseries,text=Red] at (4.74,2.94) {$\rho_0$};
+    \draw[Muted,line width=0.55pt,dashed] (1.80,1.55) -- (3.86,2.08);
+    \node[font=\fontsize{4.4}{5.0}\selectfont,text=Muted] at (2.86,1.64) {$\rho_i$};
+    \draw[Orange,line width=1.15pt,-{Latex[length=2.2mm]}] (1.92,1.68) -- (6.28,4.56);
+    \draw[Red,line width=1.05pt,-{Latex[length=2.0mm]}] (1.68,1.42) -- (0.86,0.78);
+    \draw[Teal,line width=1.3pt,-{Latex[length=2.3mm]}] (1.96,1.58) -- (3.42,2.48);
+    \foreach \x/\y in {2.60/2.05,3.20/2.22,4.75/3.18,5.50/3.74} {
+      \fill[Teal!65] (\x,\y) circle (0.035);
+    }
+    \node[fill=Orange!10,draw=Orange,rounded corners=2pt,inner sep=2.1pt,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=Orange] at (4.35,3.32) {$F_{att}$};
+    \node[fill=Red!10,draw=Red,rounded corners=2pt,inner sep=2.1pt,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=Red] at (1.02,1.10) {$F_{rep}$};
+    \node[fill=Teal!10,draw=Teal,rounded corners=2pt,inner sep=2.1pt,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=Teal] at (2.84,2.18) {$F$};
   \end{scope}
   \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.72,6.45) {Ley usada};
   \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (9.72,5.66) {$\vec F = \vec F_{att} + \sum_i \vec F_{rep,i}$};
-  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=4.8cm,align=left] at (9.72,4.67)
-    {No se dibuja un camino mágico: cada ciclo recalcula rumbo desde objetivo, sensores y saturación de \(v,\omega\).};
-  \Tag{9.72}{2.82}{saturación}{Orange}
-  \Tag{9.72}{2.20}{tolerancia}{Green}
-  \Tag{9.72}{1.58}{recuperación}{Red}
+  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont,text=Ink,text width=4.9cm,align=left] at (9.72,4.65)
+    {El rumbo se recalcula en cada ciclo con objetivo, sensores, límites de velocidad y modo de recuperación.};
+  \Metric{9.72}{3.14}{16}{ultrasonidos del Pioneer}{Teal}
+  \Metric{12.10}{3.14}{0,62 m}{rango de influencia reactiva}{Orange}
+  \Metric{9.72}{1.92}{0,12 m}{parada crítica frontal}{Red}
 }
 
-\DeckSlide{Anticolisión: sensores y zonas de velocidad}{seguridad reactiva}{
-  \begin{scope}[shift={(0.90,1.10)}]
-    \fill[Paper,rounded corners=6pt] (0,0) rectangle (7.65,6.05);
-    \draw[Rule,rounded corners=6pt] (0,0) rectangle (7.65,6.05);
-    \Robot{3.20}{2.90}{Teal}
-    \foreach \ang/\col in {0/Red,25/Orange,50/Amber,-25/Orange,-50/Amber,90/Blue,-90/Blue,180/Muted} {
-      \draw[\col!65,line width=0.55pt,-{Latex[length=1.5mm]}] (3.20,2.90) -- ++(\ang:2.18);
+\DeckSlide{Sensores: LiDAR y Pioneer}{de distancia a mapa local}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.5cm,align=left] at (0.82,7.06)
+    {La escena no añade un LiDAR físico 2D. Usa los 16 sensores de proximidad del Pioneer como rayos discretos: cada lectura entrega ángulo, distancia e impacto.};
+
+  \begin{scope}[shift={(0.92,1.10)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (7.25,5.75);
+    \draw[Rule,line width=0.40pt,rounded corners=6pt] (0,0) rectangle (7.25,5.75);
+    \foreach \x in {0.55,1.10,...,6.80} \draw[Rule,line width=0.15pt] (\x,0.38) -- (\x,5.35);
+    \foreach \y in {0.55,1.10,...,5.25} \draw[Rule,line width=0.15pt] (0.38,\y) -- (6.90,\y);
+    \Robot{2.05}{1.35}{Teal}
+    \foreach \a/\len in {-45/1.95,-30/2.45,-15/3.00,0/3.55,15/3.15,30/2.70,45/2.10,60/1.65} {
+      \draw[Teal!45,line width=0.36pt] (2.05,1.35) -- ++(\a:\len);
+      \fill[Teal!70] ($(2.05,1.35)+(\a:\len)$) circle (0.035);
     }
-    \draw[Red!65,line width=0.45pt,dashed] (3.20,2.90) circle (1.08);
-    \draw[Orange!65,line width=0.45pt,dashed] (3.20,2.90) circle (1.72);
-    \draw[Green!65,line width=0.45pt,dashed] (3.20,2.90) circle (2.34);
-    \fill[Red!12] (5.05,2.45) rectangle (5.82,3.18);
-    \node[font=\fontsize{5.0}{5.6}\selectfont,text=Muted] at (5.48,3.42) {pallet};
-    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Red] at (4.14,4.10) {frenar};
-    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Orange] at (4.66,1.38) {reducir};
-    \node[font=\fontsize{5.5}{6.2}\selectfont\bfseries,text=Green] at (1.16,1.00) {nominal};
+    \HazardBox{5.20}{2.70}{0.72}{0.66}{Red}
+    \HazardBox{4.15}{0.92}{0.62}{0.52}{Orange}
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Teal] at (2.70,3.32) {rayos de proximidad};
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Red] at (5.78,3.60) {impacto};
+    \draw[Orange,line width=0.85pt,-{Latex[length=1.8mm]}] (2.05,1.35) -- (3.88,4.55);
+    \node[font=\fontsize{4.6}{5.2}\selectfont\bfseries,text=Orange] at (3.28,4.62) {ángulo fijo \(\beta_i\)};
   \end{scope}
-  \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.05,6.35) {Implementado};
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.65,6.18) {Cómo se usa};
+  \node[anchor=west,font=\fontsize{6.15}{7.0}\selectfont\bfseries,text=Deep,text width=5.9cm,align=left] at (8.65,5.42)
+    {\(z_i=(r_i,\beta_i)\)\\
+     \(p_i^W=[\hat x,\hat y]^T+R(\hat\theta)[r_i\cos\beta_i,r_i\sin\beta_i]^T\)};
   \foreach \y/\txt/\col in {
-    5.54/{16 ultrasonidos Pioneer + 6 sensores virtuales}/Teal,
-    4.82/{ruido determinista y fallo intermitente}/Orange,
-    4.10/{distancia mínima validada: 0,191 m}/Red,
-    3.38/{estado RECOVERY si el riesgo permanece alto}/Blue} {
-    \fill[\col] (9.10,\y+0.06) circle (0.055);
-    \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont,text=Ink,text width=5.0cm,align=left] at (9.34,\y) {\txt};
+    4.00/{LiDAR real: muchos rayos láser, contornos densos y mejor resolución angular.}/Blue,
+    3.26/{Pioneer simulado: 16 sensores; suficientes para evitar obstáculos y mapear localmente.}/Teal,
+    2.52/{GMapping, Hector y Cartographer reciben estos rayos discretos, no un paquete ROS completo.}/Violet,
+    1.78/{La baja densidad explica por qué los mapas son aproximados y por qué Kalman funciona bien en una celda pequeña.}/Orange} {
+    \fill[\col] (8.72,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.55}{6.35}\selectfont,text=Ink,text width=5.35cm,align=left] at (8.94,\y) {\txt};
   }
-  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted,text width=5.0cm,align=left] at (9.10,1.85)
-    {La seguridad se presenta como comportamiento de simulación: reducción de velocidad, evasión local y parada controlada.};
+  \Tag{8.72}{0.94}{16 sensores}{Teal}
+  \Tag{11.08}{0.94}{pose 2D}{Green}
 }
 
-\DeckSlide{Máquina de estados del Pioneer}{arquitectura de control}{
-  \foreach \x/\y/\name/\col in {
-    1.20/4.90/ROUTE/Teal,
-    4.20/4.90/AVOIDING/Orange,
-    7.45/4.90/RECOVERY/Red,
-    4.20/2.50/HOLD/Blue,
-    10.65/4.90/ARRIVED/Green} {
-    \fill[\col!10,rounded corners=4pt] (\x,\y) rectangle ++(2.18,0.88);
-    \draw[\col!75,line width=0.55pt,rounded corners=4pt] (\x,\y) rectangle ++(2.18,0.88);
-    \node[font=\fontsize{7.3}{8.0}\selectfont\bfseries,text=\col] at (\x+1.09,\y+0.44) {\name};
+\DeckSlide{Planner local con SLAM\_WAYPOINT}{estimación, mapa y waypoint}{
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.6cm,align=left] at (0.82,7.08)
+    {El ciclo de navegación no une puntos a mano: estima pose, transforma sensores, actualiza mapa y devuelve un waypoint al controlador diferencial.};
+
+  \foreach \x/\tit/\txt/\col in {
+    0.90/{1. Odometría}/{\(v,\omega\) predicen \(\hat x^-\).}/Teal,
+    4.05/{2. Corrección}/{medición ruidosa corrige pose.}/Green,
+    7.20/{3. Mapa}/{landmarks, celdas o submapas.}/Violet,
+    10.35/{4. Plan local}/{directo o \texttt{SLAM\_WAYPOINT}.}/Orange} {
+    \ClaimBox{\x}{5.05}{2.72}{1.18}{\col}
+    \node[anchor=west,font=\fontsize{6.1}{6.9}\selectfont\bfseries,text=\col] at (\x+0.22,5.92) {\tit};
+    \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont,text=Ink,text width=2.24cm,align=left] at (\x+0.22,5.45) {\txt};
   }
-  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (3.38,5.34) -- (4.12,5.34);
-  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (6.38,5.34) -- (7.34,5.34);
-  \draw[Deep,line width=0.75pt,-{Latex[length=2mm]}] (9.63,5.34) -- (10.55,5.34);
-  \draw[Blue,line width=0.75pt,-{Latex[length=2mm]}] (5.30,4.90) -- (5.30,3.38);
-  \draw[Green,line width=0.75pt,-{Latex[length=2mm]}] (5.30,2.50) -- (5.30,1.65) -- (11.74,1.65) -- (11.74,4.90);
-  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (1.22,3.92) {riesgo bajo};
-  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (4.24,3.92) {obstáculo};
-  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (7.48,3.92) {bloqueo};
-  \node[anchor=west,font=\fontsize{6.0}{6.8}\selectfont,text=Muted] at (10.68,3.92) {tolerancia};
-  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Ink,text width=12.8cm,align=left] at (1.20,0.95)
-    {La FSM evita una demo opaca: cada transición puede defenderse con señales internas, telemetría y eventos visibles en CoppeliaSim.};
+  \foreach \x in {3.66,6.82,9.96} {
+    \draw[Muted,line width=0.58pt,-{Latex[length=1.8mm]}] (\x,5.66) -- ++(0.28,0);
+  }
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (0.95,3.85) {Kalman-landmark};
+  \node[anchor=west,font=\fontsize{8.0}{9.0}\selectfont\bfseries,text=Deep,text width=6.6cm,align=left] at (1.02,3.18)
+    {$P_k^- = G_kP_{k-1}^+G_k^T+Q_k$\\
+     $K_k=P_k^-H_k^T(H_kP_k^-H_k^T+R_k)^{-1}$\\
+     $\hat x_k^+=\hat x_k^-+K_k(z_k-H_k\hat x_k^-)$};
+  \node[anchor=west,font=\fontsize{5.7}{6.5}\selectfont,text=Ink,text width=6.35cm,align=left] at (1.02,1.58)
+    {En la escena corrige pose con medición ruidosa y asocia detecciones por cercanía. Si no hay asociación, crea un landmark no asociado.};
+
+  \Metric{8.25}{3.40}{pose 2D}{\([x,y,\theta]\), sin roll/pitch}{Teal}
+  \Metric{11.20}{3.40}{20--24}{landmarks finales según fase}{Green}
+  \Metric{8.25}{2.12}{WAYPOINT}{\texttt{SLAM\_WAYPOINT} usa obstáculos mapeados}{Violet}
 }
 
-\DeckSlide{Integración en celda: módulos y señales}{sistema completo}{
-  \foreach \x/\name/\txt/\col in {
-    0.80/Pioneer Controller/{FSM, campos potenciales, ruedas, batería}/Teal,
-    4.52/Scenario Manager/{S1--S8, obstáculos, parada y objetivo móvil}/Orange,
-    8.24/MultiRobot A* Manager/{rutas, reservas, carga y flota auxiliar}/Blue,
-    11.96/Demo Overlay/{labels, cámaras y lectura rápida}/Green} {
-    \fill[\col!9,rounded corners=5pt] (\x,4.66) rectangle ++(3.05,1.62);
-    \draw[\col!75,line width=0.5pt,rounded corners=5pt] (\x,4.66) rectangle ++(3.05,1.62);
-    \node[font=\fontsize{6.8}{7.7}\selectfont\bfseries,text=Deep,text width=2.70cm,align=center] at (\x+1.53,5.82) {\name};
-    \node[font=\fontsize{5.2}{6.0}\selectfont,text=Muted,text width=2.65cm,align=center] at (\x+1.53,5.18) {\txt};
-  }
-  \foreach \x in {3.90,7.62,11.34} \draw[Copper,line width=0.75pt,-{Latex[length=1.9mm]}] (\x,5.47) -- ++(0.45,0);
-  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (0.90,3.42) {Señales de coordinación};
-  \foreach \x/\txt/\col in {
-    0.90/missionReady/Teal,
-    3.55/pioneerState/Orange,
-    6.20/pioneerBatteryLevel/Blue,
-    9.25/fleetAllComplete/Green,
-    12.15/demoOverlayLabels/Copper} {
-    \Tag{\x}{2.58}{\txt}{\col}
-  }
-  \node[anchor=west,font=\fontsize{6.1}{7.1}\selectfont,text=Ink,text width=13.4cm,align=left] at (0.90,1.55)
-    {La defensa no depende de “mirar si se mueve”: los módulos publican estados, eventos y métricas que quedan registrados en JSON.};
-}
+\DeckSlide{SLAM Kalman-landmark}{pose probabilística y mapa de puntos}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Green}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {El mapa se representa como puntos observados; la incertidumbre se mantiene en la pose del robot.};
 
-\DeckSlide{Escenarios S1--S8: pruebas con degradación}{validación secuencial}{
-  \draw[Rule,line width=0.55pt] (1.05,4.52) -- (14.60,4.52);
-  \foreach \x/\n/\txt/\col in {
-    1.05/S1/ruta nominal/Teal,
-    2.98/S2/pallet móvil/Orange,
-    4.91/S3/parada/Blue,
-    6.84/S4/objetivo móvil/Green,
-    8.77/S5/pasillo estrecho/Amber,
-    10.70/S6/fallo sensor/Red,
-    12.63/S7/batería baja/Blue,
-    14.56/S8/llegada/Green} {
-    \fill[\col!12] (\x,4.52) circle (0.34);
-    \draw[\col,line width=0.55pt] (\x,4.52) circle (0.34);
-    \node[font=\fontsize{5.4}{6.0}\selectfont\bfseries,text=\col] at (\x,4.52) {\n};
-    \node[font=\fontsize{5.1}{5.8}\selectfont,text=Ink,text width=1.45cm,align=center] at (\x,3.62) {\txt};
-  }
-  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (1.05,6.30) {La demo cubre condiciones normales, interacción con celda y fallos};
-  \node[anchor=west,font=\fontsize{6.2}{7.2}\selectfont,text=Muted,text width=13.1cm,align=left] at (1.05,5.65)
-    {El profesor puede ejecutar Play y observar una secuencia ordenada: no es una escena estática ni un recorrido único idealizado.};
-  \Metric{1.05}{1.65}{4,328 m}{distancia inicial}{Teal}
-  \Metric{4.55}{1.65}{0,739 m}{distancia final}{Green}
-  \Metric{8.05}{1.65}{ARRIVED}{estado final}{Orange}
-  \Metric{11.55}{1.65}{0,191 m}{mínimo a obstáculo}{Red}
-}
-
-\DeckSlide{Extensión multi-robot: A* cooperativo}{flota auxiliar}{
-  \begin{scope}[shift={(0.82,1.00)}]
-    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.35,6.25);
-    \draw[Rule,rounded corners=6pt] (0,0) rectangle (8.35,6.25);
-    \foreach \x in {0.60,1.15,...,7.70} \draw[Rule,line width=0.22pt] (\x,0.55) -- (\x,5.72);
-    \foreach \y in {0.60,1.15,...,5.70} \draw[Rule,line width=0.22pt] (0.55,\y) -- (7.82,\y);
-    \TinyRobot{1.05}{1.05}{Teal}
-    \TinyRobot{1.05}{5.15}{Orange}
-    \TinyRobot{6.95}{1.05}{Blue}
-    \draw[Teal,line width=1.0pt,-{Latex[length=2mm]}] (1.05,1.05) -- (2.70,1.05) -- (2.70,3.25) -- (6.70,3.25);
-    \draw[Orange,line width=1.0pt,-{Latex[length=2mm]}] (1.05,5.15) -- (3.25,5.15) -- (3.25,4.05) -- (6.70,4.05);
-    \draw[Blue,line width=1.0pt,-{Latex[length=2mm]}] (6.95,1.05) -- (5.30,1.05) -- (5.30,2.20) -- (2.05,2.20);
-    \fill[Red!12] (3.05,2.85) rectangle (3.60,3.40);
-    \fill[Red!12] (5.12,3.82) rectangle (5.67,4.37);
-    \node[font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=Red] at (4.38,5.76) {reservas celda-tiempo};
-  \end{scope}
-  \node[anchor=west,font=\fontsize{7.4}{8.4}\selectfont\bfseries,text=Deep] at (9.62,6.48) {Resultado validado};
-  \Metric{9.62}{5.48}{16}{planes A* generados}{Blue}
-  \Metric{9.62}{4.36}{8}{conflictos evitados}{Orange}
-  \Metric{9.62}{3.24}{4}{eventos de carga}{Teal}
-  \Metric{9.62}{2.12}{3/3}{robots READY}{Green}
-}
-
-\DeckSlide{Validación: indicadores que sí sostienen la defensa}{evidencia cuantitativa}{
-  \begin{scope}[shift={(0.80,1.05)}]
-    \fill[Paper,rounded corners=6pt] (0,0) rectangle (14.45,6.20);
-    \draw[Rule,rounded corners=6pt] (0,0) rectangle (14.45,6.20);
-    \foreach \x/\v/\lab/\col in {
-      0.62/4.328/inicial/Muted,
-      3.10/0.739/final/Green,
-      5.58/22/sensores/Teal,
-      8.06/8/escenarios/Orange,
-      10.54/3/AMR READY/Blue,
-      13.02/0.191/mín. obstáculo/Red} {
-      \node[font=\fontsize{16}{17}\selectfont\bfseries,text=\col] at (\x+0.62,4.98) {\v};
-      \node[font=\fontsize{5.2}{5.8}\selectfont,text=Muted,text width=1.36cm,align=center] at (\x+0.62,4.32) {\lab};
+  \begin{scope}[shift={(0.92,1.20)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \foreach \x/\y/\txt/\col in {
+      0.45/4.32/{odometría \(u_k\)}/Teal,
+      2.58/4.32/{predicción \(x_k^-,P_k^-\)}/Green,
+      0.45/2.82/{rayos \(z_i\)}/Orange,
+      2.58/2.82/{asociación a \(l_j\)}/Violet,
+      4.62/3.56/{corrección EKF}/Green,
+      4.62/1.58/{landmark no asociado}/Orange} {
+      \fill[\col!10,rounded corners=3pt] (\x,\y) rectangle ++(1.70,0.62);
+      \draw[\col!65,line width=0.34pt,rounded corners=3pt] (\x,\y) rectangle ++(1.70,0.62);
+      \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=\col,align=center,text width=1.48cm] at (\x+0.85,\y+0.31) {\txt};
     }
-    \draw[Rule,line width=0.5pt] (0.65,3.65) -- (13.85,3.65);
-    \foreach \y/\p/\c in {2.85/{Pioneer reduce distancia y termina en ARRIVED.}/Green,2.26/{Sensores cubren proximidad, ruido y fallo intermitente.}/Teal,1.67/{La flota auxiliar completa rutas y recarga.}/Blue,1.08/{El JSON permite reproducir la evidencia sin depender de una captura.}/Orange} {
-      \fill[\c] (0.82,\y+0.06) circle (0.055);
-      \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Ink] at (1.06,\y) {\p};
+    \foreach \a/\b in {2.15/2.58,4.28/4.62} {
+      \draw[Muted,line width=0.58pt,-{Latex[length=1.7mm]}] (\a,4.63) -- (\b,4.63);
     }
+    \draw[Muted,line width=0.58pt,-{Latex[length=1.7mm]}] (2.15,3.13) -- (2.58,3.13);
+    \draw[Muted,line width=0.58pt,-{Latex[length=1.7mm]}] (4.28,3.13) -- (4.62,3.70);
+    \draw[Muted,line width=0.58pt,-{Latex[length=1.7mm]}] (4.28,3.13) -- (4.62,1.89);
+    \Robot{1.20}{1.30}{Teal}
+    \foreach \x/\y in {2.0/1.9,2.4/2.15,3.1/1.72,3.7/2.35,4.2/1.82} {
+      \fill[Green] (\x,\y) circle (0.055);
+    }
+    \ScanFan{1.20}{1.30}{Teal}{0.88}
+    \node[font=\fontsize{4.5}{5.0}\selectfont\bfseries,text=Green] at (3.28,1.25) {landmarks};
   \end{scope}
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.12,6.24) {Modelo usado};
+  \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont\bfseries,text=Deep,text width=6.0cm,align=left] at (8.12,5.54)
+    {\(\hat x_k^- = f(\hat x_{k-1},u_k)\)\\
+     \(P_k^- = F_kP_{k-1}F_k^T+Q_k\)\\
+     \(K_k=P_k^-H_k^T(H_kP_k^-H_k^T+R_k)^{-1}\)};
+  \node[anchor=west,font=\fontsize{5.5}{6.25}\selectfont,text=Ink,text width=6.0cm,align=left] at (8.12,3.98)
+    {Cada impacto de sensor se transforma al marco del almacén. Si cae cerca de un landmark existente, corrige la pose; si no, se registra como punto de mapa.};
+  \Metric{8.16}{2.74}{0,03142 m}{mejor RMSE Fase 1}{Green}
+  \Metric{11.30}{2.74}{20--24}{landmarks finales}{Green}
+  \Metric{8.16}{1.54}{límite}{no modela paredes como áreas ocupadas}{Orange}
 }
 
-\DeckSlide{Entregables y cómo defenderlos en 3 minutos}{guion de presentación}{
-  \node[anchor=west,font=\fontsize{7.3}{8.3}\selectfont\bfseries,text=Deep] at (0.82,6.85) {Archivos principales};
-  \foreach \y/\name/\desc/\col in {
-    6.08/{Actividad2\_Pioneer\_Profesional\_10\_10.ttt}/{escena final para abrir y ejecutar en CoppeliaSim}/Teal,
-    5.28/{Actividad2\_Pioneer\_Profesional\_10\_10\_validation.json}/{evidencia reproducible de resultados}/Orange,
-    4.48/{main.pdf}/{informe técnico con trazabilidad y validación}/Blue,
-    3.68/{Actividad2\_Pioneer\_CoppeliaSim.pptx}/{presentación editable profesional}/Green} {
-    \fill[\col!10,rounded corners=3pt] (0.90,\y-0.22) rectangle (7.60,\y+0.35);
-    \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=\col] at (1.12,\y+0.11) {\name};
-    \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont,text=Muted] at (1.12,\y-0.11) {\desc};
-  }
-  \node[anchor=west,font=\fontsize{7.3}{8.3}\selectfont\bfseries,text=Deep] at (9.15,6.85) {Orden recomendado};
-  \foreach \y/\n/\txt in {
-    6.08/1/{Explicar guía: Pioneer, campos potenciales, anticolisión.},
-    5.28/2/{Mostrar celda: ruta, sensores, HMI y batería.},
-    4.48/3/{Ejecutar o enseñar validación: S1--S8 y ARRIVED.},
-    3.68/4/{Cerrar con extensión A*: flota, reservas y carga.}} {
-    \fill[Copper] (9.23,\y+0.02) circle (0.13);
-    \node[font=\fontsize{4.8}{5.3}\selectfont\bfseries,text=white] at (9.23,\y+0.02) {\n};
-    \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont,text=Ink,text width=4.9cm,align=left] at (9.54,\y-0.06) {\txt};
-  }
+\DeckSlide{Grid log-odds inspirada en GMapping}{ocupación con pose estimada}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Orange}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {El mapa pasa de puntos aislados a celdas libres u ocupadas, útiles para evitar bloqueos locales.};
+
+  \begin{scope}[shift={(0.92,1.22)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \foreach \x in {0.55,1.10,...,6.35} \draw[Rule,line width=0.16pt] (\x,0.42) -- (\x,4.92);
+    \foreach \y in {0.55,1.10,...,4.90} \draw[Rule,line width=0.16pt] (0.42,\y) -- (6.48,\y);
+    \Robot{1.32}{1.15}{Teal}
+    \foreach \x/\y in {2.0/1.42,2.55/1.68,3.10/1.94,3.65/2.20,4.20/2.46} {
+      \fill[Teal!16] (\x-0.14,\y-0.14) rectangle ++(0.28,0.28);
+      \draw[Teal!48,line width=0.20pt] (\x-0.14,\y-0.14) rectangle ++(0.28,0.28);
+    }
+    \foreach \x/\y in {4.75/2.72,5.30/2.98,5.30/3.53,4.75/3.53} {
+      \fill[Orange!28] (\x-0.16,\y-0.16) rectangle ++(0.32,0.32);
+      \draw[Orange,line width=0.28pt] (\x-0.16,\y-0.16) rectangle ++(0.32,0.32);
+    }
+    \draw[Orange,line width=0.95pt,-{Latex[length=2.0mm]}] (1.52,1.24) -- (5.30,3.53);
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Teal] at (2.95,1.25) {libre};
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Orange] at (5.40,3.86) {ocupado};
+  \end{scope}
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.12,6.24) {Actualización};
+  \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont\bfseries,text=Deep,text width=6.1cm,align=left] at (8.12,5.54)
+    {\(L_t(c)=\mathrm{clip}(L_{t-1}(c)+\ell(c|z_t,\hat x_t))\)\\
+     \(\ell(c)=\ell_{free}\) en celdas atravesadas\\
+     \(\ell(c)=\ell_{occ}\) en el impacto};
+  \node[anchor=west,font=\fontsize{5.5}{6.25}\selectfont,text=Ink,text width=6.05cm,align=left] at (8.12,3.74)
+    {La versión Lua implementa una grid de ocupación por log-odds con la pose estimada. No es GMapping completo: no hay filtro de partículas ni árbol de trayectorias.};
+  \Metric{8.16}{2.74}{94}{celdas ocupadas Fase 1}{Orange}
+  \Metric{11.30}{2.74}{36}{rasgos Fase 2}{Orange}
+  \Metric{8.16}{1.54}{límite}{la calidad depende de la pose usada para trazar rayos}{Red}
 }
 
-\DeckSlide{Limitaciones reconocidas y mitigación}{criterio técnico}{
+\DeckSlide{Scan-to-map inspirado en Hector}{ajuste local contra la grid}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Teal}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {La aproximación scan-to-map corrige la pose buscando el desplazamiento que mejor encaja el escaneo actual con la grid.};
+
+  \begin{scope}[shift={(0.92,1.22)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \foreach \x in {0.55,1.10,...,6.35} \draw[Rule,line width=0.14pt] (\x,0.42) -- (\x,4.92);
+    \foreach \y in {0.55,1.10,...,4.90} \draw[Rule,line width=0.14pt] (0.42,\y) -- (6.48,\y);
+    \foreach \x/\y in {4.65/3.55,5.20/3.55,5.20/2.98,4.65/2.42,3.95/2.42,3.40/2.98} {
+      \fill[Teal!20] (\x-0.14,\y-0.14) rectangle ++(0.28,0.28);
+    }
+    \foreach \x/\y/\col in {1.50/1.42/Green,1.70/1.60/Orange,1.34/1.64/Violet} {
+      \draw[\col,line width=0.55pt] (\x,\y) circle (0.20);
+    }
+    \Robot{1.50}{1.42}{Teal}
+    \foreach \ang/\len in {18/3.1,30/3.5,43/3.9,55/3.2,68/2.8} {
+      \draw[Teal!45,line width=0.34pt] (1.50,1.42) -- ++(\ang:\len);
+    }
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Violet] at (2.80,1.06) {candidatos de pose};
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Teal] at (4.90,4.20) {grid};
+  \end{scope}
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.12,6.24) {Regla de ajuste};
+  \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont\bfseries,text=Deep,text width=6.1cm,align=left] at (8.12,5.54)
+    {\(\xi^\star=\arg\max_\xi \frac{1}{N}\sum_i M(T_\xi p_i)\)\\
+     \(x_k \leftarrow x_k^-+\alpha(\xi^\star-x_k^-)\)};
+  \node[anchor=west,font=\fontsize{5.5}{6.25}\selectfont,text=Ink,text width=6.05cm,align=left] at (8.12,4.08)
+    {Se evalúan pequeñas correcciones alrededor de la pose predicha. Es una aproximación Lua scan-to-map, no la pila Hector completa con optimización multi-resolución.};
+  \Metric{8.16}{2.74}{15,233 m}{ruta más corta Fase 1}{Teal}
+  \Metric{11.30}{2.74}{0,333}{precisión final de rasgos Fase 2}{Teal}
+  \Metric{8.16}{1.54}{límite}{riesgo de óptimos locales con poca geometría}{Red}
+}
+
+\DeckSlide{Submapas inspirados en Cartographer}{submapas locales y cierres simplificados}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Violet}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {El mapa se organiza en submapas; los retornos a zonas conocidas generan cierres de ciclo simplificados.};
+
+  \begin{scope}[shift={(0.92,1.22)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (6.90,5.35);
+    \foreach \x/\y/\w/\h/\lab in {0.75/2.85/2.05/1.40/{S1},2.35/2.10/2.05/1.40/{S2},3.95/2.80/2.05/1.40/{S3},2.35/0.95/2.05/1.00/{S4}} {
+      \fill[Violet!10,rounded corners=4pt] (\x,\y) rectangle ++(\w,\h);
+      \draw[Violet!68,line width=0.36pt,rounded corners=4pt] (\x,\y) rectangle ++(\w,\h);
+      \node[font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=Violet] at (\x+0.25,\y+\h-0.25) {\lab};
+    }
+    \draw[Green,line width=1.0pt,-{Latex[length=1.7mm]}] (1.00,3.20) .. controls (2.20,3.95) and (3.70,3.85) .. (4.92,3.40);
+    \draw[Green,line width=1.0pt,-{Latex[length=1.7mm]}] (4.92,3.40) .. controls (4.20,2.10) and (2.60,1.30) .. (1.42,3.02);
+    \draw[Orange,line width=0.75pt,dashed,-{Latex[length=1.7mm]}] (4.92,3.40) -- (1.42,3.02);
+    \node[font=\fontsize{4.5}{5.1}\selectfont\bfseries,text=Orange] at (3.20,3.62) {cierre};
+    \Robot{4.92}{3.40}{Teal}
+  \end{scope}
+
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.12,6.24) {Lógica};
+  \node[anchor=west,font=\fontsize{5.9}{6.8}\selectfont\bfseries,text=Deep,text width=6.1cm,align=left] at (8.12,5.58)
+    {scan \(\rightarrow\) submapa activo\\
+     distancia/tiempo \(\rightarrow\) submapa adicional\\
+     score alto con submapa antiguo \(\rightarrow\) cierre};
+  \node[anchor=west,font=\fontsize{5.5}{6.25}\selectfont,text=Ink,text width=6.05cm,align=left] at (8.12,4.12)
+    {La versión Lua conserva la idea de submapas y restricciones locales, pero no resuelve una optimización global de grafo ni loop closure completo como Cartographer.};
+  \Metric{8.16}{2.74}{13}{submapas finales}{Violet}
+  \Metric{11.30}{2.74}{4}{cierres de ciclo}{Violet}
+  \Metric{8.16}{1.54}{95,327\%}{mayor cobertura Fase 2}{Violet}
+}
+
+\DeckSlide{Qué SLAM usar y por qué}{criterio técnico de selección}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Violet}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {La elección no depende de un nombre de algoritmo, sino de qué necesita la celda: pose, ocupación, ajuste local o estructura temporal.};
+
+  \foreach \x/\tit/\preg/\uso/\lim/\col in {
+    0.88/{Kalman}/{¿dónde estoy?}/{pose estable y pocos rasgos}/{no dibuja paredes}/Green,
+    4.42/{Log-odds}/{¿qué celda ocupa?}/{costmap local y obstáculos}/{sin partículas RBPF}/Orange,
+    7.96/{Hector}/{¿encaja el scan?}/{corregir pose con geometría}/{oscila con pocos rayos}/Teal,
+    11.50/{Submapas}/{¿volví aquí?}/{zonas revisitadas y cierres}/{más coste y filtros}/Violet} {
+    \ClaimBox{\x}{3.72}{3.04}{2.44}{\col}
+    \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=\col] at (\x+0.22,5.72) {\tit};
+    \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=Deep,text width=2.42cm,align=left] at (\x+0.22,5.20) {\preg};
+    \node[anchor=west,font=\fontsize{4.8}{5.45}\selectfont,text=Ink,text width=2.44cm,align=left] at (\x+0.22,4.54) {\uso};
+    \draw[\col!60,line width=0.35pt] (\x+0.22,4.14) -- (\x+2.68,4.14);
+    \node[anchor=west,font=\fontsize{4.55}{5.15}\selectfont,text=Muted,text width=2.44cm,align=left] at (\x+0.22,3.92) {\lim};
+  }
+
+  \fill[white,rounded corners=5pt] (0.92,2.02) rectangle (14.42,3.18);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (0.92,2.02) rectangle (14.42,3.18);
+  \foreach \x/\val/\txt/\col in {
+    1.15/{Kalman}/{menor RMSE y duración}/Green,
+    4.36/{Hector}/{mejor precisión aproximada de rasgos en grids}/Teal,
+    8.05/{Submapas}/{mayor cobertura final}/Violet,
+    11.42/{Log-odds}/{referencia simple de ocupación}/Orange} {
+    \node[anchor=west,font=\fontsize{5.65}{6.3}\selectfont\bfseries,text=\col] at (\x,2.78) {\val};
+    \node[anchor=west,font=\fontsize{4.55}{5.15}\selectfont,text=Ink,text width=2.60cm,align=left] at (\x,2.34) {\txt};
+  }
+
+  \fill[Deep,rounded corners=5pt] (0.92,1.02) rectangle (14.42,1.70);
+  \node[anchor=west,font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=VIUOrangeSoft] at (1.16,1.44) {Decisión};
+  \node[anchor=west,font=\fontsize{5.75}{6.45}\selectfont\bfseries,text=white,text width=11.82cm,align=left] at (2.12,1.36)
+    {Para esta celda, Kalman es el modo operativo. Las grids y submapas explican cómo cambia el mapa cuando se prioriza ocupación, ajuste o cierre.};
+}
+
+\DeckSlide{Resultados SLAM Fase 1}{localización y mapa}{
+  \fill[Panel,rounded corners=5pt] (0.68,4.18) rectangle (14.36,7.00);
+  \draw[Rule,line width=0.40pt,rounded corners=5pt] (0.68,4.18) rectangle (14.36,7.00);
+  \fill[Green!10,rounded corners=2pt] (0.82,5.82) rectangle (14.05,6.16);
+  \node[anchor=north west] at (0.75,6.92) {
+    \scriptsize
+    \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{Modo} & \textbf{Dur. [s]} & \textbf{Ruta [m]} & \textbf{RMSE [m]} & \textbf{P95 [m]} & \textbf{Mapa}\\
+    \midrule
+    Kalman & \textbf{121,45} & 15,763 & \textbf{0,03142} & \textbf{0,04670} & 20 landmarks\\
+    Log-odds & 125,60 & 15,997 & 0,04117 & 0,05718 & 94 celdas\\
+    Submapas & 125,25 & 15,968 & 0,04149 & 0,06026 & 13 submapas\\
+    Scan-to-map & 123,55 & \textbf{15,233} & 0,04445 & 0,07596 & 84 celdas\\
+    \bottomrule
+    \end{tabular}
+  };
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Green] at (0.90,4.40)
+    {Kalman concentra el mejor error de pose; scan-to-map recorre menos distancia.};
+  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (0.82,3.60) {Resultado};
+  \node[anchor=west,font=\fontsize{6.1}{7.0}\selectfont,text=Ink,text width=13.2cm,align=left] at (0.82,3.05)
+    {Kalman da el menor error de pose en la celda compacta. Las grids log-odds y scan-to-map producen mapas de ocupación comparables. Los submapas no mejoran el RMSE frente a Kalman, pero registran estructura y cierres simplificados. Comparación con \(n=1\) ejecución por método.};
+  \Metric{0.92}{1.88}{4/4}{todos completan la misión}{Green}
+  \Metric{3.70}{1.88}{23--25\%}{batería usada en la comparación SLAM}{Orange}
+  \Metric{7.00}{1.88}{4275--4514}{actualizaciones SLAM Fase 1}{Teal}
+  \fill[Panel,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \draw[PanelEdge,line width=0.35pt,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \ClaimBox{0.82}{6.64}{13.70}{0.50}{Green}
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Deep] at (1.06,6.91)
+    {Los cuatro estimadores ejecutan la misma misión: el ranking combina error de pose, ruta y estructura de mapa.};
+  \fill[white,rounded corners=5pt] (0.86,3.52) rectangle (8.78,6.22);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (0.86,3.52) rectangle (8.78,6.22);
+  \node at (4.82,4.82) {\includegraphics[width=7.50cm,height=2.30cm,keepaspectratio]{../figures/phase1/phase1_slam_algorithm_comparison.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Green] at (1.08,3.75)
+    {Trayectoria, error y mapa exportados desde Fase 1};
+  \fill[Deep,rounded corners=5pt] (9.08,4.60) rectangle (14.44,6.22);
+  \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Teal] at (9.38,5.82) {MEJOR ERROR DE POSE};
+  \node[anchor=west,font=\fontsize{12.6}{13.6}\selectfont\bfseries,text=white] at (9.38,5.27) {Kalman landmark};
+  \node[anchor=west,font=\fontsize{13.8}{14.8}\selectfont\bfseries,text=Green] at (9.38,4.78) {0,03142 m RMSE};
+  \foreach \y/\lab/\val/\col/\ww in {
+    3.76/Kalman/{0,03142}/Green/2.70,
+    3.30/Log-odds/{0,04117}/Orange/2.18,
+    2.84/Submapas/{0,04149}/Violet/2.15,
+    2.38/Scan-to-map/{0,04445}/Teal/2.00} {
+    \node[anchor=west,font=\fontsize{5.3}{6.0}\selectfont\bfseries,text=Ink] at (9.10,\y) {\lab};
+    \fill[Rule,rounded corners=1.4pt] (10.92,\y+0.03) rectangle ++(2.80,0.14);
+    \fill[\col,rounded corners=1.4pt] (10.92,\y+0.03) rectangle ++(\ww,0.14);
+    \node[anchor=east,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=\col] at (14.30,\y+0.10) {\val};
+  }
+  \Metric{0.96}{2.20}{4/4}{todos completan la misión}{Green}
+  \Metric{4.02}{2.20}{Scan-to-map}{ruta más corta: 15,233 m}{Teal}
+  \Metric{7.08}{2.20}{Submapas}{13 submapas y cierres}{Violet}
+  \Metric{10.14}{2.20}{4275--4514}{actualizaciones SLAM}{Orange}
+}
+
+\DeckSlide{Timeline de misión}{estados exportados durante la ejecución}{
+  \fill[Panel,rounded corners=6pt] (0.72,1.20) rectangle (14.32,6.70);
+  \draw[Rule,line width=0.40pt,rounded corners=6pt] (0.72,1.20) rectangle (14.32,6.70);
+  \node at (7.52,4.12) {\includegraphics[width=12.95cm,height=4.78cm,keepaspectratio]{../figures/phase1/phase1_slam_task_timeline.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (0.98,6.05) rectangle (6.72,6.48);
+  \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Deep] at (1.16,6.27)
+    {Estados de tarea, movimiento, planner, Bill y batería en la misma escala temporal};
+  \Metric{0.92}{1.42}{WAIT\_B1}{R1 se detiene mientras Bill trabaja}{Blue}
+  \Metric{4.05}{1.42}{AVOIDING}{riesgo y reducción de velocidad registrados}{Orange}
+  \Metric{7.18}{1.42}{SLAM}{actualizaciones y planner registrados}{Violet}
+  \Metric{10.31}{1.42}{CHARGE}{retorno final a estación}{Green}
+}
+
+\DeckSlide{Fase 2: mapa desconocido}{SLAM durante exploración}{
+  \ClaimBox{0.78}{6.82}{13.60}{0.54}{Violet}
+  \node[anchor=west,font=\fontsize{5.9}{6.7}\selectfont\bfseries,text=Deep] at (1.02,7.09)
+    {Misma misión T1 y T2, pero sin mapa completo al inicio: el mapa se construye durante la ejecución.};
+  \foreach \x/\tit/\val/\txt/\col in {
+    0.90/{Kalman}/{0,03185 m}/{mejor RMSE de pose}/Green,
+    4.05/{Submapas}/{95,327\%}/{mayor actividad de mapeo}/Violet,
+    7.50/{Log-odds}/{19}/{replanificaciones}/Orange,
+    10.70/{Scan-to-map}/{0,333}/{mayor precisión final de rasgos}/Teal} {
+    \fill[\col!10,rounded corners=5pt] (\x,4.85) rectangle ++(2.82,1.70);
+    \draw[\col!75,line width=0.48pt,rounded corners=5pt] (\x,4.85) rectangle ++(2.82,1.70);
+    \node[anchor=west,font=\fontsize{6.4}{7.2}\selectfont\bfseries,text=\col] at (\x+0.20,6.08) {\tit};
+    \node[anchor=west,font=\fontsize{11.0}{12}\selectfont\bfseries,text=Deep] at (\x+0.20,5.52) {\val};
+    \node[anchor=west,font=\fontsize{5.2}{6.0}\selectfont,text=Ink,text width=2.32cm,align=left] at (\x+0.20,5.08) {\txt};
+  }
+  \fill[Panel,rounded corners=5pt] (0.72,1.88) rectangle (8.88,4.15);
+  \draw[Rule,line width=0.38pt,rounded corners=5pt] (0.72,1.88) rectangle (8.88,4.15);
+  \node[anchor=north west] at (0.82,4.00) {
+    \scriptsize
+    \begin{tabular}{@{}lrrrrr@{}}
+    \toprule
+    \textbf{Modo} & \textbf{Dur. [s]} & \textbf{Ruta [m]} & \textbf{RMSE [m]} & \textbf{Evid. [\%]} & \textbf{Rasgos}\\
+    \midrule
+    Kalman & \textbf{124,80} & 15,752 & \textbf{0,03185} & 94,613 & 24\\
+    Log-odds & 128,00 & 15,905 & 0,04220 & 94,851 & 36\\
+    Scan-to-map & 129,40 & \textbf{15,735} & 0,04587 & 94,930 & 36\\
+    Submapas & 138,65 & 16,441 & 0,03930 & \textbf{95,327} & 36\\
+    \bottomrule
+    \end{tabular}
+  };
+  \Metric{9.80}{1.58}{9--10}{cruces de obstáculo dinámico}{Red}
+  \Metric{12.20}{1.58}{17--25}{replanificaciones según modo}{Blue}
+  \fill[Paper] (0.48,0.78) rectangle (15.42,7.12);
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.2cm,align=left] at (0.92,6.62)
+    {Fase 2 arranca con parte de la celda desconocida y obliga a descubrir obstáculos con rayos de proximidad mientras el robot mantiene la misión T1/T2.};
+  \fill[Violet!8,rounded corners=4pt] (0.92,3.40) rectangle ++(6.08,2.62);
+  \draw[Violet!70,line width=0.36pt,rounded corners=4pt] (0.92,3.40) rectangle ++(6.08,2.62);
+  \node at (3.96,4.74) {\includegraphics[width=5.58cm,height=1.95cm,keepaspectratio]{../figures/phase1/coppeliasim_phase2_initial_unknown_oriented.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (1.16,3.65) {inicio con zona no observada};
+  \fill[Orange!8,rounded corners=4pt] (7.62,3.40) rectangle ++(6.08,2.62);
+  \draw[Orange!70,line width=0.36pt,rounded corners=4pt] (7.62,3.40) rectangle ++(6.08,2.62);
+  \node at (10.66,4.74) {\includegraphics[width=5.58cm,height=1.95cm,keepaspectratio]{../figures/phase1/coppeliasim_phase2_replan_dynamic_oriented.png}};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Orange] at (7.86,3.65) {replanificación ante obstáculo dinámico};
+  \Metric{0.92}{2.05}{0,03185 m}{Kalman: menor RMSE de pose}{Green}
+  \Metric{4.16}{2.05}{95,327\%}{submapas: mayor actividad de mapa}{Violet}
+  \Metric{7.40}{2.05}{17--25}{replanificaciones según modo}{Orange}
+  \Metric{10.64}{2.05}{0--1}{recuperaciones del planner}{Red}
+}
+
+\DeckSlide{Recuperación local en Fase 2}{bloqueo local y recuperación}{
   \foreach \x/\tit/\risk/\mit/\col in {
-    0.85/Mínimos locales/{Campo potencial puede oscilar o bloquearse.}/{FSM RECOVERY y ruta por waypoints.}/Orange,
-    5.45/Sensor imperfecto/{Ruido o fallo intermitente en proximidad.}/{Filtro, degradación simulada y margen de seguridad.}/Red,
-    10.05/Simulación vs planta/{La escena no equivale a certificación industrial.}/{Validar primero en CoppeliaSim y documentar supuestos.}/Blue} {
-    \fill[\col!9,rounded corners=5pt] (\x,2.25) rectangle ++(3.85,4.18);
-    \draw[\col!75,line width=0.5pt,rounded corners=5pt] (\x,2.25) rectangle ++(3.85,4.18);
-    \node[anchor=west,font=\fontsize{7.5}{8.4}\selectfont\bfseries,text=\col] at (\x+0.28,5.72) {\tit};
-    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,4.75) {Riesgo};
-    \node[anchor=west,font=\fontsize{5.6}{6.5}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,4.28) {\risk};
-    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,3.27) {Mitigación};
-    \node[anchor=west,font=\fontsize{5.6}{6.5}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,2.80) {\mit};
+    0.85/{Sensores}/{Se usan ultrasonidos y rayos simulados, no un LiDAR físico 2D.}/{Las gráficas SLAM se reportan como reconstrucción con rayos de proximidad.}/Teal,
+    5.45/{SLAM}/{Variantes Lua de grid, scan matching y submapas.}/{Todas usan las mismas señales y métricas.}/Violet,
+    10.05/{Planificación}/{El planificador local activa recuperación ante bloqueos.}/{Fase 2 mide replanificaciones y recuperación directa con mapa desconocido.}/Orange} {
+    \fill[\col!9,rounded corners=5pt] (\x,2.20) rectangle ++(3.85,4.30);
+    \draw[\col!75,line width=0.5pt,rounded corners=5pt] (\x,2.20) rectangle ++(3.85,4.30);
+    \node[anchor=west,font=\fontsize{7.5}{8.4}\selectfont\bfseries,text=\col] at (\x+0.28,5.80) {\tit};
+    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,4.88) {Límite};
+    \node[anchor=west,font=\fontsize{5.5}{6.4}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,4.40) {\risk};
+    \node[anchor=west,font=\fontsize{5.7}{6.6}\selectfont\bfseries,text=Deep] at (\x+0.28,3.18) {Cómo se informa};
+    \node[anchor=west,font=\fontsize{5.5}{6.4}\selectfont,text=Ink,text width=3.25cm,align=left] at (\x+0.28,2.70) {\mit};
   }
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \node[anchor=west,font=\fontsize{6.3}{7.2}\selectfont,text=Muted,text width=13.2cm,align=left] at (0.92,6.60)
+    {Las variantes de grid se bloquean cuando el mapa trata como obstáculo cualquier celda cercana al segmento hacia el objetivo. El filtro separa bloqueo real, obstáculo pegado al robot y obstáculo pegado al punto de recogida.};
+  \foreach \x/\tit/\body/\col in {
+    0.90/{Persistencia}/{la celda se marca como bloqueante solo tras detecciones repetidas en el log-odds}/Teal,
+    4.45/{Distancia local}/{se ignoran celdas dentro del radio de R1 o pegadas al objetivo para no cerrar el punto final}/Green,
+    8.00/{Área útil}/{el coste del waypoint penaliza puntos fuera del pasillo operativo del almacén}/Orange,
+    11.55/{Recuperación}/{\texttt{RECOVERY\_DIRECT} usa objetivo directo durante una ventana corta si el mapa no libera ruta}/Violet} {
+    \ClaimBox{\x}{4.45}{2.92}{1.48}{\col}
+    \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=\col] at (\x+0.22,5.55) {\tit};
+    \node[anchor=west,font=\fontsize{5.2}{6.0}\selectfont,text=Ink,text width=2.36cm,align=left] at (\x+0.22,5.05) {\body};
+  }
+  \fill[Paper,rounded corners=5pt] (1.05,1.42) rectangle (13.95,3.55);
+  \draw[Rule,line width=0.36pt,rounded corners=5pt] (1.05,1.42) rectangle (13.95,3.55);
+  \foreach \x/\lab/\col in {1.55/mapa crudo/Red,4.30/filtros/Orange,7.05/waypoint/Violet,9.80/control reactivo/Teal,12.25/objetivo/Green} {
+    \fill[\col!10,rounded corners=3pt] (\x,2.34) rectangle ++(1.70,0.58);
+    \draw[\col!65,line width=0.34pt,rounded corners=3pt] (\x,2.34) rectangle ++(1.70,0.58);
+    \node[font=\fontsize{4.8}{5.4}\selectfont\bfseries,text=\col] at (\x+0.85,2.63) {\lab};
+  }
+  \foreach \x in {3.38,6.13,8.88,11.38} {
+    \draw[Deep,line width=0.6pt,-{Latex[length=1.7mm]}] (\x,2.63) -- ++(0.58,0);
+  }
+  \Metric{1.18}{1.60}{4/4}{métodos completan Fase 2}{Green}
+  \Metric{4.60}{1.60}{1}{recuperación observada en submapas}{Violet}
+  \Metric{8.02}{1.60}{17}{mínimo de replanificaciones, Kalman}{Teal}
+  \Metric{11.44}{1.60}{25}{máximo de replanificaciones, submapas}{Orange}
 }
 
-\DeckSlide{Conclusión: una entrega defendible, no decorativa}{cierre}{
-  \node[anchor=west,font=\fontsize{13.2}{14.3}\selectfont\bfseries,text=Deep,text width=8.2cm,align=left] at (0.88,6.42)
-    {La mejora visual sirve a la evaluación: cada diagrama apunta a un requisito, un módulo o una prueba.};
-  \node[anchor=west,font=\fontsize{6.6}{7.7}\selectfont,text=Ink,text width=8.0cm,align=left] at (0.92,4.78)
-    {La escena final muestra el Pioneer moviéndose con campos potenciales, evitando obstáculos, publicando estado, operando dentro de una celda y extendiéndose a una flota auxiliar con A* cooperativo.};
+\DeckSlide{Comparación Fase 2: trayectorias}{misma escena desconocida, cuatro estimadores}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Violet}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {La comparación se hace con la misma misión T1/T2 y los mismos obstáculos dinámicos.};
+
+  \fill[Panel,rounded corners=6pt] (0.76,1.08) rectangle (9.62,6.54);
+  \draw[Rule,line width=0.40pt,rounded corners=6pt] (0.76,1.08) rectangle (9.62,6.54);
+  \node at (5.19,3.76) {\includegraphics[width=8.30cm,height=5.02cm,keepaspectratio]{assets/phase2_unknown_trajectory_crop.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (1.02,6.02) rectangle (5.70,6.34);
+  \node[anchor=west,font=\fontsize{5.0}{5.7}\selectfont\bfseries,text=Deep] at (1.18,6.18)
+    {Trayectorias finales y rasgos detectados};
+
+  \node[anchor=west,font=\fontsize{7.4}{8.3}\selectfont\bfseries,text=Deep] at (10.05,6.30)
+    {Comparación};
+  \foreach \y/\txt/\col in {
+    5.55/{Kalman mantiene la trayectoria más estable en error de pose.}/Green,
+    4.88/{Scan-to-map y log-odds siguen una ruta cercana, con más dispersión local.}/Teal,
+    4.21/{Submapas añade cierres simplificados y más estructura.}/Violet,
+    3.54/{El pallet dinámico modifica el recorrido sin cambiar la misión.}/Orange} {
+    \fill[\col] (10.10,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.6}{6.4}\selectfont,text=Ink,text width=4.30cm,align=left] at (10.32,\y) {\txt};
+  }
+  \Metric{10.08}{2.74}{4}{modos SLAM}{Violet}
+  \Metric{12.38}{2.74}{17--25}{replanificaciones}{Orange}
+  \Metric{10.08}{1.52}{9--10}{cruces dinámicos}{Teal}
+  \Metric{12.38}{1.52}{0--1}{recuperaciones}{Green}
+}
+
+\DeckSlide{Comparación Fase 2: cobertura temporal}{cobertura de mapa frente al tiempo}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Teal}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {La cobertura de mapa se registra durante la ejecución y compara la velocidad de descubrimiento.};
+
+  \fill[Panel,rounded corners=6pt] (0.76,1.08) rectangle (11.30,6.54);
+  \draw[Rule,line width=0.40pt,rounded corners=6pt] (0.76,1.08) rectangle (11.30,6.54);
+  \node at (6.03,3.72) {\includegraphics[width=10.10cm,height=4.82cm,keepaspectratio]{assets/phase2_unknown_evidence_crop.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (1.02,6.02) rectangle (5.84,6.34);
+  \node[anchor=west,font=\fontsize{5.0}{5.7}\selectfont\bfseries,text=Deep] at (1.18,6.18)
+    {Curva de cobertura de mapa};
+
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (11.72,6.12) {Comportamiento};
+  \node[anchor=west,font=\fontsize{5.65}{6.35}\selectfont,text=Ink,text width=2.88cm,align=left] at (11.74,5.42)
+    {Las grids suben rápido al inicio. Kalman descubre rasgos más despacio, pero termina cerca del mismo rango de cobertura.};
+  \Metric{11.78}{3.24}{5,1 s}{75\% de cobertura en grids}{Teal}
+  \Metric{11.78}{1.82}{98,55 s}{75\% de cobertura en Kalman}{Orange}
+}
+
+\DeckSlide{Comparación Fase 2: cobertura final}{cobertura final por método}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Violet}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {Todos los métodos quedan en torno al 95\% de cobertura final, con diferencias pequeñas pero medibles.};
+
+  \foreach \y/\name/\val/\w/\col in {
+    5.72/{Submapas}/{95,327\%}/11.38/Violet,
+    4.82/{Scan-to-map}/{94,930\%}/11.33/Teal,
+    3.92/{Log-odds}/{94,851\%}/11.32/Orange,
+    3.02/{Kalman landmark}/{94,613\%}/11.29/Green} {
+    \node[anchor=west,font=\fontsize{5.7}{6.3}\selectfont\bfseries,text=Deep] at (1.08,\y+0.20) {\name};
+    \fill[Rule,rounded corners=3pt] (3.74,\y) rectangle (14.80,\y+0.32);
+    \fill[\col,rounded corners=3pt] (3.74,\y) rectangle ++(\w,0.32);
+    \node[anchor=east,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=\col] at (14.58,\y+0.57) {\val};
+  }
+
+  \fill[Deep,rounded corners=5pt] (1.02,1.22) rectangle (14.78,2.18);
+  \node[anchor=west,font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=VIUOrangeSoft] at (1.28,1.86) {Comparación};
+  \node[anchor=west,font=\fontsize{5.65}{6.35}\selectfont\bfseries,text=white,text width=11.64cm,align=left] at (2.38,1.72)
+    {Submapas alcanza la mayor cobertura final, pero la diferencia frente a scan-to-map y log-odds es menor a medio punto porcentual.};
+}
+
+\DeckSlide{Fase 2: mapa desconocido}{bloqueos y obstáculos dinámicos}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Green}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {La escena introduce zonas inicialmente no observadas y obstáculos que obligan a replanificar.};
+
+  \fill[Panel,rounded corners=6pt] (0.76,1.08) rectangle (10.84,6.54);
+  \draw[Rule,line width=0.40pt,rounded corners=6pt] (0.76,1.08) rectangle (10.84,6.54);
+  \node at (5.80,3.74) {\includegraphics[width=9.54cm,height=4.92cm,keepaspectratio]{../coppeliasim/phase2_slam_logs/phase2_slam_unknown_overview.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (1.02,6.02) rectangle (5.84,6.34);
+  \node[anchor=west,font=\fontsize{5.0}{5.7}\selectfont\bfseries,text=Deep] at (1.18,6.18)
+    {Mapa y obstáculos};
+
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (11.28,6.12) {Elementos de Fase 2};
+  \foreach \y/\txt/\col in {
+    5.35/{El mapa no se inicializa completo; se revela con sensores.}/Green,
+    4.62/{El pallet y el bloque temporal modifican el paso local.}/Orange,
+    3.89/{El planificador alterna DIRECT, SLAM\_WAYPOINT y recuperación.}/Violet,
+    3.16/{Todos los métodos ejecutan la misma misión.}/Teal} {
+    \fill[\col] (11.34,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.55}{6.25}\selectfont,text=Ink,text width=3.06cm,align=left] at (11.56,\y) {\txt};
+  }
+  \Metric{11.36}{1.86}{9--10}{cruces de obstáculo dinámico}{Teal}
+}
+
+\DeckSlide{Fase 2: señales exportadas}{logger de navegación y SLAM}{
+  \ClaimBox{0.78}{6.74}{13.58}{0.48}{Orange}
+  \node[anchor=west,font=\fontsize{5.8}{6.5}\selectfont\bfseries,text=Deep] at (1.02,6.99)
+    {Las señales reconstruyen la ejecución y comparan navegación, riesgo, mapa y batería.};
+
+  \fill[Panel,rounded corners=6pt] (0.76,1.08) rectangle (11.20,6.54);
+  \draw[Rule,line width=0.40pt,rounded corners=6pt] (0.76,1.08) rectangle (11.20,6.54);
+  \node at (5.98,3.74) {\includegraphics[width=9.92cm,height=4.92cm,keepaspectratio]{../coppeliasim/phase2_slam_logs/phase2_slam_unknown_signals.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (1.02,6.02) rectangle (5.72,6.34);
+  \node[anchor=west,font=\fontsize{5.0}{5.7}\selectfont\bfseries,text=Deep] at (1.18,6.18)
+    {Series temporales exportadas};
+
+  \node[anchor=west,font=\fontsize{7.2}{8.0}\selectfont\bfseries,text=Deep] at (11.64,6.12) {Resultado};
+  \foreach \y/\txt/\col in {
+    5.38/{Verificar cuándo aparece cada replanificación.}/Orange,
+    4.66/{Medir riesgo máximo y distancia mínima a obstáculos.}/Red,
+    3.94/{Cruzar mapa revelado con error de pose.}/Green,
+    3.22/{Comparar consumo de batería entre métodos.}/Teal} {
+    \fill[\col] (11.70,\y+0.06) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.55}{6.25}\selectfont,text=Ink,text width=2.88cm,align=left] at (11.92,\y) {\txt};
+  }
+  \Metric{11.72}{1.82}{CSV}{fuente de plots y tablas}{Violet}
+}
+
+\DeckSlide{Comparación Fase 2: métricas}{duración, error, mapa y replanificación}{
+  \fill[Panel,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \draw[PanelEdge,line width=0.35pt,rounded corners=6pt] (0.60,0.90) rectangle (15.10,7.38);
+  \ClaimBox{0.82}{6.64}{13.70}{0.50}{Green}
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Deep] at (1.06,6.91)
+    {Fase 2 se evalúa con cuatro métricas: error, ruta, cobertura y replanificación.};
+
+  \foreach \x/\tit/\metric/\body/\col in {
+    0.88/Kalman/{0,03185 m}/{menor RMSE y menor duración}/Green,
+    4.42/Scan-to-map/{15,735 m}/{ruta final más corta}/Teal,
+    7.96/Submapas/{95,327\%}/{mayor cobertura y submapas}/Violet,
+    11.50/Log-odds/{0 recovery}/{grid estable sin recuperación}/Orange} {
+    \fill[\col!10,rounded corners=5pt] (\x,5.18) rectangle ++(3.05,0.96);
+    \draw[\col!65,line width=0.34pt,rounded corners=5pt] (\x,5.18) rectangle ++(3.05,0.96);
+    \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=\col] at (\x+0.18,5.86) {\tit};
+    \node[anchor=west,font=\fontsize{9.3}{10.2}\selectfont\bfseries,text=Deep] at (\x+0.18,5.52) {\metric};
+    \node[anchor=west,font=\fontsize{4.8}{5.4}\selectfont,text=Ink,text width=2.40cm,align=left] at (\x+0.18,5.26) {\body};
+  }
+
+  \fill[white,rounded corners=5pt] (0.86,2.18) rectangle (7.50,4.78);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (0.86,2.18) rectangle (7.50,4.78);
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Green] at (1.08,4.48) {RMSE de pose [m]};
+  \foreach \y/\lab/\val/\col/\ww in {
+    3.88/Kalman/{0,03185}/Green/3.48,
+    3.42/Submapas/{0,03930}/Violet/2.82,
+    2.96/Log-odds/{0,04220}/Orange/2.62,
+    2.50/Scan-to-map/{0,04587}/Teal/2.36} {
+    \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=Ink] at (1.10,\y) {\lab};
+    \fill[Rule,rounded corners=1.4pt] (2.82,\y+0.04) rectangle ++(3.60,0.15);
+    \fill[\col,rounded corners=1.4pt] (2.82,\y+0.04) rectangle ++(\ww,0.15);
+    \node[anchor=east,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=\col] at (7.18,\y+0.10) {\val};
+  }
+
+  \fill[white,rounded corners=5pt] (7.86,2.18) rectangle (14.50,4.78);
+  \draw[Rule,line width=0.34pt,rounded corners=5pt] (7.86,2.18) rectangle (14.50,4.78);
+  \node[anchor=west,font=\fontsize{6.1}{6.8}\selectfont\bfseries,text=Violet] at (8.08,4.48) {Cobertura de mapa [\%]};
+  \foreach \y/\lab/\val/\col/\ww in {
+    3.88/Submapas/{95,327}/Violet/3.54,
+    3.42/Scan-to-map/{94,930}/Teal/3.42,
+    2.96/Log-odds/{94,851}/Orange/3.39,
+    2.50/Kalman/{94,613}/Green/3.32} {
+    \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=Ink] at (8.10,\y) {\lab};
+    \fill[Rule,rounded corners=1.4pt] (10.10,\y+0.04) rectangle ++(3.55,0.15);
+    \fill[\col,rounded corners=1.4pt] (10.10,\y+0.04) rectangle ++(\ww,0.15);
+    \node[anchor=east,font=\fontsize{5.0}{5.6}\selectfont\bfseries,text=\col] at (14.18,\y+0.10) {\val};
+  }
+
+  \fill[Deep,rounded corners=5pt] (0.92,1.10) rectangle (14.48,1.82);
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=VIUOrangeSoft] at (1.14,1.52) {Elección};
+  \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=white,text width=11.80cm,align=left] at (2.14,1.44)
+    {Kalman queda primero por error y tiempo; submapas gana en cobertura; scan-to-map acorta ruta; log-odds queda como referencia de grid.};
+
+}
+
+\DeckSlide{Reconstrucción con rayos de proximidad}{mapa en un instante de la ejecución}{
+  \begin{scope}[shift={(0.88,1.22)}]
+    \fill[Paper,rounded corners=6pt] (0,0) rectangle (8.10,5.80);
+    \draw[Rule,rounded corners=6pt] (0,0) rectangle (8.10,5.80);
+    \foreach \x in {0.55,1.10,...,7.55} \draw[Rule,line width=0.18pt] (\x,0.35) -- (\x,5.45);
+    \foreach \y in {0.55,1.10,...,5.45} \draw[Rule,line width=0.18pt] (0.35,\y) -- (7.75,\y);
+    \foreach \x/\y in {4.4/4.6,4.8/4.55,5.2/4.42,5.5/4.22,6.0/2.9,6.2/2.45,2.85/1.8,3.2/1.7} {
+      \draw[Teal!28,line width=0.26pt] (5.85,1.20) -- (\x,\y);
+    }
+    \foreach \x/\y in {3.05/2.30,3.60/2.30,3.05/2.85,3.60/2.85,5.10/4.12,5.65/4.12} {
+      \fill[Red!10] (\x,\y) rectangle ++(0.18,0.18);
+    }
+    \foreach \x/\y in {4.00/1.20,4.55/1.20,5.10/1.20,5.65/1.20,3.90/1.75,3.90/2.30,2.10/3.35} {
+      \fill[Green!10] (\x,\y) rectangle ++(0.18,0.18);
+    }
+    \draw[Green,line width=1.0pt] (0.82,4.85) -- (2.10,4.85) -- (2.10,3.35) -- (3.90,3.35) -- (3.90,1.20) -- (5.85,1.20);
+    \foreach \x/\y in {1.0/4.9,1.8/4.9,2.2/3.4,3.1/3.35,4.0/2.7,4.0/1.9,5.0/1.2,5.8/1.2} {
+      \fill[Green] (\x,\y) circle (0.035);
+    }
+    \foreach \x/\y in {4.40/4.60,4.80/4.55,5.20/4.42,5.50/4.22,6.00/2.90,6.20/2.45,2.85/1.80,3.20/1.70} {
+      \fill[Violet!75] (\x,\y) circle (0.045);
+    }
+    \fill[Red!20] (3.05,2.30) rectangle (3.70,2.90);
+    \draw[Red,line width=0.5pt] (3.05,2.30) rectangle (3.70,2.90);
+    \Robot{5.85}{1.20}{Teal}
+    \ScanFan{5.85}{1.20}{Teal}{0.90}
+    \node[font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Green] at (1.40,5.20) {trayectoria};
+    \node[font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (5.30,4.95) {rasgos detectados};
+    \node[font=\fontsize{4.1}{4.7}\selectfont\bfseries,text=Red] at (3.38,3.12) {ocupado};
+    \node[font=\fontsize{4.1}{4.7}\selectfont\bfseries,text=Teal] at (6.40,1.55) {rayos};
+  \end{scope}
+  \node[anchor=west,font=\fontsize{7.2}{8.2}\selectfont\bfseries,text=Deep] at (9.55,6.52) {Qué representa};
+  \foreach \y/\txt/\col in {
+    5.72/{Los rayos de proximidad se transforman al marco del almacén}/Teal,
+    5.00/{Las celdas o landmarks se actualizan durante la misión}/Violet,
+    4.28/{El mapa reconstruido se compara por RMSE, P95, actividad y rasgos}/Green,
+    3.56/{Se comparan variantes Lua con el mismo logger}/Orange} {
+    \fill[\col] (9.64,\y+0.07) circle (0.055);
+    \node[anchor=west,font=\fontsize{6.0}{6.9}\selectfont,text=Ink,text width=4.8cm,align=left] at (9.86,\y) {\txt};
+  }
+  \Metric{9.62}{2.15}{t = 60 s}{instante usado para comparar rasgos}{Blue}
+  \Metric{12.40}{2.15}{datos}{salida para graficar reconstrucción}{Teal}
+  \fill[Paper] (0.48,0.78) rectangle (15.42,7.12);
+  \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
+  \node at (7.52,4.34) {\includegraphics[width=12.90cm,height=4.92cm,keepaspectratio]{../coppeliasim/phase2_slam_logs/phase2_slam_unknown_reconstruction_t60.png}};
+  \fill[Panel,opacity=0.94,rounded corners=3pt] (0.92,6.18) rectangle (8.92,6.58);
+  \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=Deep] at (1.10,6.38)
+    {Reconstrucción al mismo instante común: \(t=60\,s\), usando los rayos de proximidad como fuente de mapa};
+  \ClaimBox{0.98}{1.04}{2.70}{0.72}{Violet}
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Violet] at (1.18,1.56) {4 modos};
+  \node[anchor=west,font=\fontsize{4.6}{5.2}\selectfont,text=Ink,text width=2.18cm,align=left] at (1.18,1.26)
+    {Kalman, log-odds, scan-to-map y submapas};
+  \ClaimBox{4.00}{1.04}{2.65}{0.72}{Green}
+  \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Green] at (4.20,1.56) {misma escena};
+  \node[anchor=west,font=\fontsize{4.6}{5.2}\selectfont,text=Ink,text width=2.10cm,align=left] at (4.20,1.26)
+    {comparación sobre geometría común};
+}
+
+\DeckSlide{Conclusiones}{resultado técnico}{
+  \node[anchor=west,font=\fontsize{12.5}{13.7}\selectfont\bfseries,text=Deep,text width=8.6cm,align=left] at (0.88,6.42)
+    {El Pioneer completa la misión de almacén y compara control, evitación y SLAM en la misma celda.};
+  \node[anchor=west,font=\fontsize{6.5}{7.6}\selectfont,text=Ink,text width=8.2cm,align=left] at (0.92,4.80)
+    {El sistema combina seguimiento de Bill, planificación por estados, evitación reactiva y estimación de mapa. Los controladores y métodos SLAM se evalúan con duración, ruta, batería, error de pose, riesgo y actividad de mapeo.};
   \begin{scope}[shift={(10.05,1.75)}]
     \fill[Paper,rounded corners=6pt] (0,0) rectangle (4.45,4.75);
     \draw[Rule,rounded corners=6pt] (0,0) rectangle (4.45,4.75);
     \Robot{1.00}{1.12}{Teal}
     \draw[Orange,line width=1.0pt,-{Latex[length=2mm]}] (1.00,1.12) -- (2.14,1.12) -- (2.14,2.86) -- (3.50,2.86);
     \fill[Green] (3.50,2.86) circle (0.11);
-    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (3.52,3.22) {ARRIVED};
-    \Tag{0.52}{3.88}{JSON passed}{Green}
-    \Tag{0.52}{3.28}{22 sensores}{Teal}
-    \Tag{0.52}{2.68}{S1--S8}{Orange}
+    \node[font=\fontsize{5.1}{5.8}\selectfont\bfseries,text=Green] at (3.52,3.22) {CHARGING};
+    \Tag{0.52}{3.88}{Fase 1 OK}{Green}
+    \Tag{0.52}{3.28}{Fase 2 OK}{Violet}
+    \Tag{0.52}{2.68}{SLAM OK}{Orange}
   \end{scope}
   \draw[Copper,line width=0.7pt] (0.90,2.00) -- (8.40,2.00);
-  \node[anchor=west,font=\fontsize{6.5}{7.4}\selectfont\bfseries,text=Copper] at (0.92,1.55)
-    {Mensaje de defensa: obligatorio resuelto, mejora profesional justificada y evidencia reproducible.};
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont\bfseries,text=Copper,text width=7.45cm,align=left] at (0.92,1.55)
+    {La simulación está acotada por sensores de proximidad, modelos SLAM simplificados y entorno simulado.};
+  \fill[Panel,rounded corners=6pt] (0.62,0.86) rectangle (14.82,7.06);
+  \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.86) rectangle (14.82,7.06);
+  \node[anchor=west,font=\fontsize{11.0}{12.0}\selectfont\bfseries,text=Deep,text width=12.8cm,align=left] at (0.92,6.36)
+    {La misión se completa; la elección depende de la métrica priorizada.};
+  \foreach \x/\y/\tit/\body/\col in {
+    0.92/4.40/{Control elegido}/{PI queda primero en el puntaje de la celda: menor valor ponderado, tiempo corto y consumo estable. NMPC mejora ruta y batería.}/Green,
+    7.58/4.40/{SLAM elegido}/{Kalman-landmark da el menor RMSE en un espacio compacto. Las grids sostienen navegación; los submapas registran estructura con más coste.}/Violet,
+    0.92/2.22/{Limitaciones explícitas}/{SLAM simplificado en Lua, rayos de proximidad en lugar de LiDAR real y una ejecución por método en las tablas principales.}/Orange,
+    7.58/2.22/{Trabajo futuro}/{LiDAR 2D real, optimización de grafo completa para submapas, repetición estadística y más obstáculos dinámicos.}/Teal} {
+    \ClaimBox{\x}{\y}{6.08}{1.52}{\col}
+    \node[anchor=west,font=\fontsize{6.7}{7.5}\selectfont\bfseries,text=\col] at (\x+0.22,\y+1.02) {\tit};
+    \node[anchor=west,font=\fontsize{5.55}{6.35}\selectfont,text=Ink,text width=5.48cm,align=left] at (\x+0.22,\y+0.42) {\body};
+  }
+  \fill[Deep,rounded corners=5pt] (0.92,1.02) rectangle (14.34,1.70);
+  \node[anchor=west,font=\fontsize{5.4}{6.1}\selectfont\bfseries,text=VIUOrangeSoft] at (1.18,1.42) {Cierre};
+  \node[anchor=west,font=\fontsize{5.7}{6.4}\selectfont\bfseries,text=white,text width=11.70cm,align=left] at (2.08,1.34)
+    {El cierre enlaza especificación, implementación Lua, métricas exportadas y límites técnicos.};
+}
+
+\DeckSlide{Referencias}{}{
+  \foreach \y/\txt/\col in {
+    6.48/{Siegwart, R.; Nourbakhsh, I.; Scaramuzza, D. (2011). \textit{Introduction to Autonomous Mobile Robots}. MIT Press.}/Teal,
+    5.92/{Tzafestas, S. G. (2014). \textit{Introduction to Mobile Robot Control}. Elsevier.}/Teal,
+    5.36/{LaValle, S. M. (2006). \textit{Planning Algorithms}. Cambridge University Press.}/Teal,
+    4.80/{Kalman, R. E. (1960). A New Approach to Linear Filtering and Prediction Problems. \textit{Journal of Basic Engineering}.}/Green,
+    4.24/{Thrun, S.; Burgard, W.; Fox, D. (2005). \textit{Probabilistic Robotics}. MIT Press.}/Green,
+    3.68/{Grisetti, G.; Stachniss, C.; Burgard, W. (2007). Improved Techniques for Grid Mapping With Rao-Blackwellized Particle Filters.}/Violet,
+    3.12/{Kohlbrecher, S.; von Stryk, O.; Meyer, J.; Klingauf, U. (2011). Hector SLAM. IEEE SSRR.}/Violet,
+    2.56/{Hess, W.; Kohler, D.; Rapp, H.; Andor, D. (2016). Real-Time Loop Closure in 2D LIDAR SLAM. IEEE ICRA.}/Violet,
+    2.00/{Khatib, O. (1986). Real-Time Obstacle Avoidance for Manipulators and Mobile Robots. \textit{IJRR}.}/Orange,
+    1.44/{CoppeliaSim User Manual; Pioneer 3 Operations Manual; enunciado VIU de la Actividad 2.}/Orange,
+    0.88/{Repositorios consultados/adaptados: OpenSLAM GMapping, hector\_slam, Cartographer y PythonRobotics; Gemini usado para consulta e ideación visual.}/Deep} {
+    \fill[\col] (1.00,\y+0.08) circle (0.055);
+    \node[anchor=west,font=\fontsize{5.7}{6.45}\selectfont,text=Ink,text width=13.55cm,align=left] at (1.22,\y) {\txt};
+  }
 }
 
 \end{document}

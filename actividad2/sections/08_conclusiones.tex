@@ -1,32 +1,56 @@
-\chapter{Conclusiones}
+\chapter*{Conclusiones}
+\addcontentsline{toc}{chapter}{Conclusiones}
+\markboth{Conclusiones}{Conclusiones}
 
-La simulacion cumple el objetivo de la Actividad 2 y extiende el ejercicio base
-de Pioneer hacia una celda de trabajo mas realista. R1 no solo se desplaza hacia
-un objetivo: interpreta una cola de tareas, coordina entregas con Bill, transporta
-T1/T2, espera procesos humanos, devuelve piezas al shelf correcto, evita
-obstaculos, estima su pose, actualiza un mapa y termina en la estacion de carga.
+La escena base comprueba el ciclo completo entre R1, Bill, T1 y T2: el robot
+entrega herramientas, espera el trabajo humano, recupera cada pieza, evita
+obstáculos y termina en carga. La misión incluye cola de tareas, sensores,
+estimación y retorno a estación.
 
-El filtro Kalman-landmark es el metodo mas conveniente para defender la version
-basica del escenario. Es simple, reproducible, presenta el menor RMSE de
-posicion y genera un mapa compacto suficiente para planificacion local. Las
-variantes de grilla tipo GMapping, Hector y Cartographer enriquecen el benchmark
-porque muestran enfoques populares de SLAM LiDAR: ocupacion por log-odds, scan
-matching y submaps con loop closure. Sin embargo, deben presentarse como
-implementaciones reducidas en CoppeliaSim, no como ejecucion de paquetes ROS.
+Con los datos exportados, Kalman-landmark se mantiene como el candidato operativo para
+esta celda: menor RMSE de posición, menor duración en Phase 2 y menos batería.
+Las grids tipo GMapping, Hector y Cartographer se usan para comparar ocupación
+por log-odds, \textit{scan matching} y submapas con cierre de ciclo. Estas
+variantes se implementaron dentro de CoppeliaSim y Lua y usaron las mismas lecturas de
+proximidad para mantener condiciones comparables entre métodos.
 
-El sistema anticolisiones funciona como una capa reactiva clara: cuando los
-sensores detectan obstaculos cercanos, el robot reduce velocidad, modifica el
-giro y publica riesgo. La capa de waypoint SLAM mejora este comportamiento al
-introducir desvios locales cuando el mapa detecta bloqueo entre R1 y el objetivo.
+El anticolisiones funciona como capa reactiva: cuando los sensores detectan algo
+cerca, el robot baja velocidad, modifica el giro y actualiza la señal de riesgo. La capa de
+punto intermedio SLAM filtra celdas de grid poco observadas, ignora obstáculos
+pegados al objetivo y penaliza desvíos fuera del área útil. En mapas de grid
+añadimos una recuperación por falta de progreso, con ruta directa durante una
+ventana corta y evitación reactiva siempre activa.
 
-Respecto a control, la comparacion P/PI/PID/LQR/NMPC se mantiene como analisis
-complementario. PI obtuvo el mejor score ponderado de los logs disponibles, pero
-la defensa academica principal debe centrarse en los metodos clasicos
-efectivamente trazables: cinematica diferencial, control proporcional/PID,
-evitacion reactiva, Kalman y mapeo de ocupacion/landmarks.
+La comparación entre P, PI, PID, LQR y NMPC se conserva como análisis complementario. En el
+seguidor de Bill, PID dio el menor error final (\SI{0.0317}{m}), NMPC el menor
+error medio durante movimiento (\SI{0.0198}{m}) y LQR mantuvo buen error medio
+con menos variación que PID. En la misión T1 y T2, PI obtuvo el mejor puntaje
+ponderado de los CSV disponibles. LQR se aplicó como regulador discreto local y
+NMPC como control predictivo por disparo directo, resuelto con búsqueda local de
+comandos.
 
-Como trabajo futuro, el escenario puede escalarse a B1/B2/B3 y R1/R2/R3 con un
-asignador de tareas por cola y reservas temporales. Tambien podria conectarse a
-ROS 2 para ejecutar paquetes reales de \texttt{slam\_toolbox}, Cartographer o
-Hector/GMapping equivalentes, comparar contra ground truth y separar la capa de
-simulacion de la capa de algoritmo.
+No se declara estabilidad formal para los controladores discretos con
+saturación, evitación reactiva y cambios de objetivo. La validación queda en el
+plano experimental: las ejecuciones completan la misión y las señales exportadas no
+registran divergencia, pero una prueba formal exigiría analizar la conmutación
+entre modos y la capa de saturaciones.
+
+El sistema cubre la secuencia completa de almacén, la comparación de
+controladores, la validación de Phase 1 y la prueba Phase 2 con mapa
+desconocido. La misma instrumentación enlaza escenas, métricas y evidencias
+visuales sin cambiar las condiciones de comparación.
+
+Además de la bibliografía académica, se consultaron repositorios públicos para
+contrastar estructuras de implementación y adaptar ideas al entorno Lua de
+CoppeliaSim: \texttt{slam\_gmapping}, \texttt{hector\_slam}, Cartographer y
+PythonRobotics \cite{githubSlamGmapping,githubHectorSlam,githubCartographer,pythonRobotics}.
+Gemini se usó como apoyo de consulta e ideación visual; el código final, las
+métricas, las figuras y la redacción técnica fueron revisados y adaptados
+manualmente antes de incorporarlos al trabajo \cite{googleGemini2026}.
+
+Como trabajo futuro, el escenario podría conectarse a ROS 2 para ejecutar
+paquetes reales de \texttt{slam\_toolbox}, Cartographer,
+Hector o GMapping equivalentes. La evaluación de mapas debe incorporar
+referencia geométrica, IoU de ocupación, precisión y exhaustividad por obstáculo
+y varias ejecuciones por método, para separar el desempeño del método de una
+trayectoria puntual de simulación.

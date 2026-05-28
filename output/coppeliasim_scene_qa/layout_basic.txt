@@ -1,0 +1,10 @@
+floor /A2_Basic_Floor size 10.20 x 10.20 center 0.00 -0.05
+sofa_orientation A2_Basic_Sofa facing_inside=true backX -4.57 seatX -4.30 frontX -4.06
+item basic sofa pos -4.30 2.20 size 0.42 1.04 yaw -0.0
+item work table pos 3.35 -2.10 size 0.78 0.48 yaw -0.0
+item goal station pos 3.40 2.60 size 0.06 0.06 yaw -0.0
+min_furniture_gap 4.28 pair work table <-> goal station
+wall_clear basic sofa 0.28
+wall_clear work table 1.36
+wall_clear goal station 1.67
+OK

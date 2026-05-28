@@ -1,0 +1,25 @@
+kind follower
+scene ready at t 0.00
+registered joints 10
+layout /A2F_Room_Floor_Base size 10.40 10.40
+layout /A2F_Tool_Shelf_East_Wall_Shelf_Level_01 pos 4.70 -0.80 0.18
+layout /A2F_Parts_Shelf_South_Wall_Shelf_Level_01 pos 2.80 -4.70 0.18
+layout /A2F_Industrial_Work_Table_NorthEast_Top_Textured_Work_Surface pos 3.90 4.10 0.76
+bounds checked x[-5.35,5.35] y[-5.35,5.35]
+duplicate monitored aliases 0
+runtime bill_move_max 3.101
+runtime robot_move_max 2.922
+runtime speed_max 0.540
+runtime states WALKING
+runtime actions 
+joint leftShoulderJoint range 0.193 min -0.176 max 0.017
+joint leftKneeJoint range 0.000 min 0.000 max 0.000
+joint leftAnkleJoint range 0.000 min 0.000 max 0.000
+joint rightElbowJoint range 0.117 min 0.000 max 0.117
+joint rightShoulderJoint range 0.194 min -0.177 max 0.017
+joint rightLegJoint range 0.535 min -0.306 max 0.229
+joint leftElbowJoint range 0.117 min 0.000 max 0.117
+joint rightKneeJoint range 0.000 min 0.000 max 0.000
+joint rightAnkleJoint range 0.127 min -0.127 max 0.000
+joint leftLegJoint range 0.535 min -0.309 max 0.226
+OK

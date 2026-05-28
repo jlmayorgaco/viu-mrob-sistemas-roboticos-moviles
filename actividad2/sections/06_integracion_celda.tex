@@ -1,14 +1,14 @@
 \chapter{Resultados experimentales}
 
-Los resultados se obtuvieron ejecutando CoppeliaSim de forma automatizada desde
-Python. Cada corrida exporta senales de la simulacion a CSV/JSON y luego los
-scripts de plot generan las graficas del informe. Esto permite repetir la
-validacion sin depender de observacion manual.
+Los resultados proceden de ejecuciones de CoppeliaSim lanzadas
+desde Python. Cada ejecución exporta señales a CSV y JSON, y de ahí salen las
+tablas y figuras. Las capturas renderizadas desde CoppeliaSim complementan las
+gráficas y vinculan cada métrica con la escena simulada.
 
-\section{Validacion funcional de la escena}
+\section{Validación funcional de la escena}
 
-La validacion principal de \path{Sim_T2_Phase1_Basic.ttt} termino con
-\texttt{passed=true}. Los indicadores mas relevantes fueron:
+La validación principal de \path{Sim_T2_Phase1_Basic.ttt} terminó con
+\texttt{passed=true}. Los indicadores más relevantes fueron:
 
 \begin{longtable}{P{0.42\textwidth}P{0.34\textwidth}}
 \toprule
@@ -18,78 +18,90 @@ La validacion principal de \path{Sim_T2_Phase1_Basic.ttt} termino con
 Estado final de tarea & \texttt{CHARGING}\\
 Modo final de movimiento & \texttt{ARRIVED\_TARGET}\\
 Tareas completadas & 4/4\\
-Distancia caminada por Bill & \SI{7.854}{m}\\
-Bateria final R1 & 71,88\%\\
+Distancia caminada por Bill & \SI{7.843}{m}\\
+Batería final R1 & 66,76\%\\
 Sensores activos & 16\\
 Rayos de sensor visualizados & 16\\
-Landmarks/celdas SLAM finales & 22 en validacion principal\\
-Actualizaciones SLAM & 4822\\
-Error final de pose & \SI{0.031}{m}\\
-Error maximo de pose & \SI{0.044}{m}\\
-Distancia minima positiva a obstaculo & \SI{0.079}{m}\\
-Riesgo maximo de obstaculo & 0,762\\
+Landmarks/celdas SLAM finales & 24 en validación principal\\
+Actualizaciones SLAM & 8532\\
+Error final de pose & \SI{0.030}{m}\\
+Error máximo de pose & \SI{0.045}{m}\\
+Distancia mínima positiva a obstáculo & \SI{0.056}{m}\\
+Riesgo máximo de obstáculo & 0,829\\
 \bottomrule
 \end{longtable}
 
-Tambien se verificaron condiciones cualitativas: Bill se mueve entre WS1 y WS2,
-Bill ejecuta acciones visuales de tomar/trabajar/entregar, los shelves y mesas
-estan presentes, las piezas T1/T2 tienen geometria visual no generica, la cola
-de tareas se publica, el robot vuelve a carga y el planner SLAM activa
-\texttt{SLAM\_WAYPOINT} al detectar bloqueo local.
+Junto con las métricas, se comprobó la ejecución en la escena: Bill se mueve
+entre WS1 y WS2, toma y entrega piezas, trabaja en la mesa, aparecen
+estanterías, mesas y sofá, T1 y T2 tienen geometría reconocible, la cola de
+tareas queda registrada, el robot vuelve a carga y el planificador activa
+\texttt{SLAM\_WAYPOINT} cuando detecta un bloqueo local.
 
-\section{Desempeno del estimador Kalman-landmark}
+\section{Desempeño del estimador Kalman-landmark}
 
-En la exportacion especifica del estimador, la escena usa PID como controlador
+En la exportación específica del estimador, la escena usa PID como controlador
 base y \texttt{KALMAN\_LANDMARK} como algoritmo SLAM. Los resultados fueron:
 
 \begin{itemize}
-  \item RMSE de posicion: \SI{0.03125}{m}.
-  \item Error medio de posicion: \SI{0.02958}{m}.
-  \item Error P95: \SI{0.04710}{m}.
-  \item Error maximo: \SI{0.06272}{m}.
-  \item RMSE de orientacion: \SI{0.01809}{rad}.
-  \item Covarianza media publicada: 0,00081.
-  \item Landmarks finales: 16.
-  \item Actualizaciones Kalman/SLAM: 2615.
+  \item RMSE de posición: \SI{0.03149}{m}.
+  \item Error medio de posición: \SI{0.02981}{m}.
+  \item Error P95: \SI{0.04760}{m}.
+  \item Error máximo: \SI{0.05626}{m}.
+  \item RMSE de orientación: \SI{0.01987}{rad}.
+  \item Covarianza media estimada: 0,00081.
+  \item Landmarks finales: 20.
+  \item Actualizaciones Kalman/SLAM: 4295.
 \end{itemize}
+
+El número de elementos del mapa depende de la representación. En
+Kalman-landmark son rasgos puntuales fusionados; en las variantes de grid son
+celdas ocupadas o grupos de celdas. La validación funcional cerró con 24 rasgos
+y la exportación específica Kalman-landmark con 20, mientras que las grids
+acabaron con mapas más densos.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_estimator_performance.png}
-  \caption{Desempeno del estimador Kalman-landmark: error de pose, covarianza publicada, landmarks y actualizaciones.}
+  \caption{Resultados del estimador Kalman-landmark.}
   \label{fig:estimator-performance}
 \end{figure}
 
-\section{Comparacion de algoritmos SLAM}
+\section{Comparación de algoritmos SLAM}
 
-La comparacion se ejecuto con el mismo escenario, sensores, tareas y controlador
-para los cuatro modos de SLAM. La Tabla~\ref{tab:slam-comparison} resume los
+La comparación usa el mismo escenario, sensores, tareas y controlador para los
+cuatro modos de SLAM. La Tabla~\ref{tab:slam-comparison} recoge los
 valores principales.
+
+Los tiempos y longitudes de ruta salen parecidos porque el plan de misión, los
+puntos de entrega y el controlador de movimiento son los mismos. Cambia la
+representación del mapa usada por los bloqueos y los puntos intermedios. Por
+eso la columna de rasgos exige cuidado: en Kalman son landmarks fusionadas; en
+las grids son celdas o grupos de celdas ocupadas.
 
 \begingroup
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{0.26\textwidth}P{0.16\textwidth}P{0.16\textwidth}P{0.18\textwidth}P{0.16\textwidth}}
-\caption{Benchmark SLAM reducido en CoppeliaSim.}\label{tab:slam-comparison}\\
+\caption{Comparación SLAM en CoppeliaSim.}\label{tab:slam-comparison}\\
 \toprule
-\textbf{Metrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\textbf{Métrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Metrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
+\textbf{Métrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
 \midrule
 \endhead
-Completado & Si & Si & Si & Si\\
-Duracion [s] & 102,60 & 102,50 & 101,65 & 101,60\\
-Ruta [m] & 10,906 & 10,880 & 10,774 & 10,771\\
-RMSE pos. [m] & 0,04135 & 0,04072 & 0,03842 & \textbf{0,03160}\\
-Error P95 [m] & 0,05697 & 0,06485 & 0,05673 & \textbf{0,04959}\\
-Error max. [m] & 0,07722 & 0,11112 & 0,09340 & \textbf{0,06433}\\
-Features finales & 63 & 56 & 55 & 15\\
-Updates SLAM & 1457 & 1426 & 1432 & 1447\\
-Submaps & 0 & 0 & \textbf{10} & 0\\
-Loop closures & 0 & 0 & \textbf{1} & 0\\
-Bateria usada [\%] & 16,82 & 16,78 & 16,66 & \textbf{16,63}\\
+Completado & Sí & Sí & Sí & Sí\\
+Duración [s] & 125,60 & 123,55 & 125,25 & \textbf{121,45}\\
+Ruta [m] & 15,997 & \textbf{15,233} & 15,968 & 15,763\\
+RMSE pos. [m] & 0,04117 & 0,04445 & 0,04149 & \textbf{0,03142}\\
+Error P95 [m] & 0,05718 & 0,07596 & 0,06026 & \textbf{0,04670}\\
+Error max. [m] & 0,07354 & 0,10862 & 0,07362 & \textbf{0,05824}\\
+Rasgos finales & 94 & 84 & 91 & 20\\
+Actualizaciones SLAM & 4514 & 4470 & 4474 & 4275\\
+Submapas & 0 & 0 & \textbf{13} & 0\\
+Cierres de ciclo & 0 & 0 & \textbf{4} & 0\\
+Batería usada [\%] & 24,62 & \textbf{23,63} & 24,50 & 24,02\\
 \bottomrule
 \end{longtable}
 \endgroup
@@ -97,20 +109,20 @@ Bateria usada [\%] & 16,82 & 16,78 & 16,66 & \textbf{16,63}\\
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_algorithm_comparison.png}
-  \caption{Comparacion grafica de los cuatro modos SLAM reducidos: precision, mapa, actualizaciones y bateria.}
+  \caption{Comparación gráfica de los cuatro modos SLAM: trayectoria, precisión, crecimiento del mapa y resumen de error.}
   \label{fig:slam-comparison}
 \end{figure}
 
-\section{Lectura de resultados}
+\section{Interpretación de resultados}
 
-Kalman-landmark fue el mejor en error de pose y consumo, porque el escenario es
-pequeno y las landmarks son suficientes para navegar. GMapping y Hector generan
-mapas mas densos, utiles para justificar grilla de ocupacion y scan matching,
-pero pagan un pequeno incremento en error y complejidad. Cartographer-submap
-consigue un equilibrio interesante: menor ruta que GMapping/Hector, estructura
-por submaps y un cierre de ciclo simplificado, aunque no supera el RMSE de
-Kalman-landmark en esta celda compacta.
+Kalman-landmark obtuvo el menor error de pose y el menor consumo. En una celda
+pequeña, las landmarks fusionadas son suficientes para navegar. GMapping y Hector
+generan mapas más densos y comparan grid de ocupación con
+\textit{scan matching}; pagan con algo más de error y más trabajo de ajuste.
+Cartographer-submap redujo la ruta frente a GMapping y Hector y registró
+estructura por submapas con 4 cierres de ciclo locales, aunque su RMSE quedó por
+encima de Kalman-landmark.
 
-La conclusion tecnica es que para esta fase basica conviene defender
-\texttt{KALMAN\_LANDMARK} como estimador principal y usar GMapping/Hector/
-Cartographer como comparacion academica de mapas LiDAR reducidos.
+Para la escena base usamos \texttt{KALMAN\_LANDMARK} como estimador base. Los otros
+tres métodos quedan para comparar mapas calculados con los mismos rayos de
+proximidad.

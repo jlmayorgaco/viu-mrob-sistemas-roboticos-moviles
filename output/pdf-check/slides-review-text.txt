@@ -1,0 +1,2484 @@
+Actividad 2 · sistemas robóticos móviles
+
+Pioneer P3DX: almacén, tareas y SLAM
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+UNIVERSIDAD INTERNACIONAL DE VALENCIA
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Pioneer P3DX en
+CoppeliaSim y Lua
+Celda de almacén con R1, Bill, herramientas
+T1/T2, evitación reactiva, control y SLAM.
+Fase 1
+
+Fase 2
+
+Control
+
+SLAM
+
+Autor: Jorge Luis Mayorga Taborda
+Profesor: Jose I. Iñiguez
+26 de mayo de 2026
+
+Fondo: captura real de CoppeliaSim
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+1/39
+
+orden técnico
+
+Ruta del trabajo
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La secuencia conecta requisitos de la escena, arquitectura de control, seguimiento, SLAM, métricas y limitaciones técnicas.
+
+01
+
+02
+
+03
+
+04
+
+05
+
+Escena y requisito
+
+Arquitectura y
+código
+
+Control de
+seguimiento
+
+SLAM y Fase 2
+
+Resultados
+
+mannequin/Bill, celda
+de almacén, R1, T1/T2
+y métricas
+
+funciones Lua, FSM,
+sensores, planner y
+logger
+
+P, PI, PID, LQR y
+NMPC con coste y
+pesos definidos
+
+Kalman, grids log-odds,
+scan-to-map y
+submapas simplificados
+
+tablas, límites, elección
+técnica y mejoras
+
+Orden
+
+Cada bloque enlaza requisito, código, métrica y límite declarado.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+2/39
+
+ruta B1/R1 y puntos de misión
+
+Mapa operativo de la celda
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La escena se organiza alrededor del rack T1/T2, mesas WS1/WS2, Bill, R1 y la estación de carga.
+
+Secuencia
+R1 parte de carga y toma T1 en el
+rack.
+Bill trabaja en WS1 y después se
+atiende WS2.
+La ruta evita pallet, pilar y caja durante
+el ciclo.
+Los estados exportados conectan
+misión, control y SLAM.
+
+T1/T2
+
+R1/B1
+
+cola de herramientas robot y persona
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+3/39
+
+navegación autónoma en celda simulada
+
+Requisitos y objetivos
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Se modela una celda tipo almacén donde un Pioneer P3DX debe seguir a una persona, entregar herramientas, evitar
+obstáculos y construir una representación local del entorno.
+Nomenclatura: el mannequin de la especificación se implementa en la escena como Bill/B1; el requisito de seguimiento es el mismo.
+
+Requisito
+
+Coordinar seguimiento, navegación
+diferencial, seguridad local y tareas
+T1/T2 en una escena con persona
+móvil y obstáculos.
+
+Implementación
+
+Control reactivo con campos
+potenciales, FSM de misión,
+estimación Kalman y comparación
+de controladores.
+
+Mapa
+
+Mapeo con Kalman-landmark, grids
+log-odds, scan-to-map, submapas
+simplificados y Fase 2 con mapa
+desconocido.
+
+Objetivos evaluados
+Regular distancia y orientación respecto a Bill mediante un punto de referencia p∗ .
+Planificar entregas T1/T2 con una máquina de estados reproducible.
+Evitar obstáculos con sensores de proximidad, reducción de velocidad y recuperación.
+Comparar controladores y métodos SLAM con métricas comunes.
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+4/39
+
+sensores, estimación, mapa y control
+
+Arquitectura integrada
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El sistema se evalúa como un ciclo cerrado: los sensores alimentan estimación y mapa; el planificador local elige un objetivo intermedio;
+el controlador diferencial genera las velocidades de rueda y el logger exporta las señales.
+
+Sensores
+
+Estimador
+
+Mapa
+
+Planner
+
+Control
+
+16 ultrasonidos, rayos
+visuales y distancia
+mínima.
+
+odometría, corrección
+y error de pose.
+
+landmarks, celdas,
+submapas y cierres.
+
+ruta directa o
+SLAM_WAYPOINT.
+
+P/PI/PID, LQR o
+NMPC.
+
+ruta nominal
+
+SLAM_WAYPOINT
+
+readObstacleField
+
+registerSlamDetection
+
+plannedWaypointTo
+
+publishTelemetry
+
+riesgo, giro y distancia mínima
+
+impacto sensor a mundo y mapa
+
+ruta directa o punto intermedio
+
+CSV/JSON de estado y mapa
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+5/39
+
+escena principal Fase 1
+
+Almacén: R1, Bill y herramientas
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+rack T1 y T2
+WS1de carga
+Escena
+principal: R1, Bill, rack T1/T2, mesas WS1/WS2 y estación
+
+T1
+
+T2
+
+WS1
+
+bloqueo
+
+T1
+
+vista general de la celda
+
+obstáculo
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Ciclo validado
+
+Operación en escena
+
+R1 toma T1 y la lleva a Bill en WS1
+La misión completa se ejecuta en una celda
+de almacén.
+Bill trabaja frente a la mesa, sin gestos hacia
+atrás
+Bill permanece orientado hacia la mesa
+durante el trabajo.
+rayos de sensor y evitación
+R1 devuelve T1 al rack
+La evitación local y el mapa SLAM se
+actualizan
+durante
+la en
+misma
+R1 repite
+el ciclo
+con T2
+WS2ejecución.
+El cierre se mide con estado, batería, riesgo,
+R1 termina
+en la estación
+de carga
+pose y mapa
+exportados.
+
+WS2
+R
+
+Bill trabajando frente a la mesa
+dock carga
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+WS2
+
+4/4 %
+66,76
+
+0,030mm
+0,030
+
+tareas
+batería
+finalcompletadas
+Fase 1
+
+de pose
+errorerror
+finalfinal
+de pose
+
+interacción R1–Bill con T1
+
+6/39
+
+seguimiento, Fase 1 y Fase 2
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escenas de simulación
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Seguimiento, entrega, evitación, replanificación y mapa quedan registrados en capturas reales.
+
+Tres ejecuciones registradas
+Las capturas cubren tres estados del sistema: seguimiento, entrega con evitación y mapa desconocido.
+
+Seguimiento de Bill
+
+Follower
+
+Fase 1
+
+Bill define el objetivo móvil y se
+comparan P, PI, PID, LQR y NMPC.
+Entrega T1
+
+Evitación con rayos
+
+Fase 1: almacén
+
+Entrega T1/T2, Bill trabajando y
+evitación durante la misma misión.
+Fase 2 inicial
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+Replanificación dinámica
+
+Bill en mesa
+
+Fase 2
+
+Mapa desconocido, obstáculo dinámico
+y reconstrucción exportada.
+Mapa desconocido
+
+7/39
+
+Follower y Phase 2
+
+Capturas de ejecución
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Ejecuciones registradas en CoppeliaSim
+Follower registra seguimiento circular; Phase 2 registra zona desconocida, ruta de navegación, elementos de la celda y sensores de proximidad.
+
+Follower: trayectoria circular de Bill
+
+Phase 2: obstáculo no modelado
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+Follower: R1 regula distancia sin cortar la marcha
+
+Phase 2: vista general de la celda
+
+Phase 2: sensores frente al sofá
+
+8/39
+
+seguimiento y entrega
+
+Video de ejecución I
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+VIDEO
+
+seguimiento de Bill, entrega T1/T2 y retorno a carga
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+9/39
+
+Fase 2 y mapa desconocido
+
+Video de ejecución II
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+VIDEO
+
+exploración, obstáculos dinámicos, replanificación y SLAM
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+10/39
+
+trayectoria, entrega y mapeo
+
+Replay de misión
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Replay asociado
+a la ejecución
+principal
+de CoppeliaSim
+Secuencia
+de la misión:
+seguimiento,
+entrega,
+evitación y cierre
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Contenido del replay
+Secuencia
+seguimiento de Bill y orientación frontal
+seguimiento de Bill con orientación frontal
+entregas T1/T2 dentro del almacén
+entrega y retorno de T1/T2
+evitación local con rayos de proximidad
+evitación con rayos de proximidad
+mapeo SLAM y cierre de misión
+actualización SLAM y cierre en carga
+
+MP4
+
+replay de la ejecución
+principal
+replay MP4
+
+logs exportados
+
+replay
+
+misión reproducida con logs
+exportados
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+11/39
+
+tareas T1 y T2
+
+Máquina de estados de R1
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+ciclo T1
+
+pickup
+
+TO_PICKUP_T1
+
+ciclo T2
+
+TO_PICKUP_T2
+
+delivery
+
+DELIVER_T1
+
+pickup
+
+Control
+
+Fase 2
+
+Cierre
+
+work done
+
+WAIT_B1_T1
+
+delivery
+
+DELIVER_T2
+
+SLAM
+
+RETURN_T1
+
+work done
+
+WAIT_B1_T2
+
+RETURN_T2
+
+cierre
+
+TO_CHARGE
+
+La FSM validada contiene la cola completa: entregar T1, esperar trabajo de Bill, devolver T1, repetir con T2 y finalizar en carga. Los
+modos de movimiento observados son ROUTE, AVOIDING, MANIPULATING, WAIT_B1 y ARRIVED_TARGET.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+12/39
+
+fragmentos del controlador
+
+Funciones Lua integradas
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+R1 lee sensores, actualiza la FSM, decide si usar punto intermedio SLAM y exporta señales para las gráficas.
+Funciones usadas: lectura de sensores, registro SLAM, waypoint local y entrega a Bill.
+sensores + evitación
+
+FSM T1/T2
+
+planner local
+
+ok,d,pt,obj =
+sim.readProximitySensor(h)
+DELIVER_T1_WS1 = function()
+goal = readWorldPosition(target)
+if ok>0 then
+deliverToolToBill(t1,ws1,
+planX,planY = plannedWaypointTo(goal)
+addSensorRay(s,d,pt,true)
+"task1:{T1->B1@WS1}",
+heading = atan2(dy,dx)-estTheta
+registerSlamDetection(sensor,d,pt)
+readObstacleField()
+registerSlamDetection(s,d,pt)
+"WAIT_B1_WORK_T1")
+setWheelSpeeds(v,w)
+steer = steer - sign*y*w
+end
+Transforma
+el
+impacto
+al marco global y actualiza landmark,
+Lee 16 sensores, calcula risk, minObstacle, giro repulsivo y
+end
+
+reducción de velocidad.
+
+celda log-odds o submapa.
+
+plannedWaypointTo(goal)
+
+deliverToolToBill(tool,ws,next)
+
+Bill orientado a mesa
+Comprueba si la ruta directa está bloqueada y devuelve
+SLAM_WAYPOINT
+o el objetivo
+final.
+thetaB
+= atan2(y_table-y_B,
+x_table-x_B)
+
+Ejecuta la transición de FSM: aproxima R1, entrega T1/T2,
+espera a Bill y registra el estado.
+
+setJointTargetPosition(shoulder, forwardPose)
+setJointTargetPosition(elbow, workPose)
+setStringSignal("phase1B1Action","WORKING")
+
+CSV/JSON
+
+estado, ruedas, riesgo,
+batería, error y mapa
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+Lua
+controlador R1
+y manager B1
+encapsulados
+
+13/39
+
+geometría y objetivo móvil
+
+Seguimiento de Bill
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+p∗ = pB − ddes [cos θB , sin θB ]T
+
+R1
+
+Control sobre el error
+Los cinco controladores reciben la misma geometría.
+Cambia la ley de mando, no la trayectoria de Bill ni el
+logger.
+
+Bill
+θB
+
+p∗
+y
+
+P / PI / PID
+
+LQR
+
+NMPC
+
+ddes
+mesa
+
+x
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+0,82 m
+
+distancia deseada usada en
+seguimiento
+
+mismo CSV
+
+comparación bajo la misma
+trayectoria
+
+14/39
+
+modelo del Pioneer P3DX
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Cinemática diferencial
+Escena
+
+ωL
+ICC
+
+ωR
+
+Control
+
+ωL =
+
+v− L
+ω
+2
+r
+
+ωR =
+
+v+ L
+ω
+2
+r
+
+SLAM
+
+Fase 2
+
+Cierre
+
+ω
+
+r
+
+v
+
+Parámetros usados
+yR
+
+L = 0, 331 m
+
+xR
+
+0,0975 m
+
+0,55 m/s
+
+radio de rueda
+
+saturación de avance
+
+1,32 rad/s
+saturación de giro
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+15/39
+
+leyes clásicas sobre el error
+
+Control de seguimiento: P, PI y PID
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Los tres modos usan el mismo error de distancia y el mismo error de rumbo. Cambia la memoria del controlador: presente, acumulado y
+derivada.
+
+P
+
+PI
+
+PID
+
+uP = Kp ed
+
+uP I =
+PKp ed + Ki Id
+Id =
+ed ∆t
+
+Id =
+
+Responde al error instantáneo. Es
+estable y simple, pero deja offset.
+
+Añade memoria integral para corregir
+error sostenido durante el seguimiento.
+
+El término derivativo amortigua
+cambios bruscos, pero sube el esfuerzo.
+
+uP ID = Kp ed + Ki Id + Kd ėd
+
+P
+
+ed ∆t
+
+Errores comunes a los tres modos
+Error de distancia
+
+Error de rumbo
+
+ed = ∥pB − pR ∥ − ddes
+
+ϕB = atan2(yB − yR , xB − xR )
+eψ = wrap(ϕB − θR )
+
+La salida se convierte en v y ω, y después en ωL , ωR . Todos los modos pasan por saturaciones de velocidad y aceleración antes de
+mandar las ruedas.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+16/39
+
+ganancia calculada fuera de Lua
+
+Control de seguimiento: LQR discreto
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+LQR regula el error local alrededor de p∗ . La matriz K se calcula offline con Riccati discreta y Lua solo aplica la ley de control.
+
+Estado y control
+
+Modelo discreto
+
+Ley aplicada
+
+xL = [elong , elat , eyaw ]T
+u = [∆v, ∆ω]T ∗
+
+Ad = I + ∆tA
+Bd = ∆tB
+
+u = −KxL
+
+elong y elat : proyección de p
+marco de R1; eyaw = eψ .
+
+− pR en el
+
+Luego se saturan v y ω.
+
+Función cuadrática
+
+J=
+
+P
+
+T
+(xT
+k Qxk + uk Ruk )
+
+Q diag
+
+35, 80 y 18 para error
+longitudinal, lateral y yaw
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+R diag
+
+6 y 3 para variación de
+avance y giro
+
+∆t = 0, 05s
+misma escala de simulación
+
+17/39
+
+predicción con restricciones
+
+Control de seguimiento: NMPC
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+NMPC simula el modelo no lineal hacia adelante y elige una secuencia corta de comandos. En esta implementación se resuelve por disparo
+directo con búsqueda local.
+
+Coste resumido
+
+Modelo predictivo
+
+xk+1 = xk + vk cos θk ∆t
+yk+1 = yk + vk sin θk ∆t
+θk+1 = θk + ωk ∆t
+
+Horizonte
+N = 10, ∆t = 0, 22s,
+dos pasadas de mejora por
+ciclo.
+
+J =
+
+P
+k
+
+(ce + cu + cs ) + qf ∥p∗
+− pN ∥2
+N
+
+ce = qd e2d + qt ∥p∗
+− pk ∥2 + qψ e2ψ
+k
+2
+2
+cu = rv vk2 + rω ωk2 + rw (ωL
++ ωR
+)
+cs = sv ∆vk2 + sω ∆ωk2
+
+Límites
+
+v ∈ [−vrev , vmax ],
+ω ∈ [−ωmax , ωmax ].
+
+Pesos usados
+qd = 48, qt = 7, qψ = 1, 2, rv =
+1, 4, rω = 1, 8, rw = 0, 020, sv =
+65, sω = 18, qf = 6.
+
+La versión Lua conserva modelo no lineal, horizonte, restricciones y coste predictivo. La optimización se resuelve con una búsqueda directa
+pequeña para ejecutarse dentro de CoppeliaSim.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+18/39
+
+comparación P, PI, PID, LQR y NMPC
+
+Resultados de seguimiento
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Misión
+logger yconstantes:
+PI ofrece
+el mejor balance
+operativo;
+NMPC
+y batería.
+Misma ymisión
+mismo logger:
+la comparación
+pondera
+precisión,
+ruta, minimiza
+batería yruta
+riesgo
+con el mismo registro de datos.
+
+Modo
+
+Dur. [s]
+
+Ruta [m]
+
+Bat. [ %]
+
+Riesgo
+
+Puntaje
+
+P
+PI
+PID
+LQR
+NMPC
+
+115,20
+110,30
+110,85
+114,15
+112,30
+
+12,843
+12,867
+12,856
+12,796
+12,788
+
+19,804
+19,516
+19,784
+19,505
+19,316
+
+0,410
+0,487
+0,469
+0,401
+0,444
+
+0,573
+0,274
+0,567
+0,436
+0,326
+
+PI
+
+PI
+
+mejor balance operativo
+mejor balance operativo
+
+NMPC
+NMPC
+menor ruta y batería
+LQR
+
+menor batería y ruta más
+corta
+
+LQR
+
+menor riesgo máximo
+menor riesgo máximo
+Fila resaltada: menor puntaje normalizado
+Respuesta temporal exportada desde el logger de CoppeliaSim
+
+PID
+menor error final
+
+Métrica
+
+Puntaje = suma min–max normalizada, menor es mejor: 0,28 movimiento + 0,18 batería + 0,20 variación + 0,14 riesgo + 0,12
+error de pose + 0,08 duración. Riesgo = máxt obstacle_risk(t).
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+19/39
+
+precisión contra esfuerzo de control
+
+Costo de ruedas, energía y suavidad
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El
+erroresfinal
+basta
+también
+se mide
+energía,y suavidad
+cambios
+sentido.
+El menor
+error final
+unanosola
+carapara
+del comparar
+problema:controladores:
+las ruedas revelan
+energía,
+suavidad
+cambios ybruscos
+dedemando.
+
+Modo
+
+Err. mov.
+
+Err. final
+
+Energía
+
+RMS ∆u
+
+Flips
+
+P
+PI
+PID
+LQR
+NMPC
+
+0,3542
+0,2011
+0,1915
+0,0231
+0,0198
+
+0,0982
+0,1018
+0,0317
+0,0865
+0,0887
+
+49,950
+64,419
+102,381
+92,287
+77,174
+
+0,0475
+0,1318
+0,1759
+0,0873
+0,0576
+
+11
+16
+26
+12
+4
+
+Potencia y energía acumulada
+
+Suavidad del comando
+
+Datos de Actividad2_1_Basic_Follower.ttt
+
+PID
+
+PID
+
+menor error final, mayor
+esfuerzo
+menor error final
+
+NMPC
+NMPC
+mejor seguimiento con pocos
+menor error cambios
+en movimiento
+y
+de sentido
+pocos flips
+
+P
+
+P
+
+menor energía, peor
+menor energía,
+peor
+seguimiento
+seguimiento
+
+Control
+
+La elección usa error, consumo y suavidad; no solo el error final.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+20/39
+
+navegación local
+
+Campos potenciales y anticolisión
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Ley usada
+p∗
+
+⃗ =F
+⃗att +
+F
+
+P ⃗
+i
+
+Frep,i
+
+El rumbo se recalcula en cada ciclo con objetivo,
+sensores, límites de velocidad y modo de
+recuperación.
+
+Fatt
+ρ0
+
+F
+
+16
+
+0,62 m
+
+ρi
+
+ultrasonidos del Pioneer
+
+rango de influencia reactiva
+
+Frep
+
+0,12 m
+parada crítica frontal
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+21/39
+
+estimación, mapa y waypoint
+
+Planner local con SLAM_WAYPOINT
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El ciclo de navegación no une puntos a mano: estima pose, transforma sensores, actualiza mapa y devuelve un waypoint al controlador
+diferencial.
+
+1. Odometría
+
+2. Corrección
+
+3. Mapa
+
+4. Plan local
+
+v, ω predicen x̂− .
+
+medición ruidosa corrige
+pose.
+
+landmarks, celdas o
+submapas.
+
+directo o SLAM_WAYPOINT.
+
+Kalman-landmark
++
+−
+
+Pk = Gk Pk−1 GT
+k + Qk
+
+Kk = Pk− HkT (Hk Pk− HkT + Rk )−1
+x̂+
+= x̂−
++ Kk (zk − Hk x̂−
+)
+k
+k
+k
+
+En la escena corrige pose con medición ruidosa y asocia detecciones
+por cercanía. Si no hay asociación, crea un landmark no asociado.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+pose 2D
+
+20–24
+
+[x, y, θ], sin roll/pitch
+
+landmarks finales según fase
+
+WAYPOINT
+SLAM_WAYPOINT usa
+obstáculos mapeados
+
+22/39
+
+pose probabilística y mapa de puntos
+Pioneer P3DX · CoppeliaSim · SLAM
+
+SLAM Kalman-landmark
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El mapa se representa como puntos observados; la incertidumbre se mantiene en la pose del robot.
+
+Modelo usado
+odometría uk
+
+predicción
+x−
+, Pk−
+k
+
+corrección EKF
+
+rayos zi
+
+asociación a lj
+
+Cada impacto de sensor se transforma al marco del almacén. Si cae
+cerca de un landmark existente, corrige la pose; si no, se registra
+como punto de mapa.
+landmark no
+asociado
+
+landmarks
+
+x̂−
+= f (x̂k−1 , uk )
+k
+Pk− = Fk Pk−1 FkT + Qk
+Kk = Pk− HkT (Hk Pk− HkT + Rk )−1
+
+0,03142 m
+
+20–24
+
+mejor RMSE Fase 1
+
+landmarks finales
+
+límite
+
+no modela paredes como
+áreas ocupadas
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+23/39
+
+ocupación con pose estimada
+
+Grid log-odds inspirada en GMapping
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El mapa pasa de puntos aislados a celdas libres u ocupadas, útiles para evitar bloqueos locales.
+
+Actualización
+
+ocupado
+
+Lt (c) = clip(Lt−1 (c) + ℓ(c|zt , x̂t ))
+ℓ(c) = ℓf ree en celdas atravesadas
+ℓ(c) = ℓocc en el impacto
+
+La versión Lua implementa una grid de ocupación por log-odds con la
+pose estimada. No es GMapping completo: no hay filtro de partículas
+ni árbol de trayectorias.
+
+libre
+
+94
+
+36
+
+celdas ocupadas Fase 1
+
+rasgos Fase 2
+
+límite
+
+la calidad depende de la pose
+usada para trazar rayos
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+24/39
+
+ajuste local contra la grid
+
+Scan-to-map inspirado en Hector
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La aproximación scan-to-map corrige la pose buscando el desplazamiento que mejor encaja el escaneo actual con la grid.
+
+Regla de ajuste
+1
+ξ⋆ = arg máxξ N
+
+grid
+
+P
+
+M (Tξ pi )
+
+i
+xk ← x−
++ α(ξ⋆ − x−
+)
+k
+k
+
+Se evalúan pequeñas correcciones alrededor de la pose predicha. Es
+una aproximación Lua scan-to-map, no la pila Hector completa con
+optimización multi-resolución.
+
+15,233 m
+candidatos de pose
+
+ruta más corta Fase 1
+
+0,333
+
+precisión final de rasgos Fase
+2
+
+límite
+
+riesgo de óptimos locales con
+poca geometría
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+25/39
+
+submapas locales y cierres simplificados
+
+Submapas inspirados en Cartographer
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El mapa se organiza en submapas; los retornos a zonas conocidas generan cierres de ciclo simplificados.
+
+Lógica
+
+S1
+
+S3
+
+scan → submapa activo
+distancia/tiempo → submapa adicional
+score alto con submapa antiguo → cierre
+
+cierre
+
+S2
+
+S4
+
+La versión Lua conserva la idea de submapas y restricciones locales,
+pero no resuelve una optimización global de grafo ni loop closure
+completo como Cartographer.
+
+13
+
+4
+
+submapas finales
+
+cierres de ciclo
+
+95,327 %
+mayor cobertura Fase 2
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+26/39
+
+localización y mapa
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Resultados SLAM Fase 1
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Los cuatro estimadores ejecutan la misma misión: el ranking combina error de pose, ruta y estructura de mapa.
+
+Modo
+
+Dur. [s]
+
+Ruta [m]
+
+RMSE [m]
+
+P95 [m]
+
+Kalman
+Log-odds
+Submapas
+Scan-to-map
+
+121,45
+125,60
+125,25
+123,55
+
+15,763
+15,997
+15,968
+15,233
+
+0,03142
+0,04117
+0,04149
+0,04445
+
+0,04670
+0,05718
+0,06026
+0,07596
+
+Mapa
+20 landmarks
+MEJOR ERROR DE POSE
+94 celdas
+13 submapas
+84 celdas
+
+Kalman concentra el mejor error de pose; scan-to-map recorre menos distancia.
+
+Kalman landmark
+
+0,03142 m RMSE
+0,03142
+
+Kalman
+
+Trayectoria, error y mapa exportados desde Fase 1
+
+Resultado
+
+0,04117
+Log-odds
+Kalman da el menor error de pose en la celda compacta. Las grids log-odds y scan-to-map
+producen mapas de ocupación comparables.
+Los submapas no mejoran el RMSE frente a Kalman, pero registran estructura y cierres simplificados. Comparación con n = 1 ejecución
+0,04149
+Submapas
+por método.
+
+4/4
+4/4
+todos completan la misión
+todos completan la misión
+
+Scan-to-map
+23–25
+% 15,233 m
+ruta más corta:
+batería usada en la
+comparación SLAM
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+Submapas
+4275–4514
+13 submapas y cierres
+
+Scan-to-map
+
+4275–4514
+
+0,04445
+
+actualizaciones SLAM
+
+actualizaciones SLAM Fase 1
+
+27/39
+
+estados exportados durante la ejecución
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Timeline de misión
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Estados de tarea, movimiento, planner, Bill y batería en la misma escala temporal
+
+WAIT_B1
+
+R1 se detiene mientras Bill
+trabaja
+
+AVOIDING
+riesgo y reducción de
+velocidad registrados
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+SLAM
+
+actualizaciones y planner
+registrados
+
+CHARGE
+retorno final a estación
+28/39
+
+SLAM durante exploración
+
+Fase 2: mapa desconocido
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Misma misión T1 y T2, pero sin mapa completo al inicio: el mapa se construye durante la ejecución.
+
+Fase 2 arranca con parte de la celda desconocida y obliga a descubrir obstáculos con rayos de proximidad mientras el robot mantiene la
+misión T1/T2.
+
+Kalman
+
+Submapas
+
+Log-odds
+
+Scan-to-map
+
+0,03185 m
+
+95,327 %
+
+19
+
+0,333
+
+mejor RMSE de pose
+
+mayor actividad de mapeo
+
+replanificaciones
+
+inicio con zona no Dur.
+observada
+Modo
+[s]
+
+Kalman
+Log-odds
+Scan-to-map
+Submapas
+
+124,80
+128,00
+129,40
+138,65
+
+0,03185 m
+
+Kalman: menor RMSE de
+pose
+
+Ruta [m]
+
+RMSE [m]
+
+15,752
+15,905
+15,735
+16,441
+
+0,03185
+0,04220
+0,04587
+0,03930
+
+95,327 %
+
+submapas: mayor actividad
+de mapa
+
+mayor precisión final de
+rasgos
+
+replanificación
+ante obstáculo dinámico
+Evid. [ %]
+Rasgos
+
+94,613
+94,851
+94,930
+95,327
+
+17–25
+
+24
+36
+36
+36
+
+0–1
+planner
+9–10recuperaciones del 17–25
+
+replanificaciones según modo
+
+cruces de obstáculo dinámicoreplanificaciones según modo
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+29/39
+
+bloqueo local y recuperación
+
+Recuperación local en Fase 2
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Las variantes de grid se bloquean cuando el mapa trata como obstáculo cualquier celda cercana al segmento hacia el objetivo. El
+filtro separa bloqueo real, obstáculo pegado al robot y obstáculo pegado al punto de recogida.
+
+Sensores
+
+Persistencia
+
+la celda se marca como
+bloqueante solo tras
+detecciones
+repetidas en el
+Límite
+log-odds
+
+Se usan ultrasonidos y rayos
+simulados, no un LiDAR físico 2D.
+
+Cómo se informa
+Las gráficas SLAM se reportan
+como reconstrucción
+mapa crudo con rayos de
+proximidad.
+
+4/4
+métodos completan Fase 2
+
+SLAM
+
+Distancia local
+
+se ignoran celdas dentro del
+radio de R1 o pegadas al
+objetivo para Límite
+no cerrar el
+punto final
+
+Área útil
+
+Variantes Lua de grid, scan matching
+y submapas.
+
+Cómo se informa
+filtros
+
+1
+
+Todas usan las mismas señales y
+waypoint
+métricas.
+
+recuperación observada en
+submapas
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+Planificación
+
+Recuperación
+
+el coste del waypoint
+penaliza puntos fuera del
+Límite
+pasillo operativo del almacén
+
+17
+
+RECOVERY_DIRECT usa
+objetivo directo durante una
+ventana corta si el mapa no
+libera ruta
+
+El planificador local activa
+recuperación ante bloqueos.
+
+Cómo se informa
+Fase 2 mide replanificaciones y
+recuperación
+directa con mapa
+objetivo
+control
+reactivo
+desconocido.
+
+mínimo de replanificaciones,
+Kalman
+
+25
+
+máximo de replanificaciones,
+submapas
+
+30/39
+
+misma escena desconocida, cuatro estimadores
+
+Comparación Fase 2: trayectorias
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La comparación se hace con la misma misión T1/T2 y los mismos obstáculos dinámicos.
+
+Trayectorias finales y rasgos detectados
+
+Comparación
+Kalman mantiene la trayectoria más estable en
+error de pose.
+Scan-to-map y log-odds siguen una ruta cercana,
+con más dispersión local.
+Submapas añade cierres simplificados y más
+estructura.
+El pallet dinámico modifica el recorrido sin
+cambiar la misión.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+4
+
+17–25
+
+modos SLAM
+
+replanificaciones
+
+9–10
+
+0–1
+
+cruces dinámicos
+
+recuperaciones
+
+31/39
+
+cobertura de mapa frente al tiempo
+
+Comparación Fase 2: cobertura temporal
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La cobertura de mapa se registra durante la ejecución y compara la velocidad de descubrimiento.
+
+Curva de cobertura de mapa
+
+Comportamiento
+Las grids suben rápido al inicio.
+Kalman descubre rasgos más
+despacio, pero termina cerca del
+mismo rango de cobertura.
+
+5,1 s
+75 % de cobertura en grids
+
+98,55 s
+75 % de cobertura en
+Kalman
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+32/39
+
+cobertura final por método
+
+Comparación Fase 2: cobertura final
+Escena
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Todos los métodos quedan en torno al 95 % de cobertura final, con diferencias pequeñas pero medibles.
+
+95,327 %
+Submapas
+
+94,930 %
+Scan-to-map
+
+94,851 %
+Log-odds
+
+94,613 %
+Kalman landmark
+
+Comparación Submapas alcanza la mayor cobertura final, pero la diferencia frente a scan-to-map y log-odds es menor a medio punto
+
+porcentual.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+33/39
+
+bloqueos y obstáculos dinámicos
+
+Fase 2: mapa desconocido
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La escena introduce zonas inicialmente no observadas y obstáculos que obligan a replanificar.
+
+Mapa y obstáculos
+
+Elementos de Fase 2
+El mapa no se inicializa completo;
+se revela con sensores.
+El pallet y el bloque temporal
+modifican el paso local.
+El planificador alterna DIRECT,
+SLAM_WAYPOINT y
+recuperación.
+Todos los métodos ejecutan la
+misma misión.
+
+9–10
+cruces de obstáculo dinámico
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+34/39
+
+logger de navegación y SLAM
+
+Fase 2: señales exportadas
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Las señales reconstruyen la ejecución y comparan navegación, riesgo, mapa y batería.
+
+Series temporales exportadas
+
+Resultado
+Verificar cuándo aparece cada
+replanificación.
+Medir riesgo máximo y distancia
+mínima a obstáculos.
+Cruzar mapa revelado con error
+de pose.
+Comparar consumo de batería
+entre métodos.
+
+CSV
+fuente de plots y tablas
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+35/39
+
+duración, error, mapa y replanificación
+
+Comparación Fase 2: métricas
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+La
+tabla
+distingue
+navegación,
+error de pose,
+replanificación.
+Fase
+2 se
+evalúa con
+cuatro métricas:
+error,mapa
+ruta,y cobertura
+y replanificación.
+
+Método
+Kalman
+
+Dur. [s]
+
+RutaScan-to-map
+[m]
+RMSE [m]
+
+124,80
+Log-odds
+128,00
+menor
+RMSE y menor duración
+Scan-to-map
+129,40
+Submapas
+138,65
+
+15,752
+0,03185
+15,905
+ruta final más 0,04220
+corta
+15,735
+0,04587
+16,441
+0,03930
+
+Kalman landmark
+0,03185
+m
+
+15,735 m
+
+P95 [m]
+
+Mapa
+[ %]
+Rasgos
+Submapas
+
+Replan.
+
+0,03985
+0,05638
+0,07590
+0,05773
+
+94,613
+95,327
+% 24
+
+17
+19
+24
+25
+
+RMSE de pose [m]
+
+Resultado
+Submapas
+
+94,930
+95,327
+
+36
+36
+
+0 recovery
+
+grid estable sin recuperación
+
+Cobertura de mapa [ %]
+0,03185
+
+Kalman
+
+94,851
+36
+mayor
+cobertura y submapas
+
+Log-odds
+
+Submapas
+
+95,327
+
+Kalman obtiene menor RMSE y menor duración.
+Scan-to-map deja la ruta más corta. Submapas tarda más, pero alcanza 94,930
+la
+0,03930
+Scan-to-map
+mayor cobertura y estructura.
+
+Log-odds
+
+0,04220
+
+Scan-to-map
+
+0,04587
+
+Log-odds
+Kalman
+
+94,851
+94,613
+
+Submapasscan-to-map acorta ruta; log-odds
+Log-odds
+Kalman Kalman queda primero por Scan-to-map
+error y tiempo; submapas gana en cobertura;
+queda
+como
+menor RMSE y menor
+mayor cobertura y submapas
+grid estable sin recuperación
+ruta final más corta
+duración
+referencia de grid.
+
+Elección
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+36/39
+
+mapa en un instante de la ejecución
+
+Reconstrucción LiDAR/SLAM
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Qué representa
+
+trayectoria
+Reconstrucción
+al mismo instante común: t = 60 s, usando los rayos de proximidad como fuente de mapa
+rasgos detectados
+
+Los rayos de proximidad se transforman al marco
+del almacén
+Las celdas o landmarks se actualizan durante la
+misión
+El mapa reconstruido se compara por RMSE, P95,
+actividad y rasgos
+
+ocupado
+
+Se comparan variantes Lua con el mismo logger
+
+rayos
+
+t = 60 s
+4 modos
+
+Kalman, log-odds, scan-tomap y submapas
+
+misma escena
+
+comparación sobre geometría
+común
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+instante usado para comparar
+rasgos
+
+datos
+
+salida para graficar
+reconstrucción
+
+37/39
+
+resultado técnico
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Conclusiones
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+El Pioneer completa la misión de almacén
+yLacompara
+y depende
+SLAM en
+misión secontrol,
+completa;evitación
+la elección
+de la métrica priorizada.
+la misma celda.
+Fase 1 OK
+
+Control elegido
+SLAM elegido
+Fase 2 OK
+El PI
+sistema
+combina
+Bill,menor
+planificación
+por estados, evitación
+queda primero
+en seguimiento
+el puntaje de ladecelda:
+valor
+Kalman-landmark da el menor RMSE en un espacio compacto.
+CHARGING
+ponderado,
+tiempo
+corto
+y
+consumo
+estable.
+NMPC
+mejora
+grids sostienen navegación; los submapas registran
+reactiva y estimación de mapa. Los controladores y métodos SLAM Las
+se evalúan
+SLAM OK
+ruta
+y batería.ruta, batería, error de pose, riesgo y actividad de mapeo.
+estructura con más coste.
+con
+duración,
+
+Limitaciones explícitas
+
+Trabajo futuro
+
+SLAM simplificado en Lua, rayos de proximidad en lugar
+de LiDAR real y una ejecución por método en las tablas
+principales.
+
+LiDAR 2D real, optimización de grafo completa para
+submapas, repetición estadística y más obstáculos dinámicos.
+
+La simulación está acotada por sensores de proximidad, modelos SLAM
+simplificados
+entorno
+simulado.
+Cierre
+Elycierre
+enlaza
+especificación, implementación Lua, métricas exportadas y límites técnicos.
+
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+38/39
+
+Pioneer P3DX · CoppeliaSim · SLAM
+
+Referencias
+Escena
+
+Control
+
+SLAM
+
+Fase 2
+
+Cierre
+
+Siegwart, R.; Nourbakhsh, I.; Scaramuzza, D. (2011). Introduction to Autonomous Mobile Robots. MIT Press.
+Tzafestas, S. G. (2014). Introduction to Mobile Robot Control. Elsevier.
+LaValle, S. M. (2006). Planning Algorithms. Cambridge University Press.
+Kalman, R. E. (1960). A New Approach to Linear Filtering and Prediction Problems. Journal of Basic Engineering.
+Thrun, S.; Burgard, W.; Fox, D. (2005). Probabilistic Robotics. MIT Press.
+Grisetti, G.; Stachniss, C.; Burgard, W. (2007). Improved Techniques for Grid Mapping With Rao-Blackwellized Particle Filters.
+Kohlbrecher, S.; von Stryk, O.; Meyer, J.; Klingauf, U. (2011). Hector SLAM. IEEE SSRR.
+Hess, W.; Kohler, D.; Rapp, H.; Andor, D. (2016). Real-Time Loop Closure in 2D LIDAR SLAM. IEEE ICRA.
+Khatib, O. (1986). Real-Time Obstacle Avoidance for Manipulators and Mobile Robots. IJRR.
+CoppeliaSim User Manual; Pioneer 3 Operations Manual; enunciado VIU de la Actividad 2.
+Repositorios consultados/adaptados: OpenSLAM GMapping, hector_slam, Cartographer y PythonRobotics; Gemini usado para consulta e ideación
+visual.
+Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua
+
+39/39
+
+

@@ -1,13 +1,18 @@
 \chapter{Modelo del robot y control}
 
-El Pioneer P3DX se modela como robot diferencial. El controlador calcula una
-velocidad lineal \(v\) y una velocidad angular \(\omega\), y las transforma a
+El Pioneer P3DX se trata como robot diferencial. El controlador calcula una
+velocidad lineal \(v\) y una velocidad angular \(\omega\), y de ahí salen las
 velocidades de rueda izquierda y derecha:
 
 \[
 v_L = v - \frac{L}{2}\omega,\qquad
 v_R = v + \frac{L}{2}\omega
 \]
+
+Se adopta la convención usual de CoppeliaSim para esta escena: \(\omega>0\)
+incrementa el yaw del robot en sentido antihorario visto desde arriba. Con esa
+convención, la rueda derecha recibe mayor velocidad que la izquierda durante un
+giro positivo.
 
 Si \(r\) es el radio de rueda, las consignas enviadas a los motores de
 CoppeliaSim son:
@@ -17,13 +22,14 @@ CoppeliaSim son:
 \omega_R = \frac{v_R}{r}
 \]
 
-En la implementacion se usan \(r=\SI{0.0975}{m}\) y
-\(L=\SI{0.331}{m}\). Las velocidades se saturan para proteger la simulacion y
-mantener trayectorias reproducibles.
+En la implementación se usan \(r=\SI{0.0975}{m}\) y \(L=\SI{0.331}{m}\), valores
+compatibles con el Pioneer P3-DX \cite{mobilerobotsPioneer3}. Las velocidades
+se saturan para mantener los comandos dentro de un rango físico y conservar la
+repetibilidad de las ejecuciones.
 
 \section{Seguimiento de objetivo}
 
-Para navegar hacia un rack, mesa o cargador, se calcula primero la posicion del
+Para navegar hacia un rack, mesa o cargador, se calcula primero la posición del
 objetivo en coordenadas globales y luego el error respecto a la pose estimada
 del robot:
 
@@ -44,8 +50,8 @@ y el error angular usado por el controlador es:
 e_\theta = \operatorname{wrap}(\theta_g-\hat{\theta})
 \]
 
-La consigna base se corrige con un termino lateral y con una contribucion de
-evitacion de obstaculos. En forma compacta:
+La consigna base se corrige con un término lateral y con una contribución de
+evitación de obstáculos:
 
 \[
 v = f_d(d-d_f)\cos(e_\theta),\qquad
@@ -57,28 +63,28 @@ repulsivo derivado de sensores.
 
 \section{Modos de control evaluados}
 
-El benchmark de control se ejecuto con cinco modos: P, PI, PID, LQR y NMPC. La
-parte principal defendible academicamente en esta entrega es P/PI/PID junto con
-la estimacion y evitacion de obstaculos. Los modos LQR y NMPC se conservan en
-los logs como aproximaciones reducidas dentro del script, utiles para comparar
-suavidad y consumo, pero no se presentan como un solver LQR/NMPC industrial.
+Se probaron cinco modos: P, PI, PID, LQR y NMPC. Los controladores P, PI y PID
+se usan como referencia clásica junto con la estimación y la evitación. LQR y
+NMPC se incluyeron con alcance acotado: LQR usa una ganancia discreta calculada
+fuera de CoppeliaSim mediante Riccati; NMPC usa disparo directo con búsqueda
+local de comandos.
 
 \begin{longtable}{P{0.17\textwidth}P{0.35\textwidth}P{0.36\textwidth}}
 \toprule
 \textbf{Modo} & \textbf{Idea} & \textbf{Uso en la escena}\\
 \midrule
 \endhead
-P & Control proporcional sobre distancia y heading. & Simple, estable y facil de explicar, pero con mayor tiempo activo y ruta mas larga.\\
-PI & Agrega integral de distancia/heading. & Fue el mejor por el score ponderado de la comparacion de controladores.\\
-PID & Incluye derivadas para amortiguar cambios. & Buen compromiso general; se uso como modo base en varias exportaciones SLAM.\\
-LQR & Realimentacion lineal reducida de error lateral y heading. & Se conserva como aproximacion academica ligera, no como diseno completo por Riccati.\\
-NMPC & Penalizacion heuristica de riesgo y heading. & No usa solver no lineal; se reporta como modo predictivo reducido para comparacion.\\
+P & Control proporcional sobre distancia y rumbo. & Estructura simple y estable, con mayor tiempo activo y ruta más larga.\\
+PI & Agrega integral de distancia y rumbo. & Obtiene el menor puntaje ponderado en la comparación de controladores.\\
+PID & Incluye derivadas para amortiguar saltos. & Buen compromiso general; se usó como modo base en varias exportaciones SLAM.\\
+LQR & Realimentación lineal de error longitudinal, lateral y rumbo. & Ganancia discreta calculada por Riccati e integrada en Lua para el seguidor de Bill.\\
+NMPC & Control predictivo no lineal por disparo directo. & Evalúa secuencias de \(v,\omega\) con restricciones y coste de suavidad mediante búsqueda local.\\
 \bottomrule
 \end{longtable}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_controller_comparison.png}
-  \caption{Comparacion de modos de control exportada desde CoppeliaSim. Todos completan la tarea; PI obtiene el mejor score global en los pesos definidos.}
+  \caption{Comparación de modos de control exportada desde CoppeliaSim. Todos completan la tarea; PI obtiene el mejor puntaje ponderado con los pesos definidos.}
   \label{fig:controller-comparison}
 \end{figure}

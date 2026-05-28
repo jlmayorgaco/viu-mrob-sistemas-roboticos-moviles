@@ -1,0 +1,324 @@
+\chapter{Seguimiento de Bill y comparación de controladores}
+
+Antes de integrarlo en la celda completa, se probó el seguimiento de Bill en
+\path{Actividad2_1_Basic_Follower.ttt}. Bill camina con aceleración y frenado, y
+el Pioneer sigue un punto detrás de la persona. Si se apunta al centro del
+cuerpo, el robot tiende a acercarse demasiado; por eso la referencia va detrás de
+Bill.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{follower_replay_clean.png}
+  \caption{Escena de seguimiento: Bill define un objetivo móvil y R1 regula distancia, rumbo y suavidad de ruedas.}
+  \label{fig:follower-replay}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{A2_T1_Follower_SS1.png}
+    \caption{Vista general de la escena.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{A2_T1_Follower_SS2.png}
+    \caption{Seguimiento sobre la trayectoria circular.}
+  \end{subfigure}
+  \caption{Capturas de ejecución de \texttt{Actividad2\_1\_Basic\_Follower.ttt}: Bill recorre una trayectoria circular y R1 mantiene una distancia de seguimiento estable.}
+  \label{fig:follower-coppeliasim-screenshots}
+\end{figure}
+
+\section{Geometría de seguimiento}
+
+Si \(p_B=[x_B,y_B]^T\) es la posición de Bill, \(\theta_B\) su orientación y
+\(d_{des}\) la separación deseada, el punto de referencia se calcula como:
+
+\[
+p^\star =
+p_B -
+d_{des}
+\begin{bmatrix}
+\cos\theta_B\\
+\sin\theta_B
+\end{bmatrix},
+\qquad d_{des}=\SI{0.82}{m}.
+\]
+
+El error de distancia se mide con respecto a Bill, mientras que el error de
+rumbo se calcula desde el robot hacia Bill:
+
+\[
+e_d = \|p_B-p_R\|-d_{des},
+\qquad
+e_\psi = \operatorname{wrap}\left(\operatorname{atan2}(y_B-y_R,x_B-x_R)-\theta_R\right).
+\]
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{a2_follower_geometry.png}
+  \caption{Referencia móvil del seguidor: el robot controla un punto detrás de Bill y no el centro de la persona.}
+  \label{fig:follower-geometry}
+\end{figure}
+
+\section{Modelo cinemático usado por todos los modos}
+
+El movimiento plano del Pioneer se aproxima con el modelo unicycle:
+
+\[
+\dot{x}=v\cos\theta,\qquad
+\dot{y}=v\sin\theta,\qquad
+\dot{\theta}=\omega.
+\]
+
+La conversión a velocidades angulares de rueda usa el radio \(r\) y la distancia
+entre ruedas \(L\):
+
+\[
+\omega_L = \frac{v-\frac{L}{2}\omega}{r},
+\qquad
+\omega_R = \frac{v+\frac{L}{2}\omega}{r},
+\qquad
+r=\SI{0.0975}{m},\quad L=\SI{0.331}{m}.
+\]
+
+Estas mismas señales se usan para calcular potencia aproximada, energía,
+variación de comando y suavidad de control.
+
+La energía de la Tabla~\ref{tab:follower-controller-metrics} se calcula como una
+métrica mecánica aproximada. Se obtiene en Lua con la potencia de avance de cada
+rueda, fricción de rodadura, un término viscoso de rueda y potencia de guiñada:
+
+\[
+\begin{aligned}
+P_L &= \left|\frac{m}{2}a\,v_L\right|
+      + \frac{F_r}{2}|v_L| + b_\omega\omega_L^2,\\
+P_R &= \left|\frac{m}{2}a\,v_R\right|
+      + \frac{F_r}{2}|v_R| + b_\omega\omega_R^2,\\
+P_\theta &= |I_z\dot{\omega}\omega|,\qquad
+E = \sum_k (P_L+P_R+P_\theta)\Delta t .
+\end{aligned}
+\]
+
+Los parámetros usados fueron \(m=\SI{16.5}{kg}\), \(I_z=\SI{0.72}{kg.m^2}\),
+\(F_r=\SI{2.8}{N}\) y \(b_\omega=0.006\,\si{W/(rad/s)^2}\). En esa expresión, \(a=\dot{v}\) es la
+aceleración lineal estimada entre muestras y \(\dot{\omega}\) es la aceleración
+angular. Esta magnitud se usa como indicador relativo entre controladores dentro
+de la misma escena; no representa una estimación eléctrica de batería.
+
+Los términos \(\frac{m}{2}a\,v_L\) y
+\(\frac{m}{2}a\,v_R\) reparten aproximadamente la potencia inercial lineal,
+no como un modelo dinámico completo de rueda. La inercia real actúa sobre el
+centro de masa y se transmite por los contactos; se reparte por rueda solo
+para obtener una métrica relativa sensible a frenazos, inversiones de sentido y
+oscilaciones de comando.
+
+\section{P, PI y PID}
+
+Los controladores clásicos se aplican sobre \(e_d\) y se combinan con una
+realimentación de rumbo:
+
+\[
+u_P=K_p e_d,
+\qquad
+u_{PI}=K_p e_d + K_i\sum_{k=0}^{n} e_d(k)\Delta t,
+\]
+
+\[
+u_{PID}=K_p e_d + K_i\sum_{k=0}^{n} e_d(k)\Delta t
++ K_d\frac{e_d(k)-e_d(k-1)}{\Delta t}.
+\]
+
+El término proporcional responde al error instantáneo, el integral corrige
+error estacionario cuando Bill mantiene movimiento, y el derivativo amortigua
+saltos bruscos. En ejecución, todos los modos pasan por saturaciones de
+velocidad y de aceleración para evitar saltos en la escena.
+
+\section{LQR discreto}
+
+El modo LQR del seguidor regula el error local alrededor del punto \(p^\star\),
+siguiendo la forma clásica de control cuadrático lineal \cite{anderson1990}. El
+estado se define en el marco del robot:
+
+\[
+x_L =
+\begin{bmatrix}
+e_{long} & e_{lat} & e_{yaw}
+\end{bmatrix}^T,
+\qquad
+u=
+\begin{bmatrix}
+\Delta v & \Delta\omega
+\end{bmatrix}^T.
+\]
+
+Con \(v_{ref}=\SI{0.22}{m/s}\), radio local de giro \(\rho_{ref}=\SI{1.55}{m}\),
+\(\omega_{ref}=v_{ref}/\rho_{ref}\) y
+\(\Delta t=\SI{0.05}{s}\), la linealización usada en
+\path{compute_follower_lqr_gain.py} es:
+
+\[
+A=
+\begin{bmatrix}
+0 & \omega_{ref} & 0\\
+-\omega_{ref} & 0 & v_{ref}\\
+0 & 0 & 0
+\end{bmatrix},
+\qquad
+B=
+\begin{bmatrix}
+-1 & 0\\
+0 & 0\\
+0 & -1
+\end{bmatrix}.
+\]
+
+\[
+A_d=I+\Delta t A,\qquad B_d=\Delta t B.
+\]
+
+El script resuelve la ecuación algebraica de Riccati discreta con:
+
+\[
+Q=\operatorname{diag}(35,80,18),
+\qquad
+R=\operatorname{diag}(6,3),
+\]
+
+\[
+K=(B_d^T P B_d+R)^{-1}B_d^T P A_d.
+\]
+
+Los pesos proceden de una calibración empírica sobre el seguimiento de Bill, no
+de una identificación formal del Pioneer. Se penalizó más el error lateral
+\((q_{lat}=80)\) que el longitudinal \((q_{long}=35)\), porque el robot admite
+permitirse ir algo adelantado o retrasado, pero no cruzarse lateralmente con la
+referencia móvil. El coste de giro en \(R\) se dejó menor que el de avance para
+que el regulador prefiriera corregir rumbo antes de cambiar mucho la velocidad.
+
+La ley aplicada en Lua usa \(u=-Kx_L\), con saturación posterior de \(v\) y
+\(\omega\).
+
+La matriz integrada en Lua fue:
+
+\[
+K=
+\begin{bmatrix}
+-2.3496 & 1.2925 & 0.1203\\
+0.2427 & -4.3570 & -2.6887
+\end{bmatrix}.
+\]
+
+Esta parte corresponde a un LQR discreto real, de orden bajo y aplicado al
+seguimiento local de Bill.
+
+\section{NMPC por disparo directo}
+
+El modo NMPC se implementa como control predictivo no lineal por disparo
+directo. Mantiene una secuencia de \(v_k,\omega_k\), simula el modelo hacia
+adelante y mejora esa secuencia con dos pasadas de búsqueda local, siguiendo la
+estructura general de MPC \cite{rawlings2017}. La optimización se resuelve sobre
+la secuencia de comandos; IPOPT y CasADi no se usan en esta implementación.
+
+\[
+x_{k+1}=x_k+v_k\cos(\theta_k)\Delta t,
+\qquad
+y_{k+1}=y_k+v_k\sin(\theta_k)\Delta t,
+\]
+
+\[
+\theta_{k+1}=\theta_k+\omega_k\Delta t.
+\]
+
+La función de coste usada por el script penaliza error de distancia, error al
+punto \(p^\star\), rumbo, esfuerzo, potencia de rueda y variación de comando:
+
+\[
+\begin{aligned}
+J = \sum_{k=0}^{N-1}(&
+q_d e_d(k)^2 + q_t\|p^\star_k-p_k\|^2
++ q_\psi e_\psi(k)^2 \\
+&+ r_v v_k^2 + r_\omega \omega_k^2
++ r_w(\omega_{L,k}^2+\omega_{R,k}^2)\\
+&+ s_v\Delta v_k^2+s_\omega\Delta\omega_k^2)
++ q_f\|p^\star_N-p_N\|^2 .
+\end{aligned}
+\]
+
+Los pesos usados en el script fueron
+\(q_d=48.0\), \(q_t=7.0\), \(q_\psi=1.2\),
+\(r_v=1.4\), \(r_\omega=1.8\), \(r_w=0.020\),
+\(s_v=65.0\), \(s_\omega=18.0\) y \(q_f=6.0\), con horizonte
+\(N=10\), \(\Delta t=\SI{0.22}{s}\) y dos iteraciones de mejora por ciclo.
+
+La búsqueda local es determinista y de vecindario: la secuencia se inicializa
+con los comandos del ciclo anterior desplazados un paso, y en cada pasada se
+prueban perturbaciones \(\pm\Delta v\) y \(\pm\Delta\omega\) sobre cada elemento
+del horizonte. En la primera pasada los pasos son \(\Delta v=0.065\) y
+\(\Delta\omega=0.16\); en la segunda bajan a \(0.025\) y \(0.065\). Solo se
+acepta una perturbación si reduce \(J\). Por eso el coste es predictivo y el
+modelo es no lineal, pero el solucionador es una búsqueda local pequeña, no un
+SQP ni un método interior-point.
+
+Los límites de actuación se aplican durante la búsqueda:
+
+\[
+v_k\in[-v_{rev,max},v_{max}],
+\qquad
+\omega_k\in[-\omega_{max},\omega_{max}].
+\]
+
+Esta versión conserva el modelo no lineal y el coste predictivo, pero limita la
+optimización a una búsqueda local pequeña sobre comandos. El alcance queda
+limitado al método de disparo directo implementado en Lua.
+
+\section{Resultados de seguimiento}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}P{0.13\textwidth}P{0.16\textwidth}P{0.15\textwidth}P{0.15\textwidth}P{0.15\textwidth}P{0.12\textwidth}@{}}
+\toprule
+\textbf{Modo} & \textbf{Error mov. [m]} & \textbf{Error final [m]} & \textbf{Energía [J]} & \textbf{RMS \(\Delta u\)} & \textbf{Flips}\\
+\midrule
+P & 0,3542 & 0,0982 & \textbf{49,950} & 0,0475 & 11\\
+PI & 0,2011 & 0,1018 & 64,419 & 0,1318 & 16\\
+PID & 0,1915 & \textbf{0,0317} & 102,381 & 0,1759 & 26\\
+LQR & 0,0231 & 0,0865 & 92,287 & 0,0873 & 12\\
+NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
+\bottomrule
+\end{tabular}
+\caption{Métricas del seguidor de Bill por modo de control.}
+\label{tab:follower-controller-metrics}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{follower_pid_comparison.png}
+  \caption{Comparación temporal de P, PI, PID, LQR y NMPC en la escena de seguimiento de Bill.}
+  \label{fig:follower-pid-comparison}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \makebox[\textwidth][c]{\includegraphics[width=1.08\textwidth]{follower_wheel_power_comparison.png}}
+  \caption{Coste físico aproximado del seguidor: potencia instantánea y energía acumulada en las ruedas.}
+  \label{fig:follower-wheel-power}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \makebox[\textwidth][c]{\includegraphics[width=1.08\textwidth]{follower_wheel_command_smoothness.png}}
+  \caption{Suavidad de comandos del seguidor: variación de las órdenes de rueda y cambios de sentido.}
+  \label{fig:follower-wheel-smoothness}
+\end{figure}
+
+P gasta menos energía y deja más error mientras Bill se mueve. PID corrige muy
+bien al final, cuando Bill ya se detuvo, aunque paga con más variación de
+comando y más energía. LQR y NMPC bajan el error medio durante el seguimiento;
+NMPC queda más suave en inversiones de sentido y RMS de \(\Delta u\), porque
+incluye en el coste la variación de comando y el esfuerzo de rueda.

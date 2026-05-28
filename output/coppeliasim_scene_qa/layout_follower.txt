@@ -1,0 +1,11 @@
+floor /A2F_Room_Floor_Base size 10.40 x 10.40 center 0.00 0.00
+item east shelf pos 4.70 -0.80 size 1.00 0.38 yaw -0.0
+item south shelf pos 2.80 -4.70 size 1.00 0.38 yaw 90.0
+item work table pos 3.90 4.10 size 1.02 0.58 yaw -7.0
+item data station pos 4.35 -3.35 size 0.62 0.34 yaw -0.0
+min_furniture_gap 1.25 pair south shelf <-> data station
+wall_clear east shelf 0.00
+wall_clear south shelf 0.00
+wall_clear work table 0.59
+wall_clear data station 0.54
+OK

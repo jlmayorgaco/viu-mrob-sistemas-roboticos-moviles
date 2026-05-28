@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{viu-mrob-activity}[2026/05/18 VIU MROB activity template]
+\ProvidesPackage{viu-mrob-activity}[2026/05/26 VIU MROB activity 2 style]
 
 \RequirePackage{iftex}
 \ifPDFTeX
@@ -17,18 +17,24 @@
 \RequirePackage[a4paper,margin=2.35cm]{geometry}
 \RequirePackage[table,dvipsnames]{xcolor}
 \RequirePackage{graphicx}
+\RequirePackage{float}
+\RequirePackage{wrapfig}
 \RequirePackage{array,tabularx,booktabs,longtable,multirow}
 \RequirePackage{enumitem}
 \RequirePackage{tikz}
 \RequirePackage{tcolorbox}
+\RequirePackage{subcaption}
 \RequirePackage{titlesec}
 \RequirePackage{fancyhdr}
 \RequirePackage{lastpage}
 \RequirePackage{hyperref}
 \RequirePackage{xparse}
+\RequirePackage{amssymb}
 \RequirePackage{etoolbox}
+\RequirePackage{listings}
+\RequirePackage{tocloft}
 \tcbuselibrary{breakable,skins}
-\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric,shadows.blur}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,shapes.geometric,shadows.blur,patterns,matrix,petri,backgrounds}
 
 \onehalfspacing
 \renewcommand{\familydefault}{\sfdefault}
@@ -48,27 +54,44 @@
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=UniPrimaryDeep,
-  urlcolor=UniPrimaryDeep,
-  citecolor=UniPrimaryDeep,
-  pdftitle={Actividad 2 - Sistemas Roboticos Moviles},
+  linkcolor=UniPrimary,
+  urlcolor=UniPrimary,
+  citecolor=UniPrimary,
+  filecolor=UniPrimary,
+  linktocpage=true,
+  pdftitle={Actividad 2 - Sistemas Rob\'oticos M\'oviles},
   pdfauthor={Jorge Luis Mayorga Taborda},
-  pdfsubject={Programacion y control de un robot Pioneer en CoppeliaSim/Lua},
-  pdfkeywords={Pioneer P3DX, CoppeliaSim, Lua, campos potenciales, anticolision, A*, flota multi-robot}
+  pdfsubject={Programaci\'on y control de un robot Pioneer en CoppeliaSim y Lua},
+  pdfkeywords={Pioneer P3DX, CoppeliaSim, Lua, campos potenciales, anticolisi\'on, SLAM, mapa desconocido}
 }
+
+\renewcommand{\cftdotsep}{1.5}
+\setlength{\cftbeforechapskip}{6pt}
+\setlength{\cftbeforesecskip}{2pt}
+\renewcommand{\cftchapfont}{\bfseries\color{UniDark}}
+\renewcommand{\cftchappagefont}{\bfseries\color{UniPrimary}}
+\renewcommand{\cftsecfont}{\color{UniDark}}
+\renewcommand{\cftsecpagefont}{\color{UniPrimary}}
+\setlength{\cftchapnumwidth}{2.2em}
+\setlength{\cftsecindent}{2.2em}
+\setlength{\cftsecnumwidth}{3.0em}
 
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \renewcommand{\arraystretch}{1.18}
 
-\newcommand{\VIUMaster}{Master Universitario en Robotica y Automatizacion de Procesos Industriales}
-\newcommand{\VIUSubject}{Sistemas Roboticos Moviles}
+\newcommand{\VIUMaster}{M\'aster Universitario en Rob\'otica y Automatizaci\'on de Procesos Industriales}
+\newcommand{\VIUSubject}{Sistemas Rob\'oticos M\'oviles}
 \newcommand{\VIUActivityType}{Actividad 2}
-\newcommand{\VIUActivityTitle}{Programacion y control de un robot terrestre tipo Pioneer en CoppeliaSim/Lua}
-\newcommand{\VIUProfessor}{Jose I. Iniguez\\\tiny\texttt{jinigueza@professor.universidadviu.com}}
+\newcommand{\VIUActivityTitle}{Programaci\'on y control de un robot terrestre tipo Pioneer en CoppeliaSim y Lua}
+\newcommand{\VIUProfessor}{\begin{tabular}[t]{@{}l@{}}Jose I. I\~niguez\\{\scriptsize jinigueza@professor.universidadviu.com}\end{tabular}}
 \newcommand{\VIUAuthor}{Jorge Luis Mayorga Taborda}
 \newcommand{\VIUDate}{26 de mayo de 2026}
 \newcommand{\VIUGroup}{Lunabotics}
+\newcommand{\VIUGrupo}{Entrega pr\'actica de \VIUGroup}
+\newcommand{\VIULogo}{logo-viu-w}
+\newcommand{\VIULogoPath}{images/}
+\newcommand{\VIUCoverBgPath}{images/bg3-viu}
 \newcommand{\SetVIUMaster}[1]{\renewcommand{\VIUMaster}{#1}}
 \newcommand{\SetVIUSubject}[1]{\renewcommand{\VIUSubject}{#1}}
 \newcommand{\SetVIUActivityType}[1]{\renewcommand{\VIUActivityType}{#1}}
@@ -77,30 +100,44 @@
 \newcommand{\SetVIUAuthor}[1]{\renewcommand{\VIUAuthor}{#1}}
 \newcommand{\SetVIUDate}[1]{\renewcommand{\VIUDate}{#1}}
 \newcommand{\SetVIUGroup}[1]{\renewcommand{\VIUGroup}{#1}}
+\newcommand{\SetVIUGrupo}[1]{\renewcommand{\VIUGrupo}{#1}}
+\newcommand{\SetVIULogo}[1]{\renewcommand{\VIULogo}{#1}}
+\newcommand{\SetVIULogoPath}[1]{\renewcommand{\VIULogoPath}{#1}}
+\newcommand{\SetVIUCoverBgPath}[1]{\renewcommand{\VIUCoverBgPath}{#1}}
+
+\newcommand{\VIUContributors}{%
+    \textbf{Estudiante}\\[4pt]
+    \VIUAuthor
+}
+\newcommand{\SetVIUContributors}[1]{\renewcommand{\VIUContributors}{#1}}
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textbf{MROB - VIU}}
-\fancyhead[R]{\small\nouppercase{\leftmark}}
-\fancyfoot[C]{\small\color{UniPrimaryDeep}\textbf{Pagina \thepage{} de \pageref{LastPage}}}
+\fancyhead[L]{\small\textbf{MROB--VIU}\ \textbullet\ \nouppercase{\leftmark}}
+\fancyhead[R]{\small\textit{\VIUActivityType}}
+\fancyfoot[C]{\small\color{UniPrimary}\textbf{P\'agina \thepage{} de \pageref{LastPage}}}
 \renewcommand{\headrulewidth}{0.35pt}
-\renewcommand{\headrule}{\hbox to\headwidth{\color{UniPrimary!60}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{UniPrimary!55}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0pt}
 \fancypagestyle{plain}{%
   \fancyhf{}
-  \fancyhead[R]{\small\VIUActivityType}
-  \fancyfoot[C]{\small\color{UniPrimaryDeep}\textbf{Pagina \thepage{} de \pageref{LastPage}}}
+  \fancyhead[R]{\small\textit{\VIUActivityType}}
+  \fancyfoot[C]{\small\color{UniPrimary}\textbf{P\'agina \thepage{} de \pageref{LastPage}}}
   \renewcommand{\headrulewidth}{0.35pt}
+  \renewcommand{\headrule}{\hbox to\headwidth{\color{UniPrimary!55}\leaders\hrule height \headrulewidth\hfill}}
 }
 
 \titleformat{\chapter}[display]
   {\raggedright\color{UniDark}}
-  {\hfill{\color{UniPrimaryDeep}\bfseries\fontsize{38}{42}\selectfont\thechapter}}
-  {0.5ex}
+  {\makebox[\textwidth]{\hfill{\color{UniPrimaryDeep}\bfseries\fontsize{42}{46}\selectfont\thechapter}}}
+  {0.8ex}
   {\bfseries\fontsize{22}{26}\selectfont}
-  [\vspace{0.6ex}\color{UniPrimary!55}\titlerule]
-\titlespacing*{\chapter}{0pt}{2.2ex plus 1ex minus .2ex}{1.8ex}
-\titleformat{\section}{\bfseries\color{UniDark}\fontsize{15}{18}\selectfont}{\color{UniPrimaryDeep}\thesection}{0.65em}{}
-\titleformat{\subsection}{\bfseries\color{UniDark}\fontsize{12.5}{15}\selectfont}{\color{UniPrimaryDeep}\thesubsection}{0.55em}{}
+  [\vspace{0.8ex}\color{UniPrimary!55}\titlerule]
+\titlespacing*{\chapter}{0pt}{2.5ex plus 1ex minus .2ex}{2.0ex}
+\titleformat{\section}{\bfseries\color{UniDark}\fontsize{16}{18}\selectfont}{\color{UniPrimaryDeep}\thesection}{0.7em}{}
+\titleformat{\subsection}{\bfseries\color{UniDark}\fontsize{13}{16}\selectfont}{\color{UniPrimaryDeep}\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0.9em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.7em}{0.35em}
 
 \newtcolorbox{summarybox}[1][]{
   enhanced,
@@ -124,40 +161,107 @@
   #1
 }
 
-\newcommand{\MakeVIUActivityTitle}{%
-\begin{titlepage}
-\newgeometry{left=1.9cm,right=1.9cm,top=1.9cm,bottom=2.1cm}
-\pagecolor{UniPrimaryDeep}
-\color{white}
-\begin{tikzpicture}[remember picture,overlay]
-  \fill[UniPrimary] (current page.north east) ++(-7.2cm,0) rectangle (current page.south east);
-  \draw[white,opacity=0.16,line width=1.2pt] ($(current page.south east)+(-8.8cm,1.3cm)$) circle (5.0cm);
-  \draw[white,opacity=0.10,line width=1.0pt] ($(current page.south east)+(-3.4cm,8.0cm)$) circle (4.4cm);
-  \node[anchor=north west,align=left] at ($(current page.north west)+(1.9cm,-1.7cm)$)
-    {\fontsize{16}{18}\selectfont\bfseries Universidad Internacional de Valencia};
-\end{tikzpicture}
+\newtcolorbox{interviewbrief}[1][]{
+  enhanced,
+  breakable,
+  colback=UniPrimary!5,
+  colframe=UniPrimaryDeep!85!black,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  left=7pt,right=7pt,top=7pt,bottom=7pt,
+  #1
+}
 
-\vspace*{3.0cm}
-{\bfseries\fontsize{13}{16}\selectfont \VIUMaster\par}
-\vspace{4pt}
-{\fontsize{22}{25}\selectfont \VIUSubject\par}
-\vspace*{2.6cm}
-{\bfseries\fontsize{36}{40}\selectfont \VIUActivityType\par}
-\vspace{8pt}
-{\bfseries\fontsize{18}{22}\selectfont \VIUActivityTitle\par}
-\vspace{10pt}
-{\fontsize{13}{16}\selectfont Entrega practica de \VIUGroup\par}
-\vfill
-{\color{white!85}\rule{\textwidth}{0.9pt}\par}
-\vspace{0.9cm}
-\begin{tabularx}{\textwidth}{@{}P{4.1cm}X@{}}
-\textbf{Autor} & \VIUAuthor\\
-\textbf{Profesor} & \VIUProfessor\\
-\textbf{Entrega} & \VIUDate, antes de las 23:59\\
-\end{tabularx}
-\restoregeometry
+\newcounter{interviewturn}
+
+\NewDocumentEnvironment{interviewtranscript}{O{Registro de entrevista}}{%
+  \setcounter{interviewturn}{0}%
+  \begin{tcolorbox}[
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=UniMuted!45,
+    boxrule=0.55pt,
+    arc=1.5mm,
+    left=8pt,right=8pt,top=8pt,bottom=8pt,
+    title={#1},
+    fonttitle=\bfseries,
+    coltitle=white,
+    colbacktitle=UniPrimaryDeep
+  ]%
+}{%
+  \end{tcolorbox}%
+}
+
+\NewDocumentCommand{\InterviewExchange}{m m}{%
+  \stepcounter{interviewturn}%
+  \par\medskip
+  {\color{UniPrimaryDeep}\bfseries Pregunta \theinterviewturn. Lunabotics}\par
+  #1\par\smallskip
+  {\color{GoodGreen!70!black}\bfseries Respuesta}\par
+  #2\par
+  \medskip{\color{UniPrimary!35}\hrule height 0.35pt}\medskip
+}
+
+\newcommand{\MakeVIUActivityTitle}{%
+\newgeometry{left=1.8cm,right=1.8cm,top=1.8cm,bottom=2.2cm}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \thispagestyle{empty}
+    \pagecolor{UniPrimaryDeep}
+    \color{white}
+
+    \begin{tikzpicture}[remember picture,overlay]
+        \IfFileExists{\VIUCoverBgPath.png}{%
+            \node[anchor=south east,opacity=0.15] at ($(current page.south east)+(+1.0cm,-1.3cm)$)
+            {\includegraphics[height=18.2cm]{\VIUCoverBgPath}};
+        }{}%
+    \end{tikzpicture}
+
+    \raggedright
+
+    \IfFileExists{\VIULogoPath\VIULogo.pdf}{%
+        \includegraphics[height=1.7cm]{\VIULogoPath\VIULogo}%
+    }{%
+        \IfFileExists{\VIULogoPath\VIULogo.png}{%
+            \includegraphics[height=1.7cm]{\VIULogoPath\VIULogo}%
+        }{%
+            {\fontsize{16}{18}\selectfont\bfseries Universidad Internacional de Valencia\par}%
+        }%
+    }
+
+    \vspace*{2.1cm}
+
+    {\bfseries\fontsize{14}{16}\selectfont \VIUMaster\par}
+    \vspace{3pt}
+    {\fontsize{22}{24}\selectfont \VIUSubject\par}
+
+    \vspace*{2.8cm}
+
+    {\bfseries\fontsize{34}{40}\selectfont \VIUActivityType\par}
+    \vspace{4pt}
+    {\color{UniLight}\bfseries\fontsize{16}{20}\selectfont \VIUActivityTitle\par}
+    \vspace{8pt}
+    {\fontsize{14}{16}\selectfont \VIUGrupo\par}
+
+    \vfill
+
+    {\color{UniLight}\rule{\textwidth}{0.9pt}\par}
+    \vspace{1.0cm}
+
+    \begin{minipage}[t]{0.72\textwidth}
+        \raggedright
+        {\fontsize{11}{14}\selectfont
+        \VIUContributors\par
+        \vspace{6pt}
+        \textbf{Profesor}\quad \VIUProfessor\par
+        \vspace{2pt}
+        \textbf{Fecha}\quad \VIUDate, antes de las 23:59\par}
+    \end{minipage}
 \end{titlepage}
+\restoregeometry
 \pagecolor{white}
 \color{UniDark}
 \setcounter{page}{2}
+\hypersetup{pageanchor=true}
 }

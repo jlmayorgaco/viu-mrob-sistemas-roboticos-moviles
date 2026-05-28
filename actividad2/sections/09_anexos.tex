@@ -7,55 +7,127 @@
 \setlength{\tabcolsep}{3pt}
 \begin{tabularx}{\textwidth}{@{}P{0.43\textwidth}Y@{}}
 \toprule
-\textbf{Archivo} & \textbf{Funcion}\\
+\textbf{Archivo} & \textbf{Función}\\
 \midrule
 \path{coppeliasim/Sim_T2_Phase1_Basic.ttt} & Escena final validada.\\
-\path{coppeliasim/Sim_T2_Phase1_Basic_validation.json} & Resultado de validacion automatizada.\\
-\path{coppeliasim/build_phase1_basic_scene.py} & Generador de escena y validador headless.\\
-\path{coppeliasim/phase1_r1_task_controller.lua} & Controlador principal de R1: tareas, navegacion, SLAM, bateria y telemetria.\\
-\path{coppeliasim/phase1_b1_walking_manager.lua} & Movimiento y acciones visuales de Bill.\\
-\path{coppeliasim/run_phase1_slam_export.py} & Exportacion CSV de corrida base.\\
-\path{coppeliasim/run_phase1_slam_comparison.py} & Benchmark de algoritmos SLAM reducidos.\\
-\path{coppeliasim/plot_phase1_slam_comparison.py} & Generacion de plots de comparacion SLAM.\\
-\path{coppeliasim/phase1_slam_logs/} & CSV, JSON, Markdown y figuras del benchmark SLAM.\\
-\path{coppeliasim/phase1_controller_logs/} & Logs y plots de comparacion de controladores.\\
+\path{coppeliasim/Sim_T2_Phase1_Basic_validation.json} & Resultado de validación automática.\\
+\path{coppeliasim/build_phase1_basic_scene.py} & Generador de escena y validador.\\
+\path{coppeliasim/phase1_r1_task_controller.lua} & Controlador principal de R1: tareas, navegación, SLAM, batería y telemetría.\\
+\path{coppeliasim/phase1_b1_walking_manager.lua} & Movimiento y acciones visuales de B1 (Bill).\\
+\path{coppeliasim/capture_coppeliasim_screenshots.lua} & Capturas 3D renderizadas desde CoppeliaSim para el informe.\\
+\path{coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt} & Escena con mapa desconocido, obstáculos no modelados y tarima móvil.\\
+\path{coppeliasim/build_phase2_unknown_slam_scene.py} & Generador y validador de Phase 2.\\
+\path{coppeliasim/Actividad2_1_Basic_Follower.ttt} & Escena básica de seguimiento de Bill.\\
+\path{coppeliasim/pioneer_pid_follower_controller.lua} & Controlador del seguidor con P, PI, PID, LQR y NMPC por disparo directo.\\
 \bottomrule
 \end{tabularx}
+\caption{Escenas y controladores principales.}
 \end{table}
 
-\section{Parametros relevantes}
+\begin{table}[H]
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{@{}P{0.43\textwidth}Y@{}}
+\toprule
+\textbf{Archivo} & \textbf{Función}\\
+\midrule
+\path{coppeliasim/run_phase1_slam_export.py} & Exportación CSV de la ejecución base.\\
+\path{coppeliasim/run_phase1_slam_comparison.py} & Comparación de algoritmos SLAM implementados en Lua.\\
+\path{coppeliasim/plot_phase1_slam_comparison.py} & Generación de gráficas de comparación SLAM.\\
+\path{coppeliasim/phase1_slam_logs/} & CSV, JSON, Markdown y figuras de la comparación SLAM.\\
+\path{coppeliasim/run_phase2_slam_unknown_comparison.py} & Exportación comparativa Phase 2 para los cuatro modos SLAM.\\
+\path{coppeliasim/plot_phase2_slam_unknown_comparison.py} & Figuras y métricas de reconstrucción Phase 2.\\
+\path{coppeliasim/phase2_slam_logs/} & CSV, JSON, Markdown y figuras de Phase 2.\\
+\path{coppeliasim/phase1_controller_logs/} & Registros CSV y gráficas de comparación de controladores.\\
+\path{coppeliasim/follower_pid_logs/} & CSV y gráficas de seguimiento de Bill.\\
+\bottomrule
+\end{tabularx}
+\caption{Exportadores, registros y escena complementaria.}
+\end{table}
+
+\clearpage
+\section{Parámetros relevantes}
 
 \begin{table}[H]
 \small
 \setlength{\tabcolsep}{3pt}
 \begin{tabularx}{\textwidth}{@{}P{0.30\textwidth}P{0.18\textwidth}Y@{}}
 \toprule
-\textbf{Parametro} & \textbf{Valor} & \textbf{Comentario}\\
+\textbf{Parámetro} & \textbf{Valor} & \textbf{Comentario}\\
 \midrule
-Radio de rueda & \SI{0.0975}{m} & Conversion de velocidad lineal a angular de motor.\\
+Radio de rueda & \SI{0.0975}{m} & Conversión de velocidad lineal a angular de motor.\\
 Distancia entre ruedas & \SI{0.331}{m} & Modelo diferencial del Pioneer P3DX.\\
-Velocidad maxima & \SI{0.55}{m/s} & Saturacion de avance.\\
-Velocidad angular maxima & \SI{1.32}{rad/s} & Saturacion de giro.\\
-Rango de evitacion & \SI{0.62}{m} & Umbral de influencia reactiva de obstaculos.\\
-Hard stop & \SI{0.12}{m} & Distancia critica frontal.\\
-Bateria inicial & 96\% & Valor usado en validaciones.\\
-Umbral bateria baja & 56\% & Limita velocidad si se alcanza.\\
-Umbral bateria critica & 26\% & Modo conservador.\\
-Resolucion de grilla & \SI{0.18}{m} & Usada por GMapping/Hector/Cartographer reducidos.\\
-Clearance de planner & \SI{0.40}{m} & Separacion minima deseada respecto al mapa.\\
-Offset de desvio & \SI{0.52}{m} & Distancia lateral del waypoint local.\\
+Velocidad máxima & \SI{0.55}{m/s} & Saturación de avance.\\
+Velocidad angular máxima & \SI{1.32}{rad/s} & Saturación de giro.\\
+Rango de evitación & \SI{0.62}{m} & Umbral de influencia reactiva de obstáculos.\\
+Parada crítica & \SI{0.12}{m} & Distancia frontal mínima antes de detener el avance.\\
+Batería inicial & 96\% & Valor usado en validaciones.\\
+Umbral batería baja & 56\% & Limita velocidad si se alcanza.\\
+Umbral batería crítica & 26\% & Modo conservador.\\
+Resolución de grid & \SI{0.18}{m} & Usada por GMapping, Hector y Cartographer en grid.\\
+Margen del planificador & \SI{0.40}{m} & Separación mínima deseada respecto al mapa.\\
+Desplazamiento lateral & \SI{0.52}{m} & Distancia lateral del punto intermedio local.\\
+Retardo de recuperación & \SI{10.0}{s} & Activa \texttt{RECOVERY\_DIRECT} si no hay progreso hacia el objetivo.\\
+Duración de recuperación & \SI{5.5}{s} & Ventana en la que se suspende el mapa para planificar, sin apagar la evitación local.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{Resumen de benchmark de control}
+\section{Fragmentos Lua propios}
+
+\begin{lstlisting}[caption={Conversión de velocidad diferencial a ruedas.},label={lst:wheel-conversion-appendix}]
+function DifferentialDrive:setVelocity(v, w)
+    local left = (v - 0.5 * self.cfg.trackWidth * w) / self.cfg.wheelRadius
+    local right = (v + 0.5 * self.cfg.trackWidth * w) / self.cfg.wheelRadius
+    sim.setJointTargetVelocity(self.handles.leftMotor, left)
+    sim.setJointTargetVelocity(self.handles.rightMotor, right)
+end
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Entrega, espera de trabajo humano y retorno de herramienta.},label={lst:handoff-appendix}]
+local function deliverToolToBill(tool, workSurface, completedCount, nextSpec, nextState, afterDeliver)
+    stopRobot('MANIPULATING')
+    if delayElapsed(cfg.manipulationDelay) then
+        carryingTool = 0
+        placeToolAt(tool, workSurface, 0.43)
+        completedTaskCount = math.max(completedTaskCount, completedCount)
+        currentTaskSpec = nextSpec
+        setShapeColorSafe(tool, ToolColor.onTable)
+        if afterDeliver then afterDeliver() end
+        setTaskState(nextState)
+    end
+end
+
+local function waitForBillWork(tool, workSurface, dropPoint, workDelay, nextTaskId, nextSpec, nextState)
+    stopRobot('WAIT_B1')
+    placeToolAt(tool, workSurface, 0.43)
+    if delayElapsed(workDelay) then
+        currentTaskId = nextTaskId
+        currentTaskSpec = nextSpec
+        placeToolAt(tool, dropPoint, 0.36)
+        setTaskState(nextState)
+    end
+end
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Animación de Bill trabajando con brazos hacia la mesa.},label={lst:bill-arms-forward}]
+elseif self:actionContains(action, 'WORKING') then
+    pose.leftShoulder = 0.62 + 0.06 * pulse
+    pose.rightShoulder = 0.60 - 0.06 * pulse
+    pose.leftElbow = 0.28 + 0.05 * math.abs(tap)
+    pose.rightElbow = 0.26 + 0.05 * math.abs(tap)
+    pose.leftKnee = 0.07 + 0.03 * math.abs(pulse)
+    pose.rightKnee = pose.leftKnee
+\end{lstlisting}
+
+\section{Comparación de control}
 
 \begin{table}[H]
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}P{0.12\textwidth}P{0.13\textwidth}P{0.13\textwidth}P{0.13\textwidth}P{0.13\textwidth}P{0.14\textwidth}P{0.11\textwidth}@{}}
 \toprule
-\textbf{Modo} & \textbf{Dur. [s]} & \textbf{Mov. [s]} & \textbf{Ruta [m]} & \textbf{Bat. [\%]} & \textbf{Riesgo max.} & \textbf{Score}\\
+\textbf{Modo} & \textbf{Dur. [s]} & \textbf{Mov. [s]} & \textbf{Ruta [m]} & \textbf{Bat. [\%]} & \textbf{Riesgo max.} & \textbf{Puntaje}\\
 \midrule
 P & 115,20 & 37,70 & 12,843 & 19,804 & 0,410 & 0,573\\
 PI & \textbf{110,30} & \textbf{31,20} & 12,867 & 19,516 & 0,487 & \textbf{0,274}\\
@@ -69,21 +141,22 @@ NMPC & 112,30 & 33,05 & \textbf{12,788} & \textbf{19,316} & 0,444 & 0,326\\
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_controller_metrics.png}
-  \caption{Metricas complementarias de control: tiempos, trayectoria, suavidad, bateria, riesgo y error de pose.}
+  \caption{Métricas complementarias de control: tiempos, trayectoria, suavidad, batería, riesgo y error de pose.}
   \label{fig:controller-metrics}
 \end{figure}
 
-\section{Notas de limitacion}
+\section{Notas de alcance}
 
 \begin{itemize}
-  \item No se afirma ejecucion de \texttt{slam\_gmapping}, Hector ROS ni Google
-  Cartographer real; las variantes son reproducciones reducidas dentro de
-  CoppeliaSim.
+  \item Las variantes GMapping, Hector y Cartographer son implementaciones Lua
+  inspiradas en esos métodos y calculadas con los datos de los sensores de la escena.
   \item El sensor se representa con los 16 ultrasonidos del Pioneer visualizados
-  como rayos tipo LiDAR 2D, suficiente para la actividad y para comparar mapas.
-  \item La planificacion local por waypoint no reemplaza a A* global, D* o RRT;
-  es una regla practica para evitar bloqueos en una celda pequena.
-  \item Los modos LQR/NMPC del benchmark de control se conservan como
-  aproximaciones comparativas; la defensa principal se basa en los metodos
-  clasicos trazables y validados.
+  como rayos. Las figuras de reconstrucción SLAM corresponden a esos rayos de
+  proximidad y al arreglo ultrasónico simulado.
+  \item \texttt{phase2MappingEvidencePct} mide actividad de mapeo. La IoU y la
+  cobertura geométrica contra una referencia real quedan fuera de esa señal.
+  \item La planificación local por punto intermedio resuelve bloqueos de una celda
+  pequeña sin introducir una capa global adicional.
+  \item LQR y NMPC se usan como comparaciones acotadas; el análisis central usa
+  métodos clásicos de seguimiento, evitación y estimación.
 \end{itemize}

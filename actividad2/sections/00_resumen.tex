@@ -1,38 +1,38 @@
-\chapter*{Resumen ejecutivo}
-\addcontentsline{toc}{chapter}{Resumen ejecutivo}
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
 
 \begin{summarybox}
-Este documento presenta la Actividad 2 como una simulacion reproducible en
-CoppeliaSim/Lua. La escena final \path{Sim_T2_Phase1_Basic.ttt} modela un
-warehouse con un robot Pioneer P3DX identificado como R1, una persona movil B1
-(Bill), dos estaciones de herramienta T1/T2, dos mesas de trabajo, obstaculos,
-una estacion de carga C1 y una cola de tareas de entrega/retorno de piezas.
+Se implementó en CoppeliaSim y Lua un Pioneer P3DX dentro de
+una celda de almacén. La escena base \path{Sim_T2_Phase1_Basic.ttt} integra los
+elementos principales del escenario: R1, B1 (Bill) como persona móvil, T1 y T2,
+dos mesas, estanterías, un sofá de operador, obstáculos y la estación de carga. B1
+sale en el código como \texttt{/B1} o Bill; viene del modelo de persona de
+CoppeliaSim y se usa como \texttt{People/mannequin}.
 \end{summarybox}
 
-La contribucion principal no es una escena decorativa, sino un ciclo completo de
-robotica movil: lectura de sensores tipo LiDAR/proximidad, estimacion de pose,
-construccion de mapa, planificacion local, evitacion de obstaculos, control de
-velocidades diferenciales, gestion de bateria y coordinacion con una persona
-movil. La validacion automatizada confirma que R1 completa cuatro tareas:
+R1 lee los sensores de proximidad, estima su pose, actualiza un mapa local,
+evita obstáculos y manda las ruedas diferenciales mientras coordina entregas con
+B1. El ciclo que se validó fue este.
 
 \begin{itemize}
-  \item \texttt{task1:\{T1 -> B1@WS1\}}: R1 recoge T1 en el rack y la entrega a Bill.
-  \item \texttt{task2:\{B1@WS1(T1) -> Rack\_T1\}}: Bill trabaja la pieza y R1 la devuelve al shelf.
-  \item \texttt{task3:\{T2 -> B1@WS2\}}: Bill se desplaza a la segunda mesa y solicita T2.
-  \item \texttt{task4:\{B1@WS2(T2) -> Rack\_T2\}}: R1 recoge la pieza trabajada y la almacena.
+  \item \texttt{task1:\{T1 -> B1@WS1\}}: R1 recoge T1 en la estantería y la entrega a B1.
+  \item \texttt{task2:\{B1@WS1(T1) -> Rack\_T1\}}: B1 trabaja la pieza y R1 la devuelve a su estantería.
+  \item \texttt{task3:\{T2 -> B1@WS2\}}: B1 camina a la segunda mesa y solicita T2.
+  \item \texttt{task4:\{B1@WS2(T2) -> Rack\_T2\}}: R1 recoge la pieza terminada y la almacena.
 \end{itemize}
 
-El benchmark compara cuatro estimadores/mappers reducidos, implementados dentro
-de CoppeliaSim y alimentados por las mismas senales: \texttt{KALMAN\_LANDMARK},
-\texttt{GMAPPING\_GRID}, \texttt{HECTOR\_GRID\_MATCHING} y
-\texttt{CARTOGRAPHER\_SUBMAP}. Se declara explicitamente que no se ejecutan los
-paquetes ROS originales; se trata de implementaciones academicas reducidas,
-inspiradas en los metodos clasicos de la literatura.
+La segunda escena validada es \path{Sim_T2_Phase2_SLAM_Unknown.ttt}. En esa escena, el
+robot empieza con parte del entorno oculta y se encuentra obstáculos que aparecen
+durante la misión. En esa fase se comparan cuatro modos de estimación y mapeo escritos en
+Lua:
+\texttt{KALMAN\_LANDMARK}, \texttt{GMAPPING\_GRID},
+\texttt{HECTOR\_GRID\_MATCHING} y \texttt{CARTOGRAPHER\_SUBMAP}. Usan las
+mismas tareas, sensores y controlador, para que la comparación no dependa de
+condiciones de escena distintas.
 
-El resultado final de validacion de la escena principal fue satisfactorio:
-cuatro tareas completadas, retorno a carga, 16 sensores activos, rayos de sensor
-visualizados, evitacion reactiva activa, SLAM activo, planificacion por waypoint
-SLAM y error final de pose acotado a \SI{0.031}{m}. En la comparacion de SLAM,
-el modo Kalman-landmark obtiene el menor RMSE de posicion
-(\SI{0.0316}{m}), mientras que Cartographer-submap produce el mapa mas rico en
-estructura temporal con 10 submaps y 1 cierre de ciclo simplificado.
+La ejecución final de Phase 2 completó las cuatro tareas, volvió a carga, mantuvo
+activos los 16 sensores y cerró con \SI{0.040}{m} de error final de pose. En el
+ensayo con mapa desconocido, Kalman-landmark quedó con el menor RMSE de posición
+(\SI{0.03185}{m}) y la menor duración (\SI{124.80}{s}). Cartographer-submap
+generó más actividad de mapa, con 13 submapas y 4 cierres de ciclo locales;
+Hector terminó con el mejor indicador aproximado de precisión entre las grids.
