@@ -18,7 +18,7 @@ from scene_common import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
-BASE_SCENE = ROOT / "actividad2" / "coppeliasim" / "Actividad2_2_Pioneer.ttt"
+BASE_SCENE = ROOT / "actividad2" / "coppeliasim" / "legacy" / "Actividad2_2_Pioneer.ttt"
 OUTPUT_SCENE = ROOT / "actividad2" / "coppeliasim" / "Actividad2_Pioneer_basic.ttt"
 CONTROLLER = ROOT / "actividad2" / "coppeliasim" / "pioneer_basic_controller.lua"
 VALIDATION_JSON = ROOT / "actividad2" / "coppeliasim" / "Actividad2_Pioneer_basic_validation.json"
