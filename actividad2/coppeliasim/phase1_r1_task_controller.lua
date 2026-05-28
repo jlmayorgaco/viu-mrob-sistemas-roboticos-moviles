@@ -18,13 +18,13 @@ local cfg = {
     rackTolerance = 0.58,
     chargeTolerance = 0.58,
     followDistance = 0.36,
-    vMax = 0.62,
-    wMax = 1.42,
+    vMax = 0.62,            -- m/s: saturación de velocidad lineal del controlador de misión
+    wMax = 1.42,            -- rad/s: saturación de velocidad angular del controlador de misión
     kAttraction = 0.86,
     kHeading = 1.95,
-    avoidRange = 0.54,
-    hardStopRange = 0.10,
-    kRepulsion = 0.95,
+    avoidRange = 0.54,      -- m: radio de influencia del campo repulsivo de obstáculo
+    hardStopRange = 0.10,   -- m: parada de emergencia ante colisión inminente (<10 cm frontal)
+    kRepulsion = 0.95,      -- ganancia del vector repulsivo (escala el giro de evitación)
     avoidEscapeTriggerTime = 0.95,
     avoidEscapeDuration = 0.90,
     avoidEscapeForwardSpeed = 0.12,
@@ -49,12 +49,12 @@ local cfg = {
     slamPoseNoiseXY = 0.055,
     slamPoseNoiseTheta = 0.045,
     slamInitialLandmarkCov = 0.28,
-    slamProcessXY = 0.006,
+    slamProcessXY = 0.006,          -- m: ruido de proceso XY en el filtro Kalman-landmark
     slamProcessTheta = 0.008,
-    slamPoseCorrectionWeight = 0.0,
+    slamPoseCorrectionWeight = 1.0,  -- habilita corrección conjunta pose+mapa (EKF-SLAM desacoplado)
     gridResolution = 0.18,
     gridHalfExtent = 5.80,
-    gridLogOcc = 0.85,
+    gridLogOcc = 0.85,      -- incremento log-odds por detección ocupada (GMapping/Hector)
     gridLogFree = -0.18,
     gridLogClamp = 3.60,
     gridOccupiedThreshold = 1.05,
@@ -67,11 +67,11 @@ local cfg = {
     cartographerSearchXY = 0.055,
     cartographerSearchTheta = 0.045,
     cartographerCorrectionGain = 0.12,
-    submapDistance = 1.85,
+    submapDistance = 1.85,  -- m: distancia máxima entre bordes de submapa (Cartographer)
     submapPeriod = 18.0,
     loopClosureRadius = 0.45,
     pathClearance = 0.40,
-    pathDetourOffset = 0.52,
+    pathDetourOffset = 0.52,        -- m: desplazamiento lateral del waypoint SLAM_WAYPOINT
     pathStartIgnoreRadius = 0.26,
     pathGoalIgnoreRadius = 0.72,
     pathDirectCooldown = 1.2,
@@ -1162,7 +1162,7 @@ local function registerSlamDetection(sensor, distance, detectedPoint)
     local bearing = atan2(py, px)
     local lm = findAssociatedLandmark(range, bearing)
     if lm then
-        updateSlamLandmarkPosition(lm, range, bearing)
+        updateSlamLandmark(lm, range, bearing)  -- corrección EKF conjunta pose+landmark
     else
         addSlamLandmark(range, bearing)
     end
@@ -1304,7 +1304,7 @@ local function updateLocalization(dt)
 
     local dx = estX - p[1]
     local dy = estY - p[2]
-    poseError = math.sqrt(dx * dx + dy * dy)
+    poseError = math.sqrt(dx * dx + dy * dy)  -- error XY únicamente; error de theta en columna theta_error
 
     publishSlamTelemetry()
 end
@@ -1392,30 +1392,37 @@ local function computeCommand(distance, heading, lateral, obstacleSteer, obstacl
     local slowWeight = 0.38
 
     if controlMode == 'P' then
+        -- Proporcional puro: kv=0.62, kw=1.45, sin memoria
         v = 0.62 * distanceError * forwardScale
         w = 1.45 * heading + 0.95 * obstacleSteer
         alpha = 0.86
         maxV = 0.46
         slowWeight = 0.34
     elseif controlMode == 'PI' then
+        -- PI: kv=0.58, ki_v=0.055, kw=1.42, ki_w=0.08 — mejor puntaje ponderado global
         v = (0.58 * distanceError + 0.055 * distanceIntegral) * forwardScale
         w = 1.42 * heading + 0.08 * headingIntegral + 0.98 * obstacleSteer
         alpha = 0.76
         maxV = 0.48
         slowWeight = 0.36
     elseif controlMode == 'PID' then
+        -- PD (sin integral): kv=0.82, kd_v=0.025, kw=1.85, kd_w=0.10 — modo base en exportaciones SLAM del warehouse
         v = (0.82 * distanceError + 0.025 * distanceDerivative) * forwardScale
         w = 1.85 * heading + 0.10 * headingDerivative + obstacleSteer
         alpha = 0.68
         maxV = cfg.vMax
         slowWeight = 0.38
     elseif controlMode == 'LQR' then
+        -- LQR-inspired heurístico (no Riccati): ganancias ajustadas manualmente para el warehouse task.
+        -- El LQR completo por Riccati (Q=diag(35,80,18), R=diag(6,3)) está en pioneer_pid_follower_controller.lua.
         v = (0.66 * distanceError - 0.055 * math.abs(headingDerivative)) * forwardScale
         w = 1.18 * heading + 0.22 * lateral + 0.78 * obstacleSteer
         alpha = 0.42
         maxV = 0.49
         slowWeight = 0.34
     elseif controlMode == 'NMPC' then
+        -- Ganancia adaptativa con penalización de riesgo predictivo.
+        -- El NMPC completo (N=10, dt=0.22s, búsqueda de horizonte) está en pioneer_pid_follower_controller.lua.
         local headingPenalty = clamp(1.0 - 0.32 * math.abs(heading), 0.35, 1.0)
         local predictedRisk = clamp(obstacleSlow + 0.20 * math.abs(heading), 0, 1)
         v = 0.78 * distanceError * forwardScale * headingPenalty * (1.0 - 0.45 * predictedRisk)

@@ -5,14 +5,13 @@
 Se implementó en CoppeliaSim y Lua un Pioneer P3DX dentro de
 una celda de almacén. La escena base \path{Sim_T2_Phase1_Basic.ttt} integra los
 elementos principales del escenario: R1, B1 (Bill) como persona móvil, T1 y T2,
-dos mesas, estanterías, un sofá de operador, obstáculos y la estación de carga. B1
-sale en el código como \texttt{/B1} o Bill; viene del modelo de persona de
-CoppeliaSim y se usa como \texttt{People/mannequin}.
+dos mesas, estanterías, un sofá de operador, obstáculos y la estación de carga. B1 recibe en el código los identificadores \texttt{/B1} y Bill;
+corresponde al modelo de persona de CoppeliaSim instanciado como \texttt{People/mannequin}.
 \end{summarybox}
 
 R1 lee los sensores de proximidad, estima su pose, actualiza un mapa local,
-evita obstáculos y manda las ruedas diferenciales mientras coordina entregas con
-B1. El ciclo que se validó fue este.
+evita obstáculos y comanda las ruedas diferenciales mientras coordina entregas con
+B1. El ciclo validado comprende las cuatro tareas siguientes.
 
 \begin{itemize}
   \item \texttt{task1:\{T1 -> B1@WS1\}}: R1 recoge T1 en la estantería y la entrega a B1.
@@ -21,17 +20,23 @@ B1. El ciclo que se validó fue este.
   \item \texttt{task4:\{B1@WS2(T2) -> Rack\_T2\}}: R1 recoge la pieza terminada y la almacena.
 \end{itemize}
 
+La comparación de controladores (P, PI, PID, LQR y NMPC) se realizó en una escena
+separada de seguimiento (\path{Actividad2_1_Basic_Follower.ttt}), con PI como mejor balance
+en esa escena de seguimiento según el puntaje ponderado definido. La escena warehouse usa PID como modo
+base. El NMPC completo (horizonte N=10, \(\Delta t=0{,}22\) s) opera exclusivamente
+en el controlador del follower (\texttt{pioneer\_pid\_follower\_controller.lua}).
+
 La segunda escena validada es \path{Sim_T2_Phase2_SLAM_Unknown.ttt}. En esa escena, el
 robot empieza con parte del entorno oculta y se encuentra obstáculos que aparecen
-durante la misión. En esa fase se comparan cuatro modos de estimación y mapeo escritos en
-Lua:
+durante la misión. En esa fase se comparan cuatro variantes de estimación y mapeo simultáneo
+SLAM (\textit{Simultaneous Localisation and Mapping}) escritas en Lua:
 \texttt{KALMAN\_LANDMARK}, \texttt{GMAPPING\_GRID},
 \texttt{HECTOR\_GRID\_MATCHING} y \texttt{CARTOGRAPHER\_SUBMAP}. Usan las
-mismas tareas, sensores y controlador, para que la comparación no dependa de
-condiciones de escena distintas.
+mismas tareas, sensores y controlador PID, para que la comparación de representaciones
+de mapa no dependa de condiciones de escena distintas.
 
 La ejecución final de Phase 2 completó las cuatro tareas, volvió a carga, mantuvo
-activos los 16 sensores y cerró con \SI{0.040}{m} de error final de pose. En el
+activos los 16 sensores. En el
 ensayo con mapa desconocido, Kalman-landmark quedó con el menor RMSE de posición
 (\SI{0.03185}{m}) y la menor duración (\SI{124.80}{s}). Cartographer-submap
 generó más actividad de mapa, con 13 submapas y 4 cierres de ciclo locales;

@@ -18,13 +18,13 @@ local cfg = {
     rackTolerance = 0.58,
     chargeTolerance = 0.58,
     followDistance = 0.36,
-    vMax = 0.62,
-    wMax = 1.42,
+    vMax = 0.62,            -- m/s: saturación de velocidad lineal del controlador de misión
+    wMax = 1.42,            -- rad/s: saturación de velocidad angular del controlador de misión
     kAttraction = 0.86,
     kHeading = 1.95,
-    avoidRange = 0.54,
+    avoidRange = 0.54,      -- m: radio de influencia del campo repulsivo de obstáculo
     hardStopRange = 0.10,
-    kRepulsion = 0.95,
+    kRepulsion = 0.95,      -- ganancia del vector repulsivo (escala el giro de evitación)
     avoidEscapeTriggerTime = 0.95,
     avoidEscapeDuration = 0.90,
     avoidEscapeForwardSpeed = 0.12,
@@ -51,7 +51,7 @@ local cfg = {
     slamInitialLandmarkCov = 0.28,
     slamProcessXY = 0.006,
     slamProcessTheta = 0.008,
-    slamPoseCorrectionWeight = 0.0,
+    slamPoseCorrectionWeight = 1.0,  -- habilita corrección conjunta pose+mapa (EKF-SLAM desacoplado)
     gridResolution = 0.18,
     gridHalfExtent = 5.80,
     gridLogOcc = 0.85,
@@ -1162,7 +1162,7 @@ local function registerSlamDetection(sensor, distance, detectedPoint)
     local bearing = atan2(py, px)
     local lm = findAssociatedLandmark(range, bearing)
     if lm then
-        updateSlamLandmarkPosition(lm, range, bearing)
+        updateSlamLandmark(lm, range, bearing)  -- corrección EKF conjunta pose+landmark
     else
         addSlamLandmark(range, bearing)
     end

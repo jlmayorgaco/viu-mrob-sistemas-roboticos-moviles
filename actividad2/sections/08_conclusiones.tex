@@ -7,12 +7,17 @@ entrega herramientas, espera el trabajo humano, recupera cada pieza, evita
 obstáculos y termina en carga. La misión incluye cola de tareas, sensores,
 estimación y retorno a estación.
 
-Con los datos exportados, Kalman-landmark se mantiene como el candidato operativo para
-esta celda: menor RMSE de posición, menor duración en Phase 2 y menos batería.
-Las grids tipo GMapping, Hector y Cartographer se usan para comparar ocupación
-por log-odds, \textit{scan matching} y submapas con cierre de ciclo. Estas
-variantes se implementaron dentro de CoppeliaSim y Lua y usaron las mismas lecturas de
-proximidad para mantener condiciones comparables entre métodos.
+Con los datos exportados, Kalman-landmark obtiene en Fase 2 el menor RMSE de
+posición (\SI{0.03185}{m}), la menor duración (\SI{124.80}{s}) y el menor
+consumo de batería entre los cuatro métodos, y se mantiene como candidato
+operativo para esta celda compacta. Las variantes inspiradas en GMapping,
+Hector y Cartographer se emplean para comparar tres representaciones de mapa:
+grid log-odds, ajuste de pose por scan-matching discreto y submapas con cierre
+de ciclo local. Las cuatro variantes usaron las mismas lecturas de proximidad
+y el mismo controlador PID para garantizar condiciones comparables. Cada modo
+se ejecutó en una única carrera de simulación (\(n=1\)); la ordenación por
+métricas es indicativa y puede variar ante diferentes condiciones de inicialización
+o trayectorias de Bill.
 
 El anticolisiones funciona como capa reactiva: cuando los sensores detectan algo
 cerca, el robot baja velocidad, modifica el giro y actualiza la señal de riesgo. La capa de
@@ -29,28 +34,29 @@ ponderado de los CSV disponibles. LQR se aplicó como regulador discreto local y
 NMPC como control predictivo por disparo directo, resuelto con búsqueda local de
 comandos.
 
-No se declara estabilidad formal para los controladores discretos con
-saturación, evitación reactiva y cambios de objetivo. La validación queda en el
-plano experimental: las ejecuciones completan la misión y las señales exportadas no
-registran divergencia, pero una prueba formal exigiría analizar la conmutación
-entre modos y la capa de saturaciones.
+\section*{Limitaciones y trabajo futuro}
 
-El sistema cubre la secuencia completa de almacén, la comparación de
-controladores, la validación de Phase 1 y la prueba Phase 2 con mapa
-desconocido. La misma instrumentación enlaza escenas, métricas y evidencias
-visuales sin cambiar las condiciones de comparación.
+La comparación de controladores se realizó con una única carrera por modo
+(\(n=1\)) y sin análisis de estabilidad formal ante saturaciones, conmutación
+entre modos o cambios dinámicos de objetivo. La validación es experimental:
+las ejecuciones completan la misión sin divergencia observable, pero una
+prueba formal requeriría análisis de Lyapunov o estabilidad de modos conmutados.
+Las variantes de mapeo tampoco se evaluaron contra una referencia geométrica
+absoluta: el RMSE se mide respecto a la pose ruidosa del simulador, y las métricas
+de cobertura son proxies de actividad del mapa, no mediciones de IoU (\textit{Intersection
+over Union}) contra un mapa de referencia.
 
 Además de la bibliografía académica, se consultaron repositorios públicos para
-contrastar estructuras de implementación y adaptar ideas al entorno Lua de
-CoppeliaSim: \texttt{slam\_gmapping}, \texttt{hector\_slam}, Cartographer y
-PythonRobotics \cite{githubSlamGmapping,githubHectorSlam,githubCartographer,pythonRobotics}.
-Gemini se usó como apoyo de consulta e ideación visual; el código final, las
-métricas, las figuras y la redacción técnica fueron revisados y adaptados
-manualmente antes de incorporarlos al trabajo \cite{googleGemini2026}.
+contrastar estructuras de implementación: \texttt{slam\_gmapping},
+\texttt{hector\_slam}, Cartographer y PythonRobotics
+\cite{githubSlamGmapping,githubHectorSlam,githubCartographer,pythonRobotics}.
+Gemini y Claude se usaron como apoyo de consulta e ideación visual; el código
+final, las métricas, las figuras y la redacción técnica fueron revisados y
+adaptados manualmente \cite{googleGemini2026}.
 
-Como trabajo futuro, el escenario podría conectarse a ROS 2 para ejecutar
-paquetes reales de \texttt{slam\_toolbox}, Cartographer,
-Hector o GMapping equivalentes. La evaluación de mapas debe incorporar
-referencia geométrica, IoU de ocupación, precisión y exhaustividad por obstáculo
-y varias ejecuciones por método, para separar el desempeño del método de una
-trayectoria puntual de simulación.
+Como trabajo futuro, el sistema podría conectarse a ROS~2 para ejecutar los
+paquetes originales de \texttt{slam\_toolbox}, Cartographer, Hector o
+GMapping, lo que permitiría comparar las implementaciones Lua contra sus
+homólogos completos. La evaluación de mapas debe incorporar referencia
+geométrica, IoU de ocupación, precisión y exhaustividad por obstáculo y
+varias ejecuciones por método para obtener significancia estadística.

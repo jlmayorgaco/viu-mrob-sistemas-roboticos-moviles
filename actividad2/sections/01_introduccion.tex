@@ -1,34 +1,56 @@
 \chapter{Introducción}
 
-El trabajo implementa un Pioneer en CoppeliaSim y Lua y comprueba que se
-mueve dentro de una celda robotizada con evitación de obstáculos. La escena
+Se implementó un Pioneer P3DX en CoppeliaSim y Lua capaz de navegar autónomamente
+en una celda robotizada con evitación de obstáculos, conforme a los requisitos
+de la Actividad~2~\cite{viuActividad2}. La escena
 representa un caso de fábrica sencillo: R1 asiste a B1, llamado Bill, una persona
-tomada del modelo disponible en CoppeliaSim y usada como \texttt{mannequin}
-operativo. El robot lleva piezas o herramientas a dos mesas, espera mientras
+tomada del modelo disponible en CoppeliaSim y usada como \textit{mannequin}
+operativo. Los fundamentos de robótica móvil diferencial y navegación autónoma
+sobre los que se construye el sistema están descritos en \cite{siegwart2011}. El robot lleva piezas o herramientas a dos mesas, espera mientras
 Bill trabaja, las recoge, las devuelve a su estantería y termina en carga.
 
 El ciclo básico incluye coordinación temporal, evitación local, diferenciación
 entre estantería y bloqueo, retorno de herramienta y regreso a carga. La escena
 principal se guardó como:
 
+Las cuatro variantes de estimación y mapeo implementadas (\texttt{KALMAN\_LANDMARK},
+\texttt{GMAPPING\_GRID}, \texttt{HECTOR\_GRID\_MATCHING} y
+\texttt{CARTOGRAPHER\_SUBMAP}) son implementaciones propias en Lua, inspiradas
+conceptualmente en los algoritmos del mismo nombre pero sin sus optimizadores
+originales: la variante de GMapping implementa una grid de ocupación log-odds
+sin filtro de partículas Rao-Blackwellizado; la de Hector realiza una búsqueda
+discreta de pose en lugar de ajuste Gauss-Newton multi-resolución; la de Cartographer
+aplica cierre de ciclo local en lugar de optimización global de grafo de poses.
+La comparación evalúa cuatro \emph{representaciones de mapa} bajo las mismas
+condiciones de misión, no la equivalencia con los paquetes ROS originales.
+
 \begin{center}
 \texttt{actividad2/coppeliasim/Sim\_T2\_Phase1\_Basic.ttt}
 \end{center}
 
+\section{Objetivos}
+
+\begin{itemize}
+  \item Implementar un Pioneer P3DX diferencial en CoppeliaSim y Lua que navegue de forma autónoma en una celda de almacén.
+  \item Seguir al \textit{mannequin} Bill con control de distancia y rumbo en la escena de seguimiento, comparando los modos P, PI, PID, LQR (\textit{Linear Quadratic Regulator}) y NMPC (\textit{Nonlinear Model Predictive Control}) (escena \path{Actividad2_1_Basic_Follower.ttt}); la escena warehouse usa PID como controlador base.
+  \item Planificar y ejecutar las entregas de T1 y T2 con una máquina de estados reproducible y validable.
+  \item Evitar obstáculos en tiempo real con campos potenciales reactivos y recuperación ante bloqueos locales.
+  \item Comparar cuatro variantes de estimación y mapeo simultáneo SLAM (\textit{Simultaneous Localisation and Mapping}) en Lua —Kalman-landmark, grid log-odds, ajuste por scan-matching y submapas— con métricas exportadas.
+\end{itemize}
+
 \section{Relación con el enunciado}
 
 La guía pide programar un Pioneer P3DX en CoppeliaSim/Lua, primero para avanzar
-hacia un \texttt{mannequin} mediante campos potenciales y después para esquivar
+hacia un \textit{mannequin} mediante campos potenciales y después para esquivar
 obstáculos mientras mantiene ese comportamiento. La entrega también exige la
 integración en una celda robotizada, un PDF y una presentación.
 
-En este trabajo el \texttt{mannequin} se implementa como Bill/B1, el modelo de
+En este trabajo el \textit{mannequin} se implementa como Bill/B1, el modelo de
 persona móvil disponible en CoppeliaSim. R1, el Pioneer, no solo se acerca a
 Bill: sigue una referencia detrás de la persona, transporta T1 y T2, respeta
 esperas de trabajo humano, evita pallet, pilar, caja y obstáculos de Phase 2, y
-vuelve a la estación de carga. Esa ampliación mantiene el núcleo del enunciado y
-añade una capa de validación con métricas, comparación de controladores y
-mapeo local.
+vuelve a la estación de carga. Se añade una capa de validación cuantitativa con métricas exportadas, comparación
+de controladores y mapeo local (Tabla~\ref{tab:traceability-guide}).
 
 \begin{table}[H]
 \centering
@@ -37,7 +59,7 @@ mapeo local.
 \toprule
 \textbf{Punto de la guía} & \textbf{Dónde queda cubierto}\\
 \midrule
-Seguir al \texttt{mannequin} & Bill/B1 actúa como objetivo móvil y como solicitante de herramientas en la celda.\\
+Seguir al \textit{mannequin} & Bill/B1 actúa como objetivo móvil y como solicitante de herramientas en la celda.\\
 Campos potenciales & Capítulo de campos potenciales: atracción hacia Bill y repulsión por sensores.\\
 Anticolisión & Lectura de 16 sensores de proximidad, reducción de velocidad, giro reactivo y parada crítica.\\
 Integración en celda & Warehouse con racks, mesas WS1/WS2, herramientas T1/T2, estación de carga y máquina de estados.\\
@@ -52,12 +74,16 @@ Ampliación del script base & Seguimiento P/PI/PID/LQR/NMPC, estimación Kalman,
 
 Los algoritmos corren dentro de CoppeliaSim y Lua. Su alcance es acotado respecto
 a paquetes ROS completos: Kalman-landmark combina odometría, corrección de pose
-con mediciones ruidosas y rasgos compactos de obstáculo. GMapping, Hector y
-Cartographer se implementan como versiones simplificadas para comparar tres formas
-de mapa: grid de ocupación, \textit{scan matching} local y submapas con cierre
-de ciclo.
+con mediciones ruidosas y rasgos compactos de obstáculo. Las variantes inspiradas en GMapping, Hector y Cartographer
+implementan respectivamente: mapeo por grid log-odds, corrección de pose
+por scan-matching discreto y gestión de submapas con cierre de ciclo local.
+Ninguna replica el estimador probabilístico original (filtro de partículas,
+Gauss-Newton o grafo de poses), pero mantiene la representación de mapa
+característica de cada enfoque.
 
 \section{Vista general del resultado}
+
+La Fig.~\ref{fig:phase1-layout} muestra la vista superior de la celda base, con R1, B1, las estanterías de T1 y T2, las mesas de trabajo y los obstáculos presentes desde el inicio.
 
 \begin{figure}[H]
   \centering

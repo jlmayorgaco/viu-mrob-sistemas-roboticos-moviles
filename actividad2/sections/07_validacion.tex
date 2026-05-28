@@ -1,21 +1,21 @@
 \chapter{Validación}
 
-La validación revisa comportamiento y archivos presentes. El checklist mira
-escena, objetos de la escena, scripts integrados, tareas completadas, movimiento de
-Bill, acciones visuales, anticolisión, error del estimador y rayos de sensor.
-Generamos las capturas 3D desde CoppeliaSim con
+La validación revisa el comportamiento del sistema y los archivos generados. La
+lista de verificación cubre escena, objetos, scripts integrados, tareas
+completadas, movimiento de Bill, acciones visuales, anticolisión, error del
+estimador y rayos de sensor. Las capturas 3D se obtuvieron desde CoppeliaSim con
 \path{capture_coppeliasim_screenshots.lua}; son las imágenes de las
 Figuras~\ref{fig:coppeliasim-captures} y
 \ref{fig:phase2-coppeliasim-captures}.
 
-\section{Validación por checklist}
+\section{Validación por lista de verificación}
 
 \begingroup
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{0.40\textwidth}P{0.45\textwidth}P{0.08\textwidth}}
 \toprule
-\textbf{Bloque} & \textbf{Chequeo} & \textbf{Estado}\\
+\textbf{Bloque} & \textbf{Verificación} & \textbf{Estado}\\
 \midrule
 \endhead
 Escena & Existe \path{Sim_T2_Phase1_Basic.ttt} y contiene R1, B1, T1, T2, C1. & OK\\
@@ -30,7 +30,7 @@ Estimación & Kalman activo, mapa SLAM actualizado y error acotado. & OK\\
 Planificación & \texttt{SLAM\_WAYPOINT} observado. & OK\\
 Batería & Tarea aceptada por batería y retorno a carga. & OK\\
 Capturas CoppeliaSim & Vista general, entrega, trabajo de B1, rayos de sensores y replanificación Phase 2. & OK\\
-Phase 2 & Mapa desconocido, tarima móvil, bloque temporal, cuatro SLAM completados y recuperación del planner registrada. & OK\\
+Phase 2 & Mapa desconocido, tarima móvil, bloque temporal, cuatro SLAM completados y recuperación del planificador registrada. & OK\\
 Deck editable & Existe \path{slides/Actividad2_Pioneer_CoppeliaSim.pptx} junto con su PDF exportado. & OK\\
 \bottomrule
 \end{longtable}
@@ -38,10 +38,12 @@ Deck editable & Existe \path{slides/Actividad2_Pioneer_CoppeliaSim.pptx} junto c
 
 \section{Timeline de la misión}
 
+La Fig.~\ref{fig:task-timeline} muestra el timeline exportado con los estados de tarea y movimiento durante la misión.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_task_timeline.png}
-  \caption{Timeline exportado de la simulación: estados de tarea, movimiento, planner y acciones de Bill durante la misión.}
+  \caption{Timeline exportado de la simulación: estados de tarea, movimiento, planificador y acciones de Bill durante la misión.}
   \label{fig:task-timeline}
 \end{figure}
 
@@ -53,25 +55,40 @@ respetar la secuencia lógica de entrega.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_overview.png}
-  \caption{Panel de la ejecución base: pose, error, batería, obstáculos, planner y estados principales.}
+  \caption{Panel de la ejecución base: pose, error, batería, obstáculos, planificador y estados principales.}
   \label{fig:slam-overview}
 \end{figure}
 
+El panel completo de la ejecución base queda recogido en la Fig.~\ref{fig:slam-overview}.
+
 \section{Incidencias corregidas}
 
-Durante la validación se corrigieron tres incidencias. La primera fue de
-sincronización: R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que
-la tarea no representaba una entrega real. Se corrigió dejando el estado
-\texttt{WAIT\_B1\_WS2\_REQUEST\_T2} bloqueado
-hasta leer \texttt{phase1B1Station=WS2}.
+Durante la validación se corrigieron tres incidencias.
 
-La segunda incidencia se registró en Phase 2. Algunas celdas de grid antiguas quedaban
-demasiado cerca del objetivo y el planner entraba en un ciclo de desvíos
-cortos. El planner pasó a ignorar obstáculos pegados al objetivo, exigir hits
-persistentes para planificar y activar una ventana \texttt{RECOVERY\_DIRECT}
-cuando no había progreso.
+\textbf{Incidencia 1 — Sincronización de tarea T2.}
+R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que
+la tarea no representaba una entrega real. \emph{Causa raíz}: la FSM no verificaba
+el estado de Bill al hacer la transición \texttt{RETURN\_T1\_RACK\,→\,TO\_PICKUP\_T2};
+la transición ocurría en cuanto R1 completaba la tarea anterior, independientemente
+de la posición de Bill. Se corrigió dejando el estado
+\texttt{WAIT\_B1\_WS2\_REQUEST\_T2} bloqueado hasta leer
+\texttt{phase1B1Station=WS2}.
 
-La tercera incidencia correspondió al ajuste tipo Hector: con pocos impactos de sensor, varios
-candidatos de pose recibían puntajes parecidos y la corrección podía oscilar.
-Por eso se dejó una ventana discreta pequeña, un umbral mínimo de score y una
-ganancia parcial, en vez de aplicar el mejor candidato completo.
+\textbf{Incidencia 2 — Ciclos del planificador en Phase 2.}
+Algunas celdas de grid persistentes quedaban demasiado cerca del objetivo
+y el planificador entraba en un ciclo de desvíos cortos. \emph{Causa raíz}: las
+representaciones de grid acumulan evidencias pasadas que no se desvanecen;
+cuando un obstáculo ha desaparecido o el objetivo está dentro del radio de
+influencia de celdas marcadas, el planificador oscila indefinidamente. El parche
+exige detecciones persistentes, ignora celdas pegadas al objetivo y activa
+\texttt{RECOVERY\_DIRECT} cuando no hay progreso. Esta fragilidad es un límite
+conocido de planificadores sobre grids de ocupación sin olvido temporal.
+
+\textbf{Incidencia 3 — Oscilación del scan matching tipo Hector.}
+Con pocos impactos de sensor, varios candidatos de pose recibían puntajes
+parecidos y la corrección oscilaba. \emph{Causa raíz}: el scan matching en
+entornos con poca textura (pasillos rectos) produce un paisaje de puntuación
+casi plano, en el que mínimas diferencias de ruido invertían el candidato
+ganador ciclo a ciclo. Es un modo de fallo conocido del ajuste de scan en
+geometrías poco informativas \cite{thrun2005}. Se mitigó con ventana discreta
+pequeña, umbral mínimo de puntuación y ganancia parcial de corrección.
