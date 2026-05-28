@@ -1,7 +1,8 @@
 \chapter{Campos potenciales, evitación de obstáculos y planificación local}
+\label{ch:campos-potenciales}
 
 La navegación combina el campo atractivo hacia Bill, usado como mannequin, con
-una capa repulsiva de obstáculos y una capa local de mapa. Los sensores de
+una capa repulsiva de obstáculos y una capa local de mapa~\cite{lavalle2006}. Los sensores de
 proximidad reducen la velocidad y corrigen el giro cuando se detecta un obstáculo al frente
 o en los laterales. El mapa SLAM entra cuando la ruta directa se bloquea y se usa
 un punto intermedio antes de volver al objetivo.
@@ -47,14 +48,11 @@ objetivo principal de seguir a Bill.
 \section{Campo reactivo de obstáculos}
 
 Para cada sensor con detección positiva se calcula una influencia normalizada.
-La idea viene de campos potenciales artificiales y comportamiento Braitenberg
-\cite{khatib1986,braitenberg1984}, aplicada a los sensores de proximidad
-del Pioneer:
-
-El script base usa una tabla Braitenberg con pesos fijos por sensor. Se
-mantiene la relación sensor--motor y el peso depende de la distancia. Una
-lectura lejana apenas toca las ruedas; una lectura cercana fuerza más giro y
-reduce \(v\).
+La función de influencia cuadrática sigue el modelo de decaimiento de los
+campos potenciales repulsivos de Khatib \cite{khatib1986}: la fuerza crece al
+cuadrado al acercarse al obstáculo y se anula en el rango de influencia.
+La asignación de esa fuerza a velocidades angulares por posición lateral del
+sensor es el esquema Braitenberg vehicle-2b \cite{braitenberg1984}.
 
 \[
 \alpha_i =
@@ -65,14 +63,25 @@ reduce \(v\).
 \]
 
 donde \(d_i\) es la distancia medida y \(d_0\) el rango de influencia. La
-contribución angular se aproxima con el lado del sensor:
+contribución angular se calcula ponderando por la posición lateral del sensor:
 
 \[
 \omega_{obs} = -\sum_i \operatorname{sgn}(y_i)\,k_{rep}\,\alpha_i\,w_i
 \]
 
-El factor \(w_i\) aumenta el peso de sensores frontales y reduce el de sensores
-traseros. El signo de \(y_i\) indica la dirección lateral del sensor en el marco
+El factor \(w_i\) es el peso de frontalidad del sensor \(i\), definido por su
+coordenada \(x\) en el marco del robot:
+
+\[
+w_i =
+\begin{cases}
+1{,}00 & \text{si } s_{x,i} > 0{,}02\,\text{m} \quad\text{(sensores frontales)}\\
+0{,}26 & \text{si } |s_{x,i}| \le 0{,}04\,\text{m} \quad\text{(sensores laterales)}\\
+0{,}18 & \text{si } s_{x,i} < -0{,}04\,\text{m} \quad\text{(sensores traseros)}
+\end{cases}
+\]
+
+El signo de \(y_i\) indica la dirección lateral del sensor en el marco
 del robot. Si un obstáculo está dentro de una distancia crítica frontal, el robot
 entra en modo \texttt{AVOIDING}, reduce \(v\) y gira en el sentido de menor
 riesgo.

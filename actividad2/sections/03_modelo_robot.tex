@@ -1,6 +1,6 @@
 \chapter{Modelo del robot y control}
 
-El Pioneer P3DX se trata como robot diferencial. El controlador calcula una
+El Pioneer P3DX se trata como robot diferencial~\cite{tzafestas2014}. El controlador calcula una
 velocidad lineal \(v\) y una velocidad angular \(\omega\), y de ahí salen las
 velocidades de rueda izquierda y derecha:
 
@@ -78,9 +78,23 @@ P & Control proporcional sobre distancia y rumbo. & Estructura simple y estable,
 PI & Agrega integral de distancia y rumbo. & Obtiene el menor puntaje ponderado en la comparación de controladores.\\
 PID & Incluye derivadas para amortiguar saltos. & Buen compromiso general; se usó como modo base en varias exportaciones SLAM.\\
 LQR & Realimentación lineal de error longitudinal, lateral y rumbo. & Ganancia discreta calculada por Riccati e integrada en Lua para el seguidor de Bill.\\
-NMPC & Control predictivo no lineal por disparo directo. & Evalúa secuencias de \(v,\omega\) con restricciones y coste de suavidad mediante búsqueda local.\\
+NMPC & Control predictivo no lineal por disparo directo. & Evalúa secuencias de \(v,\omega\) con restricciones y coste de suavidad mediante búsqueda local (véase Sección~\ref{sec:nmpc}).\\
 \bottomrule
 \end{longtable}
+
+El puntaje ponderado que determina el modo ganador se calcula como la suma min--max normalizada de seis indicadores, con los pesos:
+\[
+S = 0{,}28\,s_{\text{mov}} + 0{,}18\,s_{\text{bat}} + 0{,}20\,s_{\text{var}} + 0{,}14\,s_{\text{riesgo}} + 0{,}12\,s_{\text{pose}} + 0{,}08\,s_{\text{dur}}
+\]
+donde menor puntaje es mejor. Los pesos reflejan las prioridades de una tarea
+de seguimiento suave y eficiente: mayor importancia al tiempo en movimiento
+activo (\(0{,}28\)) y a la suavidad de comandos (\(0{,}20\)), seguidos del
+consumo energético (\(0{,}18\)) y el riesgo de obstáculo (\(0{,}14\)),
+con menor peso al error de pose (\(0{,}12\)) y la duración total (\(0{,}08\)).
+Los pesos son ad hoc y calibrados para esta escena; la ordenación puede
+variar si se modifican sustancialmente las prioridades de la tarea.
+Los valores coinciden con los definidos en \texttt{run\_phase1\_controller\_comparison.py}
+(véase también el Anexo~\ref{tab:phase1-controller-anexo}). La Fig.~\ref{fig:controller-comparison} resume los resultados de los cinco modos.
 
 \begin{figure}[H]
   \centering

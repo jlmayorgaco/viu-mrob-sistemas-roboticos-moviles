@@ -281,82 +281,112 @@ Kalman-landmark, pero no necesariamente menor error de pose.
 \section{Hector con ajuste local}
 
 Hector SLAM usa \textit{scan matching} contra una grid y depende menos de la
-odometría \cite{kohlbrecher2011}. En esta escena implementamos una búsqueda
-local discreta alrededor de la pose estimada. Para cada candidato
-\((x,y,\theta)\) se proyectan los puntos del scan y se evalúa el puntaje contra la
-grid:
+odometría \cite{kohlbrecher2011}. La implementación resuelve el ajuste
+scan--mapa mediante el método de Gauss-Newton con jacobianos analíticos,
+en lugar de una búsqueda exhaustiva.
+
+La función de puntuación usa interpolación bilineal del mapa log-odds para
+obtener valores y gradientes continuos:
 
 \[
-s(x,y,\theta)=\frac{1}{N}\sum_{i=1}^{N} L\left(x+r_i\cos(\theta+\beta_i),
-y+r_i\sin(\theta+\beta_i)\right)
+M_{bilin}(x,y)=\sum_{k\in\{00,10,01,11\}} \lambda_k(x,y)\,L(c_k),
+\quad
+\nabla M_{bilin}=\frac{1}{\Delta}\begin{bmatrix}\partial_x\\\partial_y\end{bmatrix}M_{bilin}
 \]
 
-Si el mejor puntaje supera el umbral (\(s>0{,}45\)), la pose se corrige
-parcialmente (ganancia \(0{,}18\)) hacia ese candidato.
-\texttt{HECTOR\_GRID\_MATCHING} usa una búsqueda discreta de
-\(5\times5\times5 = 125\) candidatos sobre \((\Delta x,\Delta y,\Delta\theta)\)
-para que el cálculo quepa dentro del script Lua. Hector en ROS trabaja con
-Gauss-Newton multi-resolución; se usa una versión reducida y revisable para
-esta escena sin minimización de gradiente (Fig.~\ref{fig:slam-hector-diagram}).
+donde \(\Delta\) es la resolución de la grid, \(\lambda_k\) son los pesos
+bilineales y \(L(c_k)\) el valor log-odds de la celda vecina \(c_k\).
+La pose óptima maximiza la puntuación media del scan:
+\[
+\xi^\star=\arg\max_\xi \frac{1}{N}\sum_{i=1}^{N}M_{bilin}\!\left(T_\xi(p_i)\right).
+\]
+
+Para cada punto del scan se calcula el jacobiano analítico de la
+transformación rígida \(T_\xi(p_i)=(x+r_i\cos(\theta+\beta_i),\;y+r_i\sin(\theta+\beta_i))\):
+
+\[
+J_i=\nabla M_{bilin}\!\begin{bmatrix}1 & 0 & -r_i\sin(\theta+\beta_i)\\0 & 1 & r_i\cos(\theta+\beta_i)\end{bmatrix}
+\in\mathbb{R}^{1\times3}
+\]
+
+El Hessiano se aproxima por Gauss-Newton acumulando \(H\mathrel{+}=J_i^TJ_i\),
+y el sistema \(H\,\Delta\xi=b\) (con \(b=\tfrac{1}{N}\sum_i J_i^TM_i\)) se
+resuelve por la regla de Cramer en cada iteración. Se aplican hasta 5
+iteraciones con criterio de convergencia \(\|\Delta\xi\|<0{,}8\,\text{mm}\) y
+\(|\Delta\theta|<1{,}5\,\text{mrad}\).
+Esta formulación sigue directamente la derivación de Hector SLAM
+\cite{kohlbrecher2011}, sin las múltiples resoluciones del paquete ROS completo
+(Fig.~\ref{fig:slam-hector-diagram}).
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
   >=Latex,
   node distance=0.68cm and 0.62cm,
-  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small},
-  score/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small},
-  warn/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=2.80cm, minimum height=0.78cm, align=center, font=\small}
+  block/.style={draw=UniPrimaryDeep!80, fill=UniLight, rounded corners=2mm, minimum width=2.90cm, minimum height=0.78cm, align=center, font=\small},
+  score/.style={draw=GoodGreen!80!black, fill=GoodGreen!8, rounded corners=2mm, minimum width=2.90cm, minimum height=0.78cm, align=center, font=\small},
+  warn/.style={draw=WarnAmber!85!black, fill=WarnAmber!10, rounded corners=2mm, minimum width=2.90cm, minimum height=0.78cm, align=center, font=\small}
 ]
-\node[block] (pose) {Pose inicial\\\(\hat{x},\hat{y},\hat{\theta}\)};
-\node[block, right=of pose] (window) {Ventana local\\\(\Delta x,\Delta y,\Delta\theta\)};
-\node[block, right=of window] (project) {Proyectar scan\\sobre la grid};
-\node[score, right=of project] (score) {Puntaje\\\(s(x,y,\theta)\)};
-\node[warn, below=of project] (best) {Mejor candidato\\corrección parcial};
-\draw[->, thick, color=UniPrimaryDeep] (pose) -- (window);
-\draw[->, thick, color=UniPrimaryDeep] (window) -- (project);
-\draw[->, thick, color=GoodGreen!70!black] (project) -- (score);
-\draw[->, thick, color=WarnAmber!80!black] (score) |- (best);
-\draw[->, thick, color=WarnAmber!80!black] (best) -| (pose);
+\node[block] (pose) {Pose \(\hat\xi=(\hat x,\hat y,\hat\theta)\)};
+\node[block, right=of pose] (interp) {Interpolar\\\(M_{bilin},\nabla M_{bilin}\)};
+\node[score, right=of interp] (hess) {Acumular\\\(H\mathrel{+}=J_i^TJ_i\)};
+\node[warn, below=of hess] (solve) {Resolver\\\(H\Delta\xi=b\)};
+\node[warn, left=of solve] (update) {Actualizar\\\(\hat\xi\mathrel{+}=\Delta\xi\)};
+\draw[->, thick, color=UniPrimaryDeep] (pose) -- (interp);
+\draw[->, thick, color=UniPrimaryDeep] (interp) -- (hess);
+\draw[->, thick, color=GoodGreen!70!black] (hess) -- (solve);
+\draw[->, thick, color=WarnAmber!80!black] (solve) -- (update);
+\draw[->, thick, color=WarnAmber!80!black] (update) -- (pose);
 \end{tikzpicture}
-\caption{Particularidad de Hector: busca la pose local cuyo scan encaja mejor con la grid. La odometría inicializa la búsqueda, pero la corrección viene del ajuste scan--mapa.}
+\caption{Hector SLAM: iteración Gauss-Newton con interpolación bilineal del mapa log-odds. El Hessiano se acumula con los jacobianos analíticos de la transformación rígida; el sistema \(H\Delta\xi=b\) se resuelve por la regla de Cramer.}
 \label{fig:slam-hector-diagram}
 \end{figure}
 
-Esto hace que Hector sea útil cuando los rayos tienen geometría suficiente para
-alinearse con el mapa. Si el entorno observado es pobre, simétrico o con pocos
-impactos, varios candidatos reciben puntajes parecidos y la corrección tiende a
-oscilar. Por esa razón el script aplica solo una fracción de la corrección y
-mantiene umbrales para no mover la pose ante coincidencias débiles.
+La interpolación bilineal garantiza gradientes continuos que el Gauss-Newton
+puede seguir, a diferencia de una evaluación discreta de celdas. Si el entorno
+tiene poca textura (pasillos simétricos), el Hessiano puede ser casi singular;
+la regularización diagonal \(0{,}002\) previene divergencia y el umbral de
+puntuación mínima (\texttt{hectorMatchMinScore}) descarta correcciones débiles.
 
 \section{Cartographer con submapas}
 
 Google Cartographer organiza el mapeo en submapas y cierres de ciclo para
-reducir deriva acumulada \cite{hess2016}. La implementación local mantiene
-submapas temporales, crea submapas adicionales por distancia o periodo y aplica un
-cierre de ciclo sencillo cuando la pose vuelve cerca de un submapa antiguo con
-puntaje por encima del umbral. En la comparación actual produjo 13 submapas y 4
-cierres de ciclo.
+reducir deriva acumulada \cite{hess2016}. La implementación crea submapas
+por distancia recorrida (\(\SI{1.85}{m}\)) o periodo de tiempo (\(\SI{18}{s}\)),
+detecta cierres de ciclo cuando el robot regresa cerca de un submapa antiguo
+y optimiza el grafo de poses para propagar la corrección globalmente.
 
-En concreto, un submapa se considera antiguo si no es el activo ni el anterior y
-si han pasado más de \(\SI{22}{s}\) desde su creación. El cierre se acepta solo
-si la distancia al submapa es menor que \(\SI{0.45}{m}\), hay al menos tres
-submapas de separación, el puntaje de coincidencia de scan supera \(0.35\) y no
-se ha registrado ya ese enlace. La corrección aplicada es parcial
-\((10\%\) en \(x,y\), \(6\%\) en yaw\()\), precisamente para evitar que un falso
-positivo rompa la trayectoria.
+Un submapa se considera candidato a cierre si lleva más de \(\SI{22}{s}\)
+creado, la distancia es inferior a \(\SI{0.45}{m}\), la separación en el
+grafo es de al menos tres submapas y el puntaje de scan-matching supera
+\(0{,}35\). Cuando se detecta un cierre válido, se registra la
+restricción como arista del grafo de poses:
 
-\begin{quote}\small
-\textbf{Nota de implementación.}
-Hector y Cartographer comparten el mismo mecanismo de búsqueda de pose en Lua
-(\texttt{applyGridScanMatching}): búsqueda discreta de \(5\times5\times5=125\)
-candidatos con diferentes radios de búsqueda (\(\SI{0.075}{m}\) y
-\(\SI{0.065}{rad}\) para Hector; \(\SI{0.055}{m}\) y \(\SI{0.045}{rad}\) para
-Cartographer). La diferencia algorítmica entre ambos, en esta implementación,
-es únicamente el radio de búsqueda y la gestión adicional de submapas en
-Cartographer; no se implementa la optimización Gauss-Newton ni el ajuste de
-grafo de poses del Cartographer original \cite{hess2016}.
-\end{quote}
+\[
+e_{ij} = \bigl(\Delta x_{ij},\,\Delta y_{ij},\,\Delta\theta_{ij}\bigr)
+\]
+
+donde $(\Delta x_{ij},\Delta y_{ij},\Delta\theta_{ij})$ es la pose relativa
+medida entre el submapa activo $j$ y el submapa antiguo $i$ en el instante del
+cierre. La optimización del grafo minimiza el error cuadrático total sobre
+todas las restricciones almacenadas mediante descenso Gauss-Seidel:
+
+\[
+\varepsilon_{ij}=\bigl((\hat x_j-\hat x_i)-\Delta x_{ij},\;
+(\hat y_j-\hat y_i)-\Delta y_{ij},\;
+\operatorname{wrap}((\hat\theta_j-\hat\theta_i)-\Delta\theta_{ij})\bigr)
+\]
+
+\[
+\hat x_i \mathrel{+}=\lambda\,\varepsilon_{ij,x},\quad
+\hat x_j \mathrel{-}=\lambda\,\varepsilon_{ij,x},\quad \lambda=0{,}14,\quad\text{(ídem }y,\theta\text{)}
+\]
+
+Se ejecutan 8 iteraciones Gauss-Seidel por cierre detectado; la pose del
+robot se ancla suavemente al submapa activo tras la optimización.
+En la comparación actual produjo 13 submapas y 4 cierres de ciclo.
+Esta formulación captura la idea central de Cartographer \cite{hess2016} sin
+el solucionador Ceres ni la optimización multi-resolución del paquete original.
 
 El flujo de submapas y cierres de ciclo se ilustra en la Fig.~\ref{fig:slam-cartographer-diagram}.
 
