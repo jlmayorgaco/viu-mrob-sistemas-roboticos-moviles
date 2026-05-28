@@ -21,8 +21,9 @@ B1. El ciclo validado comprende las cuatro tareas siguientes.
 \end{itemize}
 
 La comparación de controladores (P, PI, PID, LQR y NMPC) se realizó en una escena
-separada de seguimiento (\path{Actividad2_1_Basic_Follower.ttt}), con PI como mejor balance
-en esa escena de seguimiento según el puntaje ponderado definido. La escena warehouse usa PID como modo
+separada de seguimiento (\path{Actividad2_1_Basic_Follower.ttt}) con una sola ejecución
+por modo (\(n=1\)); la ordenación por puntaje ponderado es indicativa. PI obtuvo el
+menor puntaje compuesto en esa escena según los pesos definidos. La escena warehouse usa PID como modo
 base. El NMPC completo (horizonte N=10, \(\Delta t=0{,}22\) s) opera exclusivamente
 en el controlador del follower (\texttt{pioneer\_pid\_follower\_controller.lua}).
 
@@ -36,8 +37,10 @@ mismas tareas, sensores y controlador PID, para que la comparación de represent
 de mapa no dependa de condiciones de escena distintas.
 
 La ejecución final de Phase 2 completó las cuatro tareas, volvió a carga, mantuvo
-activos los 16 sensores. En el
-ensayo con mapa desconocido, Kalman-landmark quedó con el menor RMSE de posición
-(\SI{0.03185}{m}) y la menor duración (\SI{124.80}{s}). Cartographer-submap
-generó más actividad de mapa, con 13 submapas y 4 cierres de ciclo locales;
-Hector terminó con el mejor indicador aproximado de precisión entre las grids.
+activos los 16 sensores. En el ensayo con mapa desconocido, Kalman-landmark obtuvo el menor RMSE de
+posición (\SI{0.03185}{m}, medido contra la pose ruidosa del simulador usada
+como referencia GPS sintética; véase Cap.~5) y la menor duración
+(\SI{124.80}{s}). Cartographer-submap generó más actividad de mapa, con 13
+submapas y 4 cierres de ciclo locales; Hector obtuvo el mayor índice de
+precisión por proximidad (fracción de rasgos del mapa a menos de
+\SI{0.55}{m} de un obstáculo conocido) entre las variantes grid.

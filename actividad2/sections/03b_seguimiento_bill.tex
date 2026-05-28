@@ -73,15 +73,14 @@ El movimiento plano del Pioneer se aproxima con el modelo unicycle:
 \dot{\theta}=\omega.
 \]
 
-La conversión a velocidades angulares de rueda usa el radio \(r\) y la distancia
-entre ruedas \(L\):
+La conversión a velocidades angulares de rueda usa los parámetros del
+Pioneer P3DX definidos en el Cap.~\ref{ch:modelo-robot}
+(\(r=\SI{0.0975}{m}\), \(L=\SI{0.331}{m}\)):
 
 \[
 \omega_L = \frac{v-\frac{L}{2}\omega}{r},
 \qquad
-\omega_R = \frac{v+\frac{L}{2}\omega}{r},
-\qquad
-r=\SI{0.0975}{m},\quad L=\SI{0.331}{m}.
+\omega_R = \frac{v+\frac{L}{2}\omega}{r}
 \]
 
 \label{sec:energy-model}

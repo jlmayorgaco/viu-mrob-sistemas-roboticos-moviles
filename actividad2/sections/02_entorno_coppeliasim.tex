@@ -4,10 +4,12 @@ La escena se genera con
 \path{actividad2/coppeliasim/build_phase1_basic_scene.py}. Ese script carga la
 base de la asignatura, limpia restos de pruebas anteriores, coloca la celda,
 ubica a R1 y B1, añade estanterías, mesas, sofá, obstáculos y piezas visuales, y
-deja integrados los controladores Lua. Al final lanza una validación sin interfaz
+deja integrados los controladores Lua~\cite{coppeliasimManual}. Al final lanza una validación sin interfaz
 gráfica y guarda un JSON reproducible con estado, métricas y objetos verificados.
 
 \section{Elementos del warehouse}
+
+La Tabla~\ref{tab:warehouse-elements} lista los elementos principales de la celda de almacén.
 
 \begin{table}[H]
 \centering
@@ -27,6 +29,8 @@ Estanterías & \texttt{/Rack\_T1}, \texttt{/Rack\_T2} & Estaciones de almacenami
 Obstáculos & Pallet, pilar y caja & Elementos detectables para activar evitación reactiva y mapeo.\\
 \bottomrule
 \end{tabular}
+\caption{Elementos de la celda de almacén simulada en CoppeliaSim.}
+\label{tab:warehouse-elements}
 \end{table}
 
 \section{Cómo funciona el Pioneer dentro de CoppeliaSim}
@@ -95,12 +99,12 @@ tareas y registro de datos. El \texttt{mannequin} queda como persona móvil
 manager, con tiempos de trabajo y movimiento; y los exportadores guardan CSV y JSON
 para revisar control, seguridad y SLAM con datos reproducibles.
 
-\begin{lstlisting}[caption={Lectura de sensores y evitación reactiva en Lua.},label={lst:sensor-avoidance}]
+\begin{lstlisting}[caption={Lectura de sensores y evitación reactiva en Lua. La variable \texttt{b1} es el handle de CoppeliaSim del objeto \texttt{/B1} (Bill); las detecciones sobre Bill se excluyen del mapa SLAM para no registrar al mannequin como obstáculo estático.},label={lst:sensor-avoidance}]
 for _, s in ipairs(sensors) do
     local ok, distance, point, object = sim.readProximitySensor(s.handle)
     if ok and ok > 0 and distance > 0 then
         addSensorRay(s, distance, point, true)
-        if object ~= b1 then
+        if object ~= b1 then  -- b1 = handle de /B1 (Bill); se excluye del mapa SLAM
             registerSlamDetection(s, distance, point)
         end
         if distance < cfg.avoidRange then
