@@ -1,10 +1,11 @@
 \chapter{Seguimiento de Bill y comparación de controladores}
 
 Antes de integrarlo en la celda completa, se probó el seguimiento de Bill en
-\path{Actividad2_1_Basic_Follower.ttt}. Bill camina con aceleración y frenado, y
-el Pioneer sigue un punto detrás de la persona. Si se apunta al centro del
-cuerpo, el robot tiende a acercarse demasiado; por eso la referencia va detrás de
-Bill.
+\path{Actividad2_1_Basic_Follower.ttt} (Fig.~\ref{fig:follower-replay},
+capturas en Fig.~\ref{fig:follower-coppeliasim-screenshots}). Bill camina con
+aceleración y frenado, y el Pioneer sigue un punto detrás de la persona. Si se
+apunta al centro del cuerpo, el robot tiende a acercarse demasiado; por eso la
+referencia va detrás de Bill.
 
 \begin{figure}[H]
   \centering
@@ -47,7 +48,7 @@ d_{des}
 \]
 
 El error de distancia se mide con respecto a Bill, mientras que el error de
-rumbo se calcula desde el robot hacia Bill:
+rumbo se calcula desde el robot hacia Bill (Fig.~\ref{fig:follower-geometry}):
 
 \[
 e_d = \|p_B-p_R\|-d_{des},
@@ -83,6 +84,7 @@ entre ruedas \(L\):
 r=\SI{0.0975}{m},\quad L=\SI{0.331}{m}.
 \]
 
+\label{sec:energy-model}
 Estas mismas señales se usan para calcular potencia aproximada, energía,
 variación de comando y suavidad de control.
 
@@ -102,7 +104,7 @@ E = \sum_k (P_L+P_R+P_\theta)\Delta t .
 \]
 
 Los parámetros usados fueron \(m=\SI{16.5}{kg}\), \(I_z=\SI{0.72}{kg.m^2}\),
-\(F_r=\SI{2.8}{N}\) y \(b_\omega=0.006\,\si{W/(rad/s)^2}\). En esa expresión, \(a=\dot{v}\) es la
+\(F_r=\SI{2.8}{N}\) y \(b_\omega=0{,}006~\text{W\,rad}^{-2}\text{s}^{2}\). En esa expresión, \(a=\dot{v}\) es la
 aceleración lineal estimada entre muestras y \(\dot{\omega}\) es la aceleración
 angular. Esta magnitud se usa como indicador relativo entre controladores dentro
 de la misma escena; no representa una estimación eléctrica de batería.
@@ -132,14 +134,31 @@ u_{PID}=K_p e_d + K_i\sum_{k=0}^{n} e_d(k)\Delta t
 
 El término proporcional responde al error instantáneo, el integral corrige
 error estacionario cuando Bill mantiene movimiento, y el derivativo amortigua
-saltos bruscos. En ejecución, todos los modos pasan por saturaciones de
-velocidad y de aceleración para evitar saltos en la escena.
+saltos bruscos. En ejecución, todos los modos añaden una corrección de evitación
+de obstáculos al ángulo de giro:
+\[
+\omega = \omega_{\text{controlador}} + \omega_{obs},
+\]
+donde \(\omega_{obs}\) es el término repulsivo de la sección de campos potenciales
+(\S\ref{ch:campos-potenciales}). Todos los modos pasan por saturaciones de velocidad y aceleración.
 
 \section{LQR discreto}
 
 El modo LQR del seguidor regula el error local alrededor del punto \(p^\star\),
 siguiendo la forma clásica de control cuadrático lineal \cite{anderson1990}. El
-estado se define en el marco del robot:
+estado se define en el marco del robot mediante la transformación:
+
+\[
+e_{long} = \cos\theta_R\,(x_{p^*}-x_R) + \sin\theta_R\,(y_{p^*}-y_R),
+\]
+\[
+e_{lat}  = -\sin\theta_R\,(x_{p^*}-x_R) + \cos\theta_R\,(y_{p^*}-y_R),
+\qquad
+e_{yaw}  = \operatorname{wrap}(\psi_{ref}-\theta_R),
+\]
+
+donde \((x_{p^*},y_{p^*})\) es el punto de referencia \(p^\star\). El vector de
+estado y la acción de control son:
 
 \[
 x_L =
@@ -214,6 +233,7 @@ Esta parte corresponde a un LQR discreto real, de orden bajo y aplicado al
 seguimiento local de Bill.
 
 \section{NMPC por disparo directo}
+\label{sec:nmpc}
 
 El modo NMPC se implementa como control predictivo no lineal por disparo
 directo. Mantiene una secuencia de \(v_k,\omega_k\), simula el modelo hacia
@@ -240,17 +260,27 @@ J = \sum_{k=0}^{N-1}(&
 q_d e_d(k)^2 + q_t\|p^\star_k-p_k\|^2
 + q_\psi e_\psi(k)^2 \\
 &+ r_v v_k^2 + r_\omega \omega_k^2
-+ r_w(\omega_{L,k}^2+\omega_{R,k}^2)\\
++ r_{whl}(\omega_{L,k}^2+\omega_{R,k}^2)\\
 &+ s_v\Delta v_k^2+s_\omega\Delta\omega_k^2)
 + q_f\|p^\star_N-p_N\|^2 .
 \end{aligned}
 \]
 
 Los pesos usados en el script fueron
-\(q_d=48.0\), \(q_t=7.0\), \(q_\psi=1.2\),
-\(r_v=1.4\), \(r_\omega=1.8\), \(r_w=0.020\),
-\(s_v=65.0\), \(s_\omega=18.0\) y \(q_f=6.0\), con horizonte
+\(q_d=48{,}0\), \(q_t=7{,}0\), \(q_\psi=1{,}2\),
+\(r_v=1{,}4\), \(r_\omega=1{,}8\), \(r_{whl}=0{,}020\),
+\(s_v=65{,}0\), \(s_\omega=18{,}0\) y \(q_f=6{,}0\), con horizonte
 \(N=10\), \(\Delta t=\SI{0.22}{s}\) y dos iteraciones de mejora por ciclo.
+Esta implementación reside en \texttt{pioneer\_pid\_follower\_controller.lua} y
+aplica exclusivamente a la escena de seguimiento (\path{Actividad2_1_Basic_Follower.ttt}).
+La escena warehouse (\path{Sim_T2_Phase1_Basic.ttt}) utiliza el controlador de tarea
+\texttt{phase1\_r1\_task\_controller.lua}, que implementa los mismos cinco modos
+(P, PI, PID, LQR y NMPC) con la misma ganancia $K$ y el mismo solucionador de
+horizonte. La diferencia respecto al follower es que el objetivo en el warehouse
+es un punto de navegación estático (no el punto $p^*$ detrás de Bill) y el
+objetivo se reconstruye desde los errores de distancia y rumbo disponibles en el
+planificador. La comparación de controladores presentada en este capítulo usa el
+follower, donde el objetivo móvil ejercita mejor la respuesta dinámica.
 
 La búsqueda local es determinista y de vecindario: la secuencia se inicializa
 con los comandos del ciclo anterior desplazados un paso, y en cada pasada se
@@ -289,6 +319,7 @@ PID & 0,1915 & \textbf{0,0317} & 102,381 & 0,1759 & 26\\
 LQR & 0,0231 & 0,0865 & 92,287 & 0,0873 & 12\\
 NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
 \bottomrule
+\multicolumn{6}{l}{\footnotesize \textit{n}=1 por modo. Energía: estimación cinemática aproximada (véase §\ref{sec:energy-model}). Indicadores cualitativos.}\\
 \end{tabular}
 \caption{Métricas del seguidor de Bill por modo de control.}
 \label{tab:follower-controller-metrics}
@@ -317,8 +348,11 @@ NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
   \label{fig:follower-wheel-smoothness}
 \end{figure}
 
-P gasta menos energía y deja más error mientras Bill se mueve. PID corrige muy
-bien al final, cuando Bill ya se detuvo, aunque paga con más variación de
-comando y más energía. LQR y NMPC bajan el error medio durante el seguimiento;
-NMPC queda más suave en inversiones de sentido y RMS de \(\Delta u\), porque
-incluye en el coste la variación de comando y el esfuerzo de rueda.
+La Fig.~\ref{fig:follower-pid-comparison} muestra la respuesta temporal de los
+cinco modos; la Fig.~\ref{fig:follower-wheel-power} compara potencia y energía
+de rueda; la Fig.~\ref{fig:follower-wheel-smoothness} compara la suavidad de
+comandos. P gasta menos energía y deja más error mientras Bill se mueve. PID
+corrige bien al final pero paga con más variación de comando y más energía.
+LQR y NMPC bajan el error medio durante el seguimiento; NMPC queda más suave
+en inversiones de sentido y RMS de \(\Delta u\) porque incluye en el coste la
+variación de comando y el esfuerzo de rueda.

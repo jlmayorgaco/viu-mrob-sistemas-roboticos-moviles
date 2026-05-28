@@ -1410,16 +1410,77 @@ local function computeCommand(distance, heading, lateral, obstacleSteer, obstacl
         maxV = cfg.vMax
         slowWeight = 0.38
     elseif controlMode == 'LQR' then
-        v = (0.66 * distanceError - 0.055 * math.abs(headingDerivative)) * forwardScale
-        w = 1.18 * heading + 0.22 * lateral + 0.78 * obstacleSteer
+        -- LQR discreto: K calculado offline via ecuación de Riccati discreta.
+        -- Q = diag(35, 80, 18) para (e_long, e_lat, e_yaw), R = diag(6, 3) para (delta_v, delta_w).
+        -- Estado en marco del robot: x_L = [e_long, e_lat, e_yaw]; control: u = -K * x_L.
+        local K11, K12, K13 = -2.34963497,  1.29248967,  0.12030307
+        local K21, K22, K23 =  0.24273764, -4.35704991, -2.68868520
+        local eLong = distanceError
+        local eLat  = lateral
+        local eYaw  = heading
+        local deltaV = -(K11 * eLong + K12 * eLat + K13 * eYaw)
+        local deltaW = -(K21 * eLong + K22 * eLat + K23 * eYaw)
+        v = clamp(deltaV, 0, cfg.vMax)
+        w = clamp(deltaW, -cfg.wMax, cfg.wMax) + obstacleSteer
         alpha = 0.42
         maxV = 0.49
         slowWeight = 0.34
     elseif controlMode == 'NMPC' then
-        local headingPenalty = clamp(1.0 - 0.32 * math.abs(heading), 0.35, 1.0)
-        local predictedRisk = clamp(obstacleSlow + 0.20 * math.abs(heading), 0, 1)
-        v = 0.78 * distanceError * forwardScale * headingPenalty * (1.0 - 0.45 * predictedRisk)
-        w = 1.62 * heading + 0.94 * obstacleSteer
+        -- NMPC real: horizonte N=10, dt=0.05s, modelo unicycle no lineal, coordinate descent.
+        -- Coste: qD*ed^2 + qH*eh^2 + rV*v^2 + rW*w^2 + sV*(dv)^2 + sW*(dw)^2 + terminal x6.
+        -- Objetivo reconstruido desde los errores: gx = estX + dist*cos(estTheta+heading).
+        local Nh, nmDt = 10, 0.05
+        local qD, qH, rV, rW, sV, sW, qf = 48.0, 1.2, 1.4, 1.8, 65.0, 18.0, 6.0
+        local gx = estX + distance * math.cos(estTheta + heading)
+        local gy = estY + distance * math.sin(estTheta + heading)
+        local seqV, seqW = {}, {}
+        for i = 1, Nh do seqV[i] = lastCommandV end
+        for i = 1, Nh do seqW[i] = lastCommandW end
+        local function nmCost(sv, sw)
+            local x, y, th = estX, estY, estTheta
+            local pV, pW = lastCommandV, lastCommandW
+            local c = 0
+            for i = 1, Nh do
+                local vi = clamp(sv[i], 0, cfg.vMax)
+                local wi = clamp(sw[i], -cfg.wMax, cfg.wMax)
+                th = normalizeAngle(th + wi * nmDt)
+                x  = x + vi * math.cos(th) * nmDt
+                y  = y + vi * math.sin(th) * nmDt
+                local dx, dy = gx - x, gy - y
+                local ed = math.sqrt(dx * dx + dy * dy) - cfg.followDistance
+                local eh = normalizeAngle(atan2(dy, dx) - th)
+                local wt = (i == Nh) and qf or 1.0
+                c = c + wt * (qD * ed * ed + qH * eh * eh)
+                  + rV * vi * vi + rW * wi * wi
+                  + sV * (vi - pV) * (vi - pV)
+                  + sW * (wi - pW) * (wi - pW)
+                pV, pW = vi, wi
+            end
+            return c
+        end
+        local vSteps = {0.065, 0.025}
+        local wSteps = {0.160, 0.065}
+        local bestC = nmCost(seqV, seqW)
+        for pass = 1, 2 do
+            local sv = vSteps[pass]
+            local sw = wSteps[pass]
+            for i = 1, Nh do
+                for _, sign in ipairs({1, -1, 0.5, -0.5}) do
+                    local old = seqV[i]
+                    seqV[i] = clamp(old + sign * sv, 0, cfg.vMax)
+                    local c = nmCost(seqV, seqW)
+                    if c < bestC then bestC = c else seqV[i] = old end
+                end
+                for _, sign in ipairs({1, -1, 0.5, -0.5}) do
+                    local old = seqW[i]
+                    seqW[i] = clamp(old + sign * sw, -cfg.wMax, cfg.wMax)
+                    local c = nmCost(seqV, seqW)
+                    if c < bestC then bestC = c else seqW[i] = old end
+                end
+            end
+        end
+        v = clamp(seqV[1], 0, cfg.vMax)
+        w = clamp(seqW[1] + obstacleSteer, -cfg.wMax, cfg.wMax)
         alpha = 0.35
         maxV = 0.52
         slowWeight = 0.32
