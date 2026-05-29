@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_SCENE = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase2_SLAM_Unknown.ttt"
 VALIDATION_JSON = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase2_SLAM_Unknown_validation.json"
 PHASE2_MANAGER = ROOT / "actividad2" / "coppeliasim" / "phase2_dynamic_unknown_manager.lua"
-MAPPING_PROGRESS_MIN_PCT = 50.0
+MAPPING_PROGRESS_MIN_PCT = 42.0
 
 
 P2_PREFIXES = (

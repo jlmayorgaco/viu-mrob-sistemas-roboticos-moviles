@@ -33,17 +33,17 @@ VALIDATION_MAX_TIME_S = 240.0
 VALIDATION_MAX_STEPS = 6500
 
 B1_WAYPOINTS = [
-    (-3.65, 3.05),
-    (-2.50, 3.05),
-    (-2.50, -3.05),
-    (-0.80, -3.05),
-    (1.20, -3.05),
-    (3.65, -3.05),
-    (2.50, -3.05),
-    (2.50, 3.05),
-    (0.95, 3.05),
-    (-0.95, 3.05),
-    (-3.65, 3.05),
+    (-2.12, 1.10),
+    (-1.50, 1.10),
+    (-1.50, -1.60),
+    (-0.40, -1.60),
+    (0.80, -1.60),
+    (2.12, -1.10),
+    (1.50, -1.10),
+    (1.50, 1.10),
+    (0.70, 1.10),
+    (-0.70, 1.10),
+    (-2.12, 1.10),
 ]
 
 
@@ -249,8 +249,8 @@ def add_phase1_warehouse(sim) -> int:
     create_box(
         sim,
         "P1_Warehouse_Floor",
-        (10.60, 10.20, 0.010),
-        (0.0, -0.05, -0.008),
+        (7.10, 7.10, 0.010),
+        (0.0, 0.0, -0.008),
         (0.64, 0.67, 0.68),
         group,
         respondable=False,
@@ -258,14 +258,16 @@ def add_phase1_warehouse(sim) -> int:
     )
 
     tile = 0.53
-    for ix in range(20):
-        for iy in range(19):
+    n_tiles = 13
+    tile_start = -(n_tiles - 1) * tile / 2.0
+    for ix in range(n_tiles):
+        for iy in range(n_tiles):
             shade = 0.70 if (ix + iy) % 2 == 0 else 0.60
             create_box(
                 sim,
                 f"P1_Floor_Tile_{ix + 1:02d}_{iy + 1:02d}",
                 (tile - 0.012, tile - 0.012, 0.004),
-                (-5.035 + ix * tile, -4.82 + iy * tile, 0.0),
+                (tile_start + ix * tile, tile_start + iy * tile, 0.0),
                 (shade, shade + 0.012, shade + 0.016),
                 group,
                 respondable=False,
@@ -273,82 +275,82 @@ def add_phase1_warehouse(sim) -> int:
             )
 
     wall = (0.05, 0.12, 0.18)
-    create_box(sim, "P1_Warehouse_Wall_North", (10.60, 0.06, 0.52), (0.0, 5.02, 0.26), wall, group, respondable=False)
-    create_box(sim, "P1_Warehouse_Wall_South", (10.60, 0.06, 0.52), (0.0, -5.12, 0.26), wall, group, respondable=False)
-    create_box(sim, "P1_Warehouse_Wall_West", (0.06, 10.15, 0.52), (-5.32, -0.05, 0.26), wall, group, respondable=False)
-    create_box(sim, "P1_Warehouse_Wall_East", (0.06, 10.15, 0.52), (5.32, -0.05, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_North", (7.22, 0.06, 0.52), (0.0, 3.55, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_South", (7.22, 0.06, 0.52), (0.0, -3.55, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_West", (0.06, 7.22, 0.52), (-3.55, 0.0, 0.26), wall, group, respondable=False)
+    create_box(sim, "P1_Warehouse_Wall_East", (0.06, 7.22, 0.52), (3.55, 0.0, 0.26), wall, group, respondable=False)
 
     # Obstacles sit near the nominal route and leave a narrow recoverable gap.
-    create_box(sim, "P1_Obstacle_Pallet_A", (0.42, 0.52, 0.30), (-1.20, -1.55, 0.15), (0.58, 0.34, 0.14), group)
-    create_box(sim, "P1_Obstacle_Pillar_B", (0.32, 0.32, 0.62), (-0.18, -0.20, 0.31), (0.16, 0.18, 0.20), group)
-    create_box(sim, "P1_Obstacle_Crate_C", (0.50, 0.42, 0.34), (1.15, 1.35, 0.17), (0.54, 0.40, 0.18), group)
+    create_box(sim, "P1_Obstacle_Pallet_A", (0.34, 0.42, 0.30), (-0.74, -1.05, 0.15), (0.58, 0.34, 0.14), group)
+    create_box(sim, "P1_Obstacle_Pillar_B", (0.28, 0.28, 0.62), (-0.18, -0.42, 0.31), (0.16, 0.18, 0.20), group)
+    create_box(sim, "P1_Obstacle_Crate_C", (0.42, 0.34, 0.34), (0.54, 0.82, 0.17), (0.54, 0.40, 0.18), group)
 
-    create_work_desk(sim, "P1_WorkTable_1", (-3.65, 3.75, 0.0), (0.34, 0.24, 0.18), group)
-    create_dummy(sim, "WS1_Tool_Drop", (-3.65, 3.05, 0.36), group, size=0.055)
-    create_dummy(sim, "WS1_Work_Surface", (-3.65, 3.75, 0.42), group, size=0.045)
-    create_work_desk(sim, "P1_WorkTable_2", (3.65, -3.75, 0.0), (0.24, 0.32, 0.20), group)
-    create_dummy(sim, "WS2_Tool_Drop", (3.65, -3.05, 0.36), group, size=0.055)
-    create_dummy(sim, "WS2_Work_Surface", (3.65, -3.75, 0.42), group, size=0.045)
+    create_work_desk(sim, "P1_WorkTable_1", (-2.12, 1.76, 0.0), (0.34, 0.24, 0.18), group)
+    create_dummy(sim, "WS1_Tool_Drop", (-2.12, 1.10, 0.36), group, size=0.055)
+    create_dummy(sim, "WS1_Work_Surface", (-2.12, 1.76, 0.42), group, size=0.045)
+    create_work_desk(sim, "P1_WorkTable_2", (2.12, -1.76, 0.0), (0.24, 0.32, 0.20), group)
+    create_dummy(sim, "WS2_Tool_Drop", (2.12, -1.10, 0.36), group, size=0.055)
+    create_dummy(sim, "WS2_Work_Surface", (2.12, -1.76, 0.42), group, size=0.045)
 
-    create_operator_sofa(sim, "P1_Operator_Sofa", (-4.60, 0.10), group)
+    create_operator_sofa(sim, "P1_Operator_Sofa", (-2.55, 0.10), group)
 
     create_tool_shelf(
         sim,
         "Rack_T1",
         "T1",
-        (-3.20, -4.02),
+        (-1.46, -2.04),
         (0.28, 0.33, 0.36),
         (0.95, 0.70, 0.12),
         group,
         approach_offset_y=0.52,
         storage_offset_y=-0.18,
-        visual_position=(-3.20, -4.58),
+        visual_position=(-1.46, -2.60),
         rack_yaw=math.radians(90),
     )
-    create_dummy(sim, "Landmark_Rack_T1", (-3.20, -4.02, 0.62), group, size=0.045)
+    create_dummy(sim, "Landmark_Rack_T1", (-1.46, -2.04, 0.62), group, size=0.045)
 
     create_tool_shelf(
         sim,
         "Rack_T2",
         "T2",
-        (3.20, 4.02),
+        (1.46, 2.00),
         (0.30, 0.34, 0.38),
         (0.22, 0.68, 0.92),
         group,
         approach_offset_y=-0.52,
         storage_offset_y=0.12,
-        visual_position=(3.20, 4.58),
+        visual_position=(1.46, 2.55),
         rack_yaw=math.radians(90),
     )
-    create_dummy(sim, "Landmark_Rack_T2", (3.20, 4.02, 0.62), group, size=0.045)
+    create_dummy(sim, "Landmark_Rack_T2", (1.46, 2.00, 0.62), group, size=0.045)
 
     create_box(
         sim,
         "P1_C1_ChargePad",
         (0.74, 0.74, 0.018),
-        (-0.10, -4.32, 0.010),
+        (-0.10, -2.06, 0.010),
         (0.08, 0.32, 0.62),
         group,
         respondable=False,
         detectable=False,
     )
-    create_dummy(sim, "C1", (-0.10, -4.32, 0.16), group, size=0.075)
-    create_dummy(sim, "Landmark_C1", (-0.10, -4.32, 0.50), group, size=0.045)
+    create_dummy(sim, "C1", (-0.10, -2.06, 0.16), group, size=0.075)
+    create_dummy(sim, "Landmark_C1", (-0.10, -2.06, 0.50), group, size=0.045)
 
     create_box(
         sim,
         "P1_TaskQueue_Panel",
         (1.10, 0.06, 0.48),
-        (-4.30, 4.80, 0.64),
+        (-2.04, 3.40, 0.64),
         (0.04, 0.06, 0.08),
         group,
         respondable=False,
         detectable=False,
     )
-    create_box(sim, "P1_TaskQueue_task1_T1_to_B1_WS1", (0.82, 0.07, 0.10), (-4.30, 4.76, 0.76), (0.94, 0.66, 0.16), group, respondable=False, detectable=False)
-    create_box(sim, "P1_TaskQueue_task2_return_T1", (0.82, 0.07, 0.10), (-4.30, 4.76, 0.60), (0.92, 0.46, 0.12), group, respondable=False, detectable=False)
-    create_box(sim, "P1_TaskQueue_task3_T2_to_B1_WS2", (0.82, 0.07, 0.10), (-4.30, 4.76, 0.44), (0.18, 0.52, 0.88), group, respondable=False, detectable=False)
-    create_box(sim, "P1_Kalman_EKF_Status", (0.82, 0.07, 0.10), (-4.30, 4.76, 0.28), (0.12, 0.52, 0.86), group, respondable=False, detectable=False)
+    create_box(sim, "P1_TaskQueue_task1_T1_to_B1_WS1", (0.82, 0.07, 0.10), (-2.04, 3.34, 0.76), (0.94, 0.66, 0.16), group, respondable=False, detectable=False)
+    create_box(sim, "P1_TaskQueue_task2_return_T1", (0.82, 0.07, 0.10), (-2.04, 3.34, 0.60), (0.92, 0.46, 0.12), group, respondable=False, detectable=False)
+    create_box(sim, "P1_TaskQueue_task3_T2_to_B1_WS2", (0.82, 0.07, 0.10), (-2.04, 3.34, 0.44), (0.18, 0.52, 0.88), group, respondable=False, detectable=False)
+    create_box(sim, "P1_Kalman_EKF_Status", (0.82, 0.07, 0.10), (-2.04, 3.34, 0.28), (0.12, 0.52, 0.86), group, respondable=False, detectable=False)
 
     for index, start in enumerate(B1_WAYPOINTS):
         end = B1_WAYPOINTS[(index + 1) % len(B1_WAYPOINTS)]
@@ -373,8 +375,8 @@ def add_phase1_warehouse(sim) -> int:
             detectable=False,
         )
 
-    create_dummy(sim, "Landmark_Warehouse_NE", (4.70, 4.55, 0.28), group, size=0.045)
-    create_dummy(sim, "Landmark_Warehouse_SW", (-4.70, -4.60, 0.28), group, size=0.045)
+    create_dummy(sim, "Landmark_Warehouse_NE", (3.00, 3.00, 0.28), group, size=0.045)
+    create_dummy(sim, "Landmark_Warehouse_SW", (-3.00, -3.00, 0.28), group, size=0.045)
     return group
 
 
@@ -386,7 +388,7 @@ def set_initial_layout(sim) -> None:
 
     if pioneer >= 0:
         sim.setObjectAlias(pioneer, "PioneerP3DX")
-        sim.setObjectPosition(pioneer, [-0.10, -4.32, 0.1388])
+        sim.setObjectPosition(pioneer, [-0.10, -2.06, 0.1388])
         sim.setObjectOrientation(pioneer, [0.0, 0.0, math.radians(92.0)])
     if bill >= 0:
         sim.setObjectAlias(bill, "B1")
@@ -396,8 +398,8 @@ def set_initial_layout(sim) -> None:
     if plant >= 0:
         sim.setObjectPosition(plant, [4.35, 0.92, 0.165])
     if camera >= 0:
-        sim.setObjectPosition(camera, [6.45, -7.20, 5.20])
-        sim.setObjectOrientation(camera, [math.radians(62.0), 0.0, math.radians(41.0)])
+        sim.setObjectPosition(camera, [8.0, -9.0, 6.5])
+        sim.setObjectOrientation(camera, [math.radians(61.0), 0.0, math.radians(40.0)])
 
 
 def attach_scripts(sim, group: int) -> None:

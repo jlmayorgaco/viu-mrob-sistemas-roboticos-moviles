@@ -226,11 +226,13 @@ end
 
 function JointAnimator:tableWorkPose(action, state)
     local t = self.phase
-    local main = math.sin(t)                      -- primary arm cycle
-    local alt  = math.sin(t + math.pi)            -- opposite phase for natural alternation
-    local sway = math.sin(t * 0.55)               -- slow body sway
-    local fast = math.sin(t * 1.6)                -- faster hand/wrist-like motion
-    local fastAlt = math.sin(t * 1.6 + math.pi)  -- opposite-phase fast
+    -- Gentle task-specific oscillations; base values dominate so the pose
+    -- reads clearly even at a distance.
+    local slow   = math.sin(t * 0.50)              -- slow body breath sway
+    local altL   = math.sin(t)                     -- left-arm rhythm
+    local altR   = math.sin(t + math.pi)           -- right-arm rhythm (opposite)
+    local tapL   = math.sin(t * 1.4)               -- left elbow tap
+    local tapR   = math.sin(t * 1.4 + math.pi)    -- right elbow tap (opposite)
 
     local pose = {
         leftLeg = 0,
@@ -244,42 +246,42 @@ function JointAnimator:tableWorkPose(action, state)
     }
 
     if self:actionContains(action, 'READY_TO_TAKE') or self:actionContains(action, 'TAKING') then
-        -- Both arms reach forward to receive the tool; subtle anticipation sway
-        pose.leftShoulder  =  0.54 + 0.06 * main
-        pose.rightShoulder =  0.50 + 0.05 * alt
-        pose.leftElbow     =  0.30 + 0.04 * math.abs(main)
-        pose.rightElbow    =  0.28 + 0.04 * math.abs(alt)
-        pose.leftKnee      =  0.04 + 0.02 * math.abs(sway)
-        pose.rightKnee     =  0.04 + 0.02 * math.abs(sway)
+        -- Both arms reach clearly forward, waiting for the handoff
+        pose.leftShoulder  =  0.70 + 0.04 * altL
+        pose.rightShoulder =  0.68 + 0.04 * altR
+        pose.leftElbow     =  0.28 + 0.04 * math.abs(tapL)
+        pose.rightElbow    =  0.26 + 0.04 * math.abs(tapR)
+        pose.leftKnee      =  0.05
+        pose.rightKnee     =  0.05
     elseif self:actionContains(action, 'WORKING') then
-        -- Alternating arm motion at the table: one arm reaches while the other pulls back
-        pose.leftShoulder  =  0.62 + 0.12 * main
-        pose.rightShoulder =  0.58 + 0.12 * alt
-        pose.leftElbow     =  0.40 + 0.10 * math.abs(fastAlt)
-        pose.rightElbow    =  0.36 + 0.10 * math.abs(fast)
-        pose.leftKnee      =  0.06 + 0.02 * math.abs(sway)
-        pose.rightKnee     =  0.06 + 0.02 * math.abs(sway)
+        -- Arms strongly forward; alternate slightly so the motion reads as active work
+        pose.leftShoulder  =  0.72 + 0.06 * altL
+        pose.rightShoulder =  0.70 + 0.06 * altR
+        pose.leftElbow     =  0.38 + 0.06 * math.abs(tapL)
+        pose.rightElbow    =  0.36 + 0.06 * math.abs(tapR)
+        pose.leftKnee      =  0.06 + 0.02 * math.abs(slow)
+        pose.rightKnee     =  0.06 + 0.02 * math.abs(slow)
     elseif self:actionContains(action, 'GIVING') then
-        -- Left arm extended with tool; right arm relaxed at side
-        pose.leftShoulder  =  0.60 + 0.04 * main
-        pose.rightShoulder =  0.18 + 0.03 * sway
-        pose.leftElbow     =  0.22 + 0.03 * math.abs(main)
-        pose.rightElbow    =  0.18 + 0.02 * math.abs(sway)
+        -- Left arm clearly extended offering the tool; right arm relaxed lower
+        pose.leftShoulder  =  0.74 + 0.03 * altL
+        pose.rightShoulder =  0.20 + 0.03 * slow
+        pose.leftElbow     =  0.20 + 0.03 * math.abs(tapL)
+        pose.rightElbow    =  0.14
         pose.leftKnee      =  0.03
         pose.rightKnee     =  0.03
     elseif StationByState[state] then
-        -- Idle at station: relaxed forward stance with gentle natural sway
-        pose.leftShoulder  =  0.10 + 0.04 * main
-        pose.rightShoulder =  0.10 + 0.04 * alt
-        pose.leftElbow     =  0.08 + 0.02 * math.abs(main)
-        pose.rightElbow    =  0.08 + 0.02 * math.abs(alt)
+        -- Idle at station: arms resting naturally forward (not behind back)
+        pose.leftShoulder  =  0.18 + 0.04 * altL
+        pose.rightShoulder =  0.18 + 0.04 * altR
+        pose.leftElbow     =  0.10 + 0.02 * math.abs(tapL)
+        pose.rightElbow    =  0.10 + 0.02 * math.abs(tapR)
     end
 
     return pose
 end
 
 function JointAnimator:animateAtTable(dt, action, state)
-    self.phase = self.phase + dt * 3.6  -- slower, more organic work rhythm
+    self.phase = self.phase + dt * 2.8  -- unhurried work rhythm
     self:setTargets(self:tableWorkPose(action, state))
 end
 
