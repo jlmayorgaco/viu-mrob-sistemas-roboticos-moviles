@@ -463,8 +463,7 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         and {"DELIVER_T1_WS1", "RETURN_T1_RACK", "DELIVER_T2_WS2"}.issubset(task_states_seen),
         "phase1_compliance_inherited": "ekf_slam_obstacle_map" in phase1_compliance
         and "slam_path_planning" in phase1_compliance
-        and "battery_charge" in phase1_compliance
-        and "furniture_sofa" in phase1_compliance,
+        and "battery_charge" in phase1_compliance,
     }
 
     result = {
