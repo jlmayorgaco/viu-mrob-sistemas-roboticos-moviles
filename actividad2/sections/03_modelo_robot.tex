@@ -1,4 +1,5 @@
 \chapter{Modelo del robot y control}
+\label{ch:modelo-robot}
 
 El Pioneer P3DX se trata como robot diferencial~\cite{tzafestas2014}. El controlador calcula una
 velocidad lineal \(v\) y una velocidad angular \(\omega\), y de ahí salen las
@@ -71,7 +72,7 @@ local de comandos.
 
 \begin{longtable}{P{0.17\textwidth}P{0.35\textwidth}P{0.36\textwidth}}
 \toprule
-\textbf{Modo} & \textbf{Idea} & \textbf{Uso en la escena}\\
+\textbf{Modo} & \textbf{Descripción} & \textbf{Uso en la escena}\\
 \midrule
 \endhead
 P & Control proporcional sobre distancia y rumbo. & Estructura simple y estable, con mayor tiempo activo y ruta más larga.\\
@@ -82,7 +83,7 @@ NMPC & Control predictivo no lineal por disparo directo. & Evalúa secuencias de
 \bottomrule
 \end{longtable}
 
-El puntaje ponderado que determina el modo ganador se calcula como la suma min--max normalizada de seis indicadores, con los pesos:
+El puntaje ponderado que determina el modo ganador se calcula como la suma min-max normalizada de seis indicadores, con los pesos:
 \[
 S = 0{,}28\,s_{\text{mov}} + 0{,}18\,s_{\text{bat}} + 0{,}20\,s_{\text{var}} + 0{,}14\,s_{\text{riesgo}} + 0{,}12\,s_{\text{pose}} + 0{,}08\,s_{\text{dur}}
 \]
@@ -91,7 +92,7 @@ de seguimiento suave y eficiente: mayor importancia al tiempo en movimiento
 activo (\(0{,}28\)) y a la suavidad de comandos (\(0{,}20\)), seguidos del
 consumo energético (\(0{,}18\)) y el riesgo de obstáculo (\(0{,}14\)),
 con menor peso al error de pose (\(0{,}12\)) y la duración total (\(0{,}08\)).
-Los pesos son ad hoc y calibrados para esta escena; la ordenación puede
+Los pesos son ad hoc y calibrados para esta escena. La ordenación puede
 variar si se modifican sustancialmente las prioridades de la tarea.
 Los valores coinciden con los definidos en \texttt{run\_phase1\_controller\_comparison.py}
 (véase también el Anexo~\ref{tab:phase1-controller-anexo}). La Fig.~\ref{fig:controller-comparison} resume los resultados de los cinco modos.
@@ -99,6 +100,6 @@ Los valores coinciden con los definidos en \texttt{run\_phase1\_controller\_comp
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_controller_comparison.png}
-  \caption{Comparación de modos de control exportada desde CoppeliaSim. Todos completan la tarea; PI obtiene el mejor puntaje ponderado con los pesos definidos.}
+  \caption{Comparación de modos de control exportada desde CoppeliaSim. Todos los modos completan la tarea. PI obtiene el menor puntaje ponderado con los pesos definidos (\(n=1\) por modo).}
   \label{fig:controller-comparison}
 \end{figure}

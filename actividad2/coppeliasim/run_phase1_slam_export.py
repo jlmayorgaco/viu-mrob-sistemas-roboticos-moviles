@@ -209,7 +209,7 @@ def summarize(
         "requested_slam_algorithm": requested_algorithm,
         "slam_algorithm": str(final["slam_algorithm"]),
         "localization_mode": str(final["localization_mode"]),
-        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 3,
+        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 4,
         "duration_s": round(float(final["t"]), 3),
         "samples": len(rows),
         "path_length_m": round(path_length, 3),

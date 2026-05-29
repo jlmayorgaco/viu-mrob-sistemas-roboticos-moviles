@@ -9,7 +9,12 @@ import re
 from pathlib import Path
 from statistics import fmean
 
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -106,6 +111,7 @@ def finite(data: list[float]) -> list[float]:
 
 
 def rmse(data: list[float]) -> float:
+    # data = [hypot(dx, dy) per sample] → sqrt(mean(d²)) == sqrt(mean(dx²+dy²)) == RMSE 2D posición
     vals = finite(data)
     if not vals:
         return math.nan
@@ -148,7 +154,7 @@ def metrics(rows: list[dict[str, float | int | str]]) -> dict[str, object]:
     return {
         "algorithm": algorithm,
         "localization_mode": str(final["localization_mode"]),
-        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 3,
+        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 4,
         "duration_s": round(float(final["t"]), 3),
         "samples": len(rows),
         "path_length_m": round(path, 3),

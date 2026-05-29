@@ -11,6 +11,8 @@ from __future__ import annotations
 import csv
 import json
 import math
+import sys
+from datetime import datetime
 from pathlib import Path
 from statistics import fmean
 
@@ -131,7 +133,7 @@ def summarize_rows(mode: str, csv_path: Path, rows: list[dict[str, float | int |
     pose_errors = [float(row["pose_error"]) for row in rows]
     risk_values = [float(row["obstacle_risk"]) for row in rows]
     final = rows[-1]
-    completed = int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 3
+    completed = int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 4
     duration = float(final["t"])
     battery_start = float(rows[0]["battery"])
     battery_final = float(final["battery"])
@@ -267,6 +269,11 @@ def main() -> int:
                 "mean_pose_error_m": 0.12,
                 "duration_s": 0.08,
             },
+        },
+        "meta": {
+            "run_date": datetime.now().isoformat(timespec="seconds"),
+            "python": sys.version.split()[0],
+            "n_runs_per_mode": 1,
         },
     }
     SUMMARY_JSON.write_text(json.dumps(result, indent=2), encoding="utf-8")

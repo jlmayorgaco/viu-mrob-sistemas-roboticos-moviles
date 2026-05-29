@@ -6,7 +6,12 @@ import csv
 import json
 from pathlib import Path
 
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -74,7 +79,7 @@ def main() -> int:
     ax_progress.set_title("Progreso de tareas completadas")
     ax_progress.set_xlabel("t [s]")
     ax_progress.set_ylabel("tareas completadas")
-    ax_progress.set_ylim(-0.1, 3.25)
+    ax_progress.set_ylim(-0.1, 4.25)
     ax_progress.grid(True, alpha=0.25)
     ax_progress.legend(loc="best", fontsize=8)
 

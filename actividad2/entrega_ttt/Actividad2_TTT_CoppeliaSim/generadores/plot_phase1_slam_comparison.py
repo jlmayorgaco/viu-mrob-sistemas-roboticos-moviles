@@ -9,7 +9,12 @@ import re
 from pathlib import Path
 from statistics import fmean
 
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -106,6 +111,7 @@ def finite(data: list[float]) -> list[float]:
 
 
 def rmse(data: list[float]) -> float:
+    # data = [hypot(dx, dy) per sample] → sqrt(mean(d²)) == sqrt(mean(dx²+dy²)) == RMSE 2D posición
     vals = finite(data)
     if not vals:
         return math.nan
@@ -148,7 +154,7 @@ def metrics(rows: list[dict[str, float | int | str]]) -> dict[str, object]:
     return {
         "algorithm": algorithm,
         "localization_mode": str(final["localization_mode"]),
-        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 3,
+        "completed": int(final["task_complete"]) == 1 and int(final["completed_task_count"]) >= 4,
         "duration_s": round(float(final["t"]), 3),
         "samples": len(rows),
         "path_length_m": round(path, 3),
@@ -269,34 +275,23 @@ def main() -> int:
     ax.legend(loc="best")
 
     ax = axes[1, 1]
-    ax.axis("off")
-    ax.set_title("Métricas comparativas")
-    metric_rows = [
-        ("RMSE pos [m]", "rmse_position_m"),
-        ("P95 pos [m]", "p95_position_error_m"),
-        ("Error max [m]", "max_position_error_m"),
-        ("Mapa final", "map_features_final"),
-        ("Actualiz.", "slam_updates"),
-        ("Submapas", "cartographer_submaps_final"),
-        ("Cierres", "loop_closures_final"),
-        ("Min obst [m]", "min_obstacle_m"),
-        ("Riesgo max", "max_obstacle_risk"),
-        ("Batería [%]", "battery_used_pct"),
-    ]
-    table_data = [
-        [label] + [str(all_metrics[name][key]) for name in RUNS]
-        for label, key in metric_rows
-    ]
-    table = ax.table(
-        cellText=table_data,
-        colLabels=["Métrica"] + [LABELS[name] for name in RUNS],
-        loc="center",
-        cellLoc="center",
-        colLoc="center",
-    )
-    table.auto_set_font_size(False)
-    table.set_fontsize(7.5)
-    table.scale(1.0, 1.35)
+    ordered = list(RUNS)
+    x_pos = list(range(len(ordered)))
+    rmse_values = [float(all_metrics[name]["rmse_position_m"]) for name in ordered]
+    p95_values = [float(all_metrics[name]["p95_position_error_m"]) for name in ordered]
+    width = 0.36
+    ax.bar([x - width / 2 for x in x_pos], rmse_values, width=width, color=[COLORS[name] for name in ordered], alpha=0.78, label="RMSE")
+    ax.bar([x + width / 2 for x in x_pos], p95_values, width=width, color=[COLORS[name] for name in ordered], alpha=0.38, hatch="//", label="P95")
+    for x, value in zip(x_pos, rmse_values):
+        ax.text(x - width / 2, value + 0.002, f"{value:.3f}", ha="center", va="bottom", fontsize=8)
+    for x, value in zip(x_pos, p95_values):
+        ax.text(x + width / 2, value + 0.002, f"{value:.3f}", ha="center", va="bottom", fontsize=8)
+    ax.set_title("Resumen de error de posición")
+    ax.set_xticks(x_pos, [LABELS[name].replace(" ", "\n") for name in ordered], fontsize=8)
+    ax.set_ylabel("m")
+    ax.set_ylim(0, max(p95_values) * 1.28)
+    ax.grid(True, axis="y", alpha=0.25)
+    ax.legend(loc="upper left", fontsize=8)
 
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(COMPARISON_PNG, dpi=180)
