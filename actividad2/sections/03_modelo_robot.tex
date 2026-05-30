@@ -64,21 +64,27 @@ repulsivo derivado de sensores.
 
 \section{Modos de control evaluados}
 
-Se probaron cinco modos: P, PI, PID, LQR y NMPC. Los controladores P, PI y PID
+Se probaron cinco metodos: P, PI, PID, LQR y NMPC. Los controladores P, PI y PID
 se usan como referencia clásica junto con la estimación y la evitación. LQR y
-NMPC se incluyeron con alcance acotado: LQR usa una ganancia discreta calculada
-fuera de CoppeliaSim mediante Riccati; NMPC usa disparo directo con búsqueda
-local de comandos.
+NMPC se incluyeron con alcance acotado. El LQR resuelve la ecuación de Riccati
+discreta \emph{dentro de la propia escena}, en Lua (\texttt{solveDiscreteLqr}), de
+modo que la ganancia ya no está precalculada ni embebida; el solver in-scene se
+verifica fuera de línea contra \texttt{scipy.solve\_discrete\_are}
+(\texttt{compute\_follower\_lqr\_gain.py}). En la misión de almacén se emplea una
+variante reactiva simplificada del LQR; el LQR de Riccati completo opera en el
+seguidor de Bill. El NMPC usa disparo directo y resuelve la secuencia de comandos
+con una búsqueda local de patrón (Hooke--Jeeves~\cite{hooke1961}), sin recurrir a
+IPOPT ni CasADi.
 
 \begin{longtable}{P{0.17\textwidth}P{0.35\textwidth}P{0.36\textwidth}}
 \toprule
 \textbf{Modo} & \textbf{Descripción} & \textbf{Uso en la escena}\\
 \midrule
 \endhead
-P & Control proporcional sobre distancia y rumbo. & Estructura simple y estable, con mayor tiempo activo y ruta más larga.\\
-PI & Agrega integral de distancia y rumbo. & Obtiene el menor puntaje ponderado en la comparación de controladores.\\
-PID & Incluye derivadas para amortiguar saltos. & Buen compromiso general; se usó como modo base en varias exportaciones SLAM.\\
-LQR & Realimentación lineal de error longitudinal, lateral y rumbo. & Ganancia discreta calculada por Riccati e integrada en Lua para el seguidor de Bill.\\
+P & Control proporcional sobre distancia y rumbo. & Estructura simple y estable, con ruta más larga (mayor duración en la ejecución medida).\\
+PI & Agrega integral de distancia y rumbo. & El término integral añade sobrepaso; en la ejecución medida registra el mayor riesgo de obstáculo y el peor puntaje ponderado.\\
+PID & Incluye derivadas para amortiguar saltos. & Mejor compromiso: obtiene el menor puntaje ponderado (menor riesgo, menor error de pose y menor duración) y se usa como modo base en las exportaciones SLAM.\\
+LQR & Realimentación lineal de error longitudinal, lateral y rumbo. & Ecuación de Riccati discreta resuelta en la propia escena (Lua) para el seguidor de Bill; en el almacén se usa una variante reactiva simplificada.\\
 NMPC & Control predictivo no lineal por disparo directo. & Evalúa secuencias de \(v,\omega\) con restricciones y coste de suavidad mediante búsqueda local (véase Sección~\ref{sec:nmpc}).\\
 \bottomrule
 \end{longtable}
@@ -87,19 +93,50 @@ El puntaje ponderado que determina el modo ganador se calcula como la suma min-m
 \[
 S = 0{,}28\,s_{\text{mov}} + 0{,}18\,s_{\text{bat}} + 0{,}20\,s_{\text{var}} + 0{,}14\,s_{\text{riesgo}} + 0{,}12\,s_{\text{pose}} + 0{,}08\,s_{\text{dur}}
 \]
-donde menor puntaje es mejor. Los pesos reflejan las prioridades de una tarea
-de seguimiento suave y eficiente: mayor importancia al tiempo en movimiento
-activo (\(0{,}28\)) y a la suavidad de comandos (\(0{,}20\)), seguidos del
-consumo energético (\(0{,}18\)) y el riesgo de obstáculo (\(0{,}14\)),
-con menor peso al error de pose (\(0{,}12\)) y la duración total (\(0{,}08\)).
-Los pesos son ad hoc y calibrados para esta escena. La ordenación puede
-variar si se modifican sustancialmente las prioridades de la tarea.
+donde menor puntaje es mejor. Cada indicador \(s_i\) viene en unidades distintas
+(segundos, julios, metros), así que antes de sumarlos se llevan al rango
+\([0,1]\) con normalización min-max, \(s_i=(x_i-x_{\min})/(x_{\max}-x_{\min})\),
+para que ninguno pese de más solo por su escala. Los pesos priorizan un
+seguimiento suave y
+eficiente: pesan más el tiempo en movimiento activo (0,28) y la suavidad de
+comandos (0,20) que el consumo (0,18), el riesgo (0,14), el error de pose (0,12)
+y la duración (0,08). Son ad hoc y calibrados para esta escena. Conviene tomar la ordenación como
+indicativa y no como un veredicto robusto: con \(n=1\) por modo y una normalización
+min-max sensible a los extremos, el ranking puede reordenarse si cambian las
+prioridades de la tarea o si se reajusta la navegación. De hecho, tras los últimos
+ajustes del controlador (tolerancias de aproximación, cotas del EKF y capas de
+recuperación) el modo de menor puntaje pasó a ser PID, con PI desplazado al final por
+registrar el mayor riesgo de obstáculo en su ejecución.
 Los valores coinciden con los definidos en \texttt{run\_phase1\_controller\_comparison.py}
 (véase también el Anexo~\ref{tab:phase1-controller-anexo}). La Fig.~\ref{fig:controller-comparison} resume los resultados de los cinco modos.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_controller_comparison.png}
-  \caption{Comparación de modos de control exportada desde CoppeliaSim. Todos los modos completan la tarea. PI obtiene el menor puntaje ponderado con los pesos definidos (\(n=1\) por modo).}
+  \caption{Comparación de modos de control exportada desde CoppeliaSim. Todos los modos completan la tarea. PID obtiene el menor puntaje ponderado con los pesos definidos (\(n=1\) por modo).}
   \label{fig:controller-comparison}
 \end{figure}
+
+\subsection{Capas de moldeado de velocidad sobre el modo base}
+
+El comando que produce la ley de control elegida (PID por defecto en el almacén) no
+se aplica en crudo: se le superponen varias capas que moldean la velocidad y que son
+\emph{independientes del modo}, es decir, se aplican por igual a las cinco leyes, de
+modo que la comparación las mide en igualdad de condiciones. Se detallan en el
+capítulo de Fase 2 y se resumen aquí:
+\begin{itemize}
+  \item \textbf{Factor de confianza (Fase 2).} En la celda desconocida la velocidad de
+  avance se escala con la madurez del mapa SLAM (señal \texttt{phase1SpeedLearnFactor},
+  de \(\approx 0{,}60\) a \(\approx 0{,}88\)): la primera pasada es cauta y las
+  siguientes más ágiles. En Fase 1 el factor vale 1 y no interviene.
+  \item \textbf{Aproximación a estanterías.} El robot reduce la velocidad en el tramo
+  final hacia un rack para detenerse pegado sin embestirlo, y al salir retrocede un
+  instante para liberarse antes de girar hacia el siguiente objetivo.
+  \item \textbf{Recuperación y geo-valla.} Si una maniobra se estanca, un arco de
+  retroceso la desbloquea; y, como red de seguridad numérica, una geo-valla reincorpora
+  el chasis a la celda si un artefacto del motor de física llegara a expulsarlo, además
+  de las cotas por actualización que estabilizan el EKF.
+\end{itemize}
+Estas capas afectan \emph{cómo} se ejecuta el comando del controlador en la navegación
+del almacén, pero no cambian \emph{qué} ley de control gana la comparación, que sigue
+midiendo las cinco leyes en igualdad de condiciones.

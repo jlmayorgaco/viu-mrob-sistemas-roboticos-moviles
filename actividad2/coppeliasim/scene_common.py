@@ -15,7 +15,9 @@ from typing import Callable, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[2]
-COPPELIA_DIR = Path(r"C:\Program Files\CoppeliaRobotics\CoppeliaSimEdu")
+COPPELIA_DIR = Path(
+    os.environ.get("COPPELIA_DIR", r"C:\Program Files\CoppeliaRobotics\CoppeliaSimEdu")
+)
 MODEL_DIR = COPPELIA_DIR / "models"
 
 

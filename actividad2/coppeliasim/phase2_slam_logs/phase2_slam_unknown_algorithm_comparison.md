@@ -13,28 +13,28 @@ La figura `phase2_slam_unknown_reconstruction_t60.png` compara la reconstrucció
 | Métrica | GMAPPING_GRID | HECTOR_GRID_MATCHING | CARTOGRAPHER_SUBMAP | KALMAN_LANDMARK |
 |---|---:|---:|---:|---:|
 | Completado | True | True | True | True |
-| Duración [s] | 128.0 | 129.4 | 138.65 | 124.8 |
-| Evidencia mapa final [%] | 94.851 | 94.93 | 95.327 | 94.613 |
-| Tiempo a 50% evidencia [s] | 1.55 | 1.55 | 1.55 | 19.8 |
-| Tiempo a 75% evidencia [s] | 5.1 | 5.1 | 5.1 | 98.55 |
-| Rasgos t=60s | 36 | 36 | 36 | 11 |
-| Rasgos finales | 36 | 36 | 36 | 24 |
-| Recall proxy t=60s | 0.25 | 0.25 | 0.25 | 0.25 |
-| Precisión proxy final | 0.25 | 0.333 | 0.278 | 0.25 |
-| Actualizaciones SLAM | 5558 | 5686 | 6520 | 5219 |
-| RMSE posición [m] | 0.0422 | 0.04587 | 0.0393 | 0.03185 |
-| Error P95 pose [m] | 0.05638 | 0.0759 | 0.05773 | 0.03985 |
-| Replanificaciones | 19 | 24 | 25 | 17 |
-| Recuperaciones del planificador | 0 | 0 | 1 | 0 |
-| Cruces pallet | 9 | 9 | 10 | 9 |
-| Distancia mínima a obstáculo [m] | 0.05562 | 0.1014 | 0.06047 | 0.05401 |
-| Riesgo máximo | 0.82863 | 0.69965 | 0.80613 | 0.80168 |
-| Batería usada [%] | 24.57625 | 24.47612 | 25.91574 | 24.32425 |
-| Submapas | 0 | 0 | 13 | 0 |
+| Duración [s] | 92.45 | 91.55 | 104.2 | 88.6 |
+| Evidencia mapa final [%] | 90.421 | 90.433 | 91.288 | 50.119 |
+| Tiempo a 50% evidencia [s] | 11.0 | 10.8 | 10.8 | 84.75 |
+| Tiempo a 75% evidencia [s] | 55.4 | 54.05 | 60.65 | None |
+| Rasgos t=60s | 22 | 23 | 18 | 9 |
+| Rasgos finales | 29 | 31 | 27 | 9 |
+| Recall proxy t=60s | 0.5 | 0.25 | 0.5 | 0.5 |
+| Precisión proxy final | 0.172 | 0.323 | 0.333 | 0.333 |
+| Actualizaciones SLAM | 2714 | 2718 | 3018 | 2779 |
+| RMSE posición [m] | 0.01664 | 0.08182 | 0.04011 | 0.07392 |
+| Error P95 pose [m] | 0.02186 | 0.19962 | 0.08094 | 0.13366 |
+| Replanificaciones | 15 | 16 | 20 | 14 |
+| Recuperaciones del planificador | 0 | 0 | 0 | 0 |
+| Cruces pallet | 1 | 2 | 2 | 4 |
+| Distancia mínima a obstáculo [m] | 0.05682 | 0.21537 | 0.05125 | 0.05112 |
+| Riesgo máximo | 0.82511 | 0.42591 | 0.83971 | 0.84191 |
+| Batería usada [%] | 23.41406 | 23.1142 | 25.46576 | 24.33432 |
+| Submapas | 0 | 0 | 16 | 0 |
 | Cierres de ciclo | 0 | 0 | 4 | 0 |
 
 ## Interpretación técnica
 
-La evidencia de mapa mide actividad de mapeo. La calidad geométrica se reporta con proxies de recall y precisión frente a obstáculos Phase 2 conocidos. `GMAPPING_GRID`, `HECTOR_GRID_MATCHING` y `CARTOGRAPHER_SUBMAP` reconstruyen una grid dispersa desde rayos; `KALMAN_LANDMARK` reconstruye landmarks puntuales. Hector agrega ajuste local de escaneos y Cartographer agrega submapas con cierres de ciclo locales.
+La evidencia de mapa mide actividad de mapeo. La calidad geométrica se reporta con proxies de recall y precisión frente a obstáculos Phase 2 conocidos. `GMAPPING_GRID`, `HECTOR_GRID_MATCHING` y `CARTOGRAPHER_SUBMAP` reconstruyen una grilla dispersa desde rayos; `KALMAN_LANDMARK` reconstruye landmarks puntuales. Hector agrega ajuste local de escaneos y Cartographer agrega submapas con cierres de ciclo locales.
 
 La columna `Completado` tiene prioridad sobre RMSE o evidencia de mapa al seleccionar el método operativo.

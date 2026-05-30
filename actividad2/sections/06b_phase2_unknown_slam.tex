@@ -1,21 +1,130 @@
-\chapter{Phase 2: SLAM con mapa desconocido}
+\chapter{Fase 2: SLAM con mapa desconocido}
 
 La escena \path{Sim_T2_Phase2_SLAM_Unknown.ttt} parte de la celda validada y
-arranca con parte del entorno oculto. R1 ve cajas, paredes, una tarima móvil y
-un bloque temporal a través de los sensores de proximidad dibujados como rayos.
-El controlador actualiza el mapa que va armando y lo usa para activar puntos
-intermedios locales.
+arranca con parte del entorno oculto. R1 ve cajas, paredes y un segundo robot
+móvil autónomo a través de los sensores de proximidad dibujados como rayos.
+El controlador actualiza el mapa construido hasta el momento y lo usa para
+activar puntos intermedios locales.
 
-Solo \texttt{P2\_Dynamic\_Pallet} y \texttt{P2\_Temporary\_Blocker} se mueven
-por script, con trayectorias
-periódicas deterministas. Las crates y los marcadores de zona desconocida quedan
-fijos.
+El obstáculo dinámico es un robot móvil (\texttt{/P2\_Wanderer}) que recorre la
+zona central de la celda siguiendo \emph{rutas aleatorias}: el gestor
+\texttt{Phase2\_Unknown\_Map\_Manager} muestrea waypoints al azar (con semilla
+fija para que la ejecución sea reproducible) y lo conduce de forma cinemática
+hacia cada uno. R1 lo detecta con su anillo de 16 sensores y lo evita de forma
+reactiva, pero no lo añade al mapa SLAM (es un agente móvil, como Bill); así, un
+objeto en movimiento no entra en el mapa. Las cajas y los marcadores de zona
+desconocida quedan fijos como obstáculos no modelados.
 
-La métrica de actividad de mapa en Phase 2 cuenta rasgos detectados, celdas
-ocupadas y actualizaciones SLAM. Una mayor actividad no implica necesariamente
-mejor geometría; por eso la cobertura contra la referencia geométrica se revisa
-aparte con exhaustividad de obstáculos y precisión de rasgos frente a esos
-obstáculos.
+Como el mapa empieza vacío, la misión arranca con una \emph{pasada exploratoria}:
+antes de intentar ninguna tarea, R1 recorre en orden de cercanía una serie de
+\emph{frontiers} repartidas por el área de operación (estado interno
+\texttt{EXPLORE\_FRONTIERS}), de modo que el anillo de ultrasonidos barre la celda y
+el mapa SLAM se rellena. Es una marcha deliberadamente lenta y cautelosa, sin
+manipular piezas, acotada en el tiempo: cuando alcanza las frontiers o agota su
+ventana, comienza el trabajo sobre el mapa que acaba de construir. Las frontiers se
+sitúan en los pasillos despejados centrales para que siempre sean alcanzables; el
+barrido es del área operativa, no de los rincones pegados a las paredes.
+
+Tras explorar, R1 \emph{repite el ciclo de trabajo varias veces} sobre la misma
+celda en lugar de detenerse tras la primera pasada. El mapa SLAM y el conocimiento
+acumulado se conservan entre vueltas (Tabla~\ref{tab:phase2-loops}): cada repetición
+reutiliza un mapa más completo. La velocidad de avance se gobierna además con un
+factor de confianza que crece con el número de vueltas completadas y con las
+actualizaciones SLAM acumuladas\footnote{Señal interna
+\texttt{phase1SpeedLearnFactor}; pasa de \(\approx 0{,}60\) en la primera vuelta a
+\(\approx 0{,}88\) en la tercera, acotado por debajo de 1 para conservar margen de
+seguridad al maniobrar junto a las estanterías.}. Para que el ciclo no se bloquee
+nunca, la navegación incorpora varias salvaguardas: el robot retrocede un instante
+al salir de una estantería; si una maniobra se estanca (por el robot móvil o un
+hueco estrecho) ejecuta un arco de retroceso para reorientarse; y una geo-valla
+reincorpora el chasis al recinto si un artefacto del motor de física llegara a
+expulsarlo.
+
+La Tabla~\ref{tab:phase2-loops} mide por fase la pasada exploratoria y las tres
+vueltas de trabajo, promediando tres ejecuciones. Conviene leerla con honestidad.
+Lo que mejora de forma \emph{monótona} es el conocimiento del entorno: la pasada
+exploratoria construye el mapa inicial (de 0 a \(\approx 2\,600\) actualizaciones
+SLAM y 5 \textit{landmarks}) sin tocar ninguna pieza, y a partir de ahí el mapa se
+densifica vuelta a vuelta (\(\approx 5\,500 \to 8\,500 \to 10\,800\)
+actualizaciones; 9--10 \textit{landmarks} estables). El recorrido por vuelta es casi
+constante (\(\approx 23\) m) porque la ruta de tareas es la misma. En cambio, la
+\emph{velocidad media medida no crece de forma limpia} entre vueltas: la domina la
+interacción con el robot móvil, que cambia en cada ejecución y llega a frenar más la
+tercera vuelta. Es decir, el factor de confianza interno sí escala con el mapa, pero
+su efecto sobre la velocidad media queda enmascarado por el obstáculo dinámico y por
+los tiempos fijos (Bill trabajando, manipulación, recarga). Ninguna de las tres
+ejecuciones necesitó maniobras de recuperación, lo que indica que la navegación es
+estable en las tres vueltas.
+
+\begin{table}[H]
+\centering
+\caption{Métricas de navegación por fase en la celda desconocida (media de 3
+ejecuciones). ``Explorar'' es la pasada inicial de mapeo; las vueltas 1--3 son
+los ciclos de trabajo sobre el mapa acumulado.}\label{tab:phase2-loops}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Fase} & \textbf{Dur.\ [s]} & \textbf{Recorr.\ [m]} & \textbf{Vel.\ media [m/s]} & \textbf{Updates SLAM} & \textbf{Recup.}\\
+\midrule
+Explorar & 43,7 & 6,6 & 0,155 & 2\,562 & 0\\
+Vuelta 1 & 117,8 & 23,4 & 0,197 & 5\,456 & 0\\
+Vuelta 2 & 123,4 & 23,6 & 0,193 & 8\,480 & 0\\
+Vuelta 3 & 145,0 & 23,1 & 0,162 & 10\,819 & 0\\
+\bottomrule
+\multicolumn{6}{l}{\footnotesize \textit{Updates SLAM} es el valor acumulado al
+cerrar cada fase; \textit{Recup.}\ cuenta maniobras de des-atasco.}\\
+\end{tabular}
+\end{table}
+
+\subsection{¿Mejora el SLAM con cada vuelta?}
+
+La velocidad media no es el indicador adecuado de aprendizaje (la enmascara el robot
+móvil). Lo correcto es mirar la \emph{calidad del propio SLAM}: si el mapa
+\emph{converge} y si la \emph{localización} se afina al densificarse. La
+Tabla~\ref{tab:phase2-slam} lo mide por fase, promediando tres ejecuciones, y la
+respuesta es afirmativa con dos firmas claras:
+
+\begin{itemize}
+  \item \textbf{El mapa converge.} Los \textit{landmarks} nuevos descubiertos por
+  fase caen de \(\approx 4\) durante la exploración y la primera vuelta a \(\approx
+  1\) en la segunda y la tercera: el robot deja de encontrar estructura nueva porque
+  ya ha mapeado la celda (el número total de \textit{landmarks} se estabiliza en torno
+  a 10--11). Es la firma de convergencia de un SLAM.
+  \item \textbf{La localización se afina.} El error de pose medio baja de \(\approx
+  0{,}086\)\,m mientras explora un mapa casi vacío a \(\approx 0{,}03\)\,m una vez
+  construido el mapa, y se mantiene ahí: con más \textit{landmarks} fusionadas, el EKF
+  dispone de más referencias para corregir la pose. Es decir, la mejora grande llega
+  al pasar de ``sin mapa'' a ``con mapa'' (exploración\,\(\to\)\,vuelta 1),
+  y luego el sistema queda convergido y estable, no mejorando indefinidamente.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Calidad del SLAM por fase en la celda desconocida (media de 3 ejecuciones):
+convergencia del mapa y precisión de localización.}\label{tab:phase2-slam}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Fase} & \textbf{\textit{Landmarks} (fin)} & \textbf{Nuevas} & \textbf{Error pose medio [m]} & \textbf{Error pose máx.\ [m]}\\
+\midrule
+Explorar & 4 & 4 & 0,086 & 0,32\\
+Vuelta 1 & 9 & 4 & \textbf{0,033} & 0,27\\
+Vuelta 2 & 10 & 1 & 0,042 & 0,33\\
+Vuelta 3 & 11 & 1 & \textbf{0,031} & 0,26\\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize \textit{Nuevas} = \textit{landmarks} descubiertas en
+esa fase (la caída a \(\approx 1\) indica convergencia del mapa).}\\
+\end{tabular}
+\end{table}
+
+La métrica de actividad de mapa en Fase 2\footnote{Señal interna
+\texttt{phase2MappingEvidencePct}.} cuenta rasgos detectados, celdas ocupadas y
+actualizaciones SLAM acumuladas durante la misión. Los métodos de grid la
+acumulan mucho más rápido que Kalman-landmark, porque cada rayo marca muchas
+celdas desde el primer ciclo mientras que Kalman fusiona pocas landmarks
+discretas, y terminan en 90--91\,\% frente al 50\,\% de Kalman. Como una mayor
+actividad no implica mejor geometría, la cobertura contra la referencia se revisa
+aparte con la exhaustividad de obstáculos y la precisión de rasgos.
 
 \begin{figure}[H]
   \centering
@@ -28,11 +137,13 @@ obstáculos.
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \includegraphics[width=\textwidth]{coppeliasim_phase2_replan_dynamic_oriented.png}
-    \caption{Replanificación ante obstáculo dinámico.}
+    \caption{Replanificación ante el robot móvil dinámico.}
   \end{subfigure}
-  \caption{Capturas 3D de la escena Phase 2 ejecutada en CoppeliaSim.}
+  \caption{Capturas 3D de la escena Fase 2 ejecutada en CoppeliaSim.}
   \label{fig:phase2-coppeliasim-captures}
 \end{figure}
+
+Las capturas operativas se recogen en la Fig.~\ref{fig:phase2-coppeliasim-captures}; el conjunto extendido con lecturas de sensores y plano general de la celda se muestra en la Fig.~\ref{fig:phase2-coppeliasim-screenshots-extra}.
 
 \begin{figure}[H]
   \centering
@@ -54,19 +165,19 @@ obstáculos.
     \includegraphics[width=\textwidth]{A2_T2_Phase2_SS3.png}
     \caption{Lecturas de proximidad frente al sofá.}
   \end{subfigure}
-  \caption{Capturas de ejecución de Phase 2 con mapa desconocido y obstáculos en la celda.}
+  \caption{Capturas de ejecución de Fase 2 con mapa desconocido y obstáculos en la celda.}
   \label{fig:phase2-coppeliasim-screenshots-extra}
 \end{figure}
 
 \section{Recuperación ante bloqueo local}
 
-En Phase 2, las variantes de grid podían quedar atrapadas en estados de
+En Fase 2, las variantes de grid podían quedar atrapadas en estados de
 recogida, con alternancia prolongada entre \texttt{AVOIDING} y
-\texttt{SLAM\_WAYPOINT}. El planner trataba como bloqueo cualquier celda ocupada
+\texttt{SLAM\_WAYPOINT}. El planificador trataba como bloqueo cualquier celda ocupada
 cerca del segmento al objetivo, incluso cuando la celda estaba pegada al robot,
 a la estantería o al punto de recogida.
 
-El planner aplica cinco reglas para evitar ese ciclo:
+El planificador aplica cinco reglas para evitar ese ciclo:
 
 \begin{itemize}
   \item Las celdas de grid necesitan varias detecciones antes de influir en
@@ -81,30 +192,29 @@ El planner aplica cinco reglas para evitar ese ciclo:
   mapa durante una ventana corta y conserva la evitación reactiva.
 \end{itemize}
 
-Con estas reglas los cuatro modos completan la misión en Phase 2. En la ejecución
+Con estas reglas los cuatro modos completan la misión en Fase 2. En la ejecución
 final, Cartographer activó una recuperación del planificador; GMapping, Hector y
 Kalman terminaron sin usarla.
 
 \section{Comparación de métodos}
 
-En Phase 2 los cuatro métodos se someten al mismo problema: arrancar con mapa
-incompleto, descubrir obstáculos no modelados y seguir navegando mientras una
-tarima se mueve. La comparación no se ordena por cantidad de mapa, sino por la
-representación que mantiene la misión sin bloqueo:
+Los cuatro métodos afrontan el mismo escenario de Fase 2: mapa incompleto al
+inicio, obstáculos no modelados y un robot móvil cruzando la celda. Aquí interesa
+qué representación sostiene la misión sin bloqueo, más que la cantidad de mapa
+acumulada:
 
 \begin{summarybox}
-\textbf{Kalman-landmark} prioriza pose estable y pocos rasgos; \textbf{GMapping}
-prioriza ocupación por celda; \textbf{Hector} intenta corregir pose por
-coincidencia scan--grid; \textbf{Cartographer} conserva submapas y cierres de
-ciclo, pero introduce más condiciones para evaluar si una celda antigua bloquea
-o no la ruta.
+\textbf{Kalman-landmark}: pose estable con pocos rasgos.
+\textbf{GMapping}: ocupación por celda.
+\textbf{Hector}: pose corregida por ajuste scan-grid.
+\textbf{Cartographer}: submapas y cierres de ciclo, a costa de más condiciones para decidir si una celda antigua bloquea la ruta.
 \end{summarybox}
 
 \begingroup
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{0.25\textwidth}P{0.16\textwidth}P{0.16\textwidth}P{0.18\textwidth}P{0.16\textwidth}}
-\caption{Comparación Phase 2 con mapa desconocido y obstáculos dinámicos.}\label{tab:phase2-slam-comparison}\\
+\caption{Comparación Fase 2 con mapa desconocido y un robot móvil dinámico.}\label{tab:phase2-slam-comparison}\\
 \toprule
 \textbf{Métrica} & \textbf{GMapping} & \textbf{Hector} & \textbf{Cartographer} & \textbf{Kalman}\\
 \midrule
@@ -114,27 +224,29 @@ o no la ruta.
 \midrule
 \endhead
 Completado & Sí & Sí & Sí & Sí\\
-Duración [s] & 128,00 & 129,40 & 138,65 & \textbf{124,80}\\
-Ruta [m] & 15,905 & \textbf{15,735} & 16,441 & 15,752\\
-RMSE pos. [m] & 0,04220 & 0,04587 & 0,03930 & \textbf{0,03185}\\
-Error P95 [m] & 0,05638 & 0,07590 & 0,05773 & \textbf{0,03985}\\
-Actividad de mapa [\%] & 94,851 & 94,930 & \textbf{95,327} & 94,613\\
-Rasgos finales & 36 & 36 & 36 & 24\\
-Exhaustividad aprox. final & 1,000 & 1,000 & 1,000 & 1,000\\
-Precisión aprox. final & 0,250 & \textbf{0,333} & 0,278 & 0,250\\
-Replanificaciones & 19 & 24 & 25 & \textbf{17}\\
-Recuperaciones del planificador & 0 & 0 & 1 & 0\\
-Batería usada [\%] & 24,576 & 24,476 & 25,916 & \textbf{24,324}\\
-Submapas & 0 & 0 & \textbf{13} & 0\\
+Duración [s] & 92,45 & 91,55 & 104,20 & \textbf{88,60}\\
+Ruta [m] & 15,759 & \textbf{15,666} & 16,711 & 16,407\\
+RMSE pos. [m] & \textbf{0,01664} & 0,08182 & 0,04011 & 0,07392\\
+Error P95 [m] & \textbf{0,02186} & 0,19962 & 0,08094 & 0,13366\\
+Actividad de mapa [\%] & 90,421 & 90,433 & \textbf{91,288} & 50,119\\
+Rasgos finales & 29 & 31 & 27 & 9\\
+Exhaustividad aprox. final & 0,500 & 0,500 & 0,500 & 0,500\\
+Precisión aprox. final & 0,172 & 0,323 & \textbf{0,333} & 0,333\\
+Replanificaciones & 15 & 16 & 20 & \textbf{14}\\
+Recuperaciones del planificador & 0 & 0 & 0 & 0\\
+Batería usada [\%] & 23,414 & \textbf{23,114} & 25,466 & 24,334\\
+Submapas & 0 & 0 & \textbf{16} & 0\\
 Cierres de ciclo & 0 & 0 & \textbf{4} & 0\\
 \bottomrule
 \end{longtable}
 \endgroup
 
+Cartographer registró 16 submapas y 2 cierres de ciclo en Fase 1 y 16 submapas y 4 cierres en Fase 2. Los cierres se computan en tiempo de ejecución según la proximidad del robot a submapas antiguos, por lo que las diferencias entre fases provienen de las trayectorias y detecciones distintas de cada escena, no de un valor prefijado.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase2_slam_unknown_algorithm_comparison.png}
-  \caption{Comparación de métodos en Phase 2.}
+  \caption{Comparación de métodos en Fase 2.}
   \label{fig:phase2-slam-comparison}
 \end{figure}
 
@@ -147,19 +259,23 @@ Cierres de ciclo & 0 & 0 & \textbf{4} & 0\\
 
 \section{Discusión técnica}
 
-Kalman-landmark fue el modo operativo más eficiente: terminó antes, usó menos
-batería y mantuvo el menor RMSE de pose. Su mapa es compacto, suficiente para la
-navegación de esta celda, aunque menos denso que las representaciones de grid.
+La Tabla~\ref{tab:phase2-slam-comparison} recoge los valores numéricos completos; las Figs.~\ref{fig:phase2-slam-comparison} y \ref{fig:phase2-reconstruction-t60} los resumen gráficamente junto con la reconstrucción del mapa.
+Kalman-landmark terminó la misión en el menor tiempo (88,6 s) con el mapa más
+compacto (9 rasgos), aunque su RMSE de pose (0,074 m) no fue el menor: la
+corrección EKF a partir de 16 ultrasonidos dispersos introduce más ruido que
+apoyarse en la grid. GMapping obtuvo el menor RMSE (0,017 m) por esa misma razón.
 
 Los modos de grid generan más rasgos de mapa y aumentan rápido la actividad de
-mapeo. Esa métrica cuantifica actividad, no calidad geométrica por sí sola.
-Cartographer fue la mejor grid en RMSE y actividad final, aunque
-necesitó más ruta, más replanificaciones y una activación de
-\texttt{RECOVERY\_DIRECT}. Hector obtuvo la mayor precisión aproximada final entre
-las grids y también registró el mayor error máximo de pose. GMapping completó
-la misión con menor duración que las otras grids.
+mapeo, métrica que cuantifica actividad y no calidad geométrica. Hector hizo la
+ruta más corta (15,666 m) con el menor consumo de batería (23,1\,\%), pero el
+mayor RMSE (0,082 m), coherente con la sensibilidad del \textit{scan matching}
+cuando los rayos discriminan poco. Cartographer fue el más caro (104,2 s y
+25,5\,\% de batería) porque gestiona submapas, pero a cambio aportó estructura
+temporal (16 submapas, 4 cierres de ciclo) y el menor RMSE entre las grids con
+scan matching (0,040 m). Ningún modo necesitó \texttt{RECOVERY\_DIRECT} en esta
+ejecución.
 
-Para ejecutar la misión con bajo error de pose, Kalman-landmark queda como base.
-Para representar ocupación, las grids generan mapas más densos, pero su
-utilidad debe evaluarse junto con error de pose, ruta, replanificaciones y
-recuperaciones.
+Para la misión, Kalman-landmark queda como base por su mapa compacto y bajo
+coste de cómputo. Para representar ocupación, las grids generan mapas más densos,
+pero su utilidad debe evaluarse junto con error de pose, ruta, replanificaciones
+y recuperaciones.

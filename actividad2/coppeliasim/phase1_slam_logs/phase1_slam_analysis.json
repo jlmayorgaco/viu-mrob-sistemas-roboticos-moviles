@@ -1,26 +1,26 @@
 {
-  "duration_s": 121.65,
-  "samples": 897,
+  "duration_s": 78.75,
+  "samples": 611,
   "estimator": {
-    "rmse_x_m": 0.02157,
-    "rmse_y_m": 0.02294,
-    "rmse_position_m": 0.03149,
-    "mean_position_error_m": 0.02981,
-    "median_position_error_m": 0.03005,
-    "p95_position_error_m": 0.0476,
-    "max_position_error_m": 0.05626,
-    "rmse_theta_rad": 0.01987,
-    "mean_reported_pose_error_m": 0.02805,
-    "max_reported_pose_error_m": 0.04511,
-    "mean_covariance": 0.00081,
-    "max_covariance": 0.00278
+    "rmse_x_m": 0.04263,
+    "rmse_y_m": 0.05062,
+    "rmse_position_m": 0.06618,
+    "mean_position_error_m": 0.04496,
+    "median_position_error_m": 0.02049,
+    "p95_position_error_m": 0.14488,
+    "max_position_error_m": 0.29105,
+    "rmse_theta_rad": 0.03445,
+    "mean_reported_pose_error_m": 0.03846,
+    "max_reported_pose_error_m": 0.27719,
+    "mean_covariance": 0.02829,
+    "max_covariance": 0.04994
   },
   "mapping": {
-    "landmarks_final": 20,
-    "landmarks_from_final_map": 20,
-    "slam_updates": 4295,
-    "updates_per_second": 35.306,
-    "updates_per_landmark": 214.75,
+    "landmarks_final": 8,
+    "landmarks_from_final_map": 8,
+    "slam_updates": 2461,
+    "updates_per_second": 31.251,
+    "updates_per_landmark": 307.62,
     "first_landmark_times_s": [
       [
         1,
@@ -28,175 +28,115 @@
       ],
       [
         2,
-        0.15
+        2.7
       ],
       [
         3,
-        0.15
+        5.7
       ],
       [
         4,
-        0.15
+        7.35
       ],
       [
         5,
-        0.8
+        17.9
       ],
       [
         6,
-        2.4
+        43.1
       ],
       [
         7,
-        6.6
+        47.3
       ],
       [
         8,
-        7.65
-      ],
-      [
-        9,
-        16.1
-      ],
-      [
-        10,
-        87.15
-      ],
-      [
-        11,
-        90.0
-      ],
-      [
-        12,
-        94.2
-      ],
-      [
-        13,
-        94.65
-      ],
-      [
-        14,
-        95.4
-      ],
-      [
-        15,
-        95.55
-      ],
-      [
-        16,
-        98.55
-      ],
-      [
-        17,
-        100.2
-      ],
-      [
-        18,
-        100.95
-      ],
-      [
-        19,
-        109.35
-      ],
-      [
-        20,
-        111.75
+        49.85
       ]
     ],
     "landmark_seen_counts": {
-      "O1": 315,
-      "O2": 632,
-      "O3": 101,
-      "O4": 75,
-      "O5": 89,
-      "O6": 196,
-      "O7": 255,
-      "O8": 312,
-      "O9": 119,
-      "O10": 309,
-      "O11": 655,
-      "O12": 249,
-      "O13": 73,
-      "O14": 156,
-      "O15": 25,
-      "O16": 309,
-      "O17": 216,
-      "O18": 105,
-      "O19": 67,
-      "O20": 29
+      "O1": 416,
+      "O2": 306,
+      "O3": 323,
+      "O4": 243,
+      "O5": 172,
+      "O6": 330,
+      "O7": 510,
+      "O8": 157
     }
   },
   "planning_and_safety": {
     "planner_mode_durations_s": {
-      "DIRECT": 105.4,
-      "DIRECT_AFTER_WAYPOINT": 14.0,
-      "SLAM_WAYPOINT": 2.25
+      "DIRECT": 69.2,
+      "DIRECT_AFTER_WAYPOINT": 4.6,
+      "SLAM_WAYPOINT": 4.95
     },
     "motion_mode_durations_s": {
-      "ARRIVED_TARGET": 0.4,
-      "AVOIDING": 35.9,
-      "MANIPULATING": 7.1,
-      "ROUTE": 4.25,
-      "WAIT_B1": 74.0
+      "ARRIVED_TARGET": 0.35,
+      "AVOIDING": 33.65,
+      "MANIPULATING": 7.0,
+      "ROUTE": 8.1,
+      "WAIT_B1": 29.65
     },
-    "min_obstacle_m": 0.09656,
-    "max_obstacle_risk": 0.71277,
+    "min_obstacle_m": 0.06861,
+    "max_obstacle_risk": 0.77164,
     "battery_start_pct": 96.0,
-    "battery_final_pct": 71.79783,
-    "battery_used_pct": 24.20217,
+    "battery_final_pct": 72.43446,
+    "battery_used_pct": 23.56554,
     "completed_tasks": 4,
     "final_task_state": "CHARGING"
   },
   "pose_error_by_motion_mode": {
     "ARRIVED_TARGET": {
       "samples": 4,
-      "mean_m": 0.03086,
-      "p95_m": 0.03403,
-      "max_m": 0.03428
+      "mean_m": 0.0729,
+      "p95_m": 0.0868,
+      "max_m": 0.08914
     },
     "AVOIDING": {
-      "samples": 258,
-      "mean_m": 0.02787,
-      "p95_m": 0.04013,
-      "max_m": 0.04511
+      "samples": 248,
+      "mean_m": 0.0736,
+      "p95_m": 0.14171,
+      "max_m": 0.27719
     },
     "MANIPULATING": {
-      "samples": 56,
-      "mean_m": 0.02616,
-      "p95_m": 0.03959,
-      "max_m": 0.0412
+      "samples": 55,
+      "mean_m": 0.02399,
+      "p95_m": 0.0714,
+      "max_m": 0.11313
     },
     "ROUTE": {
-      "samples": 33,
-      "mean_m": 0.03209,
-      "p95_m": 0.04121,
-      "max_m": 0.04176
+      "samples": 55,
+      "mean_m": 0.02204,
+      "p95_m": 0.064,
+      "max_m": 0.07016
     },
     "WAIT_B1": {
-      "samples": 546,
-      "mean_m": 0.02806,
-      "p95_m": 0.03968,
-      "max_m": 0.04117
+      "samples": 249,
+      "mean_m": 0.00974,
+      "p95_m": 0.01923,
+      "max_m": 0.03585
     }
   },
   "pose_error_by_planner_mode": {
     "DIRECT": {
-      "samples": 787,
-      "mean_m": 0.02784,
-      "p95_m": 0.03967,
-      "max_m": 0.04179
+      "samples": 546,
+      "mean_m": 0.03366,
+      "p95_m": 0.11896,
+      "max_m": 0.27719
     },
     "DIRECT_AFTER_WAYPOINT": {
-      "samples": 95,
-      "mean_m": 0.02965,
-      "p95_m": 0.04138,
-      "max_m": 0.04511
+      "samples": 32,
+      "mean_m": 0.0718,
+      "p95_m": 0.13668,
+      "max_m": 0.14226
     },
     "SLAM_WAYPOINT": {
-      "samples": 15,
-      "mean_m": 0.02874,
-      "p95_m": 0.04295,
-      "max_m": 0.04305
+      "samples": 33,
+      "mean_m": 0.08557,
+      "p95_m": 0.13996,
+      "max_m": 0.24912
     }
   }
 }

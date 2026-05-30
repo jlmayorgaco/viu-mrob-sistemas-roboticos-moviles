@@ -1,9 +1,9 @@
 \chapter{Validación}
 
-La validación revisa el comportamiento del sistema y los archivos generados. La
-lista de verificación cubre escena, objetos, scripts integrados, tareas
-completadas, movimiento de Bill, acciones visuales, anticolisión, error del
-estimador y rayos de sensor. Las capturas 3D se obtuvieron desde CoppeliaSim con
+Se revisan el comportamiento del sistema y los archivos generados. La lista de
+verificación (tabla siguiente) recorre escena, objetos, scripts, tareas,
+movimiento de Bill, acciones visuales, anticolisión, error del estimador y rayos
+de sensor. Las capturas 3D se obtuvieron desde CoppeliaSim con
 \path{capture_coppeliasim_screenshots.lua}; son las imágenes de las
 Figuras~\ref{fig:coppeliasim-captures} y
 \ref{fig:phase2-coppeliasim-captures}.
@@ -29,8 +29,8 @@ Seguridad & Modo \texttt{AVOIDING} observado y señal de riesgo activa. & OK\\
 Estimación & Kalman activo, mapa SLAM actualizado y error acotado. & OK\\
 Planificación & \texttt{SLAM\_WAYPOINT} observado. & OK\\
 Batería & Tarea aceptada por batería y retorno a carga. & OK\\
-Capturas CoppeliaSim & Vista general, entrega, trabajo de B1, rayos de sensores y replanificación Phase 2. & OK\\
-Phase 2 & Mapa desconocido, tarima móvil, bloque temporal, cuatro SLAM completados y recuperación del planificador registrada. & OK\\
+Capturas CoppeliaSim & Vista general, entrega, trabajo de B1, rayos de sensores y replanificación Fase 2. & OK\\
+Fase 2 & Mapa desconocido, robot móvil con rutas aleatorias, cuatro SLAM completados y recuperación del planificador registrada. & OK\\
 Deck editable & Existe \path{slides/Actividad2_Pioneer_CoppeliaSim.pptx} junto con su PDF exportado. & OK\\
 \bottomrule
 \end{longtable}
@@ -38,12 +38,12 @@ Deck editable & Existe \path{slides/Actividad2_Pioneer_CoppeliaSim.pptx} junto c
 
 \section{Timeline de la misión}
 
-La Fig.~\ref{fig:task-timeline} muestra el timeline exportado con los estados de tarea y movimiento durante la misión.
+La Fig.~\ref{fig:task-timeline} muestra la secuencia temporal exportada con los estados de tarea y movimiento durante la misión.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{phase1_slam_task_timeline.png}
-  \caption{Timeline exportado de la simulación: estados de tarea, movimiento, planificador y acciones de Bill durante la misión.}
+  \caption{Secuencia temporal de la simulación: estados de tarea, movimiento, planificador y acciones de Bill durante la misión.}
   \label{fig:task-timeline}
 \end{figure}
 
@@ -65,30 +65,27 @@ El panel completo de la ejecución base queda recogido en la Fig.~\ref{fig:slam-
 
 Durante la validación se corrigieron tres incidencias.
 
-\textbf{Incidencia 1 — Sincronización de tarea T2.}
-R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que
-la tarea no representaba una entrega real. \emph{Causa raíz}: la FSM no verificaba
-el estado de Bill al hacer la transición \texttt{RETURN\_T1\_RACK\,→\,TO\_PICKUP\_T2};
-la transición ocurría en cuanto R1 completaba la tarea anterior, independientemente
-de la posición de Bill. Se corrigió dejando el estado
-\texttt{WAIT\_B1\_WS2\_REQUEST\_T2} bloqueado hasta leer
-\texttt{phase1B1Station=WS2}.
+\subsection{Sincronización de tarea T2}
+R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que la tarea no
+representaba una entrega real. La máquina de estados no comprobaba la posición de
+Bill al pasar de devolver T1 a recoger T2: la transición ocurría en cuanto R1
+terminaba la tarea anterior. Se corrigió bloqueando el estado de solicitud de T2
+hasta que Bill llega a WS2.
 
-\textbf{Incidencia 2 — Ciclos del planificador en Phase 2.}
-Algunas celdas de grid persistentes quedaban demasiado cerca del objetivo
-y el planificador entraba en un ciclo de desvíos cortos. \emph{Causa raíz}: las
-representaciones de grid acumulan evidencias pasadas que no se desvanecen;
-cuando un obstáculo ha desaparecido o el objetivo está dentro del radio de
-influencia de celdas marcadas, el planificador oscila indefinidamente. El parche
-exige detecciones persistentes, ignora celdas pegadas al objetivo y activa
-\texttt{RECOVERY\_DIRECT} cuando no hay progreso. Esta fragilidad es un límite
-conocido de planificadores sobre grids de ocupación sin olvido temporal.
+\subsection{Ciclos del planificador en Fase 2}
+Algunas celdas de grid persistentes quedaban demasiado cerca del objetivo y el
+planificador entraba en un ciclo de desvíos cortos. Las representaciones de grid
+acumulan evidencias pasadas que no se desvanecen, de modo que cuando un obstáculo
+desaparece o el objetivo cae dentro del radio de celdas marcadas, la
+planificación oscila. El parche exige detecciones persistentes, ignora celdas
+pegadas al objetivo y vuelve a ruta directa cuando no hay progreso. Es un límite
+conocido de los planificadores sobre grids de ocupación sin olvido temporal.
 
-\textbf{Incidencia 3 — Oscilación del scan matching tipo Hector.}
+\subsection{Oscilación del scan matching tipo Hector}
 Con pocos impactos de sensor, varios candidatos de pose recibían puntajes
-parecidos y la corrección oscilaba. \emph{Causa raíz}: el scan matching en
-entornos con poca textura (pasillos rectos) produce un paisaje de puntuación
-casi plano, en el que mínimas diferencias de ruido invertían el candidato
-ganador ciclo a ciclo. Es un modo de fallo conocido del ajuste de scan en
-geometrías poco informativas \cite{thrun2005}. Se mitigó con ventana discreta
-pequeña, umbral mínimo de puntuación y ganancia parcial de corrección.
+parecidos y la corrección oscilaba. En entornos con poca textura (pasillos
+rectos) el scan matching produce un paisaje de puntuación casi plano, donde
+mínimas diferencias de ruido invierten el candidato ganador de un ciclo a otro;
+es un modo de fallo conocido del ajuste de scan en geometrías poco informativas
+\cite{thrun2005}. Se mitigó con una ventana de búsqueda pequeña, un umbral mínimo
+de puntuación y una ganancia de corrección parcial.

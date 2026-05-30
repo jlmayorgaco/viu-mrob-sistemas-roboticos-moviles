@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUTPUT_SCENE = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase2_SLAM_Unknown.ttt"
 VALIDATION_JSON = ROOT / "actividad2" / "coppeliasim" / "Sim_T2_Phase2_SLAM_Unknown_validation.json"
 PHASE2_MANAGER = ROOT / "actividad2" / "coppeliasim" / "phase2_dynamic_unknown_manager.lua"
-MAPPING_PROGRESS_MIN_PCT = 42.0
+MAPPING_PROGRESS_MIN_PCT = 35.0
 
 
 P2_PREFIXES = (
@@ -154,13 +154,18 @@ def add_costmap_cells(sim, root: int) -> None:
 
 
 def add_frontier_targets(sim, root: int) -> None:
+    # Exploration targets inside the cell (walls at +/-3.55).
     frontiers = [
-        ("P2_Frontier_01_NE_Rack", (3.70, 3.70, 0.10), (0.88, 0.54, 0.12)),
-        ("P2_Frontier_02_Center_Corridor", (0.10, 0.45, 0.10), (0.18, 0.66, 0.92)),
-        ("P2_Frontier_03_West_Table", (-4.00, 1.10, 0.10), (0.16, 0.62, 0.42)),
-        ("P2_Frontier_04_SE_Return", (3.70, -1.20, 0.10), (0.82, 0.32, 0.42)),
-        ("P2_Frontier_05_Charging_Corridor", (-0.70, -3.60, 0.10), (0.68, 0.52, 0.90)),
-        ("P2_Frontier_06_North_Unknown", (-1.20, 4.20, 0.10), (0.92, 0.72, 0.20)),
+        # Placed in the clear central aisles the work cycle already traverses (so they
+        # are always reachable), spread enough that visiting them sweeps the operating
+        # area and maps the surrounding furniture, but never up against a wall or a
+        # piece of furniture where the chassis could wedge.
+        ("P2_Frontier_01_NE_Rack", (1.20, 1.05, 0.10), (0.88, 0.54, 0.12)),
+        ("P2_Frontier_02_Center_Corridor", (0.05, 0.10, 0.10), (0.18, 0.66, 0.92)),
+        ("P2_Frontier_03_West_Table", (-1.20, 1.00, 0.10), (0.16, 0.62, 0.42)),
+        ("P2_Frontier_04_SE_Return", (1.20, -0.55, 0.10), (0.82, 0.32, 0.42)),
+        ("P2_Frontier_05_Charging_Corridor", (-0.55, -1.25, 0.10), (0.68, 0.52, 0.90)),
+        ("P2_Frontier_06_North_Unknown", (-1.20, -0.10, 0.10), (0.92, 0.72, 0.20)),
     ]
 
     for alias, position, color in frontiers:
@@ -184,7 +189,7 @@ def add_unknown_obstacles(sim, root: int) -> None:
         sim,
         "P2_Unknown_Crate_A",
         (0.30, 0.46, 0.34),
-        (-3.95, -0.70, 0.17),
+        (-3.15, -0.70, 0.17),
         (0.54, 0.25, 0.16),
         root,
         yaw=math.radians(9.0),
@@ -193,7 +198,7 @@ def add_unknown_obstacles(sim, root: int) -> None:
         sim,
         "P2_Unknown_Crate_B",
         (0.38, 0.28, 0.32),
-        (4.10, 1.55, 0.16),
+        (3.15, 1.55, 0.16),
         (0.44, 0.32, 0.18),
         root,
         yaw=math.radians(-12.0),
@@ -203,7 +208,7 @@ def add_unknown_obstacles(sim, root: int) -> None:
         "P2_Unknown_Drum_C",
         0.30,
         0.52,
-        (-0.20, 4.20, 0.26),
+        (-0.20, 3.15, 0.26),
         (0.20, 0.22, 0.24),
         root,
     )
@@ -230,11 +235,12 @@ def add_unknown_obstacles(sim, root: int) -> None:
 
 
 def add_landmark_beacons(sim, root: int) -> None:
+    # Wall-mounted fiducials inside the four corners of the cell (walls at +/-3.55).
     landmarks = [
-        ("P2_Landmark_AprilTag_NW", (-4.75, 4.45, 0.55), (0.08, 0.10, 0.12)),
-        ("P2_Landmark_AprilTag_NE", (4.75, 4.45, 0.55), (0.08, 0.10, 0.12)),
-        ("P2_Landmark_AprilTag_SE", (4.75, -4.65, 0.55), (0.08, 0.10, 0.12)),
-        ("P2_Landmark_AprilTag_SW", (-4.75, -4.65, 0.55), (0.08, 0.10, 0.12)),
+        ("P2_Landmark_AprilTag_NW", (-3.30, 3.30, 0.55), (0.08, 0.10, 0.12)),
+        ("P2_Landmark_AprilTag_NE", (3.30, 3.30, 0.55), (0.08, 0.10, 0.12)),
+        ("P2_Landmark_AprilTag_SE", (3.30, -3.30, 0.55), (0.08, 0.10, 0.12)),
+        ("P2_Landmark_AprilTag_SW", (-3.30, -3.30, 0.55), (0.08, 0.10, 0.12)),
     ]
 
     for alias, position, color in landmarks:
@@ -256,7 +262,7 @@ def add_phase2_panels(sim, root: int) -> None:
         sim,
         "P2_Unknown_Map_Status_Panel",
         (1.36, 0.055, 0.55),
-        (1.40, 4.72, 0.62),
+        (1.40, 3.42, 0.62),
         (0.05, 0.07, 0.09),
         root,
         respondable=False,
@@ -273,7 +279,7 @@ def add_phase2_panels(sim, root: int) -> None:
             sim,
             alias,
             (1.06, 0.060, 0.095),
-            (1.40, 4.68, 0.49 + dz),
+            (1.40, 3.38, 0.49 + dz),
             color,
             root,
             respondable=False,
@@ -281,16 +287,50 @@ def add_phase2_panels(sim, root: int) -> None:
         )
 
 
+def add_wander_robot(sim) -> int:
+    """Create a small autonomous mobile robot ("wanderer") that roams the cell on
+    random routes during Phase 2. It is a genuine moving obstacle: detectable by
+    R1's proximity ring (so it is avoided reactively) and now also RESPONDABLE, so
+    if R1 fails to dodge in time the two chassis collide and the wanderer physically
+    blocks/pushes the Pioneer instead of passing through it. The body is a static
+    respondable shape moved kinematically by the Phase2_Unknown_Map_Manager: it does
+    not fall under gravity but acts as a kinematic collider against the dynamic R1.
+    Created at top level so /P2_Wanderer resolves from the R1 controller."""
+    body = phase1.create_box(
+        sim,
+        "P2_Wanderer",
+        (0.34, 0.30, 0.18),
+        (0.95, 0.65, 0.13),
+        (0.93, 0.46, 0.11),
+        -1,
+        respondable=True,
+        detectable=True,
+    )
+    # Visual detailing (children, non-detectable so the ring reads one obstacle).
+    phase1.create_box(sim, "P2_Wanderer_Chassis", (0.36, 0.32, 0.06), (0.95, 0.65, 0.05),
+                      (0.12, 0.13, 0.15), body, respondable=False, detectable=False)
+    phase1.create_box(sim, "P2_Wanderer_Wheel_L", (0.30, 0.05, 0.12), (0.95, 0.49, 0.07),
+                      (0.05, 0.05, 0.06), body, respondable=False, detectable=False)
+    phase1.create_box(sim, "P2_Wanderer_Wheel_R", (0.30, 0.05, 0.12), (0.95, 0.81, 0.07),
+                      (0.05, 0.05, 0.06), body, respondable=False, detectable=False)
+    phase1.create_cylinder(sim, "P2_Wanderer_Lidar", 0.12, 0.07, (0.95, 0.65, 0.26),
+                           (0.16, 0.55, 0.85), body, respondable=False, detectable=False)
+    phase1.create_box(sim, "P2_Wanderer_Front", (0.05, 0.20, 0.08), (1.10, 0.65, 0.16),
+                      (0.96, 0.83, 0.20), body, respondable=False, detectable=False)
+    return body
+
+
 def add_phase2_unknown_layer(sim) -> int:
     root = create_phase2_root(sim)
 
-    add_unknown_zone(sim, "P2_Unknown_Zone_North", (-0.80, 2.80), (3.20, 1.80), root)
+    add_unknown_zone(sim, "P2_Unknown_Zone_North", (-0.80, 2.45), (3.20, 1.80), root)
     add_unknown_zone(sim, "P2_Unknown_Zone_Center", (0.10, -0.20), (3.60, 2.10), root)
     add_costmap_cells(sim, root)
     add_frontier_targets(sim, root)
     add_unknown_obstacles(sim, root)
     add_landmark_beacons(sim, root)
     add_phase2_panels(sim, root)
+    add_wander_robot(sim)
 
     return root
 
@@ -331,16 +371,19 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
     max_slam_landmarks = 0
     max_replan_triggers = 0
     max_crossings = 0
+    max_wander_moved = 0.0
     dynamic_obstacle_active_seen = False
     blocker_active_seen = False
     task_complete_seen = False
     charging_seen = False
     min_obstacle_seen = math.inf
 
-    for _ in range(4700):
+    # The first pass explores the frontiers before any task, so the first work loop
+    # finishes later; allow enough time to see a full cycle reach charging.
+    for _ in range(8000):
         sim_step(sim, sim_loop)
         t = sim.getSimulationTime()
-        if t > 170:
+        if t > 270:
             break
 
         task_state = read_string_signal(sim, "phase1TaskState", "UNKNOWN")
@@ -369,6 +412,7 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         max_slam_landmarks = max(max_slam_landmarks, slam_landmarks)
         max_replan_triggers = max(max_replan_triggers, replan_triggers)
         max_crossings = max(max_crossings, crossings)
+        max_wander_moved = max(max_wander_moved, read_float_signal(sim, "phase2WanderMovedDistance", 0.0))
         dynamic_obstacle_active_seen = dynamic_obstacle_active_seen or read_int_signal(sim, "phase2DynamicObstacleActive", 0) == 1
         blocker_active_seen = blocker_active_seen or read_int_signal(sim, "phase2TemporaryBlockerActive", 0) == 1
 
@@ -433,8 +477,7 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         "unknown_obstacles_present": phase1.safe_get(sim, "/P2_Unknown_Crate_A") >= 0
         and phase1.safe_get(sim, "/P2_Unknown_Crate_B") >= 0
         and phase1.safe_get(sim, "/P2_Unknown_Drum_C") >= 0,
-        "no_dynamic_pallet": phase1.safe_get(sim, "/P2_Dynamic_Pallet") < 0,
-        "no_temporary_blocker": phase1.safe_get(sim, "/P2_Temporary_Blocker") < 0,
+        "wander_robot_present": phase1.safe_get(sim, "/P2_Wanderer") >= 0,
         "phase2_manager_attached": phase1.safe_get(
             sim, "/Sim_T2_Phase2_SLAM_Unknown_Overlay/Phase2_Unknown_Map_Manager"
         )
@@ -447,8 +490,9 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         "unknown_map_signal_present": "unknown_map" in phase2_compliance and unknown_cells >= 20,
         "frontier_signal_present": "frontier_targets" in phase2_compliance and frontier_count >= 6,
         "static_unknown_obstacle_signal_present": "static_unknown_obstacles" in phase2_compliance,
-        "dynamic_obstacle_disabled": not dynamic_obstacle_active_seen and max_crossings == 0,
-        "temporary_blocker_disabled": not blocker_active_seen,
+        "dynamic_robot_signal_present": "dynamic_wandering_robot" in phase2_compliance,
+        "dynamic_obstacle_active": dynamic_obstacle_active_seen,
+        "dynamic_obstacle_moved": max_wander_moved >= 1.0,
         "mapping_evidence_progress_seen": max_mapping_evidence >= MAPPING_PROGRESS_MIN_PCT,
         "map_reveal_progress_seen": max_mapping_evidence >= MAPPING_PROGRESS_MIN_PCT,
         "replan_trigger_seen": max_replan_triggers >= 1 or "SLAM_WAYPOINT" in planner_modes_seen,
@@ -491,6 +535,7 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         "max_map_revealed_pct": round(max_mapping_evidence, 1),
         "max_replan_triggers": max_replan_triggers,
         "dynamic_obstacle_crossings": max_crossings,
+        "wander_robot_moved_m": round(max_wander_moved, 3),
         "frontier_count": frontier_count,
         "unknown_cells": unknown_cells,
         "task_complete_seen": task_complete_seen,

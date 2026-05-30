@@ -15,8 +15,8 @@
 \path{coppeliasim/phase1_r1_task_controller.lua} & Controlador principal de R1: tareas, navegación, SLAM, batería y telemetría.\\
 \path{coppeliasim/phase1_b1_walking_manager.lua} & Movimiento y acciones visuales de B1 (Bill).\\
 \path{coppeliasim/capture_coppeliasim_screenshots.lua} & Capturas 3D renderizadas desde CoppeliaSim para el informe.\\
-\path{coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt} & Escena con mapa desconocido, obstáculos no modelados y tarima móvil.\\
-\path{coppeliasim/build_phase2_unknown_slam_scene.py} & Generador y validador de Phase 2.\\
+\path{coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt} & Escena con mapa desconocido, obstáculos no modelados y un robot móvil autónomo (\texttt{P2\_Wanderer}) con rutas aleatorias.\\
+\path{coppeliasim/build_phase2_unknown_slam_scene.py} & Generador y validador de Fase 2.\\
 \path{coppeliasim/Actividad2_1_Basic_Follower.ttt} & Escena básica de seguimiento de Bill.\\
 \path{coppeliasim/pioneer_pid_follower_controller.lua} & Controlador del seguidor con P, PI, PID, LQR y NMPC por disparo directo.\\
 \bottomrule
@@ -35,9 +35,9 @@
 \path{coppeliasim/run_phase1_slam_comparison.py} & Comparación de algoritmos SLAM implementados en Lua.\\
 \path{coppeliasim/plot_phase1_slam_comparison.py} & Generación de gráficas de comparación SLAM.\\
 \path{coppeliasim/phase1_slam_logs/} & CSV, JSON, Markdown y figuras de la comparación SLAM.\\
-\path{coppeliasim/run_phase2_slam_unknown_comparison.py} & Exportación comparativa Phase 2 para los cuatro modos SLAM.\\
-\path{coppeliasim/plot_phase2_slam_unknown_comparison.py} & Figuras y métricas de reconstrucción Phase 2.\\
-\path{coppeliasim/phase2_slam_logs/} & CSV, JSON, Markdown y figuras de Phase 2.\\
+\path{coppeliasim/run_phase2_slam_unknown_comparison.py} & Exportación comparativa Fase 2 para los cuatro modos SLAM.\\
+\path{coppeliasim/plot_phase2_slam_unknown_comparison.py} & Figuras y métricas de reconstrucción Fase 2.\\
+\path{coppeliasim/phase2_slam_logs/} & CSV, JSON, Markdown y figuras de Fase 2.\\
 \path{coppeliasim/phase1_controller_logs/} & Registros CSV y gráficas de comparación de controladores.\\
 \path{coppeliasim/follower_pid_logs/} & CSV y gráficas de seguimiento de Bill.\\
 \bottomrule
@@ -57,20 +57,22 @@
 \midrule
 Radio de rueda & \SI{0.0975}{m} & Conversión de velocidad lineal a angular de motor.\\
 Distancia entre ruedas & \SI{0.331}{m} & Modelo diferencial del Pioneer P3DX.\\
-Velocidad máxima & \SI{0.55}{m/s} & Saturación de avance.\\
-Velocidad angular máxima & \SI{1.32}{rad/s} & Saturación de giro.\\
-Rango de evitación & \SI{0.62}{m} & Umbral de influencia reactiva de obstáculos.\\
-Parada crítica & \SI{0.12}{m} & Distancia frontal mínima antes de detener el avance.\\
+Velocidad máxima (\texttt{vMax}) & \SI{0.62}{m/s} & Saturación de avance (controlador de misión).\\
+Velocidad angular máxima (\texttt{wMax}) & \SI{1.42}{rad/s} & Saturación de giro (controlador de misión).\\
+Rango de evitación & \SI{0.54}{m} & Umbral de influencia reactiva de obstáculos.\\
+Parada crítica & \SI{0.10}{m} & Distancia frontal mínima antes de detener el avance.\\
 Batería inicial & 96\% & Valor usado en validaciones.\\
 Umbral batería baja & 56\% & Limita velocidad si se alcanza.\\
 Umbral batería crítica & 26\% & Modo conservador.\\
 Resolución de grid & \SI{0.18}{m} & Usada por GMapping, Hector y Cartographer en grid.\\
 Margen del planificador & \SI{0.40}{m} & Separación mínima deseada respecto al mapa.\\
 Desplazamiento lateral & \SI{0.52}{m} & Distancia lateral del punto intermedio local.\\
-Retardo de recuperación & \SI{10.0}{s} & Activa \texttt{RECOVERY\_DIRECT} si no hay progreso hacia el objetivo.\\
-Duración de recuperación & \SI{5.5}{s} & Ventana en la que se suspende el mapa para planificar, sin apagar la evitación local.\\
+Retardo de recuperación & \SI{6.0}{s} & Activa \texttt{RECOVERY\_DIRECT} si no hay progreso hacia el objetivo.\\
+Duración de recuperación & \SI{3.5}{s} & Ventana en la que se suspende el mapa para planificar, sin apagar la evitación local.\\
 \bottomrule
 \end{tabularx}
+\caption{Parámetros de configuración del sistema.}
+\label{tab:system-params}
 \end{table}
 
 \section{Fragmentos Lua propios}
@@ -122,6 +124,8 @@ elseif self:actionContains(action, 'WORKING') then
 
 \section{Comparación de control}
 
+Las métricas complementarias de control se ilustran en la Fig.~\ref{fig:controller-metrics}.
+
 \begin{table}[H]
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -129,13 +133,15 @@ elseif self:actionContains(action, 'WORKING') then
 \toprule
 \textbf{Modo} & \textbf{Dur. [s]} & \textbf{Mov. [s]} & \textbf{Ruta [m]} & \textbf{Bat. [\%]} & \textbf{Riesgo max.} & \textbf{Puntaje}\\
 \midrule
-P & 115,20 & 37,70 & 12,843 & 19,804 & 0,410 & 0,573\\
-PI & \textbf{110,30} & \textbf{31,20} & 12,867 & 19,516 & 0,487 & \textbf{0,274}\\
-PID & 110,85 & 31,55 & 12,856 & 19,784 & 0,469 & 0,567\\
-LQR & 114,15 & 36,20 & 12,796 & 19,505 & \textbf{0,401} & 0,436\\
-NMPC & 112,30 & 33,05 & \textbf{12,788} & \textbf{19,316} & 0,444 & 0,326\\
+P & 105,35 & 62,75 & \textbf{21,096} & 30,145 & 0,682 & 0,729\\
+PI & 98,70 & 56,50 & 21,880 & 31,126 & 0,836 & 0,810\\
+PID & \textbf{90,60} & \textbf{51,35} & 21,371 & 30,086 & \textbf{0,494} & \textbf{0,089}\\
+LQR & 98,90 & 56,55 & 21,183 & 29,972 & 0,740 & 0,376\\
+NMPC & 94,60 & 52,10 & 21,387 & \textbf{29,919} & 0,718 & 0,202\\
 \bottomrule
 \end{tabular}
+\caption{Resultados comparativos de los cinco controladores en la misión warehouse de Fase 1 (\(n=1\) por modo; puntaje compuesto, menor es mejor). Aquí LQR y NMPC son las variantes reactivas simplificadas del controlador de tarea; el LQR con ganancia de Riccati y el NMPC de horizonte completo se evalúan sobre el follower (Tabla~\ref{tab:follower-controller-metrics}).}
+\label{tab:phase1-controller-anexo}
 \end{table}
 
 \begin{figure}[H]
@@ -144,6 +150,25 @@ NMPC & 112,30 & 33,05 & \textbf{12,788} & \textbf{19,316} & 0,444 & 0,326\\
   \caption{Métricas complementarias de control: tiempos, trayectoria, suavidad, batería, riesgo y error de pose.}
   \label{fig:controller-metrics}
 \end{figure}
+
+\section{Parámetros de Cartographer}
+
+Los parámetros del módulo Cartographer-submap usados en Fase 1 y Fase 2 son (Tabla~\ref{tab:cartographer-params}):
+
+\begin{table}[H]
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parámetro} & \textbf{Valor}\\
+\midrule
+\texttt{cartographer.submap\_min\_age\_s} & 22 s\\
+\texttt{cartographer.submap\_max\_distance\_m} & 0,45 m\\
+\texttt{cartographer.loop\_closure\_score} & 0,35\\
+\bottomrule
+\end{tabular}
+\caption{Parámetros de Cartographer-submap. Idénticos en Fase 1 y Fase 2.}
+\label{tab:cartographer-params}
+\end{table}
 
 \section{Notas de alcance}
 

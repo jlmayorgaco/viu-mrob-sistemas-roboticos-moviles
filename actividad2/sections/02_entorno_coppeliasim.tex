@@ -1,11 +1,4 @@
-\chapter{Escenario CoppeliaSim}
-
-La escena se genera con
-\path{actividad2/coppeliasim/build_phase1_basic_scene.py}. Ese script carga la
-base de la asignatura, limpia restos de pruebas anteriores, coloca la celda,
-ubica a R1 y B1, añade estanterías, mesas, sofá, obstáculos y piezas visuales, y
-deja integrados los controladores Lua~\cite{coppeliasimManual}. Al final lanza una validación sin interfaz
-gráfica y guarda un JSON reproducible con estado, métricas y objetos verificados.
+\chapter{Escenarios CoppeliaSim}
 
 \section{Elementos del warehouse}
 
@@ -35,16 +28,14 @@ Obstáculos & Pallet, pilar y caja & Elementos detectables para activar evitaci�
 
 \section{Cómo funciona el Pioneer dentro de CoppeliaSim}
 
-El Pioneer P3DX de la escena se maneja como una plataforma diferencial. Tiene dos
-ruedas motrices laterales: si las dos ruedas giran a la misma velocidad, el robot
-avanza recto; si una rueda gira más rápido que la otra, el robot cambia de
-rumbo; si una avanza y la otra retrocede, puede girar casi sobre su propio
-centro. Por eso el controlador no envía una posición final directamente al
-robot. En cada ciclo calcula una velocidad lineal \(v\) y una velocidad angular
-\(\omega\), las convierte en velocidades de rueda y las aplica a los motores de
-CoppeliaSim.
+El Pioneer P3DX de la escena se maneja como una plataforma diferencial con dos
+ruedas motrices laterales. Con las dos a la misma velocidad avanza recto, si una
+gira más rápido cambia de rumbo, y si una avanza mientras la otra retrocede gira
+casi sobre su propio centro. El controlador calcula en cada ciclo una velocidad
+lineal \(v\) y una angular \(\omega\), las convierte en velocidades de rueda y las
+aplica a los motores de CoppeliaSim.
 
-El ciclo de control es siempre el mismo:
+El ciclo de control en cada paso es:
 
 \begin{enumerate}
   \item Leer la pose estimada de R1, el estado de Bill, el objetivo de la tarea y
@@ -58,23 +49,22 @@ El ciclo de control es siempre el mismo:
   registrar telemetría.
 \end{enumerate}
 
-Este bucle explica por qué el documento separa escena, cinemática, campos
-potenciales, anticolisión y SLAM. No son módulos aislados: todos alimentan la
-misma decisión de velocidad que se envía al Pioneer.
+Los cuatro módulos (percepción, estimación, planificación y control) producen
+una sola consigna de velocidad para el Pioneer.
 
 \section{Bill como actor móvil}
 
-Bill camina entre las dos estaciones, pide herramientas y trabaja la pieza en la
-mesa que toca. El script \path{phase1_b1_walking_manager.lua} define WS1/WS2,
-escribe la estación actual, indica qué herramienta necesita y anima las acciones
-de tomar, trabajar y entregar. La orientación se calcula con:
+Entre las dos estaciones, Bill pide herramientas y trabaja la pieza en la mesa
+correspondiente. Su gestor define las estaciones WS1/WS2, publica la estación y
+la herramienta actuales y anima las acciones de tomar, trabajar y entregar. La
+orientación se calcula con:
 
 \[
 \theta_B = \operatorname{atan2}(y_{k+1}-y_k,\;x_{k+1}-x_k)
 \]
 
 Bill mira hacia donde camina. En las mesas se orienta hacia la superficie de
-trabajo para mantener coherencia visual entre la animación y la tarea ejecutada.
+trabajo, de acuerdo con la acción animada.
 
 \section{Cola de tareas}
 
@@ -93,11 +83,11 @@ solicitud válida.
 
 \section{Integración del código}
 
-El código de la escena se concentra en percepción, coordinación de
-tareas y registro de datos. El \texttt{mannequin} queda como persona móvil
-\texttt{/B1}; los sensores entregan datos a la evitación y al mapa; B1 tiene su propio
-manager, con tiempos de trabajo y movimiento; y los exportadores guardan CSV y JSON
-para revisar control, seguridad y SLAM con datos reproducibles.
+El código de la escena cubre percepción, coordinación de tareas y registro de
+datos. El \texttt{mannequin} queda como persona móvil \texttt{/B1}; los sensores
+entregan datos a la evitación y al mapa. B1 tiene su propio gestor con
+tiempos de trabajo y movimiento, y los exportadores guardan CSV y JSON para
+revisar control, seguridad y SLAM con datos reproducibles.
 
 \begin{lstlisting}[caption={Lectura de sensores y evitación reactiva en Lua. La variable \texttt{b1} es el handle de CoppeliaSim del objeto \texttt{/B1} (Bill); las detecciones sobre Bill se excluyen del mapa SLAM para no registrar al mannequin como obstáculo estático.},label={lst:sensor-avoidance}]
 for _, s in ipairs(sensors) do
@@ -183,6 +173,6 @@ setWheelSpeeds(v, w)
 \section{Piezas visuales}
 
 T1 y T2 se hicieron con primitivas para evitar geometrías genéricas. T1 lleva
-placa, nervios, boss central y pernos; T2 representa una placa compuesta/electrónica
+placa, nervios, boss central y pernos. T2 representa una placa compuesta/electrónica
 con raíles, conector y capacitor. La geometría diferenciada distingue
 cada herramienta durante la ejecución y en las capturas.

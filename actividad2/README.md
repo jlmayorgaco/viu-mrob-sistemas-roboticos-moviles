@@ -40,7 +40,7 @@ coppeliasim/Sim_T2_Phase1_Basic.ttt
 coppeliasim/Sim_T2_Phase1_Basic_validation.json
 ```
 
-Incluye la celda warehouse con R1, Bill/B1, herramientas T1/T2, mesas WS1/WS2, racks, estacion de carga, bateria simulada, 16 sensores del Pioneer, evitacion reactiva, Kalman landmarks y cola completa de tareas. Las mesas, sofa y racks se importan desde la libreria de modelos de CoppeliaSim cuando esta disponible. La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `71.77 %`, 21 landmarks y error final de pose `0.019 m`.
+Incluye la celda warehouse con R1, Bill/B1, herramientas T1/T2, mesas WS1/WS2, racks, estacion de carga, bateria simulada, 16 sensores del Pioneer, evitacion reactiva, EKF-SLAM de landmarks con correccion de pose por sensor (gating de Mahalanobis) y cola completa de tareas. Las mesas, sofa y racks se importan desde la libreria de modelos de CoppeliaSim cuando esta disponible. La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `72.3 %`, 8 landmarks y error final de pose `0.047 m` (error de localizacion EKF genuino, no anclado a ground truth).
 
 Escena Phase 2 para mapa desconocido:
 
@@ -49,7 +49,7 @@ coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt
 coppeliasim/Sim_T2_Phase2_SLAM_Unknown_validation.json
 ```
 
-Mantiene la mision T1/T2 y anade obstaculos no conocidos, zonas ocultas y replanificacion. La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `68.45 %`, 20 landmarks y evidencia maxima de mapeo `84.2 %`.
+Mantiene la mision T1/T2 y anade obstaculos no conocidos, zonas ocultas, replanificacion y un robot movil autonomo (`/P2_Wanderer`) que recorre la celda con rutas aleatorias como obstaculo dinamico (evitado de forma reactiva por R1, no mapeado como landmark). La validacion actual termina con `passed=true`, cuatro tareas completadas, estado final `CHARGING`, bateria final `72.3 %`, 9 landmarks, el robot movil recorrio `16.6 m` con `4` cruces frente a R1 y evidencia maxima de mapeo `49.2 %`.
 
 Escena base de seguimiento de Bill:
 

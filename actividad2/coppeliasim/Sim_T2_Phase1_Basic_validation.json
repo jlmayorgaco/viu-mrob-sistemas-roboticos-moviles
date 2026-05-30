@@ -28,6 +28,7 @@
     "AVOIDING",
     "MANIPULATING",
     "ROUTE",
+    "SLAM_PATH",
     "WAIT_B1"
   ],
   "battery_modes_seen": [
@@ -57,19 +58,18 @@
   ],
   "planner_modes_seen": [
     "DIRECT",
-    "DIRECT_AFTER_WAYPOINT",
     "SLAM_WAYPOINT"
   ],
-  "battery_level": 72.62,
-  "b1_moved_distance_m": 9.794,
+  "battery_level": 66.08,
+  "b1_moved_distance_m": 10.712,
   "completed_task_count": 4,
-  "slam_landmark_count": 8,
-  "slam_updates": 2502,
-  "max_slam_landmarks": 8,
-  "min_obstacle_seen_m": 0.057,
-  "max_obstacle_risk": 0.816,
-  "final_pose_error_m": 0.037,
-  "max_pose_error_m": 0.048,
+  "slam_landmark_count": 7,
+  "slam_updates": 2105,
+  "max_slam_landmarks": 7,
+  "min_obstacle_seen_m": 0.186,
+  "max_obstacle_risk": 0.49,
+  "final_pose_error_m": 0.041,
+  "max_pose_error_m": 0.26,
   "sensor_count": 16,
   "sensor_ray_count": 16,
   "checks": {

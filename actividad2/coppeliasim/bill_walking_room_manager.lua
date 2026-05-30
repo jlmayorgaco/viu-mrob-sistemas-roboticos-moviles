@@ -21,13 +21,13 @@ local finalYaw = 0
 local lapProgress = 0
 
 local cfg = {
-    baseSpeed = 0.42,
-    speedAmplitude = 0.12,
+    baseSpeed = 0.22,
+    speedAmplitude = 0.09,
     speedCycles = 4,
     laps = 2,
     z = 0.0,
     logPeriod = 1.2,
-    circleRadius = 2.05,
+    circleRadius = 1.55,
     startAngle = math.pi / 4.0,
     gaitReferenceSpeed = 0.42,
     gaitPhaseRate = 10.8,

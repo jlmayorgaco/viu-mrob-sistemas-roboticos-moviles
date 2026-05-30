@@ -8,6 +8,8 @@ controller so the exported metrics are comparable.
 from __future__ import annotations
 
 import json
+import sys
+from datetime import datetime
 from pathlib import Path
 
 from run_phase1_slam_export import LOG_DIR, run
@@ -39,6 +41,11 @@ def main() -> int:
         "outputs": {
             "csv": [str(LOG_DIR / f"phase1_slam_{tag}.csv") for _, tag in RUNS],
             "summary_json": [str(LOG_DIR / f"phase1_slam_{tag}_summary.json") for _, tag in RUNS],
+        },
+        "meta": {
+            "run_date": datetime.now().isoformat(timespec="seconds"),
+            "python": sys.version.split()[0],
+            "n_runs_per_algorithm": 1,
         },
     }
     COMPARISON_JSON.write_text(json.dumps(comparison, indent=2), encoding="utf-8")

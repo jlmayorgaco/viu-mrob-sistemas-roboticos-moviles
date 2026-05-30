@@ -32,6 +32,9 @@ local function safeGet(path)
     return -1
 end
 
+-- Roll-free look-at: builds an orthonormal camera frame whose +Z faces the target
+-- and whose image-up axis is the world vertical projected onto the image plane, so
+-- the horizon stays level (no camera roll, which is what tilted the earlier captures).
 local function lookAtPose(position, target)
     local dx = target[1] - position[1]
     local dy = target[2] - position[2]
@@ -40,13 +43,33 @@ local function lookAtPose(position, target)
     if norm < 1e-9 then
         return sim.buildPose(position, {0, 0, -1}, 3)
     end
-    return sim.buildPose(position, {dx / norm, dy / norm, dz / norm}, 3)
+    local zc = {dx / norm, dy / norm, dz / norm}      -- camera forward (+Z toward target)
+    -- camera right = normalize(worldUp x forward); falls back if forward is vertical
+    local rx = 0.0 * zc[3] - 1.0 * zc[2]
+    local ry = 1.0 * zc[1] - 0.0 * zc[3]
+    local rz = 0.0 * zc[2] - 0.0 * zc[1]
+    local rn = math.sqrt(rx * rx + ry * ry + rz * rz)
+    if rn < 1e-6 then
+        return sim.buildPose(position, zc, 3)
+    end
+    local xc = {rx / rn, ry / rn, rz / rn}
+    local yc = {                                       -- camera up = forward x right
+        zc[2] * xc[3] - zc[3] * xc[2],
+        zc[3] * xc[1] - zc[1] * xc[3],
+        zc[1] * xc[2] - zc[2] * xc[1],
+    }
+    local m = {
+        xc[1], yc[1], zc[1], position[1],
+        xc[2], yc[2], zc[2], position[2],
+        xc[3], yc[3], zc[3], position[3],
+    }
+    return sim.matrixToPose(m)
 end
 
 function Capture:new()
     local outDir = namedString(
         'captureDir',
-        'C:/Users/walla/Documents/Master VIU/C9_SistRobMoviles/viu-mrob-sistemas-roboticos-moviles/actividad2/figures/phase1'
+        sim.getStringParam(sim.stringparam_scene_path) .. '/../../figures/phase1'
     )
     local tag = namedString('captureTag', 'phase1')
     local schedule

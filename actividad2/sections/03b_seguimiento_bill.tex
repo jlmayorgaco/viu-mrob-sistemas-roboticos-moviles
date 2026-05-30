@@ -4,8 +4,8 @@ Antes de integrarlo en la celda completa, se probó el seguimiento de Bill en
 \path{Actividad2_1_Basic_Follower.ttt} (Fig.~\ref{fig:follower-replay},
 capturas en Fig.~\ref{fig:follower-coppeliasim-screenshots}). Bill camina con
 aceleración y frenado, y el Pioneer sigue un punto detrás de la persona. Si se
-apunta al centro del cuerpo, el robot tiende a acercarse demasiado; por eso la
-referencia va detrás de Bill.
+apunta al centro del cuerpo, el robot se acerca demasiado. La referencia se
+sitúa detrás de Bill para mantener la separación deseada \(d_{des}\).
 
 \begin{figure}[H]
   \centering
@@ -105,8 +105,8 @@ E = \sum_k (P_L+P_R+P_\theta)\Delta t .
 Los parámetros usados fueron \(m=\SI{16.5}{kg}\), \(I_z=\SI{0.72}{kg.m^2}\),
 \(F_r=\SI{2.8}{N}\) y \(b_\omega=\SI{0.006}{kg\,m^2\,s^{-1}}\) (amortiguamiento viscoso rotacional, unidades SI: N\,m\,s). En esa expresión, \(a=\dot{v}\) es la
 aceleración lineal estimada entre muestras y \(\dot{\omega}\) es la aceleración
-angular. Esta magnitud se usa como indicador relativo entre controladores dentro
-de la misma escena; no representa una estimación eléctrica de batería.
+angular. Esta magnitud sirve como indicador relativo entre controladores en
+la misma escena (estimación cinemática aproximada, no eléctrica).
 
 Los términos \(\frac{m}{2}a\,v_L\) y
 \(\frac{m}{2}a\,v_R\) reparten aproximadamente la potencia inercial lineal,
@@ -131,16 +131,15 @@ u_{PID}=K_p e_d + K_i\sum_{k=0}^{n} e_d(k)\Delta t
 + K_d\frac{e_d(k)-e_d(k-1)}{\Delta t}.
 \]
 
-El término proporcional responde al error instantáneo; el integral acumula
-el retardo sistemático del seguidor y lo elimina en régimen permanente,
-tanto si el objetivo se mueve como si está detenido; el derivativo amortigua
-cambios bruscos del error. En ejecución, todos los modos añaden una corrección de evitación
+El término proporcional actúa sobre el error instantáneo y el derivativo
+amortigua sus cambios bruscos; el integral elimina el error de régimen
+permanente, esté el objetivo en movimiento o detenido. En ejecución, todos los modos añaden una corrección de evitación
 de obstáculos al ángulo de giro:
 \[
 \omega = \omega_{\text{controlador}} + \omega_{obs},
 \]
 donde \(\omega_{obs}\) es el término repulsivo de la sección de campos potenciales
-(\S\ref{ch:campos-potenciales}). Todos los modos pasan por saturaciones de velocidad y aceleración.
+(\S\ref{ch:campos-potenciales}). En todos los modos se aplican saturaciones de velocidad y aceleración.
 
 \section{LQR discreto}
 
@@ -174,8 +173,10 @@ u=
 
 Con \(v_{ref}=\SI{0.22}{m/s}\), radio local de giro \(\rho_{ref}=\SI{1.55}{m}\),
 \(\omega_{ref}=v_{ref}/\rho_{ref}\) y
-\(\Delta t=\SI{0.05}{s}\), la linealización usada en
-\path{compute_follower_lqr_gain.py} es:
+\(\Delta t=\SI{0.05}{s}\), \(A\) y \(B\) salen de derivar la dinámica del error
+en el marco de Frenet (cómo cambian \(e_{long},e_{lat},e_{yaw}\) al desviarse de
+la trayectoria de referencia); los términos \(\pm\omega_{ref}\) y \(v_{ref}\) son
+el acoplamiento entre esos tres errores al recorrer una curva:
 
 \[
 A=
@@ -202,10 +203,17 @@ de error de rumbo \(e_{yaw}\), lo que el LQR compensa asignando un peso alto
 a \(e_{lat}\) en la matriz \(Q\) (\(Q_{22}=80\)).
 
 \[
-A_d=I+\Delta t A,\qquad B_d=\Delta t B.
+A_d=I+\Delta t A,\qquad B_d=\Delta t B,
 \]
 
-El script resuelve la ecuación algebraica de Riccati discreta con:
+discretización de Euler hacia adelante con paso \(\Delta t\). La ganancia \(K\) se
+calcula \emph{dentro de la escena} al arrancar: partiendo de \(P=Q\) se aplica
+repetidamente la ecuación de Riccati en diferencias
+\(P\leftarrow A_d^\top P A_d-(A_d^\top P B_d)(R+B_d^\top P B_d)^{-1}(B_d^\top P A_d)+Q\).
+Como el par \((A_d,B_d)\) es controlable, \(P\) converge a un valor estable; en
+ese punto fijo se cumple la ecuación algebraica de Riccati y la ganancia óptima
+estacionaria es \(K=(B_d^\top P B_d+R)^{-1}B_d^\top P A_d\), sin valores
+precargados. Las matrices de coste son:
 
 \[
 Q=\operatorname{diag}(35,80,18),
@@ -219,15 +227,14 @@ K=(B_d^T P B_d+R)^{-1}B_d^T P A_d.
 
 Los pesos proceden de una calibración empírica sobre el seguimiento de Bill, no
 de una identificación formal del Pioneer. Se penalizó más el error lateral
-\((q_{lat}=80)\) que el longitudinal \((q_{long}=35)\), porque el robot admite
-permitirse ir algo adelantado o retrasado, pero no cruzarse lateralmente con la
-referencia móvil. El coste de giro en \(R\) se dejó menor que el de avance para
-que el regulador prefiriera corregir rumbo antes de cambiar mucho la velocidad.
+\((q_{lat}=80)\) que el longitudinal \((q_{long}=35)\): un adelanto o retraso
+longitudinal es tolerable, pero un cruce lateral con la referencia móvil no. El coste de giro en \(R\) se dejó menor que el de avance
+para que el regulador corrija antes el rumbo que la velocidad.
 
 La ley aplicada en Lua usa \(u=-Kx_L\), con saturación posterior de \(v\) y
 \(\omega\).
 
-La matriz integrada en Lua fue:
+La matriz resultante calculada en escena fue:
 
 \[
 K=
@@ -237,17 +244,15 @@ K=
 \end{bmatrix}.
 \]
 
-Esta parte corresponde a un LQR discreto real, de orden bajo y aplicado al
-seguimiento local de Bill.
 
 \section{NMPC por disparo directo}
 \label{sec:nmpc}
 
 El modo NMPC se implementa como control predictivo no lineal por disparo
-directo. Mantiene una secuencia de \(v_k,\omega_k\), simula el modelo hacia
-adelante y mejora esa secuencia con dos pasadas de búsqueda local, siguiendo la
-estructura general de MPC \cite{rawlings2017}. La optimización se resuelve sobre
-la secuencia de comandos; IPOPT y CasADi no se usan en esta implementación.
+directo. Mantiene una secuencia de \(v_k,\omega_k\), simula el modelo no lineal
+hacia adelante sobre el horizonte y optimiza esa secuencia con una búsqueda de
+patrón de Hooke-Jeeves~\cite{hooke1961}, siguiendo la estructura general de MPC
+\cite{rawlings2017}.
 
 \[
 x_{k+1}=x_k+v_k\cos(\theta_k)\Delta t,
@@ -278,37 +283,37 @@ El coste incluye dos términos de posición con roles distintos: \(q_d e_d^2\)
 penaliza el error escalar de distancia a Bill (mantiene el radio correcto
 respecto al objetivo, pero no corrige la desviación lateral); \(q_t\|p^\star-p\|^2\)
 penaliza la distancia euclídea al punto \(p^\star\), introduciendo una corrección
-lateral suave que alinea el robot detrás de Bill. Ambos son necesarios: sin
-\(q_t\) el robot mantiene el radio pero puede quedar desplazado lateralmente;
-sin \(q_d\) el seguimiento del radio depende íntegramente de la posición de
-\(p^\star\), con menor robustez ante errores de predicción de Bill.
+lateral suave que alinea el robot detrás de Bill. Si se quita \(q_t\), el robot
+conserva el radio pero se desvía de lado; quitar \(q_d\) deja el radio en manos
+solo de \(p^\star\), con menos robustez ante errores de predicción de Bill.
 El valor \(q_t=7{,}0\ll q_d=48{,}0\) asegura que la corrección lateral no
 interfiera con la regulación de distancia.
 
-Los pesos usados en el script fueron
+Los pesos fueron
 \(q_d=48{,}0\), \(q_t=7{,}0\), \(q_\psi=1{,}2\),
 \(r_v=1{,}4\), \(r_\omega=1{,}8\), \(r_{whl}=0{,}020\),
 \(s_v=65{,}0\), \(s_\omega=18{,}0\) y \(q_f=6{,}0\), con horizonte
-\(N=10\), \(\Delta t=\SI{0.22}{s}\) y dos iteraciones de mejora por ciclo.
-Esta implementación reside en \texttt{pioneer\_pid\_follower\_controller.lua} y
-aplica exclusivamente a la escena de seguimiento (\path{Actividad2_1_Basic_Follower.ttt}).
-La escena warehouse (\path{Sim_T2_Phase1_Basic.ttt}) utiliza el controlador de tarea
-\texttt{phase1\_r1\_task\_controller.lua}, que implementa los mismos cinco modos
-(P, PI, PID, LQR y NMPC) con la misma ganancia $K$ y el mismo solucionador de
-horizonte. La diferencia respecto al follower es que el objetivo en el warehouse
-es un punto de navegación estático (no el punto $p^*$ detrás de Bill) y el
-objetivo se reconstruye desde los errores de distancia y rumbo disponibles en el
-planificador. La comparación de controladores presentada en este capítulo usa el
-follower, donde el objetivo móvil ejercita mejor la respuesta dinámica.
+\(N=10\), \(\Delta t=\SI{0.22}{s}\) y hasta seis pasadas de refinamiento por
+ciclo con pasos geométricamente decrecientes.
+Este controlador opera en la escena de seguimiento de Bill. La escena warehouse
+usa un controlador de tarea distinto, cuyo modo base es PID y que
+también ofrece los cinco modos, pero en \emph{variantes reactivas simplificadas}
+(ganancias fijas para LQR y un coste predictivo de un solo paso para NMPC),
+adaptadas a un objetivo de navegación estático en lugar del punto móvil
+\(p^\star\) detrás de Bill. El regulador LQR con ganancia de Riccati calculada en
+escena y el NMPC de horizonte completo con búsqueda de patrón se demuestran en el
+\emph{follower}, donde el objetivo móvil ejercita mejor la respuesta dinámica; por
+eso la comparación cuantitativa de controladores de este capítulo usa el follower.
 
-La búsqueda local es determinista y de vecindario: la secuencia se inicializa
-con los comandos del ciclo anterior desplazados un paso, y en cada pasada se
-prueban perturbaciones \(\pm\Delta v\) y \(\pm\Delta\omega\) sobre cada elemento
-del horizonte. En la primera pasada los pasos son \(\Delta v=0.065\) y
-\(\Delta\omega=0.16\); en la segunda bajan a \(0.025\) y \(0.065\). Solo se
-acepta una perturbación si reduce \(J\). Por eso el coste es predictivo y el
-modelo es no lineal, pero el solucionador es una búsqueda local pequeña, no un
-SQP ni un método interior-point.
+La búsqueda de patrón es determinista: la secuencia se inicializa con los
+comandos del ciclo anterior desplazados un paso (\emph{warm start}), y en cada
+pasada se prueban perturbaciones \(\pm\Delta v\) y \(\pm\Delta\omega\) sobre cada
+elemento del horizonte, aceptando solo las que reducen \(J\). Los pasos parten
+de \(\Delta v=0{,}090\) y \(\Delta\omega=0{,}220\) y se reducen por un factor
+\(0{,}55\) cuando una pasada completa no mejora el coste, hasta alcanzar un suelo
+de \(0{,}004\) y \(0{,}010\). El coste es predictivo y el modelo es no lineal;
+el solucionador es una búsqueda de patrón de Hooke-Jeeves, no un método SQP ni
+de punto interior.
 
 Los límites de actuación se aplican durante la búsqueda:
 
@@ -319,8 +324,7 @@ v_k\in[-v_{rev,max},v_{max}],
 \]
 
 Esta versión conserva el modelo no lineal y el coste predictivo, pero limita la
-optimización a una búsqueda local pequeña sobre comandos. El alcance queda
-limitado al método de disparo directo implementado en Lua.
+optimización a una búsqueda local de vecindario sobre comandos.
 
 \section{Resultados de seguimiento}
 
@@ -332,11 +336,11 @@ limitado al método de disparo directo implementado en Lua.
 \toprule
 \textbf{Modo} & \textbf{Error mov. [m]} & \textbf{Error final [m]} & \textbf{Energía [J]} & \textbf{RMS \(\Delta u\)} & \textbf{Flips}\\
 \midrule
-P & 0,3542 & 0,0982 & \textbf{49,950} & 0,0475 & 11\\
-PI & 0,2011 & 0,1018 & 64,419 & 0,1318 & 16\\
-PID & 0,1915 & \textbf{0,0317} & 102,381 & 0,1759 & 26\\
-LQR & 0,0231 & 0,0865 & 92,287 & 0,0873 & 12\\
-NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
+P & 0,3537 & 0,1017 & \textbf{49,495} & 0,0490 & 18\\
+PI & 0,2010 & 0,0782 & 64,146 & 0,1356 & 18\\
+PID & 0,1912 & \textbf{0,0457} & 83,181 & 0,1310 & 16\\
+LQR & \textbf{0,0167} & 0,0762 & 87,314 & 0,0791 & 4\\
+NMPC & 0,0189 & 0,0484 & 73,415 & \textbf{0,0457} & \textbf{3}\\
 \bottomrule
 \multicolumn{6}{l}{\footnotesize \textit{n}=1 por modo. Energía: estimación cinemática aproximada (véase §\ref{sec:energy-model}). Indicadores cualitativos.}\\
 \end{tabular}
@@ -370,8 +374,8 @@ NMPC & \textbf{0,0198} & 0,0887 & 77,174 & 0,0576 & \textbf{4}\\
 La Fig.~\ref{fig:follower-pid-comparison} muestra la respuesta temporal de los
 cinco modos; la Fig.~\ref{fig:follower-wheel-power} compara potencia y energía
 de rueda; la Fig.~\ref{fig:follower-wheel-smoothness} compara la suavidad de
-comandos. P gasta menos energía y deja más error mientras Bill se mueve. PID
-corrige bien al final pero paga con más variación de comando y más energía.
-LQR y NMPC bajan el error medio durante el seguimiento; NMPC queda más suave
-en inversiones de sentido y RMS de \(\Delta u\) porque incluye en el coste la
+comandos. P gasta menos energía y deja más error con Bill en movimiento. PID
+ajusta bien el error final a costa de más variación de comando y más energía.
+LQR y NMPC reducen el error medio durante el seguimiento; NMPC es el más suave en
+inversiones de sentido y RMS de \(\Delta u\), porque su coste penaliza la
 variación de comando y el esfuerzo de rueda.

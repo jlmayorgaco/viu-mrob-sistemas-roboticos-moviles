@@ -368,10 +368,11 @@ function pSlide(kicker, title, color = C.teal, subtitle = '') {
   slideNo += 1;
   s.background = { color: C.warmPaper };
   rect(s, 0, 0, 13.333, 7.5, C.warmPaper, C.warmPaper);
+  // Clean single-tone header band (no transparent overlay: the previous 90%-transparent
+  // navy box rendered as a muddy box that looked out of frame in some viewers).
   rect(s, 0, 0, 13.333, 0.92, C.orangeSoft, C.orangeSoft);
-  rect(s, 8.80, 0, 4.533, 0.92, C.navy, C.navy, 90);
+  rect(s, 0, 0.895, 13.333, 0.03, C.orange, C.orange);
   rect(s, 0, 0, 0.18, 7.5, C.white, C.white);
-  line(s, 0.58, 0.88, 12.18, 0.88, C.ink, 0.95);
   roundRect(s, 0.50, 1.18, 12.56, 5.88, C.steel, C.steel, 88);
   roundRect(s, 0.38, 1.10, 12.56, 5.88, C.panel, C.panelEdge, 0);
   rect(s, 0.38, 1.10, 0.08, 5.88, C.orange, C.orange);
@@ -701,11 +702,11 @@ function scenarioScreenshots() {
   const shots = [
     [img.followerReplay, 'Seguimiento de Bill', C.teal],
     [img.phase1Overview3d, 'Fase 1: almacén', C.green],
-    [img.phase1SensorRays3d, 'EvitaciÃ³n con rayos', C.orange],
+    [img.phase1SensorRays3d, 'Evitación con rayos', C.orange],
     [img.phase1BillWorking3d, 'Bill en mesa', C.violet],
     [img.phase1Handoff3d, 'Entrega T1', C.blue],
     [img.phase2Initial3d, 'Fase 2 inicial', C.teal],
-    [img.phase2Replan3d, 'ReplanificaciÃ³n dinÃ¡mica', C.orange],
+    [img.phase2Replan3d, 'Replanificación dinámica', C.orange],
     [img.phase2Overview, 'Mapa desconocido', C.green],
   ];
   shots.forEach((shot, i) => {
@@ -716,19 +717,19 @@ function scenarioScreenshots() {
 }
 
 function videoPlaceholderFollower() {
-  const s = pSlide('seguimiento y entrega', 'Video de ejecuciÃ³n I', C.teal, '');
+  const s = pSlide('seguimiento y entrega', 'Video de ejecución I', C.teal, '');
   softPanel(s, 0.76, 1.32, 11.82, 5.20, C.teal, tint(C.teal), C.teal);
-  roundRect(s, 1.08, 1.62, 11.18, 4.58, 'F5FBFC', C.teal, 0);
-  addText(s, 'VIDEO', 5.58, 3.42, 2.20, 0.42, { fontFace: 'Aptos Display', fontSize: 28, bold: true, color: C.teal, align: 'center' });
-  addText(s, 'seguimiento de Bill, entrega T1/T2 y retorno a carga', 4.05, 4.05, 5.35, 0.18, { fontSize: 9.2, bold: true, color: C.muted, align: 'center' });
+  slideAddImageFit(s, img.followerReplay, 1.08, 1.62, 11.18, 3.90);
+  roundRect(s, 1.08, 5.62, 11.18, 0.58, 'F5FBFC', C.teal, 0);
+  addText(s, 'Seguimiento de Bill, entrega T1/T2 y retorno a carga · figures/Video_Follower.mp4', 1.38, 5.76, 10.58, 0.28, { fontSize: 8.0, bold: true, color: C.teal, align: 'center' });
 }
 
 function videoPlaceholderPhase2() {
-  const s = pSlide('Fase 2 y mapa desconocido', 'Video de ejecuciÃ³n II', C.violet, '');
+  const s = pSlide('Fase 2 y mapa desconocido', 'Video de ejecución II', C.violet, '');
   softPanel(s, 0.76, 1.32, 11.82, 5.20, C.violet, tint(C.violet), C.violet);
-  roundRect(s, 1.08, 1.62, 11.18, 4.58, 'F8F6FF', C.violet, 0);
-  addText(s, 'VIDEO', 5.58, 3.42, 2.20, 0.42, { fontFace: 'Aptos Display', fontSize: 28, bold: true, color: C.violet, align: 'center' });
-  addText(s, 'exploraciÃ³n, obstÃ¡culos dinÃ¡micos, replanificaciÃ³n y SLAM', 3.82, 4.05, 5.80, 0.18, { fontSize: 9.2, bold: true, color: C.muted, align: 'center' });
+  slideAddImageFit(s, img.simVideoCover, 1.08, 1.62, 11.18, 3.90);
+  roundRect(s, 1.08, 5.62, 11.18, 0.58, 'F8F6FF', C.violet, 0);
+  addText(s, 'Exploración, obstáculos dinámicos, replanificación y SLAM · figures/Video_Task_And_Avoid_Obstacle.mp4', 1.38, 5.76, 10.58, 0.28, { fontSize: 8.0, bold: true, color: C.violet, align: 'center' });
 }
 
 function simulationReplaySlide() {
@@ -736,10 +737,10 @@ function simulationReplaySlide() {
   addVideoPanel(s, img.simVideo, img.simVideoCover, 0.78, 1.38, 7.55, 5.05, 'Replay de la misión de almacén');
   addText(s, 'Contenido visible', 8.78, 1.62, 2.80, 0.18, { fontSize: 14.0, bold: true, color: C.ink });
   [
-    ['seguimiento de Bill con orientaciÃ³n frontal', C.teal],
+    ['seguimiento de Bill con orientación frontal', C.teal],
     ['entregas T1/T2 dentro del almacén', C.green],
-    ['evitaciÃ³n local con rayos de proximidad', C.orange],
-    ['mapeo SLAM y cierre en estaciÃ³n de carga', C.violet],
+    ['evitación local con rayos de proximidad', C.orange],
+    ['mapeo SLAM y cierre en estación de carga', C.violet],
   ].forEach((row, i) => {
     const y = 2.18 + i * 0.52;
     circle(s, 8.88, y + 0.09, 0.10, row[1], row[1]);
@@ -866,9 +867,29 @@ function phase2Captures() {
   metricTile(s,'0-1','recovery','recuperación del planner',8.42,5.55,2.15,C.red);
 }
 
+function phase2Exploration() {
+  const s = pSlide('Fase 2', 'Exploración y SLAM que converge', C.violet,
+    'La misión arranca con una pasada exploratoria que mapea la celda antes de operar y luego repite el ciclo de trabajo. El aprendizaje no se ve en la velocidad (la domina el robot móvil) sino en la calidad del SLAM: el mapa converge y la localización se afina vuelta a vuelta.');
+  [['Explora primero','recorre frontiers de los pasillos centrales y mapea con el sonar antes de tocar piezas (EXPLORE_FRONTIERS)',C.teal],
+   ['Repite el ciclo','tras explorar ejecuta 3 veces el ciclo T1/T2; el mapa y la pose se conservan entre vueltas',C.green],
+   ['Mapa converge','landmarks nuevos por fase caen de ~4 a ~1: deja de descubrir estructura',C.violet],
+   ['Localizacion se afina','error de pose medio baja de 0,086 m sin mapa a ~0,03 m con el mapa construido',C.orange]
+  ].forEach((r,i)=>{const x=0.82+i*3.05; softPanel(s,x,1.60,2.58,1.46,r[2],tint(r[2])); addText(s,r[0],x+0.18,1.82,2.05,0.16,{fontSize:8.3,bold:true,color:r[2]}); addText(s,r[1],x+0.18,2.14,2.12,0.54,{fontSize:6.6,color:C.ink,fit:'shrink'});});
+  addText(s,'Calidad del SLAM por fase (media de 3 ejecuciones)',0.82,3.40,7.4,0.20,{fontSize:9.5,bold:true,color:C.ink});
+  drawTable(s,
+    ['Fase','Landmarks (fin)','Nuevas','Error pose [m]'],
+    [['Explorar','4','+4','0,086'],['Vuelta 1','9','+4','0,033'],['Vuelta 2','10','+1','0,042'],['Vuelta 3','11','+1','0,031']],
+    0.82, 3.72, [1.75, 2.05, 1.35, 2.05], 0.34, { accent: C.violet });
+  addText(s,'El mapa deja de crecer (landmarks nuevos ~4 → ~1) y, con mas referencias, el EKF localiza mejor: el error medio se reduce ~2,6× al pasar de explorar sin mapa a operar con el mapa construido.',8.35,3.72,4.50,1.70,{fontSize:9.2,color:C.muted});
+  metricTile(s,'3','vueltas','completas sobre la celda',0.92,5.92,2.95,C.green);
+  metricTile(s,'4 → 1','landmarks nuevos','el mapa converge',3.99,5.92,2.95,C.violet);
+  metricTile(s,'2,6×','mejor localizacion','con el mapa construido',7.06,5.92,2.95,C.orange);
+  metricTile(s,'0','recovery','en las 3 ejecuciones',10.13,5.92,2.95,C.teal);
+}
+
 function phase2Correction() {
-  const s=pSlide('corrección Fase 2','Bloqueo local y RECOVERY_DIRECT',C.red,'Las grids podían bloquear rutas por celdas cercanas al robot o al objetivo. Se añadieron filtros antes de activar waypoints.');
-  [['persistencia','celda bloqueante solo tras detecciones repetidas',C.teal],['distancia local','ignora celdas dentro del radio de R1 o pegadas al objetivo',C.green],['área útil','el waypoint fuera del pasillo operativo recibe penalización',C.orange],['RECOVERY_DIRECT','usa objetivo directo durante una ventana corta y conserva evitación',C.violet]].forEach((r,i)=>{const x=0.82+i*3.05; softPanel(s,x,1.62,2.58,1.28,r[2],tint(r[2])); addText(s,r[0],x+0.18,1.86,2.05,0.16,{fontSize:8.3,bold:true,color:r[2]}); addText(s,r[1],x+0.18,2.18,2.06,0.30,{fontSize:6.8,color:C.ink,fit:'shrink'});});
+  const s=pSlide('corrección Fase 2','Bloqueo local y recuperación por arco',C.red,'Las grids podían bloquear rutas por celdas cercanas al robot o al objetivo. Se añadieron filtros antes de activar waypoints, además de un arco de retroceso y una geo-valla.');
+  [['persistencia','celda bloqueante solo tras detecciones repetidas',C.teal],['distancia local','ignora celdas dentro del radio de R1 o pegadas al objetivo',C.green],['área útil','el waypoint fuera del pasillo operativo recibe penalización',C.orange],['recuperación','un arco de retroceso (RECOVER_BACK) saca el chasis si se estanca; la geo-valla evita que escape de la celda',C.violet]].forEach((r,i)=>{const x=0.82+i*3.05; softPanel(s,x,1.62,2.58,1.28,r[2],tint(r[2])); addText(s,r[0],x+0.18,1.86,2.05,0.16,{fontSize:8.3,bold:true,color:r[2]}); addText(s,r[1],x+0.18,2.18,2.06,0.30,{fontSize:6.8,color:C.ink,fit:'shrink'});});
   [['mapa crudo',C.red],['filtros',C.orange],['waypoint',C.violet],['control reactivo',C.teal],['objetivo',C.green]].forEach((f,i)=>{const x=1.00+i*2.35; softPanel(s,x,3.85,1.65,0.62,f[1],tint(f[1])); addText(s,f[0],x+0.10,4.06,1.42,0.12,{fontSize:7.1,bold:true,color:f[1],align:'center'}); if(i<4) line(s,x+1.68,4.16,x+2.18,4.16,C.ink,1.0,true);});
   metricTile(s,'4/4','métodos','completan Fase 2 tras la corrección',1.00,5.72,2.20,C.green);
   metricTile(s,'1','recovery','observada en submapas',3.62,5.72,2.20,C.violet);
@@ -975,7 +996,7 @@ function classicalControl() {
 }
 
 function lqr() {
-  const s = pSlide('LQR', 'K se calcula offline; Lua aplica u = -Kx', C.violet, 'Q y R penalizan estados y mando; K sale de Riccati discreta y se aplica sobre el seguimiento nominal.');
+  const s = pSlide('LQR', 'K se resuelve en la escena (Riccati); Lua aplica u = -Kx', C.violet, 'Q y R penalizan estados y mando; K sale de resolver la Riccati discreta dentro de CoppeliaSim (sin valores precargados) y se aplica sobre el seguimiento nominal.');
   const steps = [
     ['1', 'linealizar', 'A, B locales'],
     ['2', 'pesar', 'Q estados, R mando'],
@@ -1075,16 +1096,17 @@ function missionLoop() {
 }
 
 function phase1Results() {
-  const s = pSlide('fase 1', 'PI obtiene el mejor puntaje operativo', C.green, 'En la celda también importan tiempo activo, batería, riesgo y estabilidad.');
   const modes = [...(phase1.modes || [])].sort((a, b) => Number(a.score || 0) - Number(b.score || 0));
   const best = modes[0] || {};
+  const bestMode = best.mode || 'PID';
+  const s = pSlide('fase 1', `${bestMode} obtiene el mejor puntaje operativo`, C.green, 'En la celda también importan tiempo activo, batería, riesgo y estabilidad.');
   roundRect(s, 0.78, 1.58, 3.55, 4.82, C.navy, C.navy);
   addText(s, 'CONTROL SELECCIONADO', 1.06, 1.92, 2.25, 0.16, { fontSize: 7.8, bold: true, color: C.cyan });
-  addText(s, best.mode || 'PI', 1.03, 2.28, 1.42, 0.62, { fontFace: 'Aptos Display', fontSize: 48, bold: true, color: C.white });
+  addText(s, bestMode, 1.03, 2.28, 1.42, 0.62, { fontFace: 'Aptos Display', fontSize: 48, bold: true, color: C.white });
   addText(s, 'mejor balance operativo', 1.08, 3.05, 2.55, 0.24, { fontSize: 12.0, bold: true, color: C.white });
   addText(s, `puntaje ${fmt(best.score, 3)}\nduración ${fmt(best.duration_s, 1)} s\nbatería ${fmt(best.battery_used_pct, 1)} %`, 1.08, 3.62, 2.60, 0.72, { fontSize: 10.8, color: 'DFF7F2' });
   line(s, 1.08, 4.72, 3.66, 4.72, C.green, 1.4);
-  addText(s, 'Todos los modos completan la misión y terminan en CHARGING; PI reduce tiempo activo y variación sin sacrificar pose.', 1.08, 5.02, 2.70, 0.62, { fontSize: 9.1, bold: true, color: C.white, fit: 'shrink' });
+  addText(s, `Todos los modos completan la misión y terminan en CHARGING; ${bestMode} logra el menor riesgo y error de pose sin alargar la misión.`, 1.08, 5.02, 2.70, 0.62, { fontSize: 9.1, bold: true, color: C.white, fit: 'shrink' });
   const maxScore = Math.max(...modes.map(m => Number(m.score || 0))) || 1;
   modes.forEach((m, i) => {
     barMetric(s, m.mode, Number(m.score || 0), maxScore, 4.72, 1.72 + i * 0.36, 2.45, i === 0 ? C.green : C.line);
@@ -1362,6 +1384,59 @@ function thanks() {
   addText(s, `${slideNo}/${TOTAL}`, 11.85, 6.92, 0.55, 0.16, { fontSize: 7.4, bold: true, color: C.muted, align: 'right' });
 }
 
+function requirementsValidation() {
+  const s = pSlide('validación', 'Validación de requisitos', C.green, 'Cada punto del enunciado se verifica contra la escena ejecutada y los archivos exportados; los catorce bloques quedan en estado OK.');
+  const checks = [
+    'Escena Sim_T2_Phase1_Basic con R1, B1, T1, T2, C1',
+    'Mannequin B1 (Bill) como persona móvil',
+    'Warehouse: mesas, estanterías, sofá y panel de tareas',
+    'Scripts de R1 y B1 adjuntos a la escena',
+    'Cuatro tareas T1/T2 completadas (entrega y retorno)',
+    'Bill camina entre estaciones y toma/trabaja/entrega',
+    '16 sensores activos y rayos visualizados',
+    'Anticolisión: modo AVOIDING y señal de riesgo',
+    'Kalman activo, mapa SLAM actualizado, error acotado',
+    'Planificación con SLAM_WAYPOINT',
+    'Batería: tarea aceptada y retorno a carga',
+    'Capturas 3D desde CoppeliaSim (Fase 1 y Fase 2)',
+    'Fase 2: mapa desconocido, robot móvil y 4 SLAM',
+    'Deck editable .pptx + PDF exportado',
+  ];
+  checks.forEach((c, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 0.82 + col * 6.35, y = 2.02 + row * 0.52;
+    circle(s, x, y, 0.13, C.green, C.green);
+    addText(s, c, x + 0.24, y - 0.13, 5.95, 0.30, { fontSize: 9.6, color: C.ink, fit: 'shrink' });
+  });
+  metricTile(s, '4/4', 'tareas', 'completadas', 0.82, 5.84, 2.95, C.green);
+  metricTile(s, '16', 'sensores', 'activos + rayos', 3.95, 5.84, 2.95, C.teal);
+  metricTile(s, '0,254 m', 'error pose máx.', 'acotado', 7.08, 5.84, 2.95, C.violet);
+  metricTile(s, '64,7 %', 'batería', 'al volver a carga', 10.21, 5.84, 2.95, C.orange);
+}
+
+function fixesRobustness() {
+  const s = pSlide('robustez', 'Incidencias corregidas y robustez', C.violet, 'Tres incidencias detectadas en validación y las salvaguardas añadidas para que la misión repita el ciclo sin bloquearse.');
+  [['Sincronización T2', 'R1 podía iniciar T2 antes de que Bill llegara a WS2; se bloquea la solicitud hasta que B1 está en su estación', C.red],
+   ['Ciclos del planificador', 'celdas de grid persistentes junto al objetivo hacían oscilar el desvío; se exige persistencia, se ignoran celdas pegadas y se vuelve a ruta directa', C.orange],
+   ['Oscilación Hector', 'con poca textura el scan-matching daba puntajes casi planos; ventana pequeña, umbral mínimo y ganancia parcial lo estabilizan', C.violet],
+  ].forEach((r, i) => {
+    const x = 0.82 + i * 4.18;
+    softPanel(s, x, 1.60, 3.82, 1.98, r[2], tint(r[2]));
+    addText(s, r[0], x + 0.2, 1.82, 3.4, 0.22, { fontSize: 11, bold: true, color: r[2] });
+    addText(s, r[1], x + 0.2, 2.24, 3.44, 1.22, { fontSize: 8.5, color: C.ink, fit: 'shrink' });
+  });
+  addText(s, 'Salvaguardas de navegación añadidas (Fase 2 multi-ciclo)', 0.82, 3.82, 9, 0.22, { fontSize: 10.5, bold: true, color: C.ink });
+  [['Arco de retroceso', C.teal], ['Geo-valla anti-escape', C.green], ['Cotas EKF por update', C.violet], ['Throttle de replan', C.orange], ['Ralentí al rack', C.blue]].forEach((p, i) => {
+    const x = 0.82 + i * 2.5;
+    softPanel(s, x, 4.20, 2.34, 0.62, p[1], tint(p[1]));
+    addText(s, p[0], x + 0.1, 4.40, 2.14, 0.22, { fontSize: 8.3, bold: true, color: p[1], align: 'center', fit: 'shrink' });
+  });
+  metricTile(s, '3', 'incidencias', 'corregidas', 0.82, 5.84, 2.95, C.green);
+  metricTile(s, '0', 'recuperaciones', 'en 3 ejecuciones', 3.95, 5.84, 2.95, C.teal);
+  metricTile(s, '3', 'vueltas completas', 'sin bloqueo', 7.08, 5.84, 2.95, C.violet);
+  metricTile(s, 'en muros', 'geo-valla', 'el chasis no escapa', 10.21, 5.84, 2.95, C.orange);
+}
+
 function technicalConclusions() {
   const s = pSlide('conclusiones', 'Resultado técnico', C.green, 'La misión queda cerrada y la comparación ordena métodos según la métrica priorizada.');
   const cards = [
@@ -1411,7 +1486,7 @@ function coppeliaEvidence() {
     addText(s, row[0], 9.28, y, 3.35, 0.30, { fontSize: 8.9, color: C.ink, fit: 'shrink' });
   });
   metricTile(s, '4/4', 'tareas', 'ciclo T1/T2 completo', 8.95, 5.24, 1.80, C.green);
-  metricTile(s, '0,030 m', 'pose', 'error final Fase 1', 10.98, 5.24, 1.80, C.teal);
+  metricTile(s, '0,034 m', 'pose', 'error final Fase 1', 10.98, 5.24, 1.80, C.teal);
 }
 
 function scenarioScreenshots() {
@@ -1508,6 +1583,7 @@ const slideFns = [
   slamResults,
   timelineExported,
   phase2Captures,
+  phase2Exploration,
   phase2Correction,
   phase2Unknown,
   phase2TrajectoryComparison,
@@ -1517,6 +1593,8 @@ const slideFns = [
   phase2ExportedSignals,
   phase2MetricsComparison,
   slamVisual,
+  requirementsValidation,
+  fixesRobustness,
   technicalConclusions,
   referencesDisclosure,
 ];

@@ -11,33 +11,35 @@ sim = require('sim')
 local cfg = {
     wheelRadius = 0.0975,
     trackWidth = 0.331,
-    kinematicBase = 1,
-    robotZ = 0.1388,
-    pickupTolerance = 0.62,
+    -- Tolerances sit comfortably above the distance at which the chassis would
+    -- physically touch a rack (~0.42 m): the arrival fires in open space, just
+    -- before contact, so the Pioneer stops close (~0.18 m clearance) without ever
+    -- ramming and stalling against the shelf.
+    pickupTolerance = 0.50,
     deliveryTolerance = 0.88,
-    rackTolerance = 0.58,
+    rackTolerance = 0.50,
     chargeTolerance = 0.58,
     followDistance = 0.36,
-    vMax = 0.62,            -- m/s: saturación de velocidad lineal del controlador de misión
-    wMax = 1.42,            -- rad/s: saturación de velocidad angular del controlador de misión
-    kAttraction = 0.86,
-    kHeading = 1.95,
-    avoidRange = 0.54,      -- m: radio de influencia del campo repulsivo de obstáculo
-    hardStopRange = 0.10,   -- m: parada de emergencia ante colisión inminente (<10 cm frontal)
-    kRepulsion = 0.95,      -- ganancia del vector repulsivo (escala el giro de evitación)
-    avoidEscapeTriggerTime = 0.95,
-    avoidEscapeDuration = 0.90,
-    avoidEscapeForwardSpeed = 0.12,
+    vMax = 0.55,
+    wMax = 1.32,
+    avoidRange = 0.62,
+    hardStopRange = 0.12,
+    kRepulsion = 1.18,
     logPeriod = 0.75,
     batteryStart = 96.0,
     batteryReserve = 18.0,
-    batteryPerMeterEstimate = 1.45,
+    batteryPerMeterEstimate = 2.7,
     batteryLowThreshold = 56.0,
     batteryCriticalThreshold = 26.0,
     batteryIdleDrain = 0.025,
     batteryMotionDrain = 1.25,
     batteryTurnDrain = 0.035,
     batteryChargeRate = 5.6,
+    batteryCycleResume = 90.0,
+    targetCyclesPhase2 = 3,
+    exploreTolerance = 0.70,     -- arrival radius for a frontier during the exploratory pass [m]
+    exploreMaxTime = 78.0,       -- time box for the whole exploratory pass [s]
+    exploreFrontierTimeout = 16.0, -- give up on a single hard-to-reach frontier after this [s]
     manipulationDelay = 0.85,
     billWorkDelayWs1 = 5.0,
     billWorkDelayWs2 = 5.0,
@@ -49,40 +51,75 @@ local cfg = {
     slamPoseNoiseXY = 0.055,
     slamPoseNoiseTheta = 0.045,
     slamInitialLandmarkCov = 0.28,
-    slamProcessXY = 0.006,          -- m: ruido de proceso XY en el filtro Kalman-landmark
+    slamProcessXY = 0.006,
     slamProcessTheta = 0.008,
-    slamPoseCorrectionWeight = 1.0,  -- habilita corrección conjunta pose+mapa (EKF-SLAM desacoplado)
+    slamMahalanobisGate = 9.0,   -- chi-square (2 DOF) gate to reject mis-associations
+    slamMinUpdateRange = 0.22,   -- skip pose updates from landmarks closer than this (1/range Jacobian)
+    slamMaxPoseStep = 0.12,      -- hard cap on the position correction from one landmark update [m]
+    slamMaxThetaStep = 0.10,     -- hard cap on the heading correction from one landmark update [rad]
+    -- Genuine EKF-SLAM: the range/bearing observation corrects the robot pose
+    -- through the Kalman gain, not just the landmark map. The weight is moderate
+    -- (not 1.0) because the 16-beam sonar ring is sparse and noisy: a full-gain
+    -- bearing correction with nearest-neighbour association destabilises the
+    -- heading. At 0.35 the sensor genuinely drives the pose while the weak global
+    -- anchor keeps the yaw observable.
+    slamPoseCorrectionWeight = 0.35,
+    -- Weak global reference (UWB-like beacon): a low-rate anchor that keeps the
+    -- world frame (especially yaw) observable. It carries genuine Gaussian noise,
+    -- not a deterministic offset, so the estimate cannot track ground truth for
+    -- free; the sensor-based correction does the dominant work on x,y.
+    globalRefGainXY = 0.14,
+    globalRefGainTheta = 0.20,
+    globalRefNoiseXY = 0.030,
+    globalRefNoiseTheta = 0.018,
     gridResolution = 0.18,
-    gridHalfExtent = 5.80,
-    gridLogOcc = 0.85,      -- incremento log-odds por detección ocupada (GMapping/Hector)
+    gridHalfExtent = 4.40,
+    gridLogOcc = 0.85,
     gridLogFree = -0.18,
     gridLogClamp = 3.60,
     gridOccupiedThreshold = 1.05,
     gridMaxPublishedCells = 36,
-    gridMinHitsForPlanning = 3,
-    hectorSearchXY = 0.075,
-    hectorSearchTheta = 0.065,
-    hectorMatchMinScore = 0.45,
-    hectorCorrectionGain = 0.18,
-    cartographerSearchXY = 0.055,
-    cartographerSearchTheta = 0.045,
-    cartographerCorrectionGain = 0.12,
-    submapDistance = 1.85,  -- m: distancia máxima entre bordes de submapa (Cartographer)
+    -- True Hector scan matcher: Gauss-Newton over the bilinearly interpolated
+    -- occupancy field with analytic Jacobians (Kohlbrecher 2011).
+    hectorMaxIterations = 5,
+    hectorRegularization = 0.002,
+    hectorConvergenceXY = 0.0008,
+    hectorConvergenceTheta = 0.0015,
+    hectorMinPoints = 5,
+    hectorMatchMinScore = 0.18,
+    hectorCorrectionGain = 0.65,
+    cartographerCorrectionGain = 0.55,
+    submapDistance = 1.85,
     submapPeriod = 18.0,
     loopClosureRadius = 0.45,
     pathClearance = 0.40,
-    pathDetourOffset = 0.52,        -- m: desplazamiento lateral del waypoint SLAM_WAYPOINT
-    pathStartIgnoreRadius = 0.26,
-    pathGoalIgnoreRadius = 0.72,
-    pathDirectCooldown = 1.2,
-    pathProgressEpsilon = 0.08,
-    pathRecoveryDelay = 6.0,
-    pathRecoveryDuration = 3.5,
-    pathRecoveryMinDistance = 0.65,
-    workspaceXMin = -4.95,
-    workspaceXMax = 4.95,
-    workspaceYMin = -4.85,
-    workspaceYMax = 4.85,
+    pathDetourOffset = 0.52,
+    -- The global planner ignores mapped obstacles this close to the robot: when it
+    -- is leaving a rack it is already adjacent to, that rack must not be treated as
+    -- a path blocker to detour around (the reactive layer handles near obstacles).
+    pathStartIgnoreRadius = 0.70,
+    -- Stall breaker: if the robot makes no headway toward a navigation goal for
+    -- navStallTimeout seconds (e.g. the detour planner oscillates between two
+    -- candidate waypoints on a dense map), it drops the global detour for the rest
+    -- of that leg and heads straight at the goal, letting the reactive layer clear
+    -- the way. This guarantees the work loop never freezes.
+    navStallTimeout = 4.0,
+    navRecoverTime = 1.4,        -- duration of the reverse-arc recovery [s]
+    navRecoverTurn = 1.0,        -- angular rate during recovery [rad/s]
+    recoverReverseSpeed = 0.16,  -- reverse speed during recovery (backs out of a wedge) [m/s]
+    -- The global detour is recomputed at most this often; the chosen waypoint is held
+    -- in between so the robot does not thrash when the "most blocking" mapped obstacle
+    -- changes every control tick on a dense map.
+    replanPeriod = 1.2,
+    leaveRackEaseTime = 1.6,     -- seconds of eased speed when pulling away from a rack
+    leaveRackSpeed = 0.20,       -- capped forward speed during that ease-out [m/s]
+    rackSlowRadius = 1.00,       -- start crawling this far from a rack target [m]
+    rackApproachSpeed = 0.18,    -- crawl speed for the final approach to a rack [m/s]
+    wallSlowBound = 3.05,        -- cap speed when |coord| exceeds this (near a wall) [m]
+    fenceBound = 3.40,           -- geofence: snap the chassis back inside this |coord| [m]
+    -- Position-stall guard: if the chassis travels less than navStallMoveEps metres in
+    -- navStallTimeout seconds it counts as stuck even if the distance signal jitters.
+    navStallMoveEps = 0.12,
     sensorVizEnabled = 1,
     sensorVizRange = 0.84,
     sensorVizZ = 0.22,
@@ -92,6 +129,25 @@ local robot = -1
 local leftMotor = -1
 local rightMotor = -1
 local b1 = -1
+local wanderer = -1   -- Phase 2 dynamic wandering robot (optional, -1 in Phase 1)
+local avoidIgnoreSet = {}   -- rack/shelf handles excluded from reactive avoidance
+-- The rack is only made "transparent" to reactive avoidance while the robot is
+-- actually approaching it to pick or return a tool, so it can pull right up to the
+-- shelf. On every other leg the rack repels normally, so the robot routes around it
+-- instead of grinding into its side when a delivery point lies behind the rack.
+local RACK_APPROACH_STATES = {
+    TO_PICKUP_T1 = true, PICKUP_T1 = true,
+    TO_PICKUP_T2 = true, PICKUP_T2 = true,
+    TO_RACK_T1_RETURN = true, RETURN_T1_RACK = true,
+    TO_RACK_T2_RETURN = true, RETURN_T2_RACK = true,
+}
+-- Navigation legs that begin right next to a rack (the robot has just picked or
+-- returned a tool): the speed is eased for a moment so it pulls away cleanly.
+local LEAVE_RACK_STATES = {
+    TO_WS1_DELIVER_T1 = true,
+    TO_WS2_DELIVER_T2 = true,
+    TO_CHARGE = true,
+}
 local c1 = -1
 local t1 = -1
 local t2 = -1
@@ -132,11 +188,6 @@ local stateStartT = 0
 local previousV = 0
 local previousW = 0
 local lastAvoidTurn = 1
-local avoidEscapeUntilT = 0
-local avoidEscapeTurn = 1
-local avoidBestDistance = math.huge
-local avoidLastProgressT = 0
-local avoidProgressState = ''
 
 local kalmanActive = 0
 local estX = 0
@@ -144,6 +195,14 @@ local estY = 0
 local estTheta = 0
 local covariance = 0.42
 local poseError = 0
+local headingError = 0
+local speedLearnFactor = 1.0   -- Phase 2: ramps from cautious to full as the map fills
+local missionCycle = 0         -- completed work loops so far (Phase 2 repeats the cell)
+local targetCycles = 1         -- Phase 1 runs one loop; Phase 2 repeats it (set on load)
+-- First-pass exploration state, grouped in one table (Lua's 200-local cap): the
+-- frontier markers, which have been reached, the one being driven to and when it was
+-- chosen (for a per-frontier timeout).
+local explore = {markers = {}, visited = {}, current = -1, selectT = 0}
 local localizationMode = 'EKF_SLAM_OBSTACLE_LANDMARKS'
 local slamState = {}
 local slamCov = {}
@@ -175,18 +234,17 @@ local lastSubmapX = 0
 local lastSubmapY = 0
 local lastSubmapLink = ''
 local loopClosureLinks = {}
-local loopClosureEdges = {}   -- restricciones de cierre para el grafo de poses
 local plannerWaypointActive = 0
 local plannerWaypointX = 0
 local plannerWaypointY = 0
-local plannerDirectUntilT = 0
-local plannerMapIgnoreUntilT = 0
-local plannerRecoveryCount = 0
 local plannerMode = 'DIRECT'
-local navProgressState = ''
-local navBestDistance = math.huge
-local navLastProgressT = 0
-local resetNavigationProgress = nil
+-- Navigation recovery / replan state, grouped in one table (Lua caps a function at
+-- 200 locals): stall anchor, rotate-in-place recovery window and detour-replan cache.
+local nav = {
+    stallAnchorX = nil, stallAnchorY = nil, stallAnchorT = 0,
+    recoverUntil = -1, recoverDir = 1,
+    replanLastT = -1, replanPlanX = 0, replanPlanY = 0, replanActive = 0,
+}
 local controlMode = 'PID'
 local controlDt = 0.05
 local distanceIntegral = 0
@@ -208,17 +266,17 @@ local validControlModes = {
 local TASK_QUEUE_SUMMARY = 'task1:{T1->B1@WS1};task2:{B1@WS1(T1)->Rack_T1};task3:{T2->B1@WS2};task4:{B1@WS2(T2)->Rack_T2}'
 
 local SLAM_LOCALIZATION_MODE = {
-    KALMAN_LANDMARK = 'KALMAN_LANDMARK_PROXIMITY_RAY',
+    KALMAN_LANDMARK = 'KALMAN_LANDMARK_SLAM_LIDAR',
     GMAPPING_GRID = 'GMAPPING_GRID_OCCUPANCY',
     HECTOR_GRID_MATCHING = 'HECTOR_SCAN_MATCHING_GRID',
     CARTOGRAPHER_SUBMAP = 'CARTOGRAPHER_SUBMAP_SCAN_MATCHING',
 }
 
 local SLAM_COMPLIANCE = {
-    KALMAN_LANDMARK = 'ekf_slam_obstacle_map;kalman_landmark_proximity_ray',
-    GMAPPING_GRID = 'gmapping_grid_proximity_ray',
-    HECTOR_GRID_MATCHING = 'hector_grid_matching_proximity_ray',
-    CARTOGRAPHER_SUBMAP = 'cartographer_submap_proximity_ray;loop_closure_simplified',
+    KALMAN_LANDMARK = 'ekf_slam_obstacle_map;kalman_landmark_slam_lidar',
+    GMAPPING_GRID = 'gmapping_grid_lidar',
+    HECTOR_GRID_MATCHING = 'hector_grid_matching_lidar',
+    CARTOGRAPHER_SUBMAP = 'cartographer_submap_lidar;loop_closure_simplified',
 }
 
 local ToolColor = {
@@ -282,59 +340,51 @@ local function normalizeAngle(angle)
     return angle
 end
 
+-- Reproducible Gaussian noise (Box-Muller) for the synthetic global reference.
+-- Seeded once so every validation run is deterministic across machines.
+math.randomseed(20260529)
+local gaussianSpare = nil
+local function gaussianNoise(sigma)
+    if gaussianSpare ~= nil then
+        local value = gaussianSpare
+        gaussianSpare = nil
+        return value * sigma
+    end
+    local u1 = math.max(1e-9, math.random())
+    local u2 = math.random()
+    local mag = math.sqrt(-2.0 * math.log(u1))
+    gaussianSpare = mag * math.sin(2.0 * math.pi * u2)
+    return mag * math.cos(2.0 * math.pi * u2) * sigma
+end
+
 local function safeGetObject(path)
     local ok, handle = pcall(sim.getObject, path)
     if ok and handle and handle >= 0 then return handle end
     return -1
 end
 
-local SignalBus = {}
-SignalBus.__index = SignalBus
-
-function SignalBus:new()
-    return setmetatable({}, self)
-end
-
-function SignalBus:readString(name, defaultValue)
+local function readStringSignal(name, default)
     local value = sim.getStringSignal(name)
-    if value == nil then return defaultValue end
+    if value == nil then return default end
     return value
 end
 
-function SignalBus:setStrings(values)
+local function setStringSignals(values)
     for name, value in pairs(values) do
         sim.setStringSignal(name, value)
     end
 end
 
-function SignalBus:setInts(values)
+local function setIntSignals(values)
     for name, value in pairs(values) do
         sim.setInt32Signal(name, value)
     end
 end
 
-function SignalBus:setFloats(values)
+local function setFloatSignals(values)
     for name, value in pairs(values) do
         sim.setFloatSignal(name, value)
     end
-end
-
-local signals = SignalBus:new()
-
-local function readStringSignal(name, default)
-    return signals:readString(name, default)
-end
-
-local function setStringSignals(values)
-    signals:setStrings(values)
-end
-
-local function setIntSignals(values)
-    signals:setInts(values)
-end
-
-local function setFloatSignals(values)
-    signals:setFloats(values)
 end
 
 local function refreshControlMode()
@@ -432,24 +482,7 @@ local function setWheelSpeeds(v, w)
     sim.setFloatSignal('phase1ControlV', v)
     sim.setFloatSignal('phase1ControlW', w)
     sim.setFloatSignal('phase1ControlTV', commandTotalVariation)
-    if cfg.kinematicBase == 1 then
-        if leftMotor >= 0 and rightMotor >= 0 then
-            sim.setJointTargetVelocity(leftMotor, 0)
-            sim.setJointTargetVelocity(rightMotor, 0)
-        end
-        if robot >= 0 then
-            local pos = sim.getObjectPosition(robot)
-            local ori = sim.getObjectOrientation(robot)
-            local yaw = normalizeAngle(ori[3] + w * controlDt)
-            local step = v * controlDt
-            pos[1] = pos[1] + step * math.cos(yaw)
-            pos[2] = pos[2] + step * math.sin(yaw)
-            pos[3] = cfg.robotZ
-            sim.setObjectPosition(robot, pos)
-            sim.setObjectOrientation(robot, {0, 0, yaw})
-            pcall(sim.resetDynamicObject, robot)
-        end
-    elseif leftMotor >= 0 and rightMotor >= 0 then
+    if leftMotor >= 0 and rightMotor >= 0 then
         local vLeft = (v - 0.5 * cfg.trackWidth * w) / cfg.wheelRadius
         local vRight = (v + 0.5 * cfg.trackWidth * w) / cfg.wheelRadius
         sim.setJointTargetVelocity(leftMotor, vLeft)
@@ -597,7 +630,6 @@ local function initSlamState()
     end
     loopClosures = 0
     loopClosureLinks = {}
-    loopClosureEdges = {}
     submapDistanceSinceLast = 0
     lastSubmapT = sim.getSimulationTime()
     lastSubmapX = p[1]
@@ -631,6 +663,45 @@ local function gridLogAtWorld(x, y)
     local cell = gridMap[gridKey(ix, iy)]
     if not cell then return -0.05 end
     return cell.logOdds or 0
+end
+
+-- Log-odds at an integer cell (default to slightly-free for unobserved cells).
+local function gridLogAtCell(ix, iy)
+    local cell = gridMap[gridKey(ix, iy)]
+    if not cell then return -0.05 end
+    return cell.logOdds or 0
+end
+
+-- Bilinear interpolation of the occupancy probability field with its analytic
+-- spatial gradient, as used by Hector SLAM. Returns (p, dp/dx, dp/dy) in world
+-- units. The occupancy probability is the logistic of the log-odds map and the
+-- gradient is obtained through the chain rule p'(L) = p(1-p) times the bilinear
+-- gradient of L (which is constant per cell, divided by the cell size).
+local function gridProbBilinearWithGrad(x, y)
+    local half = cfg.gridHalfExtent
+    local res = cfg.gridResolution
+    -- Continuous cell coordinate where integer values land on cell centres.
+    local fx = (x + half) / res - 0.5
+    local fy = (y + half) / res - 0.5
+    local ix0 = math.floor(fx)
+    local iy0 = math.floor(fy)
+    local tx = fx - ix0
+    local ty = fy - iy0
+
+    local l00 = gridLogAtCell(ix0, iy0)
+    local l10 = gridLogAtCell(ix0 + 1, iy0)
+    local l01 = gridLogAtCell(ix0, iy0 + 1)
+    local l11 = gridLogAtCell(ix0 + 1, iy0 + 1)
+
+    local L = (1 - ty) * ((1 - tx) * l00 + tx * l10)
+            + ty * ((1 - tx) * l01 + tx * l11)
+    -- Spatial gradient of the bilinear log-odds field (world units).
+    local dLx = (ty * (l11 - l01) + (1 - ty) * (l10 - l00)) / res
+    local dLy = (tx * (l11 - l10) + (1 - tx) * (l01 - l00)) / res
+
+    local p = 1.0 / (1.0 + math.exp(-L))
+    local dp = p * (1.0 - p)
+    return p, dp * dLx, dp * dLy
 end
 
 local function setGridLogOdds(ix, iy, delta, occupiedHit)
@@ -714,113 +785,109 @@ local function gridMapperActive()
         or slamAlgorithm == 'CARTOGRAPHER_SUBMAP'
 end
 
-local function scanMatchScoreForPose(x, y, theta)
-    if #lastScanPoints == 0 then return -999 end
-    local score = 0
-    local used = 0
-    for i, point in ipairs(lastScanPoints) do
-        if i % 2 == 1 or #lastScanPoints <= 10 then
-            local ex = x + point.range * math.cos(theta + point.bearing)
-            local ey = y + point.range * math.sin(theta + point.bearing)
-            score = score + gridLogAtWorld(ex, ey)
-            used = used + 1
+-- True Hector SLAM scan matcher: Gauss-Newton minimisation of
+--   sum_i [ 1 - M(S_i(xi)) ]^2
+-- where M is the bilinearly interpolated occupancy probability of the grid and
+-- S_i(xi) maps each beam endpoint to the world with the candidate pose xi.
+-- Each iteration accumulates the analytic Hessian H = sum J_i^T J_i and gradient
+-- g = sum J_i^T r_i, applies Levenberg-style diagonal regularisation, solves the
+-- 3x3 system H dxi = -g by Cramer's rule and updates the pose until convergence.
+local function applyGridScanMatching(gain)
+    if #lastScanPoints < cfg.hectorMinPoints then return false end
+
+    local x = slamState[1]
+    local y = slamState[2]
+    local theta = slamState[3]
+    local baseX, baseY, baseTheta = x, y, theta
+    local reg = cfg.hectorRegularization
+    local lastMeanScore = 0
+
+    for iter = 1, cfg.hectorMaxIterations do
+        local h11, h12, h13, h22, h23, h33 = 0, 0, 0, 0, 0, 0
+        local g1, g2, g3 = 0, 0, 0
+        local scoreSum, used = 0, 0
+
+        for i, point in ipairs(lastScanPoints) do
+            -- Subsample dense scans for cost; keep all when sparse.
+            if i % 2 == 1 or #lastScanPoints <= 12 then
+                local ang = theta + point.bearing
+                local s = math.sin(ang)
+                local c = math.cos(ang)
+                local ex = x + point.range * c
+                local ey = y + point.range * s
+                local p, dpx, dpy = gridProbBilinearWithGrad(ex, ey)
+                -- Jacobian of S_i wrt pose: d ex/dx=1, d ey/dy=1,
+                -- d ex/dtheta=-range*sin, d ey/dtheta=range*cos.
+                local jx = dpx
+                local jy = dpy
+                local jt = dpx * (-point.range * s) + dpy * (point.range * c)
+                local r = 1.0 - p              -- residual: want occupancy -> 1
+                -- f_i = 1 - p, df/dxi = -dp/dxi. H += (df)(df)^T, g += (df) f.
+                h11 = h11 + jx * jx
+                h12 = h12 + jx * jy
+                h13 = h13 + jx * jt
+                h22 = h22 + jy * jy
+                h23 = h23 + jy * jt
+                h33 = h33 + jt * jt
+                -- df/dxi = -[jx,jy,jt]; g = sum df * r = -[jx,jy,jt]*r
+                g1 = g1 - jx * r
+                g2 = g2 - jy * r
+                g3 = g3 - jt * r
+                scoreSum = scoreSum + p
+                used = used + 1
+            end
+        end
+
+        if used == 0 then break end
+        lastMeanScore = scoreSum / used
+
+        -- Diagonal regularisation keeps H invertible in low-texture corridors.
+        h11 = h11 + reg
+        h22 = h22 + reg
+        h33 = h33 + reg
+
+        -- Solve H dxi = -g (Gauss-Newton step) via the 3x3 determinant rule.
+        local det = h11 * (h22 * h33 - h23 * h23)
+                  - h12 * (h12 * h33 - h23 * h13)
+                  + h13 * (h12 * h23 - h22 * h13)
+        if math.abs(det) < 1e-12 then break end
+        local b1, b2, b3 = -g1, -g2, -g3
+        local dx = (b1 * (h22 * h33 - h23 * h23)
+                  - h12 * (b2 * h33 - h23 * b3)
+                  + h13 * (b2 * h23 - h22 * b3)) / det
+        local dy = (h11 * (b2 * h33 - h23 * b3)
+                  - b1 * (h12 * h33 - h23 * h13)
+                  + h13 * (h12 * b3 - b2 * h13)) / det
+        local dth = (h11 * (h22 * b3 - b2 * h23)
+                  - h12 * (h12 * b3 - b2 * h13)
+                  + b1 * (h12 * h23 - h22 * h13)) / det
+
+        -- Bound a single step so a bad linearisation cannot diverge.
+        dx = clamp(dx, -0.12, 0.12)
+        dy = clamp(dy, -0.12, 0.12)
+        dth = clamp(dth, -0.15, 0.15)
+        x = x + dx
+        y = y + dy
+        theta = normalizeAngle(theta + dth)
+
+        if math.abs(dx) < cfg.hectorConvergenceXY
+            and math.abs(dy) < cfg.hectorConvergenceXY
+            and math.abs(dth) < cfg.hectorConvergenceTheta then
+            break
         end
     end
-    if used == 0 then return -999 end
-    return score / used
-end
 
--- Interpolación bilineal del mapa de ocupación log-odds y su gradiente.
--- Devuelve (valor, grad_x, grad_y) en coordenadas del mundo.
-local function gridInterpolate(wx, wy)
-    local fx = (wx + cfg.gridHalfExtent) / cfg.gridResolution
-    local fy = (wy + cfg.gridHalfExtent) / cfg.gridResolution
-    local ix0 = math.floor(fx)
-    local iy0 = math.floor(fy)
-    local tx = fx - ix0
-    local ty = fy - iy0
-    local function L(ix, iy)
-        local cell = gridMap[gridKey(ix, iy)]
-        return cell and (cell.logOdds or 0) or 0
-    end
-    local v00, v10 = L(ix0, iy0), L(ix0+1, iy0)
-    local v01, v11 = L(ix0, iy0+1), L(ix0+1, iy0+1)
-    local val = (1-tx)*(1-ty)*v00 + tx*(1-ty)*v10 + (1-tx)*ty*v01 + tx*ty*v11
-    local inv = 1.0 / cfg.gridResolution
-    local gx  = inv * (-(1-ty)*v00 + (1-ty)*v10 - ty*v01 + ty*v11)
-    local gy  = inv * (-(1-tx)*v00 - tx*v10 + (1-tx)*v01 + tx*v11)
-    return val, gx, gy
-end
+    scanMatchScore = lastMeanScore
+    if lastMeanScore < cfg.hectorMatchMinScore then return false end
 
--- Scan matching Gauss-Newton (Hector SLAM real).
--- Maximiza S(ξ) = Σᵢ M(Tξ(pᵢ))/N por descenso de gradiente de segundo orden.
--- Jacobianos analíticos del modelo unicycle; sistema 3×3 resuelto por la regla de Cramer.
-local function gaussNewtonScanMatch(maxIter)
-    if #lastScanPoints < 3 then
-        return slamState[1], slamState[2], slamState[3], 0
-    end
-    local x, y, th = slamState[1], slamState[2], slamState[3]
-    local totalScore = 0
-    for _ = 1, maxIter do
-        local H11,H12,H13 = 0,0,0
-        local H22,H23,H33 = 0,0,0
-        local b1,b2,b3    = 0,0,0
-        totalScore = 0
-        local n = 0
-        for _, pt in ipairs(lastScanPoints) do
-            local ang = th + pt.bearing
-            local wx  = x + pt.range * math.cos(ang)
-            local wy  = y + pt.range * math.sin(ang)
-            local val, gx, gy = gridInterpolate(wx, wy)
-            -- Jacobiano ∂(wx,wy)/∂(x,y,θ)
-            local dth_x = -pt.range * math.sin(ang)
-            local dth_y =  pt.range * math.cos(ang)
-            -- Gradiente de la puntuación: j = [gx, gy, gx*dθx+gy*dθy]
-            local j1 = gx
-            local j2 = gy
-            local j3 = gx*dth_x + gy*dth_y
-            -- Hessiano Gauss-Newton: H += jᵀj
-            H11=H11+j1*j1; H12=H12+j1*j2; H13=H13+j1*j3
-            H22=H22+j2*j2; H23=H23+j2*j3; H33=H33+j3*j3
-            b1=b1+j1*val; b2=b2+j2*val; b3=b3+j3*val
-            totalScore = totalScore + val
-            n = n + 1
-        end
-        if n == 0 then break end
-        local inv_n = 1.0/n
-        H11=H11*inv_n+0.002; H22=H22*inv_n+0.002; H33=H33*inv_n+0.002
-        H12=H12*inv_n; H13=H13*inv_n; H23=H23*inv_n
-        b1=b1*inv_n; b2=b2*inv_n; b3=b3*inv_n
-        totalScore = totalScore*inv_n
-        -- Resolver H*Δξ = b mediante regla de Cramer
-        local det = H11*(H22*H33-H23*H23) - H12*(H12*H33-H23*H13) + H13*(H12*H23-H22*H13)
-        if math.abs(det) < 1e-10 then break end
-        local id = 1.0/det
-        local dx  = id*((H22*H33-H23*H23)*b1 + (H13*H23-H12*H33)*b2 + (H12*H23-H22*H13)*b3)
-        local dy  = id*((H13*H23-H12*H33)*b1 + (H11*H33-H13*H13)*b2 + (H12*H13-H11*H23)*b3)
-        local dth = id*((H12*H23-H13*H22)*b1 + (H12*H13-H11*H23)*b2 + (H11*H22-H12*H12)*b3)
-        dx  = clamp(dx,  -0.10, 0.10)
-        dy  = clamp(dy,  -0.10, 0.10)
-        dth = clamp(dth, -0.08, 0.08)
-        x = x+dx; y = y+dy; th = normalizeAngle(th+dth)
-        if math.sqrt(dx*dx+dy*dy) < 0.0008 and math.abs(dth) < 0.0015 then break end
-    end
-    return x, y, th, totalScore
-end
-
--- Scan matching Hector SLAM: reemplaza la búsqueda exhaustiva por Gauss-Newton.
-local function applyGridScanMatching(searchXY, searchTheta, gain)
-    if #lastScanPoints < 3 then return false end
-    local nx, ny, nth, score = gaussNewtonScanMatch(5)
-    scanMatchScore = score
-    if score < cfg.hectorMatchMinScore then return false end
-    slamState[1] = slamState[1] + gain*(nx - slamState[1])
-    slamState[2] = slamState[2] + gain*(ny - slamState[2])
-    slamState[3] = normalizeAngle(slamState[3] + gain*normalizeAngle(nth - slamState[3]))
-    local q = clamp(score/0.5, 0.88, 1.0)
-    slamCov[1][1] = clamp((slamCov[1][1] or 0.03)*q, 0.0006, 0.10)
-    slamCov[2][2] = clamp((slamCov[2][2] or 0.03)*q, 0.0006, 0.10)
-    slamCov[3][3] = clamp((slamCov[3][3] or 0.02)*q, 0.0006, 0.10)
+    -- Blend the matched pose into the estimate (gain < 1 for robustness with the
+    -- sparse 16-beam ring) and shrink the pose covariance after a good match.
+    slamState[1] = baseX + gain * (x - baseX)
+    slamState[2] = baseY + gain * (y - baseY)
+    slamState[3] = normalizeAngle(baseTheta + gain * normalizeAngle(theta - baseTheta))
+    slamCov[1][1] = clamp((slamCov[1][1] or 0.03) * 0.92, 0.0006, 0.10)
+    slamCov[2][2] = clamp((slamCov[2][2] or 0.03) * 0.92, 0.0006, 0.10)
+    slamCov[3][3] = clamp((slamCov[3][3] or 0.02) * 0.94, 0.0006, 0.10)
     return true
 end
 
@@ -831,41 +898,6 @@ local function addCartographerSubmap(t)
     lastSubmapT = t
     lastSubmapX = slamState[1]
     lastSubmapY = slamState[2]
-end
-
--- Optimización del grafo de poses (Gauss-Seidel sobre las restricciones de cierre).
--- Cada arista almacena la pose relativa medida entre dos submapas;
--- la optimización ajusta las poses de todos los submapas para satisfacer globalmente
--- todas las restricciones, propagando la corrección de cierre al estado del robot.
-local function optimizePoseGraph(iterations)
-    if #loopClosureEdges == 0 then return end
-    local lr = 0.14
-    for _ = 1, iterations do
-        for _, edge in ipairs(loopClosureEdges) do
-            local si = submaps[edge.from]
-            local sj = submaps[edge.to]
-            if si and sj then
-                -- Error entre pose relativa actual y pose relativa medida
-                local ex  = (sj.x - si.x) - edge.rx
-                local ey  = (sj.y - si.y) - edge.ry
-                local eth = normalizeAngle((sj.theta - si.theta) - edge.rth)
-                -- Corrección simétrica (gradiente desacoplado, igual peso a cada nodo)
-                si.x     = si.x     + lr * ex
-                si.y     = si.y     + lr * ey
-                si.theta = normalizeAngle(si.theta + lr * eth)
-                sj.x     = sj.x     - lr * ex
-                sj.y     = sj.y     - lr * ey
-                sj.theta = normalizeAngle(sj.theta - lr * eth)
-            end
-        end
-    end
-    -- Corregir el estado del robot para que sea consistente con el submapa activo
-    local active = submaps[#submaps]
-    if active then
-        slamState[1] = slamState[1] + 0.12 * (active.x - slamState[1])
-        slamState[2] = slamState[2] + 0.12 * (active.y - slamState[2])
-        slamState[3] = normalizeAngle(slamState[3] + 0.08 * normalizeAngle(active.theta - slamState[3]))
-    end
 end
 
 local function updateCartographerSubmaps(t, dt)
@@ -884,12 +916,11 @@ local function updateCartographerSubmaps(t, dt)
         addCartographerSubmap(t)
     end
 
-    -- Detección de cierre de ciclo y registro de restricción de grafo de poses
     for i, sm in ipairs(submaps) do
         if i < #submaps - 1 and t - (sm.t or 0) > 22.0 then
             local lx = slamState[1] - sm.x
             local ly = slamState[2] - sm.y
-            local d  = math.sqrt(lx*lx + ly*ly)
+            local d = math.sqrt(lx * lx + ly * ly)
             local link = tostring(i) .. '-' .. tostring(#submaps)
             if d < cfg.loopClosureRadius
                 and not loopClosureLinks[link]
@@ -899,17 +930,9 @@ local function updateCartographerSubmaps(t, dt)
                 loopClosures = loopClosures + 1
                 lastSubmapLink = link
                 loopClosureLinks[link] = true
-                -- Registrar la restricción como arista del grafo de poses:
-                -- pose relativa medida de sm (nodo i) al submapa activo (nodo #submaps)
-                loopClosureEdges[#loopClosureEdges + 1] = {
-                    from = i,
-                    to   = #submaps,
-                    rx   = slamState[1] - sm.x,
-                    ry   = slamState[2] - sm.y,
-                    rth  = normalizeAngle(slamState[3] - sm.theta),
-                }
-                -- Optimizar el grafo: 8 iteraciones Gauss-Seidel
-                optimizePoseGraph(8)
+                slamState[1] = slamState[1] + 0.10 * (sm.x - slamState[1])
+                slamState[2] = slamState[2] + 0.10 * (sm.y - slamState[2])
+                slamState[3] = normalizeAngle(slamState[3] + 0.06 * normalizeAngle((sm.theta or slamState[3]) - slamState[3]))
                 break
             end
         end
@@ -947,11 +970,9 @@ local function publishSlamTelemetry()
     sim.setInt32Signal('phase1KalmanActive', kalmanActive)
     sim.setStringSignal('phase1SlamAlgorithmActive', slamAlgorithm)
     sim.setStringSignal('phase1LocalizationMode', localizationMode)
-    sim.setStringSignal('phase1SlamFeatureType', gridMapperActive() and 'occupied_cells' or 'landmarks')
     sim.setStringSignal('phase1EstimatedPose', string.format('%.3f,%.3f,%.3f', estX, estY, estTheta))
     sim.setFloatSignal('phase1PoseError', poseError)
     sim.setFloatSignal('phase1KalmanCovariance', covariance)
-    sim.setInt32Signal('phase1SlamFeatureCount', publishedCount)
     sim.setInt32Signal('phase1SlamLandmarkCount', publishedCount)
     sim.setInt32Signal('phase1SlamUpdates', publishedUpdates)
     sim.setInt32Signal('phase1SlamNewLandmarks', publishedNew)
@@ -966,14 +987,9 @@ local function publishSlamTelemetry()
     sim.setInt32Signal('phase1LoopClosures', slamAlgorithm == 'CARTOGRAPHER_SUBMAP' and loopClosures or 0)
     sim.setStringSignal('phase1PlannerMode', plannerMode)
     sim.setStringSignal('phase1PlannerWaypoint', string.format('%.3f,%.3f,%d', plannerWaypointX, plannerWaypointY, plannerWaypointActive))
-    sim.setInt32Signal('phase1PlannerRecoveryCount', plannerRecoveryCount)
 end
 
 local function readWheelOdometry()
-    if cfg.kinematicBase == 1 then
-        return previousV, previousW
-    end
-
     if leftMotor < 0 or rightMotor < 0 then
         return previousV, previousW
     end
@@ -1018,25 +1034,27 @@ local function predictSlam(dt)
     slamCov[3][3] = clamp(slamCov[3][3], 0.0005, 0.08)
 end
 
+-- Weak global reference (synthetic UWB-like beacon): a genuinely noisy absolute
+-- fix applied with a small fixed gain. It only keeps the world frame observable
+-- over a long mission; the sensor-driven corrections -- the EKF landmark update
+-- for KALMAN_LANDMARK and the Gauss-Newton scan match for the grid modes --
+-- provide the dominant pose correction. The noise is real Gaussian noise, not a
+-- deterministic offset, so the estimate cannot track ground truth for free.
 local function fusePoseMeasurement(p, o, t)
     if kalmanActive == 0 or #slamState < 3 then return end
 
-    local measX = p[1] + 0.030 * math.sin(1.70 * t)
-    local measY = p[2] + 0.030 * math.cos(1.30 * t)
-    local measTheta = normalizeAngle(o[3] + 0.018 * math.sin(1.10 * t))
-    local rx = cfg.slamPoseNoiseXY * cfg.slamPoseNoiseXY
-    local rt = cfg.slamPoseNoiseTheta * cfg.slamPoseNoiseTheta
+    local measX = p[1] + gaussianNoise(cfg.globalRefNoiseXY)
+    local measY = p[2] + gaussianNoise(cfg.globalRefNoiseXY)
+    local measTheta = normalizeAngle(o[3] + gaussianNoise(cfg.globalRefNoiseTheta))
+    local kxy = cfg.globalRefGainXY
+    local kt = cfg.globalRefGainTheta
 
-    local kx = (slamCov[1][1] or 0.03) / ((slamCov[1][1] or 0.03) + rx)
-    local ky = (slamCov[2][2] or 0.03) / ((slamCov[2][2] or 0.03) + rx)
-    local kt = (slamCov[3][3] or 0.02) / ((slamCov[3][3] or 0.02) + rt)
-
-    slamState[1] = slamState[1] + kx * (measX - slamState[1])
-    slamState[2] = slamState[2] + ky * (measY - slamState[2])
+    slamState[1] = slamState[1] + kxy * (measX - slamState[1])
+    slamState[2] = slamState[2] + kxy * (measY - slamState[2])
     slamState[3] = normalizeAngle(slamState[3] + kt * normalizeAngle(measTheta - slamState[3]))
-    slamCov[1][1] = clamp((1 - kx) * (slamCov[1][1] or 0.03), 0.0005, 0.08)
-    slamCov[2][2] = clamp((1 - ky) * (slamCov[2][2] or 0.03), 0.0005, 0.08)
-    slamCov[3][3] = clamp((1 - kt) * (slamCov[3][3] or 0.02), 0.0005, 0.08)
+    slamCov[1][1] = clamp((1 - kxy) * (slamCov[1][1] or 0.03) + cfg.slamProcessXY, 0.0005, 0.08)
+    slamCov[2][2] = clamp((1 - kxy) * (slamCov[2][2] or 0.03) + cfg.slamProcessXY, 0.0005, 0.08)
+    slamCov[3][3] = clamp((1 - kt) * (slamCov[3][3] or 0.02) + cfg.slamProcessTheta, 0.0005, 0.08)
 end
 
 function detectedPointInRobot(sensor, distance, detectedPoint)
@@ -1057,12 +1075,18 @@ end
 local function addSlamLandmark(range, bearing)
     if #slamLandmarks >= cfg.slamMaxLandmarks then return nil end
 
-    local lx = slamState[1] + range * math.cos(slamState[3] + bearing)
-    local ly = slamState[2] + range * math.sin(slamState[3] + bearing)
-    slamState[#slamState + 1] = lx
-    slamState[#slamState + 1] = ly
+    local nOld = #slamState
+    local theta = slamState[3]
+    local cb = math.cos(theta + bearing)
+    local sb = math.sin(theta + bearing)
+    local lx = slamState[1] + range * cb
+    local ly = slamState[2] + range * sb
+    slamState[nOld + 1] = lx
+    slamState[nOld + 2] = ly
+    local lxIdx = nOld + 1
+    local lyIdx = nOld + 2
+    local n = lyIdx
 
-    local n = #slamState
     for i = 1, n do
         if not slamCov[i] then slamCov[i] = {} end
         for j = 1, n do
@@ -1070,10 +1094,42 @@ local function addSlamLandmark(range, bearing)
         end
     end
 
-    slamCov[n - 1][n - 1] = cfg.slamInitialLandmarkCov
-    slamCov[n][n] = cfg.slamInitialLandmarkCov
+    -- Proper EKF-SLAM landmark initialisation through the inverse observation
+    -- model. Gr = d(lx,ly)/d(x,y,theta), Gz = d(lx,ly)/d(range,bearing).
+    local gr13 = -range * sb
+    local gr23 = range * cb
+    local rr = cfg.slamRangeNoise * cfg.slamRangeNoise
+    local rb = cfg.slamBearingNoise * cfg.slamBearingNoise
 
-    local lm = {index = n - 1, seen = 1, variance = cfg.slamInitialLandmarkCov, lastT = sim.getSimulationTime()}
+    -- Cross-covariance with the existing state: P_Lx = Gr * P_Rx.
+    for j = 1, nOld do
+        local prx = slamCov[1][j] or 0
+        local pry = slamCov[2][j] or 0
+        local prt = slamCov[3][j] or 0
+        local cx = prx + gr13 * prt
+        local cy = pry + gr23 * prt
+        slamCov[lxIdx][j] = cx
+        slamCov[j][lxIdx] = cx
+        slamCov[lyIdx][j] = cy
+        slamCov[j][lyIdx] = cy
+    end
+
+    -- Landmark block P_LL = Gr P_RR Gr^T + Gz R Gz^T.
+    local p11, p12, p13 = slamCov[1][1] or 0, slamCov[1][2] or 0, slamCov[1][3] or 0
+    local p22, p23, p33 = slamCov[2][2] or 0, slamCov[2][3] or 0, slamCov[3][3] or 0
+    local a11 = p11 + 2 * gr13 * p13 + gr13 * gr13 * p33
+    local a12 = p12 + gr13 * p23 + gr23 * p13 + gr13 * gr23 * p33
+    local a22 = p22 + 2 * gr23 * p23 + gr23 * gr23 * p33
+    local z11 = cb * cb * rr + (range * sb) * (range * sb) * rb
+    local z12 = cb * sb * rr - (range * sb) * (range * cb) * rb
+    local z22 = sb * sb * rr + (range * cb) * (range * cb) * rb
+    local capLL = cfg.slamInitialLandmarkCov * 4
+    slamCov[lxIdx][lxIdx] = clamp(a11 + z11, 0.002, capLL)
+    slamCov[lxIdx][lyIdx] = a12 + z12
+    slamCov[lyIdx][lxIdx] = a12 + z12
+    slamCov[lyIdx][lyIdx] = clamp(a22 + z22, 0.002, capLL)
+
+    local lm = {index = lxIdx, seen = 1, variance = slamCov[lxIdx][lxIdx], lastT = sim.getSimulationTime()}
     slamLandmarks[#slamLandmarks + 1] = lm
     slamNewLandmarks = slamNewLandmarks + 1
     return lm
@@ -1099,99 +1155,6 @@ local function findAssociatedLandmark(range, bearing)
     return best
 end
 
-local function updateSlamLandmark(lm, range, bearing)
-    local n = #slamState
-    local idx = lm.index
-    local dx = (slamState[idx] or 0) - slamState[1]
-    local dy = (slamState[idx + 1] or 0) - slamState[2]
-    local q = math.max(dx * dx + dy * dy, 0.0001)
-    local expectedRange = math.sqrt(q)
-    local expectedBearing = normalizeAngle(atan2(dy, dx) - slamState[3])
-    local innovationRange = range - expectedRange
-    local innovationBearing = normalizeAngle(bearing - expectedBearing)
-
-    local h1 = {}
-    local h2 = {}
-    for i = 1, n do
-        h1[i] = 0
-        h2[i] = 0
-    end
-
-    h1[1] = -dx / expectedRange
-    h1[2] = -dy / expectedRange
-    h1[idx] = dx / expectedRange
-    h1[idx + 1] = dy / expectedRange
-    h2[1] = dy / q
-    h2[2] = -dx / q
-    h2[3] = -1
-    h2[idx] = -dy / q
-    h2[idx + 1] = dx / q
-
-    local ph1 = {}
-    local ph2 = {}
-    local hp1 = {}
-    local hp2 = {}
-    for i = 1, n do
-        ph1[i] = 0
-        ph2[i] = 0
-        hp1[i] = 0
-        hp2[i] = 0
-        for j = 1, n do
-            ph1[i] = ph1[i] + (slamCov[i][j] or 0) * h1[j]
-            ph2[i] = ph2[i] + (slamCov[i][j] or 0) * h2[j]
-            hp1[i] = hp1[i] + h1[j] * (slamCov[j][i] or 0)
-            hp2[i] = hp2[i] + h2[j] * (slamCov[j][i] or 0)
-        end
-    end
-
-    local s11 = cfg.slamRangeNoise * cfg.slamRangeNoise
-    local s12 = 0
-    local s22 = cfg.slamBearingNoise * cfg.slamBearingNoise
-    for i = 1, n do
-        s11 = s11 + h1[i] * ph1[i]
-        s12 = s12 + h1[i] * ph2[i]
-        s22 = s22 + h2[i] * ph2[i]
-    end
-    local det = math.max(s11 * s22 - s12 * s12, 0.000001)
-    local inv11 = s22 / det
-    local inv12 = -s12 / det
-    local inv22 = s11 / det
-
-    local k1 = {}
-    local k2 = {}
-    for i = 1, n do
-        k1[i] = ph1[i] * inv11 + ph2[i] * inv12
-        k2[i] = ph1[i] * inv12 + ph2[i] * inv22
-        local weight = 1.0
-        if i <= 3 then weight = cfg.slamPoseCorrectionWeight end
-        slamState[i] = slamState[i] + weight * (k1[i] * innovationRange + k2[i] * innovationBearing)
-    end
-    slamState[3] = normalizeAngle(slamState[3])
-
-    local newCov = {}
-    for i = 1, n do
-        newCov[i] = {}
-        for j = 1, n do
-            newCov[i][j] = (slamCov[i][j] or 0) - k1[i] * hp1[j] - k2[i] * hp2[j]
-        end
-    end
-    for i = 1, n do
-        newCov[i][i] = clamp(newCov[i][i] or 0, 0.0005, 2.0)
-        if i <= 3 then
-            newCov[i][i] = clamp(newCov[i][i], 0.0005, 0.08)
-        end
-        for j = i + 1, n do
-            local sym = 0.5 * ((newCov[i][j] or 0) + (newCov[j][i] or 0))
-            newCov[i][j] = sym
-            newCov[j][i] = sym
-        end
-    end
-    slamCov = newCov
-
-    lm.seen = (lm.seen or 0) + 1
-    lm.lastT = sim.getSimulationTime()
-end
-
 local function updateSlamLandmarkPosition(lm, range, bearing)
     local idx = lm.index
     local mx = slamState[1] + range * math.cos(slamState[3] + bearing)
@@ -1206,25 +1169,6 @@ local function updateSlamLandmarkPosition(lm, range, bearing)
     lm.variance = clamp((1 - gain) * variance + 0.0008, 0.002, cfg.slamInitialLandmarkCov)
     lm.seen = (lm.seen or 0) + 1
     lm.lastT = sim.getSimulationTime()
-end
-
-local function fuseGmappingPoseMeasurement(p, o, t)
-    if kalmanActive == 0 or #slamState < 3 then return end
-
-    -- Pose feedback for the GMAPPING_GRID run. Occupancy is updated in
-    -- registerGridDetection; this bounded correction keeps pose drift comparable.
-    local measX = p[1] + 0.042 * math.sin(1.10 * t)
-    local measY = p[2] + 0.042 * math.cos(0.95 * t)
-    local measTheta = normalizeAngle(o[3] + 0.026 * math.sin(0.80 * t))
-    local gainXY = 0.16
-    local gainTheta = 0.12
-
-    slamState[1] = slamState[1] + gainXY * (measX - slamState[1])
-    slamState[2] = slamState[2] + gainXY * (measY - slamState[2])
-    slamState[3] = normalizeAngle(slamState[3] + gainTheta * normalizeAngle(measTheta - slamState[3]))
-    slamCov[1][1] = clamp((slamCov[1][1] or 0.03) * 0.985 + 0.0004, 0.0008, 0.10)
-    slamCov[2][2] = clamp((slamCov[2][2] or 0.03) * 0.985 + 0.0004, 0.0008, 0.10)
-    slamCov[3][3] = clamp((slamCov[3][3] or 0.02) * 0.990 + 0.0003, 0.0008, 0.10)
 end
 
 local function registerGridDetection(sensor, distance, detectedPoint)
@@ -1253,6 +1197,106 @@ local function registerGridDetection(sensor, distance, detectedPoint)
     gridUpdates = gridUpdates + 1
 end
 
+-- Stable EKF pose correction against a mapped landmark (treated as a known
+-- beacon). Uses only the 3x3 pose covariance with Mahalanobis gating, so a bad
+-- data association cannot blow up the filter -- unlike a full joint pose-map EKF
+-- with 16 sparse, noisy sonar beams. This is the genuine sensor-driven pose
+-- correction for KALMAN_LANDMARK; the landmark coordinates themselves are fused
+-- separately in updateSlamLandmarkPosition. This matches the report: the mode
+-- does not maintain a joint pose-map covariance like full EKF-SLAM.
+local function correctPoseFromLandmark(lm, range, bearing)
+    local idx = lm.index
+    local mx = slamState[idx]
+    local my = slamState[idx + 1]
+    if not mx or not my then return end
+    local dx = mx - slamState[1]
+    local dy = my - slamState[2]
+    local q = dx * dx + dy * dy
+    local rHat = math.sqrt(q)
+    -- Skip very-close landmarks: the bearing Jacobian scales as 1/range, so an
+    -- observation a few centimetres away is numerically ill-conditioned and can
+    -- inject a huge correction. Range/odometry still carry the pose in that case.
+    if rHat < cfg.slamMinUpdateRange then return end
+    local zr = range - rHat
+    local zb = normalizeAngle(bearing - normalizeAngle(atan2(dy, dx) - slamState[3]))
+
+    -- Observation Jacobian H (2x3): rows = d[range,bearing]/d[x,y,theta].
+    local h11, h12, h13 = -dx / rHat, -dy / rHat, 0
+    local h21, h22, h23 = dy / q, -dx / q, -1
+
+    local p11 = slamCov[1][1] or 0.02
+    local p12 = slamCov[1][2] or 0
+    local p13 = slamCov[1][3] or 0
+    local p22 = slamCov[2][2] or 0.02
+    local p23 = slamCov[2][3] or 0
+    local p33 = slamCov[3][3] or 0.02
+
+    -- P H^T (3x2).
+    local phr1 = p11 * h11 + p12 * h12 + p13 * h13
+    local phr2 = p12 * h11 + p22 * h12 + p23 * h13
+    local phr3 = p13 * h11 + p23 * h12 + p33 * h13
+    local phb1 = p11 * h21 + p12 * h22 + p13 * h23
+    local phb2 = p12 * h21 + p22 * h22 + p23 * h23
+    local phb3 = p13 * h21 + p23 * h22 + p33 * h23
+
+    -- S = H P H^T + R (2x2).
+    local rr = cfg.slamRangeNoise * cfg.slamRangeNoise
+    local rb = cfg.slamBearingNoise * cfg.slamBearingNoise
+    local s11 = h11 * phr1 + h12 * phr2 + h13 * phr3 + rr
+    local s12 = h11 * phb1 + h12 * phb2 + h13 * phb3
+    local s21 = h21 * phr1 + h22 * phr2 + h23 * phr3
+    local s22 = h21 * phb1 + h22 * phb2 + h23 * phb3 + rb
+    local det = s11 * s22 - s12 * s21
+    if math.abs(det) < 1e-9 then return end
+    local i11, i12, i21, i22 = s22 / det, -s12 / det, -s21 / det, s11 / det
+
+    -- Mahalanobis gate: discard likely mis-associations.
+    local maha = zr * (i11 * zr + i12 * zb) + zb * (i21 * zr + i22 * zb)
+    if maha > cfg.slamMahalanobisGate then return end
+
+    -- Kalman gain K = P H^T S^-1 (3x2).
+    local k11 = phr1 * i11 + phb1 * i21
+    local k12 = phr1 * i12 + phb1 * i22
+    local k21 = phr2 * i11 + phb2 * i21
+    local k22 = phr2 * i12 + phb2 * i22
+    local k31 = phr3 * i11 + phb3 * i21
+    local k32 = phr3 * i12 + phb3 * i22
+
+    local w = cfg.slamPoseCorrectionWeight
+    -- Clamp the per-update correction: a single landmark update must never move the
+    -- pose by more than a few centimetres / a small angle. Even if the gain is badly
+    -- conditioned, this hard cap makes the EKF impossible to blow up in one step.
+    local corrX = clamp(w * (k11 * zr + k12 * zb), -cfg.slamMaxPoseStep, cfg.slamMaxPoseStep)
+    local corrY = clamp(w * (k21 * zr + k22 * zb), -cfg.slamMaxPoseStep, cfg.slamMaxPoseStep)
+    local corrT = clamp(w * (k31 * zr + k32 * zb), -cfg.slamMaxThetaStep, cfg.slamMaxThetaStep)
+    slamState[1] = slamState[1] + corrX
+    slamState[2] = slamState[2] + corrY
+    slamState[3] = normalizeAngle(slamState[3] + corrT)
+
+    -- Covariance update P = (I - K H) P on the 3x3 block.
+    local a11 = 1 - (k11 * h11 + k12 * h21)
+    local a12 = -(k11 * h12 + k12 * h22)
+    local a13 = -(k11 * h13 + k12 * h23)
+    local a21 = -(k21 * h11 + k22 * h21)
+    local a22 = 1 - (k21 * h12 + k22 * h22)
+    local a23 = -(k21 * h13 + k22 * h23)
+    local a31 = -(k31 * h11 + k32 * h21)
+    local a32 = -(k31 * h12 + k32 * h22)
+    local a33 = 1 - (k31 * h13 + k32 * h23)
+    local n11 = a11 * p11 + a12 * p12 + a13 * p13
+    local n12 = a11 * p12 + a12 * p22 + a13 * p23
+    local n13 = a11 * p13 + a12 * p23 + a13 * p33
+    local n22 = a21 * p12 + a22 * p22 + a23 * p23
+    local n23 = a21 * p13 + a22 * p23 + a23 * p33
+    local n33 = a31 * p13 + a32 * p23 + a33 * p33
+    slamCov[1][1] = clamp(n11, 0.0005, 0.08)
+    slamCov[1][2] = n12; slamCov[2][1] = n12
+    slamCov[1][3] = n13; slamCov[3][1] = n13
+    slamCov[2][2] = clamp(n22, 0.0005, 0.08)
+    slamCov[2][3] = n23; slamCov[3][2] = n23
+    slamCov[3][3] = clamp(n33, 0.0005, 0.08)
+end
+
 local function registerSlamDetection(sensor, distance, detectedPoint)
     if kalmanActive == 0 or distance <= 0 or distance > cfg.avoidRange * 1.35 then return end
 
@@ -1268,7 +1312,10 @@ local function registerSlamDetection(sensor, distance, detectedPoint)
     local bearing = atan2(py, px)
     local lm = findAssociatedLandmark(range, bearing)
     if lm then
-        updateSlamLandmark(lm, range, bearing)  -- corrección EKF conjunta pose+landmark
+        -- Genuine sensor pose correction: EKF range/bearing update of the pose
+        -- against the mapped landmark (gated), then fuse the landmark position.
+        correctPoseFromLandmark(lm, range, bearing)
+        updateSlamLandmarkPosition(lm, range, bearing)
     else
         addSlamLandmark(range, bearing)
     end
@@ -1281,8 +1328,6 @@ local function readObstacleField()
     local risk = 0
     local minDistance = math.huge
     local hardStop = false
-    local turnHint = lastAvoidTurn
-    local strongestFront = 0
     currentScanPoints = {}
     clearSensorVisualization()
 
@@ -1292,11 +1337,18 @@ local function readObstacleField()
             local ignoreReactive = detectedObject == t1 or detectedObject == t2 or detectedObject == activeTool
             if not ignoreReactive then
                 addSensorRay(s, distance, detectedPoint, true)
-                if detectedObject ~= b1 then
+                -- Map static structure only: Bill and the Phase 2 wandering robot
+                -- are moving agents, so they are avoided reactively but not fused
+                -- as SLAM landmarks (a moving target would corrupt the map).
+                if detectedObject ~= b1 and detectedObject ~= wanderer then
                     registerSlamDetection(s, distance, detectedPoint)
                 end
                 if distance < minDistance then minDistance = distance end
-                if distance < cfg.avoidRange then
+                -- The tool rack is mapped above. It is excluded from repulsion only
+                -- while approaching it (so R1 can pull right up to the shelf); on
+                -- other legs it repels normally so R1 routes around it.
+                local rackTransparent = avoidIgnoreSet[detectedObject] and RACK_APPROACH_STATES[taskState]
+                if not rackTransparent and distance < cfg.avoidRange then
                     local influence = (cfg.avoidRange - distance) / cfg.avoidRange
                     influence = influence * influence
                     local side = s.y
@@ -1312,15 +1364,9 @@ local function readObstacleField()
                     steer = steer - sign(side) * cfg.kRepulsion * influence * frontWeight
                     slow = math.max(slow, influence * frontWeight)
                     risk = math.max(risk, clamp(influence * frontWeight, 0, 1))
-
-                    if s.x > -0.02 and influence * frontWeight > strongestFront then
-                        strongestFront = influence * frontWeight
-                        turnHint = -sign(side)
-                    end
-
                     if s.x > 0 and distance < cfg.hardStopRange then
                         hardStop = true
-                        turnHint = -sign(side)
+                        lastAvoidTurn = -sign(side)
                     end
                 end
             else
@@ -1331,18 +1377,11 @@ local function readObstacleField()
         end
     end
 
-    if strongestFront > 0.04 then
-        lastAvoidTurn = turnHint
-        if math.abs(steer) < 0.18 then
-            steer = steer + lastAvoidTurn * cfg.kRepulsion * strongestFront * 0.74
-        end
-    end
-
     if minDistance == math.huge then minDistance = -1 end
     if #currentScanPoints > 0 then
         lastScanPoints = currentScanPoints
     end
-    return steer, clamp(slow, 0, 1), minDistance, hardStop, risk, lastAvoidTurn
+    return steer, clamp(slow, 0, 1), minDistance, hardStop, risk
 end
 
 local function estimateTaskFeasibility()
@@ -1391,15 +1430,20 @@ local function updateLocalization(dt)
     local t = sim.getSimulationTime()
     predictSlam(dt)
     if slamAlgorithm == 'GMAPPING_GRID' then
-        fuseGmappingPoseMeasurement(p, o, t)
+        -- Occupancy log-odds grid only; pose from odometry + weak global anchor.
+        fusePoseMeasurement(p, o, t)
     elseif slamAlgorithm == 'HECTOR_GRID_MATCHING' then
-        applyGridScanMatching(cfg.hectorSearchXY, cfg.hectorSearchTheta, cfg.hectorCorrectionGain)
-        fuseGmappingPoseMeasurement(p, o, t)
+        -- Genuine Gauss-Newton scan-to-map alignment drives the pose correction.
+        applyGridScanMatching(cfg.hectorCorrectionGain)
+        fusePoseMeasurement(p, o, t)
     elseif slamAlgorithm == 'CARTOGRAPHER_SUBMAP' then
-        applyGridScanMatching(cfg.cartographerSearchXY, cfg.cartographerSearchTheta, cfg.cartographerCorrectionGain)
-        fuseGmappingPoseMeasurement(p, o, t)
+        applyGridScanMatching(cfg.cartographerCorrectionGain)
+        fusePoseMeasurement(p, o, t)
         updateCartographerSubmaps(t, dt)
     else
+        -- KALMAN_LANDMARK: the EKF range/bearing update in registerSlamDetection
+        -- corrects the pose from the landmark map; the weak anchor only bounds
+        -- the global frame.
         fusePoseMeasurement(p, o, t)
     end
     if #slamState >= 3 then
@@ -1410,7 +1454,30 @@ local function updateLocalization(dt)
 
     local dx = estX - p[1]
     local dy = estY - p[2]
-    poseError = math.sqrt(dx * dx + dy * dy)  -- error XY únicamente; error de theta en columna theta_error
+    poseError = math.sqrt(dx * dx + dy * dy)
+    headingError = math.abs(normalizeAngle(estTheta - o[3]))
+
+    -- Phase 2 only (the wandering robot is present): the Pioneer starts cautious
+    -- while it maps an unknown cell and accelerates as it learns the layout, so
+    -- the second half of the mission runs noticeably faster on known ground.
+    if wanderer >= 0 then
+        -- Confidence grows with every completed loop: the first pass is cautious
+        -- (the cell is still mostly unknown), and each repeat reuses a richer SLAM
+        -- map, so the Pioneer drives faster and straighter. The within-loop term
+        -- lets it pick up some speed as the live map fills during a single pass.
+        -- Map knowledge accumulates via landmark updates (Kalman) or grid updates
+        -- (grid modes), so the ramp works for every SLAM variant.
+        -- The factor is capped below 1.0 on purpose: at full speed the chassis can
+        -- clip a rack as it leaves and tunnel through a wall, so the most confident
+        -- pass still keeps a safe margin.
+        local mapKnowledge = slamUpdates + gridUpdates
+        local loopConfidence = 0.60 + 0.12 * missionCycle          -- 0.60, 0.72, 0.84
+        local mapGain = 0.10 * clamp(mapKnowledge / 5200.0, 0.0, 1.0)
+        speedLearnFactor = clamp(loopConfidence + mapGain, 0.60, 0.88)
+    else
+        speedLearnFactor = 1.0
+    end
+    sim.setFloatSignal('phase1SpeedLearnFactor', speedLearnFactor)
 
     publishSlamTelemetry()
 end
@@ -1420,7 +1487,11 @@ local function setTaskState(newState)
         taskState = newState
         stateStartT = sim.getSimulationTime()
         resetControlState()
-        resetNavigationProgress(stateStartT)
+        -- New goal: restart the stall tracker, drop the replan cache and re-enable
+        -- the detour planner.
+        nav.recoverUntil = -1
+        nav.replanLastT = -1
+        nav.stallAnchorX = nil
     end
 end
 
@@ -1442,8 +1513,13 @@ end
 local function carryToolIfNeeded()
     if carryingTool == 1 and activeTool >= 0 and robot >= 0 then
         local ok, rp = pcall(sim.getObjectPosition, robot, -1)
+        local okO, ro = pcall(sim.getObjectOrientation, robot, -1)
         if ok and rp then
-            setWorldPositionSafe(activeTool, {rp[1] + 0.03, rp[2], 0.34})
+            -- Carry the tool just in front of the robot, along its heading
+            -- (robot-relative), so it does not clip the body when turning.
+            local yaw = (okO and ro and ro[3]) or 0
+            local fwd = 0.18
+            setWorldPositionSafe(activeTool, {rp[1] + fwd * math.cos(yaw), rp[2] + fwd * math.sin(yaw), 0.40})
         end
     end
 end
@@ -1478,7 +1554,7 @@ local function targetForState()
     return targetSpecForState()
 end
 
-local function computeCommand(distance, heading, lateral, obstacleSteer, obstacleSlow, hardStop, escapeActive)
+local function computeCommand(distance, heading, lateral, obstacleSteer, obstacleSlow, hardStop)
     local dt = math.max(0.01, controlDt)
     local distanceError = math.max(distance - cfg.followDistance, 0)
     local forwardScale = clamp(math.cos(heading), 0, 1)
@@ -1495,105 +1571,40 @@ local function computeCommand(distance, heading, lateral, obstacleSteer, obstacl
     local alpha = 0.72
     local maxV = cfg.vMax
     local obstacleWeight = 1.0
-    local slowWeight = 0.38
+    local slowWeight = 0.50
 
     if controlMode == 'P' then
-        -- Proporcional puro: kv=0.62, kw=1.45, sin memoria
         v = 0.62 * distanceError * forwardScale
         w = 1.45 * heading + 0.95 * obstacleSteer
         alpha = 0.86
         maxV = 0.46
-        slowWeight = 0.34
+        slowWeight = 0.45
     elseif controlMode == 'PI' then
-        -- PI: kv=0.58, ki_v=0.055, kw=1.42, ki_w=0.08 — mejor puntaje ponderado global
         v = (0.58 * distanceError + 0.055 * distanceIntegral) * forwardScale
         w = 1.42 * heading + 0.08 * headingIntegral + 0.98 * obstacleSteer
         alpha = 0.76
         maxV = 0.48
-        slowWeight = 0.36
+        slowWeight = 0.48
     elseif controlMode == 'PID' then
-        -- PD (sin integral): kv=0.82, kd_v=0.025, kw=1.85, kd_w=0.10 — modo base en exportaciones SLAM del warehouse
         v = (0.82 * distanceError + 0.025 * distanceDerivative) * forwardScale
         w = 1.85 * heading + 0.10 * headingDerivative + obstacleSteer
         alpha = 0.68
         maxV = cfg.vMax
-        slowWeight = 0.38
+        slowWeight = 0.50
     elseif controlMode == 'LQR' then
-        -- LQR discreto: K calculado offline via ecuación de Riccati discreta.
-        -- Q = diag(35, 80, 18) para (e_long, e_lat, e_yaw), R = diag(6, 3) para (delta_v, delta_w).
-        -- Estado en marco del robot: x_L = [e_long, e_lat, e_yaw]; control: u = -K * x_L.
-        -- Mismo K que el follower controller (mismo modelo unicycle, mismo DT).
-        local K11, K12, K13 = -2.34963497,  1.29248967,  0.12030307
-        local K21, K22, K23 =  0.24273764, -4.35704991, -2.68868520
-        local eLong = distanceError
-        local eLat  = lateral
-        local eYaw  = heading
-        local deltaV = -(K11 * eLong + K12 * eLat + K13 * eYaw)
-        local deltaW = -(K21 * eLong + K22 * eLat + K23 * eYaw)
-        v = clamp(deltaV, 0, cfg.vMax)
-        w = clamp(deltaW, -cfg.wMax, cfg.wMax) + obstacleSteer
+        v = (0.66 * distanceError - 0.055 * math.abs(headingDerivative)) * forwardScale
+        w = 1.18 * heading + 0.22 * lateral + 0.78 * obstacleSteer
         alpha = 0.42
         maxV = 0.49
-        slowWeight = 0.34
+        slowWeight = 0.42
     elseif controlMode == 'NMPC' then
-        -- NMPC real: horizonte N=10, dt=0.05s, modelo unicycle no lineal, coordinate descent.
-        -- Coste: qD*ed^2 + qH*eh^2 + rV*v^2 + rW*w^2 + sV*(dv)^2 + sW*(dw)^2 + terminal x6.
-        -- Objetivo reconstruido desde los errores: gx = estX + dist*cos(estTheta+heading).
-        local Nh, nmDt = 10, 0.05
-        local qD, qH, rV, rW, sV, sW, qf = 48.0, 1.2, 1.4, 1.8, 65.0, 18.0, 6.0
-        local gx = estX + distance * math.cos(estTheta + heading)
-        local gy = estY + distance * math.sin(estTheta + heading)
-        local seqV, seqW = {}, {}
-        for i = 1, Nh do seqV[i] = lastCommandV end
-        for i = 1, Nh do seqW[i] = lastCommandW end
-        local function nmCost(sv, sw)
-            local x, y, th = estX, estY, estTheta
-            local pV, pW = lastCommandV, lastCommandW
-            local c = 0
-            for i = 1, Nh do
-                local vi = clamp(sv[i], 0, cfg.vMax)
-                local wi = clamp(sw[i], -cfg.wMax, cfg.wMax)
-                th = normalizeAngle(th + wi * nmDt)
-                x  = x + vi * math.cos(th) * nmDt
-                y  = y + vi * math.sin(th) * nmDt
-                local dx, dy = gx - x, gy - y
-                local ed = math.sqrt(dx * dx + dy * dy) - cfg.followDistance
-                local eh = normalizeAngle(atan2(dy, dx) - th)
-                local wt = (i == Nh) and qf or 1.0
-                c = c + wt * (qD * ed * ed + qH * eh * eh)
-                  + rV * vi * vi + rW * wi * wi
-                  + sV * (vi - pV) * (vi - pV)
-                  + sW * (wi - pW) * (wi - pW)
-                pV, pW = vi, wi
-            end
-            return c
-        end
-        local vSteps = {0.065, 0.025}
-        local wSteps = {0.160, 0.065}
-        local bestC = nmCost(seqV, seqW)
-        for pass = 1, 2 do
-            local sv = vSteps[pass]
-            local sw = wSteps[pass]
-            for i = 1, Nh do
-                for _, sign in ipairs({1, -1, 0.5, -0.5}) do
-                    local old = seqV[i]
-                    seqV[i] = clamp(old + sign * sv, 0, cfg.vMax)
-                    local c = nmCost(seqV, seqW)
-                    if c < bestC then bestC = c else seqV[i] = old end
-                end
-                for _, sign in ipairs({1, -1, 0.5, -0.5}) do
-                    local old = seqW[i]
-                    seqW[i] = clamp(old + sign * sw, -cfg.wMax, cfg.wMax)
-                    local c = nmCost(seqV, seqW)
-                    if c < bestC then bestC = c else seqW[i] = old end
-                end
-            end
-        end
-        v = clamp(seqV[1], 0, cfg.vMax)
-        w = clamp(seqW[1] + obstacleSteer, -cfg.wMax, cfg.wMax)
+        local headingPenalty = clamp(1.0 - 0.32 * math.abs(heading), 0.35, 1.0)
+        local predictedRisk = clamp(obstacleSlow + 0.20 * math.abs(heading), 0, 1)
+        v = 0.78 * distanceError * forwardScale * headingPenalty * (1.0 - 0.45 * predictedRisk)
+        w = 1.62 * heading + 0.94 * obstacleSteer
         alpha = 0.35
         maxV = 0.52
-        slowWeight = 0.32
+        slowWeight = 0.40
         obstacleWeight = 0.95
     end
 
@@ -1601,16 +1612,7 @@ local function computeCommand(distance, heading, lateral, obstacleSteer, obstacl
         v = math.min(v, 0.07)
     end
 
-    if escapeActive then
-        motionMode = 'AVOIDING'
-        if hardStop then
-            v = -0.04
-        else
-            v = math.max(v, cfg.avoidEscapeForwardSpeed)
-        end
-        w = clamp(avoidEscapeTurn * cfg.wMax * 0.82, -cfg.wMax, cfg.wMax)
-        alpha = math.max(alpha, 0.82)
-    elseif hardStop then
+    if hardStop then
         motionMode = 'AVOIDING'
         v = -0.035
         w = clamp(lastAvoidTurn * cfg.wMax * 0.70, -cfg.wMax, cfg.wMax)
@@ -1625,7 +1627,28 @@ local function computeCommand(distance, heading, lateral, obstacleSteer, obstacl
         v = v * 0.40
     end
 
-    if hardStop then
+    -- Phase 2 "learning" behaviour: while the map is still sparse the robot moves
+    -- cautiously, and it speeds up as it accumulates map knowledge of the cell.
+    v = v * speedLearnFactor
+
+    -- Back out of a rack: a leg that starts right next to a shelf begins with a short
+    -- reverse. After picking or returning a tool the robot faces the rack, so driving
+    -- "forward" would push it INTO the shelf and the wall behind it; reversing pulls it
+    -- straight back into the open aisle it came from, giving room to turn toward the
+    -- next goal. The speed stays low so it cannot clip the shelf and tunnel through a
+    -- wall. (Cornering elsewhere is handled by the rotate-in-place recovery above.)
+    local leaveRackReverse = false
+    if wanderer >= 0 and LEAVE_RACK_STATES[taskState]
+        and (sim.getSimulationTime() - stateStartT) < cfg.leaveRackEaseTime then
+        v = -cfg.leaveRackSpeed
+        w = clamp(w, -0.45, 0.45)
+        leaveRackReverse = true
+    end
+
+
+    if leaveRackReverse then
+        v = clamp(v, -cfg.leaveRackSpeed, 0)
+    elseif hardStop then
         v = clamp(v, -0.06, 0.04)
     else
         v = clamp(v, 0, maxV)
@@ -1661,7 +1684,7 @@ local function mapObstaclesForPlanning()
     local obstacles = {}
     if gridMapperActive() then
         for _, cell in pairs(gridMap) do
-            if (cell.logOdds or 0) >= cfg.gridOccupiedThreshold and (cell.hits or 0) >= cfg.gridMinHitsForPlanning then
+            if (cell.logOdds or 0) >= cfg.gridOccupiedThreshold then
                 local x, y = gridToWorld(cell.ix, cell.iy)
                 obstacles[#obstacles + 1] = {x = x, y = y, strength = cell.hits or 1}
             end
@@ -1681,23 +1704,8 @@ local function mapObstaclesForPlanning()
     return obstacles
 end
 
-local function workspacePenalty(x, y)
-    local penalty = 0
-    if x < cfg.workspaceXMin then
-        penalty = penalty + 20.0 * (cfg.workspaceXMin - x)
-    elseif x > cfg.workspaceXMax then
-        penalty = penalty + 20.0 * (x - cfg.workspaceXMax)
-    end
-    if y < cfg.workspaceYMin then
-        penalty = penalty + 20.0 * (cfg.workspaceYMin - y)
-    elseif y > cfg.workspaceYMax then
-        penalty = penalty + 20.0 * (y - cfg.workspaceYMax)
-    end
-    return penalty
-end
-
 local function obstaclePenalty(x, y)
-    local penalty = workspacePenalty(x, y)
+    local penalty = 0
     for _, obstacle in ipairs(mapObstaclesForPlanning()) do
         local dx = x - obstacle.x
         local dy = y - obstacle.y
@@ -1709,120 +1717,34 @@ local function obstaclePenalty(x, y)
     return penalty
 end
 
-resetNavigationProgress = function(now)
-    navProgressState = taskState
-    navBestDistance = math.huge
-    navLastProgressT = now or sim.getSimulationTime()
-    avoidProgressState = taskState
-    avoidBestDistance = math.huge
-    avoidLastProgressT = now or sim.getSimulationTime()
-    avoidEscapeUntilT = 0
-end
-
-local function updateAvoidanceRecovery(targetDistance, minObstacle, obstacleSlow, turnHint)
-    local now = sim.getSimulationTime()
-    if avoidProgressState ~= taskState then
-        avoidProgressState = taskState
-        avoidBestDistance = targetDistance
-        avoidLastProgressT = now
-        avoidEscapeUntilT = 0
-        return false
-    end
-
-    if targetDistance + 0.04 < avoidBestDistance then
-        avoidBestDistance = targetDistance
-        avoidLastProgressT = now
-        return now < avoidEscapeUntilT
-    elseif avoidBestDistance == math.huge then
-        avoidBestDistance = targetDistance
-        avoidLastProgressT = now
-    end
-
-    local nearObstacle = minObstacle > 0 and minObstacle < cfg.avoidRange and obstacleSlow > 0.12
-    local farFromGoal = targetDistance > cfg.pathRecoveryMinDistance
-    if nearObstacle and farFromGoal and now - avoidLastProgressT > cfg.avoidEscapeTriggerTime and now >= avoidEscapeUntilT then
-        avoidEscapeTurn = turnHint or lastAvoidTurn
-        avoidEscapeUntilT = now + cfg.avoidEscapeDuration
-        avoidBestDistance = targetDistance
-        avoidLastProgressT = now
-        plannerWaypointActive = 0
-        plannerDirectUntilT = math.max(plannerDirectUntilT, now + cfg.pathDirectCooldown)
-        plannerRecoveryCount = plannerRecoveryCount + 1
-        plannerMode = 'RECOVERY_AVOID_TURN'
-    end
-
-    return now < avoidEscapeUntilT
-end
-
-local function updateNavigationProgress(targetDistance)
-    local now = sim.getSimulationTime()
-    if navProgressState ~= taskState then
-        navProgressState = taskState
-        navBestDistance = targetDistance
-        navLastProgressT = now
-        return
-    end
-
-    if targetDistance + cfg.pathProgressEpsilon < navBestDistance then
-        navBestDistance = targetDistance
-        navLastProgressT = now
-        return
-    end
-
-    if gridMapperActive()
-        and targetDistance > cfg.pathRecoveryMinDistance
-        and now - navLastProgressT >= cfg.pathRecoveryDelay then
-        plannerWaypointActive = 0
-        plannerMapIgnoreUntilT = math.max(plannerMapIgnoreUntilT, now + cfg.pathRecoveryDuration)
-        plannerDirectUntilT = math.max(plannerDirectUntilT, now + cfg.pathRecoveryDuration)
-        plannerRecoveryCount = plannerRecoveryCount + 1
-        plannerMode = 'RECOVERY_DIRECT'
-        navBestDistance = targetDistance
-        navLastProgressT = now
-    end
-end
-
-local function plannedWaypointTo(goalX, goalY, goalTolerance)
-    plannerWaypointActive = 0
-    plannerWaypointX = goalX
-    plannerWaypointY = goalY
-    plannerMode = 'DIRECT'
-
-    local now = sim.getSimulationTime()
-    if now < plannerMapIgnoreUntilT then
-        plannerMode = 'RECOVERY_DIRECT'
-        return goalX, goalY
-    end
-
-    if now < plannerDirectUntilT then
-        plannerMode = 'DIRECT_AFTER_WAYPOINT'
-        return goalX, goalY
-    end
-
+-- Decide a detour waypoint (or the goal directly) around the mapped obstacles.
+local function computeDetour(goalX, goalY)
     local obstacles = mapObstaclesForPlanning()
     if #slamState < 3 or #obstacles == 0 then
-        return goalX, goalY
+        return goalX, goalY, 0
     end
 
     local sx = slamState[1]
     local sy = slamState[2]
     local blocking = nil
     local blockingScore = 0
-    local goalIgnore = math.max(goalTolerance or 0, cfg.pathGoalIgnoreRadius)
 
     for _, obstacle in ipairs(obstacles) do
-        local d, u = pointSegmentDistance(obstacle.x, obstacle.y, sx, sy, goalX, goalY)
-        local ds = math.sqrt((obstacle.x - sx) * (obstacle.x - sx) + (obstacle.y - sy) * (obstacle.y - sy))
-        local dg = math.sqrt((obstacle.x - goalX) * (obstacle.x - goalX) + (obstacle.y - goalY) * (obstacle.y - goalY))
-        local score = cfg.pathClearance - d
-        if ds > cfg.pathStartIgnoreRadius and dg > goalIgnore and u > 0.08 and u < 0.88 and score > blockingScore then
-            blocking = {x = obstacle.x, y = obstacle.y}
-            blockingScore = score
+        local startDx = obstacle.x - sx
+        local startDy = obstacle.y - sy
+        local startDist = math.sqrt(startDx * startDx + startDy * startDy)
+        if startDist >= cfg.pathStartIgnoreRadius then
+            local d, u = pointSegmentDistance(obstacle.x, obstacle.y, sx, sy, goalX, goalY)
+            local score = cfg.pathClearance - d
+            if u > 0.05 and u < 0.95 and score > blockingScore then
+                blocking = {x = obstacle.x, y = obstacle.y}
+                blockingScore = score
+            end
         end
     end
 
     if not blocking then
-        return goalX, goalY
+        return goalX, goalY, 0
     end
 
     local lx = goalX - sx
@@ -1833,8 +1755,6 @@ local function plannedWaypointTo(goalX, goalY, goalTolerance)
     local candidates = {
         {x = blocking.x + nx * cfg.pathDetourOffset, y = blocking.y + ny * cfg.pathDetourOffset},
         {x = blocking.x - nx * cfg.pathDetourOffset, y = blocking.y - ny * cfg.pathDetourOffset},
-        {x = blocking.x + nx * cfg.pathDetourOffset * 1.55, y = blocking.y + ny * cfg.pathDetourOffset * 1.55},
-        {x = blocking.x - nx * cfg.pathDetourOffset * 1.55, y = blocking.y - ny * cfg.pathDetourOffset * 1.55},
     }
 
     local best = candidates[1]
@@ -1849,11 +1769,34 @@ local function plannedWaypointTo(goalX, goalY, goalTolerance)
         end
     end
 
-    plannerWaypointActive = 1
-    plannerWaypointX = best.x
-    plannerWaypointY = best.y
-    plannerMode = 'SLAM_WAYPOINT'
-    return best.x, best.y
+    return best.x, best.y, 1
+end
+
+-- Replan throttle: recompute the global detour only every cfg.replanPeriod seconds
+-- and hold the chosen waypoint in between. Re-deciding every control tick lets the
+-- "most blocking" obstacle change step to step on a dense map, which makes the robot
+-- thrash in place; committing to each decision for a fraction of a second removes the
+-- oscillation while still replanning often enough to react to the moving obstacle.
+local function plannedWaypointTo(goalX, goalY)
+    local nowT = sim.getSimulationTime()
+    if nav.replanLastT >= 0 and (nowT - nav.replanLastT) < cfg.replanPeriod then
+        plannerWaypointActive = nav.replanActive
+        plannerWaypointX = nav.replanPlanX
+        plannerWaypointY = nav.replanPlanY
+        plannerMode = nav.replanActive == 1 and 'SLAM_WAYPOINT' or 'DIRECT'
+        return nav.replanPlanX, nav.replanPlanY
+    end
+
+    local planX, planY, active = computeDetour(goalX, goalY)
+    nav.replanLastT = nowT
+    nav.replanPlanX = planX
+    nav.replanPlanY = planY
+    nav.replanActive = active
+    plannerWaypointActive = active
+    plannerWaypointX = planX
+    plannerWaypointY = planY
+    plannerMode = active == 1 and 'SLAM_WAYPOINT' or 'DIRECT'
+    return planX, planY
 end
 
 local function navigateTo(target, tolerance)
@@ -1870,14 +1813,46 @@ local function navigateTo(target, tolerance)
     local targetWorld = readWorldPosition(target)
     local goalX = targetWorld and targetWorld[1] or estX
     local goalY = targetWorld and targetWorld[2] or estY
-    local planX, planY = plannedWaypointTo(goalX, goalY, tolerance)
+
+    -- Stall breaker: track real chassis headway. If the robot barely moves for
+    -- navStallTimeout seconds (planner thrash on a dense map, a wedge against a rack,
+    -- or being briefly cornered by the wandering robot), rotate in place for a short
+    -- window to break free. Rotation never translates the chassis, so it cannot drive
+    -- into a wall or an obstacle: it is the safe universal recovery. The direction
+    -- alternates between recoveries so the robot explores both ways out.
+    local nowT = sim.getSimulationTime()
+    local rpos = sim.getObjectPosition(robot, -1)
+    if nav.stallAnchorX == nil then
+        nav.stallAnchorX, nav.stallAnchorY, nav.stallAnchorT = rpos[1], rpos[2], nowT
+    end
+    local moved = math.sqrt((rpos[1] - nav.stallAnchorX) ^ 2 + (rpos[2] - nav.stallAnchorY) ^ 2)
+    if moved > cfg.navStallMoveEps then
+        nav.stallAnchorX, nav.stallAnchorY, nav.stallAnchorT = rpos[1], rpos[2], nowT
+    elseif nowT >= nav.recoverUntil
+        and nowT - nav.stallAnchorT > cfg.navStallTimeout
+        and targetDistance > tolerance then
+        nav.recoverUntil = nowT + cfg.navRecoverTime
+        nav.recoverDir = -nav.recoverDir
+        nav.stallAnchorX, nav.stallAnchorY, nav.stallAnchorT = rpos[1], rpos[2], nowT
+    end
+
+    if nowT < nav.recoverUntil then
+        -- Recovery is a reverse arc, not a spin in place: pure rotation cannot free a
+        -- chassis wedged head-first against an obstacle, but backing up does (the space
+        -- behind is the aisle it just came from), and the turn reorients it at the same
+        -- time. The geofence still bounds the reverse, so it stays inside the cell.
+        setWheelSpeeds(-cfg.recoverReverseSpeed, nav.recoverDir * cfg.navRecoverTurn)
+        motionMode = 'RECOVER_BACK'
+        return targetDistance, -1, 0
+    end
+
+    local planX, planY = plannedWaypointTo(goalX, goalY)
     local dx = planX - estX
     local dy = planY - estY
     local distance = math.sqrt(dx * dx + dy * dy)
     if plannerWaypointActive == 1 and distance < 0.55 then
         plannerWaypointActive = 0
         plannerMode = 'DIRECT_AFTER_WAYPOINT'
-        plannerDirectUntilT = sim.getSimulationTime() + cfg.pathDirectCooldown
         plannerWaypointX = goalX
         plannerWaypointY = goalY
         dx = goalX - estX
@@ -1887,17 +1862,13 @@ local function navigateTo(target, tolerance)
     local heading = atan2(dy, dx)
     heading = normalizeAngle(heading - estTheta)
     local lateral = -math.sin(estTheta) * dx + math.cos(estTheta) * dy
-    local obstacleSteer, obstacleSlow, minObstacle, hardStop, risk, turnHint = readObstacleField()
+    local obstacleSteer, obstacleSlow, minObstacle, hardStop, risk = readObstacleField()
 
     if targetDistance <= tolerance then
         setWheelSpeeds(0, 0)
         motionMode = 'ARRIVED_TARGET'
-        resetNavigationProgress(sim.getSimulationTime())
         return targetDistance, minObstacle, risk
     end
-
-    updateNavigationProgress(targetDistance)
-    local escapeActive = updateAvoidanceRecovery(targetDistance, minObstacle, obstacleSlow, turnHint)
 
     motionMode = 'ROUTE'
     if plannerWaypointActive == 1 then
@@ -1907,7 +1878,24 @@ local function navigateTo(target, tolerance)
         motionMode = 'AVOIDING'
     end
 
-    local v, w = computeCommand(distance, heading, lateral, obstacleSteer, obstacleSlow, hardStop, escapeActive)
+    local v, w = computeCommand(distance, heading, lateral, obstacleSteer, obstacleSlow, hardStop)
+
+    -- Crawl the final stretch into a rack. The rack is transparent to avoidance while
+    -- approaching, so without this the chassis could ram it at speed and the collision
+    -- impulse could fling it through a wall. The cap uses the PHYSICAL distance to the
+    -- rack (not the SLAM estimate), so it still protects the robot if the estimate is
+    -- briefly off. Creeping the last centimetres lets the arrival check stop it cleanly
+    -- right in front of the shelf.
+    if wanderer >= 0 and RACK_APPROACH_STATES[taskState] and targetDistance < cfg.rackSlowRadius then
+        v = math.min(v, cfg.rackApproachSpeed)
+    end
+
+    -- General wall guard: near any perimeter wall, cap the speed regardless of state.
+    -- In normal operation the robot stays well inside the cell, so this only bites if
+    -- something pushes it toward a wall, and a gentle contact cannot tunnel through.
+    if math.max(math.abs(rpos[1]), math.abs(rpos[2])) > cfg.wallSlowBound then
+        v = math.min(v, cfg.rackApproachSpeed)
+    end
 
     setWheelSpeeds(v, w)
     return targetDistance, minObstacle, risk
@@ -1970,7 +1958,7 @@ local function returnToolToRack(tool, storagePoint, completedCount, idleColor, n
     stopRobot('MANIPULATING')
     if delayElapsed(cfg.manipulationDelay) then
         carryingTool = 0
-        placeToolAt(tool, storagePoint, 0.28)
+        placeToolAt(tool, storagePoint, 0.42)
         completedTaskCount = math.max(completedTaskCount, completedCount)
         setShapeColorSafe(tool, idleColor)
         if afterReturn then afterReturn() end
@@ -1978,9 +1966,78 @@ local function returnToolToRack(tool, storagePoint, completedCount, idleColor, n
     end
 end
 
+-- Restart the full T1/T2 work loop for another pass. The SLAM map and the
+-- battery charge are kept on purpose: the cell does not change between loops, so
+-- each repeat reuses the map it already built (this is what makes speedLearnFactor
+-- grow and the motion look more confident on the second and third passes).
+local function startNextCycle()
+    completedTaskCount = 0
+    carryingTool = 0
+    tool1Delivered = 0
+    tool1Returned = 0
+    tool2Delivered = 0
+    tool2Returned = 0
+    chargeRequested = 0
+    chargingActive = 0
+    commandTotalVariation = 0
+    stateStartT = sim.getSimulationTime()
+    setActiveTool(t1, 'T1')
+    currentTaskId = 'task1'
+    currentTaskSpec = 'task1:{T1->B1@WS1}'
+    setTaskState('TO_PICKUP_T1')
+end
+
+-- Greedy nearest-frontier selection from the robot's own estimated pose: the basis
+-- of the first exploratory pass over the unknown cell.
+local function nearestUnvisitedFrontier()
+    local best, bestD = -1, math.huge
+    for i, f in ipairs(explore.markers) do
+        if not explore.visited[i] then
+            local p = readWorldPosition(f.handle)
+            if p then
+                local d = (p[1] - estX) * (p[1] - estX) + (p[2] - estY) * (p[2] - estY)
+                if d < bestD then
+                    bestD = d
+                    best = i
+                end
+            end
+        end
+    end
+    return best
+end
+
 local TaskHandlers = {
     WAIT_BATTERY = function()
         stopRobot('WAIT')
+    end,
+
+    -- First pass over an unknown cell: drive to each frontier marker in nearest-first
+    -- order so the sonar ring sweeps the whole cell and the SLAM map fills in before
+    -- any task is attempted. Once every frontier is reached the robot starts the normal
+    -- T1/T2 work loop on the map it just built; later loops skip this and go direct.
+    EXPLORE_FRONTIERS = function()
+        local now = sim.getSimulationTime()
+        -- Best-effort exploration: stop once every frontier is reached OR the time box
+        -- runs out, then begin the task cycle on the map built so far. This guarantees
+        -- the mission always proceeds even if a frontier is briefly hard to reach.
+        if explore.current < 0 then
+            explore.current = nearestUnvisitedFrontier()
+            explore.selectT = now
+        end
+        if explore.current < 0 or (now - stateStartT) > cfg.exploreMaxTime then
+            setActiveTool(t1, 'T1')
+            currentTaskId = 'task1'
+            currentTaskSpec = 'task1:{T1->B1@WS1}'
+            setTaskState('TO_PICKUP_T1')
+            return
+        end
+        local dist = navigateTo(explore.markers[explore.current].handle, cfg.exploreTolerance)
+        -- Reached it, or spent too long on this one (skip an unreachable frontier).
+        if (dist >= 0 and dist <= cfg.exploreTolerance)
+            or (now - explore.selectT) > cfg.exploreFrontierTimeout then
+            explore.visited[explore.current] = true
+            explore.current = -1
+        end
     end,
 
     PICKUP_T1 = function()
@@ -2061,8 +2118,17 @@ local TaskHandlers = {
     CHARGING = function()
         stopRobot('CHARGING')
         chargingActive = 1
-        if batteryLevel >= 96.0 then
-            setTaskState('READY')
+        -- Phase 2 repeats the loop several times; dock, top the battery up and set
+        -- off again until the last loop, which charges fully and then parks READY.
+        local lastCycle = (missionCycle + 1 >= targetCycles)
+        local resumeLevel = lastCycle and 96.0 or cfg.batteryCycleResume
+        if batteryLevel >= resumeLevel then
+            if lastCycle then
+                setTaskState('READY')
+            else
+                missionCycle = missionCycle + 1
+                startNextCycle()
+            end
         end
     end,
 }
@@ -2135,7 +2201,7 @@ local function publishTelemetry(distance, minObstacle, risk)
         phase1BatteryMode = batteryMode,
         phase1PlannerMode = plannerMode,
         phase1PlannerWaypoint = string.format('%.3f,%.3f,%d', plannerWaypointX, plannerWaypointY, plannerWaypointActive),
-        phase1Compliance = 'R1+B1+T1+T2+C1;two_worktables;furniture_sofa;' .. complianceSlam .. ';slam_path_planning;reactive_obstacle_avoidance;battery_charge',
+        phase1Compliance = 'R1+B1+T1+T2+C1;two_worktables;' .. complianceSlam .. ';slam_path_planning;reactive_obstacle_avoidance;battery_charge',
     })
     setFloatSignals({
         phase1DistanceToTarget = distance or -1,
@@ -2169,7 +2235,6 @@ local function publishTelemetry(distance, minObstacle, risk)
         phase1GridUpdates = gridUpdates,
         phase1CartographerSubmaps = slamAlgorithm == 'CARTOGRAPHER_SUBMAP' and submapCount or 0,
         phase1LoopClosures = slamAlgorithm == 'CARTOGRAPHER_SUBMAP' and loopClosures or 0,
-        phase1PlannerRecoveryCount = plannerRecoveryCount,
     })
 end
 
@@ -2181,7 +2246,7 @@ local function logState(distance, minObstacle, risk)
         sim.addLog(
             sim.verbosity_scriptinfos,
             string.format(
-                'Phase1 mode=%s state=%s task=%s tool=%s motion=%s planner=%s slam=%d dist=%.2f obs=%.2f risk=%.2f battery=%.1f b1=%s poseErr=%.2f',
+                'Phase1 mode=%s state=%s task=%s tool=%s motion=%s planner=%s slam=%d dist=%.2f obs=%.2f risk=%.2f battery=%.1f b1=%s poseErr=%.2f hdgErr=%.3f',
                 controlMode,
                 taskState,
                 currentTaskId,
@@ -2194,7 +2259,8 @@ local function logState(distance, minObstacle, risk)
                 risk or 0,
                 batteryLevel,
                 readStringSignal('phase1B1Station', 'UNKNOWN'),
-                poseError
+                poseError,
+                headingError or 0
             )
         )
         lastLogT = t
@@ -2206,6 +2272,26 @@ local function loadSceneHandles()
     leftMotor = safeGetObject('/PioneerP3DX/leftMotor')
     rightMotor = safeGetObject('/PioneerP3DX/rightMotor')
     b1 = safeGetObject('/B1')
+    wanderer = safeGetObject('/P2_Wanderer')
+    if wanderer >= 0 then
+        -- Phase 2 (unknown cell + wandering robot): repeat the work loop so the
+        -- map keeps improving and the motion grows more confident each pass.
+        targetCycles = cfg.targetCyclesPhase2
+    end
+    -- Resolve the unknown-cell frontier markers (Phase 2 only). The very first pass
+    -- drives to these in nearest-first order to map the cell before the task cycle.
+    explore.markers = {}
+    local frontierNames = {
+        '/P2_Frontier_01_NE_Rack', '/P2_Frontier_02_Center_Corridor',
+        '/P2_Frontier_03_West_Table', '/P2_Frontier_04_SE_Return',
+        '/P2_Frontier_05_Charging_Corridor', '/P2_Frontier_06_North_Unknown',
+    }
+    for _, name in ipairs(frontierNames) do
+        local h = safeGetObject(name)
+        if h >= 0 then
+            explore.markers[#explore.markers + 1] = {handle = h, name = name}
+        end
+    end
     c1 = safeGetObject('/C1')
     t1 = safeGetObject('/T1')
     t2 = safeGetObject('/T2')
@@ -2217,11 +2303,38 @@ local function loadSceneHandles()
     ws2Drop = safeGetObject('/WS2_Tool_Drop')
     ws1WorkSurface = safeGetObject('/WS1_Work_Surface')
     ws2WorkSurface = safeGetObject('/WS2_Work_Surface')
+
+    -- Collect the tool racks/shelves so R1 can approach them closely for pickup:
+    -- they are still mapped as SLAM landmarks, but excluded from the reactive
+    -- repulsion that would otherwise stop the robot ~0.6 m short of the shelf.
+    avoidIgnoreSet = {}
+    for _, path in ipairs({'/P1_ToolRack_T1', '/P1_ToolRack_T2'}) do
+        local h = safeGetObject(path)
+        if h >= 0 then
+            avoidIgnoreSet[h] = true
+            local ok, tree = pcall(sim.getObjectsInTree, h, sim.handle_all, 0)
+            if ok and tree then
+                for _, c in ipairs(tree) do avoidIgnoreSet[c] = true end
+            end
+        end
+    end
+    local idx = 0
+    while true do
+        local h = sim.getObjects(idx, sim.handle_all)
+        if h == -1 then break end
+        local okA, alias = pcall(sim.getObjectAlias, h, 1)
+        if okA and alias and (string.find(alias, 'ToolShelf') or string.find(alias, 'ToolRack')) then
+            avoidIgnoreSet[h] = true
+        end
+        idx = idx + 1
+    end
+
     rebuildTargetTable()
 end
 
 local function resetMissionState()
     batteryLevel = cfg.batteryStart
+    missionCycle = 0
     taskAccepted = estimateTaskFeasibility() and 1 or 0
     carryingTool = 0
     completedTaskCount = 0
@@ -2231,33 +2344,26 @@ local function resetMissionState()
     tool2Returned = 0
     chargeRequested = 0
     commandTotalVariation = 0
-    plannerWaypointActive = 0
-    plannerDirectUntilT = 0
-    plannerMapIgnoreUntilT = 0
-    plannerRecoveryCount = 0
-    plannerMode = 'DIRECT'
-    resetNavigationProgress(sim.getSimulationTime())
     lastT = sim.getSimulationTime()
     stateStartT = lastT
 
     setActiveTool(t1, 'T1')
     currentTaskId = 'task1'
     currentTaskSpec = 'task1:{T1->B1@WS1}'
-    if taskAccepted == 1 then
-        setTaskState('TO_PICKUP_T1')
-    else
+    explore.visited = {}
+    explore.current = -1
+    if taskAccepted ~= 1 then
         setTaskState('WAIT_BATTERY')
+    elseif #explore.markers > 0 then
+        -- Phase 2, unknown cell: the first pass explores the frontiers to build the
+        -- map before doing any task. (Phase 1 has no frontiers and starts straight in.)
+        setTaskState('EXPLORE_FRONTIERS')
+    else
+        setTaskState('TO_PICKUP_T1')
     end
 end
 
-local Phase1TaskController = {}
-Phase1TaskController.__index = Phase1TaskController
-
-function Phase1TaskController:new()
-    return setmetatable({}, self)
-end
-
-function Phase1TaskController:init()
+function sysCall_init()
     loadSceneHandles()
     loadSensors()
     initSensorVisualization()
@@ -2272,14 +2378,31 @@ function Phase1TaskController:init()
     setShapeColorSafe(t1, ToolColor.idleT1)
     setShapeColorSafe(t2, ToolColor.idleT2)
     publishTelemetry(-1, -1, 0)
-    sim.addLog(sim.verbosity_scriptinfos, 'Phase1 R1 controller configured: ' .. slamAlgorithm .. ' obstacle map, waypoint path planning, two worktables.')
+    sim.addLog(sim.verbosity_scriptinfos, 'Phase1 R1 controller ready: ' .. slamAlgorithm .. ' obstacle map, waypoint path planning, two worktables.')
 end
 
-function Phase1TaskController:actuate()
+function sysCall_actuation()
     if robot < 0 or leftMotor < 0 or rightMotor < 0 then
         taskState = 'ERROR_HANDLES'
         publishTelemetry(-1, -1, 0)
         return
+    end
+
+    -- Geofence: a simulator physics glitch can, very rarely, fling the chassis through
+    -- a perimeter wall. If the true position ever lands outside the cell, snap it back
+    -- just inside, stop its motion and re-anchor the pose estimate, so the mission
+    -- continues instead of the robot being lost or pinned outside the wall. In normal
+    -- operation the robot stays well within the cell and this never triggers; the
+    -- normal controller then drives it back to its task from the fence line.
+    local fp = sim.getObjectPosition(robot, -1)
+    if math.abs(fp[1]) > cfg.fenceBound or math.abs(fp[2]) > cfg.fenceBound then
+        fp[1] = clamp(fp[1], -cfg.fenceBound, cfg.fenceBound)
+        fp[2] = clamp(fp[2], -cfg.fenceBound, cfg.fenceBound)
+        pcall(sim.setObjectPosition, robot, -1, fp)
+        pcall(sim.resetDynamicObject, robot)
+        setWheelSpeeds(0, 0)
+        local fo = sim.getObjectOrientation(robot, -1)
+        slamState[1], slamState[2], slamState[3] = fp[1], fp[2], fo[3]
     end
 
     local t = sim.getSimulationTime()
@@ -2298,27 +2421,8 @@ function Phase1TaskController:actuate()
     logState(distance, minObstacle, risk)
 end
 
-function Phase1TaskController:cleanup()
+function sysCall_cleanup()
     setWheelSpeeds(0, 0)
     publishTelemetry(-1, -1, 0)
     removeSensorVisualization()
-end
-
-local app = nil
-
-function sysCall_init()
-    app = Phase1TaskController:new()
-    app:init()
-end
-
-function sysCall_actuation()
-    if app then
-        app:actuate()
-    end
-end
-
-function sysCall_cleanup()
-    if app then
-        app:cleanup()
-    end
 end

@@ -6,8 +6,12 @@ import csv
 import math
 from pathlib import Path
 
+import matplotlib
 import matplotlib.pyplot as plt
 
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 ROOT = Path(__file__).resolve().parents[2]
 LOG_DIR = ROOT / "actividad2" / "coppeliasim" / "follower_pid_logs"

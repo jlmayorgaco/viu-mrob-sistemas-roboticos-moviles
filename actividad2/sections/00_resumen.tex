@@ -5,13 +5,13 @@
 Se implementó en CoppeliaSim y Lua un Pioneer P3DX dentro de
 una celda de almacén. La escena base \path{Sim_T2_Phase1_Basic.ttt} integra los
 elementos principales del escenario: R1, B1 (Bill) como persona móvil, T1 y T2,
-dos mesas, estanterías, un sofá de operador, obstáculos y la estación de carga. B1 recibe en el código los identificadores \texttt{/B1} y Bill;
-corresponde al modelo de persona de CoppeliaSim instanciado como \texttt{People/mannequin}.
+dos mesas, estanterías, un sofá de operador, obstáculos y la estación de carga. B1 recibe en el código los identificadores \texttt{/B1} y Bill.
+Corresponde al modelo de persona de CoppeliaSim instanciado como \texttt{People/mannequin}.
 \end{summarybox}
 
-R1 lee los sensores de proximidad, estima su pose, actualiza un mapa local,
-evita obstáculos y comanda las ruedas diferenciales mientras coordina entregas con
-B1. El ciclo validado comprende las cuatro tareas siguientes.
+R1 usa los 16 sensores de proximidad para estimar su pose y mantener un mapa
+local con el que evita obstáculos, mientras coordina las entregas con B1. El
+ciclo validado comprende las cuatro tareas siguientes.
 
 \begin{itemize}
   \item \texttt{task1:\{T1 -> B1@WS1\}}: R1 recoge T1 en la estantería y la entrega a B1.
@@ -27,20 +27,20 @@ menor puntaje compuesto en esa escena según los pesos definidos. La escena ware
 base. El NMPC completo (horizonte N=10, \(\Delta t=0{,}22\) s) opera exclusivamente
 en el controlador del follower (\texttt{pioneer\_pid\_follower\_controller.lua}).
 
-La segunda escena validada es \path{Sim_T2_Phase2_SLAM_Unknown.ttt}. En esa escena, el
-robot empieza con parte del entorno oculta y se encuentra obstáculos que aparecen
-durante la misión. En esa fase se comparan cuatro variantes de estimación y mapeo simultáneo
+La segunda escena validada es \path{Sim_T2_Phase2_SLAM_Unknown.ttt}. Aquí el
+robot arranca con parte del entorno oculto y detecta obstáculos nuevos durante la
+misión. En esa fase se comparan cuatro variantes de estimación y mapeo simultáneo
 SLAM (\textit{Simultaneous Localisation and Mapping}) escritas en Lua:
 \texttt{KALMAN\_LANDMARK}, \texttt{GMAPPING\_GRID},
 \texttt{HECTOR\_GRID\_MATCHING} y \texttt{CARTOGRAPHER\_SUBMAP}. Usan las
 mismas tareas, sensores y controlador PID, para que la comparación de representaciones
 de mapa no dependa de condiciones de escena distintas.
 
-La ejecución final de Phase 2 completó las cuatro tareas, volvió a carga, mantuvo
-activos los 16 sensores. En el ensayo con mapa desconocido, Kalman-landmark obtuvo el menor RMSE de
-posición (\SI{0.03185}{m}, medido contra la pose ruidosa del simulador usada
-como referencia GPS sintética; véase Cap.~5) y la menor duración
-(\SI{124.80}{s}). Cartographer-submap generó más actividad de mapa, con 13
-submapas y 4 cierres de ciclo locales; Hector obtuvo el mayor índice de
-precisión por proximidad (fracción de rasgos del mapa a menos de
-\SI{0.55}{m} de un obstáculo conocido) entre las variantes grid.
+En la ejecución final de Fase 2, R1 completó las cuatro tareas y volvió a carga,
+con los 16 sensores activos, mientras un robot móvil autónomo cruzaba la celda con
+rutas aleatorias. Las cuatro variantes terminaron la misión. La más rápida fue
+Kalman-landmark (\SI{88.6}{s}), que además dejó el mapa más compacto. El menor
+RMSE de posición lo dio GMapping (\SI{0.017}{m}, medido contra una referencia
+global ruidosa, no contra verdad de terreno; véase Cap.~5), y Cartographer-submap
+aportó estructura temporal con 16 submapas y 4 cierres de ciclo calculados en
+ejecución.

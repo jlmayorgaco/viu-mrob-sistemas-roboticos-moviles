@@ -1,8 +1,9 @@
 """Run Sim_T2_Phase2_SLAM_Unknown.ttt and export unknown-map SLAM data.
 
 R1 starts with only the static landmarks in memory. During the mission it adds
-obstacles from sensor detections while the dynamic pallet and temporary blocker
-force avoidance and replanning. This exporter records the plotting signals.
+obstacles from sensor detections while an autonomous wandering robot
+(/P2_Wanderer) moving on random routes forces avoidance and replanning. This
+exporter records the plotting signals.
 """
 
 from __future__ import annotations
@@ -218,12 +219,14 @@ def run(
 
         robot = phase1_export.safe_get(sim, "/PioneerP3DX")
         b1 = phase1_export.safe_get(sim, "/B1")
-        pallet = phase1_export.safe_get(sim, "/P2_Dynamic_Pallet")
-        blocker = phase1_export.safe_get(sim, "/P2_Temporary_Blocker")
+        # The dynamic obstacle is now the wandering robot /P2_Wanderer; the
+        # legacy pallet/blocker columns below track it.
+        pallet = phase1_export.safe_get(sim, "/P2_Wanderer")
+        blocker = pallet
         if robot < 0 or b1 < 0:
             raise RuntimeError("Scene is missing /PioneerP3DX or /B1")
-        if pallet < 0 or blocker < 0:
-            raise RuntimeError("Scene is missing /P2_Dynamic_Pallet or /P2_Temporary_Blocker")
+        if pallet < 0:
+            raise RuntimeError("Scene is missing /P2_Wanderer")
 
         sim.setStringSignal("phase1ControlMode", "PID")
         sim.setStringSignal("phase1SlamAlgorithm", slam_algorithm)

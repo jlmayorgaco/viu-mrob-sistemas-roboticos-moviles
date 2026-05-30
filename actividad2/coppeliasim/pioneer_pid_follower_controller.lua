@@ -33,7 +33,7 @@ local Gains = {
 local DriveProfiles = {
     P = {vMax = 0.50, vReverseMax = -0.20, wMax = 1.35, headingKp = 1.35, headingKd = 0.00, accel = 3.0, brake = 0.22, turnAccel = 2.0, settleError = 0.08},
     PI = {vMax = 0.58, vReverseMax = -0.12, wMax = 1.70, headingKp = 1.70, headingKd = 0.04, accel = 6.0, brake = 5.0, turnAccel = 6.0, settleError = 0.08},
-    PID = {vMax = 0.72, vReverseMax = -0.12, wMax = 1.85, headingKp = 1.85, headingKd = 0.08, accel = 8.2, brake = 8.0, turnAccel = 8.0, settleError = 0.045, settleExit = 0.075, derivativeAlpha = 0.22},
+    PID = {vMax = 0.56, vReverseMax = -0.12, wMax = 1.85, headingKp = 1.85, headingKd = 0.08, accel = 7.5, brake = 7.5, turnAccel = 8.0, settleError = 0.045, settleExit = 0.075, derivativeAlpha = 0.22},
     LQR = {vMax = 0.42, vReverseMax = -0.08, wMax = 1.30, headingKp = 1.38, headingKd = 0.20, accel = 1.45, brake = 1.35, turnAccel = 1.55, settleError = 0.055, settleExit = 0.105, derivativeAlpha = 0.055, deadband = 0.014, commandDeadband = 0.004},
     NMPC = {vMax = 0.36, vReverseMax = -0.08, wMax = 0.90, accel = 1.80, brake = 1.70, turnAccel = 1.70, settleError = 0.060, settleExit = 0.11},
 }
@@ -41,9 +41,16 @@ local DriveProfiles = {
 local NmpcConfig = {
     horizon = 10,
     dt = 0.22,
-    iterations = 2,
-    stepV = {0.065, 0.025},
-    stepW = {0.16, 0.065},
+    -- Derivative-free receding-horizon solver: a Hooke-Jeeves pattern search
+    -- over the (v,w) command sequence with geometrically shrinking steps. No
+    -- SQP/interior-point library (IPOPT/CasADi) is available inside the
+    -- CoppeliaSim Lua sandbox, so the optimiser is implemented from scratch.
+    iterations = 6,
+    stepV0 = 0.090,
+    stepW0 = 0.220,
+    stepShrink = 0.55,
+    stepFloorV = 0.004,
+    stepFloorW = 0.010,
     qDistance = 48.0,
     qTarget = 7.0,
     qHeading = 1.2,
@@ -56,12 +63,15 @@ local NmpcConfig = {
 }
 
 local LqrConfig = {
-    -- Offline discrete LQR for x=[e_long, e_lat, e_yaw] and u=[delta_v, delta_w].
-    -- Gain computed with compute_follower_lqr_gain.py.
-    K = {
-        {-2.34963497, 1.29248967, 0.12030307},
-        {0.24273764, -4.35704991, -2.68868520},
-    },
+    -- Discrete LQR for x=[e_long, e_lat, e_yaw] and u=[delta_v, delta_w].
+    -- The gain K is now solved on-line at scene init by iterating the discrete
+    -- algebraic Riccati equation (see solveDiscreteLqr); it is no longer a value
+    -- copied from compute_follower_lqr_gain.py. That Python script is kept only
+    -- as an off-line cross-check (it reaches the same K via scipy).
+    K = nil,
+    vRef = 0.22,   -- reference forward speed of the linearisation point [m/s]
+    rho = 1.55,    -- reference turn radius [m] -> wRef = vRef / rho
+    dt = 0.05,     -- discretisation step [s]
     q = {35.0, 80.0, 18.0},
     r = {6.0, 3.0},
 }
@@ -366,7 +376,96 @@ end
 local LqrStrategy = {}
 LqrStrategy.__index = LqrStrategy
 
+-- ----------------------------------------------------------------------------
+-- In-scene discrete LQR (Riccati) solver. Pure-Lua small matrix algebra so the
+-- gain is computed inside CoppeliaSim at init, not imported as a constant.
+-- ----------------------------------------------------------------------------
+local function matMul(A, B)
+    local r, n, c = #A, #B, #B[1]
+    local out = {}
+    for i = 1, r do
+        out[i] = {}
+        for j = 1, c do
+            local s = 0
+            for k = 1, n do s = s + A[i][k] * B[k][j] end
+            out[i][j] = s
+        end
+    end
+    return out
+end
+
+local function matT(A)
+    local out = {}
+    for i = 1, #A[1] do
+        out[i] = {}
+        for j = 1, #A do out[i][j] = A[j][i] end
+    end
+    return out
+end
+
+local function matAddScaled(A, B, sgn)
+    local out = {}
+    for i = 1, #A do
+        out[i] = {}
+        for j = 1, #A[1] do out[i][j] = A[i][j] + sgn * B[i][j] end
+    end
+    return out
+end
+
+local function inv2(M)
+    local det = M[1][1] * M[2][2] - M[1][2] * M[2][1]
+    if math.abs(det) < 1e-12 then det = (det >= 0 and 1 or -1) * 1e-12 end
+    return {
+        { M[2][2] / det, -M[1][2] / det},
+        {-M[2][1] / det,  M[1][1] / det},
+    }
+end
+
+-- Iterate P <- A'PA - (A'PB)(R+B'PB)^-1(B'PA) + Q to the fixed point, then
+-- return K = (R + B'PB)^-1 B'PA.
+local function solveDiscreteLqr(A, B, Q, R, iterations, tol)
+    iterations = iterations or 5000
+    tol = tol or 1e-11
+    local P = {}
+    for i = 1, #Q do P[i] = {} for j = 1, #Q do P[i][j] = Q[i][j] end end
+    local At, Bt = matT(A), matT(B)
+    local K = nil
+    for _ = 1, iterations do
+        local BtP = matMul(Bt, P)
+        local inv = inv2(matAddScaled(R, matMul(BtP, B), 1))
+        K = matMul(matMul(inv, BtP), A)
+        local AtP = matMul(At, P)
+        local Pn = matAddScaled(matAddScaled(matMul(AtP, A), matMul(matMul(AtP, B), K), -1), Q, 1)
+        local diff = 0
+        for i = 1, #P do for j = 1, #P do diff = diff + math.abs(Pn[i][j] - P[i][j]) end end
+        P = Pn
+        if diff < tol then break end
+    end
+    return K
+end
+
+-- Build the linearised unicycle error model about the reference trajectory and
+-- solve the discrete LQR for the follower.
+local function computeFollowerLqrGain(lqrCfg)
+    local vRef = lqrCfg.vRef or 0.22
+    local wRef = vRef / (lqrCfg.rho or 1.55)
+    local dt = lqrCfg.dt or 0.05
+    local Ac = {{0, wRef, 0}, {-wRef, 0, vRef}, {0, 0, 0}}
+    local Bc = {{-1, 0}, {0, 0}, {0, -1}}
+    local Ad, Bd = {}, {}
+    for i = 1, 3 do
+        Ad[i] = {}
+        for j = 1, 3 do Ad[i][j] = (i == j and 1 or 0) + dt * Ac[i][j] end
+        Bd[i] = {dt * Bc[i][1], dt * Bc[i][2]}
+    end
+    local Q = {{lqrCfg.q[1], 0, 0}, {0, lqrCfg.q[2], 0}, {0, 0, lqrCfg.q[3]}}
+    local R = {{lqrCfg.r[1], 0}, {0, lqrCfg.r[2]}}
+    return solveDiscreteLqr(Ad, Bd, Q, R)
+end
+
 function LqrStrategy:new(cfg, lqrCfg)
+    -- Solve the Riccati equation in-scene; the gain is no longer hardcoded.
+    lqrCfg.K = computeFollowerLqrGain(lqrCfg)
     return setmetatable({cfg = cfg, lqrCfg = lqrCfg}, self)
 end
 
@@ -502,41 +601,57 @@ end
 function NmpcOptimizer:solve(ctx)
     self:initialize(ctx.runtime.actualV, ctx.runtime.actualW)
     local d = ctx.profile
+    local vLo = d.vReverseMax or self.robotCfg.vReverseMax
+    local vHi = d.vMax or self.robotCfg.vMax
+    local wHi = d.wMax or self.robotCfg.wMax
     local bestCost = self:cost(self.seqV, self.seqW, ctx)
 
-    for pass = 1, self.cfg.iterations do
-        local stepV = self.cfg.stepV[pass] or self.cfg.stepV[#self.cfg.stepV]
-        local stepW = self.cfg.stepW[pass] or self.cfg.stepW[#self.cfg.stepW]
-
+    -- Hooke-Jeeves pattern search: each pass probes +/- the current step on
+    -- every command of the horizon, keeps any move that lowers the cost, and
+    -- shrinks the step geometrically. Passes stop early once a whole sweep
+    -- yields no improvement (local optimum reached for this step size).
+    local stepV = self.cfg.stepV0
+    local stepW = self.cfg.stepW0
+    for _ = 1, self.cfg.iterations do
+        local improved = false
         for i = 1, self.cfg.horizon do
             local originalV = self.seqV[i]
-            local candidateV = originalV
-            for _, sign in ipairs(SearchSigns) do
-                self.seqV[i] = MathEx.clamp(originalV + sign * stepV, d.vReverseMax or self.robotCfg.vReverseMax, d.vMax or self.robotCfg.vMax)
+            for _, s in ipairs(SearchSigns) do
+                self.seqV[i] = MathEx.clamp(originalV + s * stepV, vLo, vHi)
                 local cost = self:cost(self.seqV, self.seqW, ctx)
                 if cost < bestCost then
                     bestCost = cost
-                    candidateV = self.seqV[i]
+                    originalV = self.seqV[i]
+                    improved = true
                 end
             end
-            self.seqV[i] = candidateV
+            self.seqV[i] = originalV
 
             local originalW = self.seqW[i]
-            local candidateW = originalW
-            for _, sign in ipairs(SearchSigns) do
-                self.seqW[i] = MathEx.clamp(originalW + sign * stepW, -(d.wMax or self.robotCfg.wMax), d.wMax or self.robotCfg.wMax)
+            for _, s in ipairs(SearchSigns) do
+                self.seqW[i] = MathEx.clamp(originalW + s * stepW, -wHi, wHi)
                 local cost = self:cost(self.seqV, self.seqW, ctx)
                 if cost < bestCost then
                     bestCost = cost
-                    candidateW = self.seqW[i]
+                    originalW = self.seqW[i]
+                    improved = true
                 end
             end
-            self.seqW[i] = candidateW
+            self.seqW[i] = originalW
+        end
+
+        if not improved then
+            -- Refine the resolution; stop when both steps hit their floor.
+            stepV = stepV * self.cfg.stepShrink
+            stepW = stepW * self.cfg.stepShrink
+            if stepV < self.cfg.stepFloorV and stepW < self.cfg.stepFloorW then
+                break
+            end
         end
     end
 
-    return MathEx.clamp(self.seqV[1] or 0, d.vReverseMax or self.robotCfg.vReverseMax, d.vMax or self.robotCfg.vMax),
-        MathEx.clamp(self.seqW[1] or 0, -(d.wMax or self.robotCfg.wMax), d.wMax or self.robotCfg.wMax)
+    return MathEx.clamp(self.seqV[1] or 0, vLo, vHi),
+        MathEx.clamp(self.seqW[1] or 0, -wHi, wHi)
 end
 
 local NmpcStrategy = {}

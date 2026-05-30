@@ -9,8 +9,12 @@ import re
 from pathlib import Path
 from statistics import fmean
 
+import matplotlib
 import matplotlib.pyplot as plt
 
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 ROOT = Path(__file__).resolve().parents[2]
 LOG_DIR = ROOT / "actividad2" / "coppeliasim" / "phase1_slam_logs"
@@ -434,7 +438,7 @@ def main() -> int:
         ax.scatter([p[1] for p in landmarks], [p[2] for p in landmarks], s=54, marker="x", color="#c9472c", label="landmarks obstaculo")
         for idx, x, y, seen in landmarks:
             ax.text(x + 0.03, y + 0.03, f"O{idx}", fontsize=7.5, color="#8a2d1d")
-    ax.set_title("Trayectoria, estimacion y mapa")
+    ax.set_title("Trayectoria, estimación y mapa")
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.axis("equal")

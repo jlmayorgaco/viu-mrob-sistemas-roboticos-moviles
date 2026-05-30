@@ -1,14 +1,28 @@
 sim = require('sim')
 
 -- Phase 2 scenario manager.
--- Publishes unknown-map, mapping and replan signals used by validation scripts.
+-- Drives the autonomous wandering robot (/P2_Wanderer) along random routes and
+-- publishes the unknown-map, mapping-activity and replan signals consumed by the
+-- validation scripts. The wanderer is a genuine moving obstacle: R1 detects it
+-- with its proximity ring and avoids/replans around it.
 
 local Config = {
-    movedObjects = 'none',
-    motionModel = 'static_unknown_map',
+    movedObjects = 'P2_Wanderer',
+    motionModel = 'dynamic_wandering_robot',
     minReveal = 6.0,
-    frontierCount = 6,
-    unknownCells = 32,
+    frontierCount = 6,   -- number of frontier marker objects placed in the scene
+    unknownCells = 32,   -- number of costmap cells placed in the scene
+    -- Wanderer motion (kinematic): random waypoints inside the central free area.
+    wanderSpeed = 0.20,
+    wanderZ = 0.13,
+    boundXMin = -1.8, boundXMax = 1.8,
+    boundYMin = -1.6, boundYMax = 1.6,
+    -- Avoid stopping on the interior furniture (pallet, pillar, crate).
+    keepouts = {{-0.74, -1.05}, {-0.18, -0.42}, {0.54, 0.82}},
+    keepoutRadius = 0.55,
+    waypointTolerance = 0.18,
+    crossingDistance = 0.9,   -- distance to R1 that counts as a path crossing
+    seed = 20260529,
 }
 
 local MathEx = {}
@@ -19,6 +33,11 @@ function MathEx.clamp(value, lo, hi)
     return value
 end
 
+function MathEx.atan2(y, x)
+    if math.atan2 then return math.atan2(y, x) end
+    return math.atan(y, x)
+end
+
 local SignalBus = {}
 SignalBus.__index = SignalBus
 
@@ -26,17 +45,9 @@ function SignalBus:new()
     return setmetatable({}, self)
 end
 
-function SignalBus:setString(name, value)
-    pcall(sim.setStringSignal, name, value)
-end
-
-function SignalBus:setFloat(name, value)
-    pcall(sim.setFloatSignal, name, value)
-end
-
-function SignalBus:setInt(name, value)
-    pcall(sim.setInt32Signal, name, value)
-end
+function SignalBus:setString(name, value) pcall(sim.setStringSignal, name, value) end
+function SignalBus:setFloat(name, value) pcall(sim.setFloatSignal, name, value) end
+function SignalBus:setInt(name, value) pcall(sim.setInt32Signal, name, value) end
 
 function SignalBus:readFloat(name, defaultValue)
     local value = sim.getFloatSignal(name)
@@ -56,6 +67,115 @@ function SignalBus:readString(name, defaultValue)
     return value
 end
 
+-- ---------------------------------------------------------------------------
+-- Wandering robot: random-route kinematic motion + genuine crossing counting.
+-- ---------------------------------------------------------------------------
+local Wanderer = {}
+Wanderer.__index = Wanderer
+
+function Wanderer:new(cfg, signals)
+    return setmetatable({
+        cfg = cfg,
+        signals = signals,
+        handle = -1,
+        robot = -1,
+        x = 0, y = 0,
+        targetX = 0, targetY = 0,
+        moved = 0,
+        crossings = 0,
+        wasNear = false,
+        lastT = 0,
+        active = 0,
+    }, self)
+end
+
+local function safeGet(path)
+    local ok, h = pcall(sim.getObject, path)
+    if ok and h and h >= 0 then return h end
+    return -1
+end
+
+function Wanderer:pickTarget()
+    local c = self.cfg
+    for _ = 1, 12 do
+        local tx = c.boundXMin + math.random() * (c.boundXMax - c.boundXMin)
+        local ty = c.boundYMin + math.random() * (c.boundYMax - c.boundYMin)
+        local clear = true
+        for _, k in ipairs(c.keepouts) do
+            local dx, dy = tx - k[1], ty - k[2]
+            if dx * dx + dy * dy < c.keepoutRadius * c.keepoutRadius then clear = false; break end
+        end
+        if clear then self.targetX = tx; self.targetY = ty; return end
+    end
+    -- Fallback after several rejections: accept the last candidate.
+    self.targetX = c.boundXMin + math.random() * (c.boundXMax - c.boundXMin)
+    self.targetY = c.boundYMin + math.random() * (c.boundYMax - c.boundYMin)
+end
+
+function Wanderer:init()
+    math.randomseed(self.cfg.seed)
+    self.handle = safeGet('/P2_Wanderer')
+    self.robot = safeGet('/PioneerP3DX')
+    self.lastT = sim.getSimulationTime()
+    if self.handle >= 0 then
+        local ok, p = pcall(sim.getObjectPosition, self.handle, -1)
+        if ok and p then self.x, self.y = p[1], p[2] end
+        self.active = 1
+    else
+        self.active = 0
+    end
+    self:pickTarget()
+end
+
+function Wanderer:update(t)
+    if self.handle < 0 then return end
+    local dt = MathEx.clamp(t - self.lastT, 0.0, 0.2)
+    self.lastT = t
+
+    local dx = self.targetX - self.x
+    local dy = self.targetY - self.y
+    local dist = math.sqrt(dx * dx + dy * dy)
+    if dist < self.cfg.waypointTolerance then
+        self:pickTarget()
+        dx = self.targetX - self.x
+        dy = self.targetY - self.y
+        dist = math.sqrt(dx * dx + dy * dy)
+    end
+
+    if dist > 1e-4 then
+        local step = math.min(self.cfg.wanderSpeed * dt, dist)
+        local nx = self.x + dx / dist * step
+        local ny = self.y + dy / dist * step
+        self.moved = self.moved + math.sqrt((nx - self.x) ^ 2 + (ny - self.y) ^ 2)
+        self.x, self.y = nx, ny
+        local yaw = MathEx.atan2(dy, dx)
+        pcall(sim.setObjectPosition, self.handle, -1, {self.x, self.y, self.cfg.wanderZ})
+        pcall(sim.setObjectOrientation, self.handle, -1, {0, 0, yaw})
+    end
+
+    -- Count genuine crossings: rising edge of "near R1".
+    if self.robot >= 0 then
+        local ok, rp = pcall(sim.getObjectPosition, self.robot, -1)
+        if ok and rp then
+            local d = math.sqrt((rp[1] - self.x) ^ 2 + (rp[2] - self.y) ^ 2)
+            local near = d < self.cfg.crossingDistance
+            if near and not self.wasNear then
+                self.crossings = self.crossings + 1
+            end
+            self.wasNear = near
+        end
+    end
+
+    self.signals:setInt('phase2DynamicObstacleActive', self.active)
+    self.signals:setInt('phase2ObstacleCrossings', self.crossings)
+    self.signals:setFloat('phase2WanderMovedDistance', self.moved)
+    self.signals:setFloat('phase2DynamicObstacleX', self.x)
+    self.signals:setFloat('phase2DynamicObstacleY', self.y)
+end
+
+-- ---------------------------------------------------------------------------
+-- Mapping-activity proxy (declared as activity, not geometric coverage/IoU).
+-- ---------------------------------------------------------------------------
 local MappingEvidence = {}
 MappingEvidence.__index = MappingEvidence
 
@@ -92,11 +212,14 @@ end
 local TracePublisher = {}
 TracePublisher.__index = TracePublisher
 
-function TracePublisher:new(cfg, signals, evidence)
+local COMPLIANCE = 'unknown_map;frontier_targets;static_unknown_obstacles;dynamic_wandering_robot;costmap;slam_path_planning;obstacle_avoidance'
+
+function TracePublisher:new(cfg, signals, evidence, wanderer)
     return setmetatable({
         cfg = cfg,
         signals = signals,
         evidence = evidence,
+        wanderer = wanderer,
         replanTriggers = 0,
         lastRiskGate = false,
         lastPlannerGate = false,
@@ -106,12 +229,13 @@ end
 function TracePublisher:initialize()
     self.signals:setString('phase2Scenario', 'UNKNOWN_MAP_SLAM_AVOIDANCE')
     self.signals:setString('phase2State', 'RUNNING')
-    self.signals:setString('phase2Compliance', 'unknown_map;frontier_targets;static_unknown_obstacles;costmap;slam_path_planning;obstacle_avoidance')
+    self.signals:setString('phase2Compliance', COMPLIANCE)
     self.signals:setString('phase2MovedObjects', self.cfg.movedObjects)
     self.signals:setString('phase2MotionModel', self.cfg.motionModel)
     self.signals:setInt('phase2DynamicObstacleActive', 0)
     self.signals:setInt('phase2TemporaryBlockerActive', 0)
     self.signals:setInt('phase2ObstacleCrossings', 0)
+    self.signals:setFloat('phase2WanderMovedDistance', 0.0)
     self.signals:setInt('phase2ReplanTriggers', 0)
     self.signals:setInt('phase2FrontierCount', self.cfg.frontierCount)
     self.signals:setInt('phase2UnknownCells', self.cfg.unknownCells)
@@ -128,6 +252,8 @@ function TracePublisher:update()
     local plannerMode = self.signals:readString('phase1PlannerMode', '')
     local mapping = self.evidence:read()
 
+    -- Genuine replan triggers: rising edges of high obstacle risk (the wanderer
+    -- or a static unknown obstacle entering the path) and of SLAM_WAYPOINT.
     local riskGate = risk > 0.16
     if riskGate and not self.lastRiskGate then
         self.replanTriggers = self.replanTriggers + 1
@@ -141,16 +267,12 @@ function TracePublisher:update()
     self.lastPlannerGate = plannerGate
 
     self.signals:setString('phase2Scenario', 'UNKNOWN_MAP_SLAM_AVOIDANCE')
-    self.signals:setString('phase2Compliance', 'unknown_map;frontier_targets;static_unknown_obstacles;costmap;slam_path_planning;obstacle_avoidance')
+    self.signals:setString('phase2Compliance', COMPLIANCE)
     self.signals:setString('phase2MovedObjects', self.cfg.movedObjects)
     self.signals:setString('phase2MotionModel', self.cfg.motionModel)
     self.signals:setFloat('phase2MappingEvidencePct', mapping.pct)
     self.signals:setFloat('phase2MapRevealedPct', mapping.pct)
-    self.signals:setFloat('phase2DynamicObstacleX', 0.0)
-    self.signals:setFloat('phase2DynamicObstacleY', 0.0)
-    self.signals:setInt('phase2DynamicObstacleActive', 0)
     self.signals:setInt('phase2TemporaryBlockerActive', 0)
-    self.signals:setInt('phase2ObstacleCrossings', 0)
     self.signals:setInt('phase2ReplanTriggers', self.replanTriggers)
     self.signals:setInt('phase2FrontierCount', self.cfg.frontierCount)
     self.signals:setInt('phase2UnknownCells', self.cfg.unknownCells)
@@ -166,17 +288,22 @@ Phase2ScenarioApp.__index = Phase2ScenarioApp
 function Phase2ScenarioApp:new()
     local signals = SignalBus:new()
     local evidence = MappingEvidence:new(Config, signals)
+    local wanderer = Wanderer:new(Config, signals)
     return setmetatable({
         signals = signals,
-        publisher = TracePublisher:new(Config, signals, evidence),
+        wanderer = wanderer,
+        publisher = TracePublisher:new(Config, signals, evidence, wanderer),
     }, self)
 end
 
 function Phase2ScenarioApp:init()
     self.publisher:initialize()
+    self.wanderer:init()
 end
 
 function Phase2ScenarioApp:actuate()
+    local t = sim.getSimulationTime()
+    self.wanderer:update(t)
     self.publisher:update()
 end
 

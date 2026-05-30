@@ -245,34 +245,37 @@ function JointAnimator:tableWorkPose(action, state)
         rightElbow = 0,
     }
 
+    -- NOTE: in this rig a NEGATIVE shoulder angle swings the arm FORWARD (toward
+    -- the face / the work table); positive swings it behind the back. All station
+    -- poses therefore use negative shoulders so the arms reach in front of Bill.
     if self:actionContains(action, 'READY_TO_TAKE') or self:actionContains(action, 'TAKING') then
         -- Both arms reach clearly forward, waiting for the handoff
-        pose.leftShoulder  =  0.70 + 0.04 * altL
-        pose.rightShoulder =  0.68 + 0.04 * altR
+        pose.leftShoulder  = -0.70 + 0.04 * altL
+        pose.rightShoulder = -0.68 + 0.04 * altR
         pose.leftElbow     =  0.28 + 0.04 * math.abs(tapL)
         pose.rightElbow    =  0.26 + 0.04 * math.abs(tapR)
         pose.leftKnee      =  0.05
         pose.rightKnee     =  0.05
     elseif self:actionContains(action, 'WORKING') then
-        -- Arms strongly forward; alternate slightly so the motion reads as active work
-        pose.leftShoulder  =  0.72 + 0.06 * altL
-        pose.rightShoulder =  0.70 + 0.06 * altR
+        -- Arms reach forward over the table; alternate slightly to read as active work
+        pose.leftShoulder  = -0.72 + 0.06 * altL
+        pose.rightShoulder = -0.70 + 0.06 * altR
         pose.leftElbow     =  0.38 + 0.06 * math.abs(tapL)
         pose.rightElbow    =  0.36 + 0.06 * math.abs(tapR)
         pose.leftKnee      =  0.06 + 0.02 * math.abs(slow)
         pose.rightKnee     =  0.06 + 0.02 * math.abs(slow)
     elseif self:actionContains(action, 'GIVING') then
-        -- Left arm clearly extended offering the tool; right arm relaxed lower
-        pose.leftShoulder  =  0.74 + 0.03 * altL
-        pose.rightShoulder =  0.20 + 0.03 * slow
+        -- Left arm clearly extended forward offering the tool; right arm relaxed
+        pose.leftShoulder  = -0.74 + 0.03 * altL
+        pose.rightShoulder = -0.20 + 0.03 * slow
         pose.leftElbow     =  0.20 + 0.03 * math.abs(tapL)
         pose.rightElbow    =  0.14
         pose.leftKnee      =  0.03
         pose.rightKnee     =  0.03
     elseif StationByState[state] then
-        -- Idle at station: arms resting naturally forward (not behind back)
-        pose.leftShoulder  =  0.18 + 0.04 * altL
-        pose.rightShoulder =  0.18 + 0.04 * altR
+        -- Idle at station: arms resting naturally in front (not behind the back)
+        pose.leftShoulder  = -0.18 + 0.04 * altL
+        pose.rightShoulder = -0.18 + 0.04 * altR
         pose.leftElbow     =  0.10 + 0.02 * math.abs(tapL)
         pose.rightElbow    =  0.10 + 0.02 * math.abs(tapR)
     end
@@ -299,10 +302,13 @@ function JointAnimator:animateWalking(dt, speed, action, state)
         rightLeg = -step * 0.30,
         leftKnee = math.max(0, step) * 0.38,
         rightKnee = math.max(0, -step) * 0.38,
-        leftShoulder = -0.08 + math.sin(self.phase + math.pi) * 0.10,
-        rightShoulder = -0.08 - math.sin(self.phase + math.pi) * 0.10,
-        leftElbow = 0.08 + math.max(0, -step) * 0.06,
-        rightElbow = 0.08 + math.max(0, step) * 0.06,
+        -- Arms swing forward (negative = toward the front/face in this rig),
+        -- contralateral to the legs and with smaller amplitude, so they never
+        -- reach behind the legs.
+        leftShoulder = -0.16 + math.sin(self.phase + math.pi) * 0.18,
+        rightShoulder = -0.16 - math.sin(self.phase + math.pi) * 0.18,
+        leftElbow = 0.12 + math.max(0, -step) * 0.06,
+        rightElbow = 0.12 + math.max(0, step) * 0.06,
     })
 end
 

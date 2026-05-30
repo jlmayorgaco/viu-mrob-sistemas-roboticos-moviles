@@ -8,27 +8,27 @@ Para el mapa se usa asociación por cercanía: si una detección cae cerca de un
 
 ## Desempeño numérico
 
-- RMSE posición: 0.03149 m
-- Error medio de posición: 0.02981 m
-- Error P95 de posición: 0.0476 m
-- Error máximo de posición: 0.05626 m
-- RMSE orientación: 0.01987 rad
-- Covarianza media publicada: 0.00081
+- RMSE posición: 0.06618 m
+- Error medio de posición: 0.04496 m
+- Error P95 de posición: 0.14488 m
+- Error máximo de posición: 0.29105 m
+- RMSE orientación: 0.03445 rad
+- Covarianza media publicada: 0.02829
 
 ## Mapeo y planificación
 
-- Landmarks finales: 20
-- Actualizaciones SLAM/Kalman: 4295
-- Frecuencia media de actualización: 35.306 actualizaciones/s
-- Actualizaciones por landmark: 214.75
-- Duración por modo de planificador: {'DIRECT': 105.4, 'DIRECT_AFTER_WAYPOINT': 14.0, 'SLAM_WAYPOINT': 2.25}
-- Duración por modo de movimiento: {'ARRIVED_TARGET': 0.4, 'AVOIDING': 35.9, 'MANIPULATING': 7.1, 'ROUTE': 4.25, 'WAIT_B1': 74.0}
+- Landmarks finales: 8
+- Actualizaciones SLAM/Kalman: 2461
+- Frecuencia media de actualización: 31.251 actualizaciones/s
+- Actualizaciones por landmark: 307.62
+- Duración por modo de planificador: {'DIRECT': 69.2, 'DIRECT_AFTER_WAYPOINT': 4.6, 'SLAM_WAYPOINT': 4.95}
+- Duración por modo de movimiento: {'ARRIVED_TARGET': 0.35, 'AVOIDING': 33.65, 'MANIPULATING': 7.0, 'ROUTE': 8.1, 'WAIT_B1': 29.65}
 
 ## Seguridad operacional
 
-- Distancia mínima positiva a obstáculo: 0.09656 m
-- Riesgo máximo de obstáculo: 0.71277
-- Batería inicial/final: 96.0% -> 71.79783%
+- Distancia mínima positiva a obstáculo: 0.06861 m
+- Riesgo máximo de obstáculo: 0.77164
+- Batería inicial/final: 96.0% -> 72.43446%
 - Tareas completadas: 4
 - Estado final: CHARGING
 

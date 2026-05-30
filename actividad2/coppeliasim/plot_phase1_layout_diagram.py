@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
+
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle, Rectangle
 

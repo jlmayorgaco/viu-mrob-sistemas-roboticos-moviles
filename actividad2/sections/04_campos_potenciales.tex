@@ -1,8 +1,8 @@
 \chapter{Campos potenciales, evitación de obstáculos y planificación local}
 \label{ch:campos-potenciales}
 
-La navegación combina el campo atractivo hacia Bill, usado como mannequin, con
-una capa repulsiva de obstáculos y una capa local de mapa~\cite{lavalle2006}. Los sensores de
+Hacia Bill (usado como mannequin) actúa un campo atractivo; sobre él se
+superponen la repulsión por obstáculos y una capa local de mapa~\cite{lavalle2006}. Los sensores de
 proximidad reducen la velocidad y corrigen el giro cuando se detecta un obstáculo al frente
 o en los laterales. El mapa SLAM entra cuando la ruta directa se bloquea y se usa
 un punto intermedio antes de volver al objetivo.
@@ -15,10 +15,9 @@ acaban moviendo las ruedas.
 
 \section{Campo atractivo hacia Bill}
 
-La navegación define una fuerza de atracción hacia el
-mannequin. En la escena, Bill cumple ese papel. Si \(p_R=[x_R,y_R]^T\)
-es la posición estimada del robot y \(p_B=[x_B,y_B]^T\) la posición de Bill, se
-usa el potencial atractivo:
+El campo atractivo apunta al mannequin, que en esta escena es Bill. Si
+\(p_R=[x_R,y_R]^T\) es la posición estimada del robot y \(p_B=[x_B,y_B]^T\) la
+posición de Bill, se usa el potencial atractivo:
 
 \[
 U_{att}(p_R)=\frac{1}{2}k_{att}\|p_B-p_R\|^2,
@@ -26,8 +25,7 @@ U_{att}(p_R)=\frac{1}{2}k_{att}\|p_B-p_R\|^2,
 F_{att}=-\nabla U_{att}=k_{att}(p_B-p_R).
 \]
 
-El controlador no aplica la fuerza como dinámica física; la traduce a consignas
-de avance y giro para el robot diferencial:
+La fuerza atractiva se traduce a consignas de avance y giro:
 
 \[
 \theta_{att}=\operatorname{atan2}(y_B-y_R,x_B-x_R),
@@ -41,9 +39,8 @@ v_{att}=\operatorname{sat}_{[0,v_{max}]}\bigl(k_v(\|p_B-p_R\|-d_f)\bigr),
 \omega_{att}=k_\theta e_\theta .
 \]
 
-La expresión anterior define la atracción hacia Bill. La repulsión de
-obstáculos modifica \(\omega_{att}\) y limita \(v_{att}\), pero no sustituye el
-objetivo principal de seguir a Bill.
+La repulsión de obstáculos modifica \(\omega_{att}\) y reduce \(v_{att}\); el
+objetivo de seguir a Bill no cambia.
 
 \section{Campo reactivo de obstáculos}
 

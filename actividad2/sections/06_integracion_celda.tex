@@ -2,8 +2,8 @@
 
 Los resultados proceden de ejecuciones de CoppeliaSim lanzadas
 desde Python. Cada ejecución exporta señales a CSV y JSON, y de ahí salen las
-tablas y figuras. Las capturas renderizadas desde CoppeliaSim complementan las
-gráficas y vinculan cada métrica con la escena simulada.
+tablas y figuras. Las capturas renderizadas desde CoppeliaSim acompañan a las
+gráficas.
 
 \section{Validación funcional de la escena}
 
@@ -18,46 +18,57 @@ La validación principal de \path{Sim_T2_Phase1_Basic.ttt} terminó con
 Estado final de tarea & \texttt{CHARGING}\\
 Modo final de movimiento & \texttt{ARRIVED\_TARGET}\\
 Tareas completadas & 4/4\\
-Distancia caminada por Bill & \SI{7.843}{m}\\
-Batería final R1 & 66,76\%\\
+Distancia caminada por Bill & \SI{10.78}{m} \textsuperscript{a}\\
+Batería final R1 & 64,7\% \textsuperscript{a}\\
 Sensores activos & 16\\
 Rayos de sensor visualizados & 16\\
-Landmarks/celdas SLAM finales & 24 en validación principal\\
-Actualizaciones SLAM & 8532\\
-Error final de pose & \SI{0.030}{m}\\
-Error máximo de pose & \SI{0.045}{m}\\
-Distancia mínima positiva a obstáculo & \SI{0.056}{m}\\
-Riesgo máximo de obstáculo & 0,829\\
+Landmarks/celdas SLAM finales & 6 (Kalman-landmark básico) \textsuperscript{a}\\
+Actualizaciones SLAM & 2345 \textsuperscript{a}\\
+Error final de pose & \SI{0.040}{m} \textsuperscript{a}\\
+Error máximo de pose & \SI{0.254}{m} \textsuperscript{a}\\
+Distancia mínima positiva a obstáculo & \SI{0.215}{m}\\
+Riesgo máximo de obstáculo & 0,40\\
 \bottomrule
+\multicolumn{2}{l}{\footnotesize \textsuperscript{a} Valor extraído de \texttt{Sim\_T2\_Phase1\_Basic\_validation.json}. El comparativo SLAM extendido usa configuración distinta (más actualizaciones, mayor cobertura de mapa).}\\
 \end{longtable}
 
-Junto con las métricas, se comprobó la ejecución en la escena: Bill se mueve
-entre WS1 y WS2, toma y entrega piezas, trabaja en la mesa, aparecen
-estanterías, mesas y sofá, T1 y T2 tienen geometría reconocible, la cola de
-tareas queda registrada, el robot vuelve a carga y el planificador activa
-\texttt{SLAM\_WAYPOINT} cuando detecta un bloqueo local.
+Junto con las métricas, se comprobó la ejecución en la escena: Bill recorre
+WS1--WS2 tomando, trabajando y entregando piezas; las estanterías, mesas y sofá
+están presentes; T1 y T2 son reconocibles; la cola de tareas queda registrada;
+y R1 vuelve a carga al terminar. La FSM de tarea recorre
+19 cadenas de estado distintas durante la misión completa (listadas en
+\texttt{task\_states\_seen} del JSON de validación); el diagrama de la presentación
+muestra los 9 estados de tarea principales, omitiendo los estados intermedios de
+navegación (\texttt{PICK\_RETURN\_T1\_WS1}, \texttt{WAIT\_B1\_WS2\_REQUEST\_T2},
+\texttt{TO\_WS1\_DELIVER\_T1}, etc.).
 
 \section{Desempeño del estimador Kalman-landmark}
 
-En la exportación específica del estimador, la escena usa PID como controlador
-base y \texttt{KALMAN\_LANDMARK} como algoritmo SLAM. Los resultados fueron:
+En la exportación específica del estimador, la escena usa el modo PID como base y
+\texttt{KALMAN\_LANDMARK} como algoritmo SLAM. Ese modo PID de misión usa términos
+proporcional y derivado sobre el error de distancia, sin integral explícito; la
+comparación con integral completa (P/PI/PID/LQR/NMPC) se hizo en la escena de
+seguimiento. Los resultados de esta exportación
+fueron\footnote{Los errores de pose difieren de la Tabla~\ref{tab:slam-comparison}
+porque ambas exportaciones usan distinta configuración de registro.}:
 
 \begin{itemize}
-  \item RMSE de posición: \SI{0.03149}{m}.
-  \item Error medio de posición: \SI{0.02981}{m}.
-  \item Error P95: \SI{0.04760}{m}.
-  \item Error máximo: \SI{0.05626}{m}.
-  \item RMSE de orientación: \SI{0.01987}{rad}.
-  \item Covarianza media estimada: 0,00081.
-  \item Landmarks finales: 20.
-  \item Actualizaciones Kalman/SLAM: 4295.
+  \item RMSE de posición: \SI{0.06618}{m}.
+  \item Error medio de posición: \SI{0.04496}{m}.
+  \item Error P95: \SI{0.14488}{m}.
+  \item Error máximo: \SI{0.29105}{m}.
+  \item RMSE de orientación: \SI{0.03445}{rad}.
+  \item Covarianza media estimada: 0,02829.
+  \item Landmarks finales: 8.
+  \item Actualizaciones Kalman/SLAM: 2461.
 \end{itemize}
 
 El número de elementos del mapa depende de la representación. En
 Kalman-landmark son rasgos puntuales fusionados; en las variantes de grid son
-celdas ocupadas o grupos de celdas. La validación funcional cerró con 24 rasgos
-y la exportación específica Kalman-landmark con 20, mientras que las grids
-acabaron con mapas más densos.
+celdas ocupadas o grupos de celdas. La validación funcional cerró con 6 rasgos y
+la exportación específica Kalman-landmark con 8, ambas listas compactas, mientras
+que las grids acabaron con mapas más densos (26--27 celdas,
+Fig.~\ref{fig:estimator-performance}).
 
 \begin{figure}[H]
   \centering
@@ -69,14 +80,17 @@ acabaron con mapas más densos.
 \section{Comparación de algoritmos SLAM}
 
 La comparación usa el mismo escenario, sensores, tareas y controlador para los
-cuatro modos de SLAM. La Tabla~\ref{tab:slam-comparison} recoge los
-valores principales.
+cuatro modos de SLAM. Todas las ejecuciones completan las 4 tareas y consumen
+una batería similar (\(\approx 22{,}5\)--\(24{,}2\)\,\%, coherente con la
+validación funcional). Los recuentos de actualizaciones SLAM
+(\(\approx 2300\)--\(2700\)) difieren ligeramente entre modos según cuántas
+detecciones asocia cada representación. La Tabla~\ref{tab:slam-comparison} recoge
+los valores principales.
 
 Los tiempos y longitudes de ruta salen parecidos porque el plan de misión, los
 puntos de entrega y el controlador de movimiento son los mismos. Cambia la
-representación del mapa usada por los bloqueos y los puntos intermedios. Por
-eso la columna de rasgos exige cuidado: en Kalman son landmarks fusionadas; en
-las grids son celdas o grupos de celdas ocupadas.
+representación del mapa usada por los bloqueos y los puntos intermedios. La columna de rasgos requiere cuidado: Kalman almacena landmarks fusionadas,
+mientras que las variantes de grid almacenan celdas o grupos de celdas ocupadas.
 
 \begingroup
 \footnotesize
@@ -92,17 +106,18 @@ las grids son celdas o grupos de celdas ocupadas.
 \midrule
 \endhead
 Completado & Sí & Sí & Sí & Sí\\
-Duración [s] & 125,60 & 123,55 & 125,25 & \textbf{121,45}\\
-Ruta [m] & 15,997 & \textbf{15,233} & 15,968 & 15,763\\
-RMSE pos. [m] & 0,04117 & 0,04445 & 0,04149 & \textbf{0,03142}\\
-Error P95 [m] & 0,05718 & 0,07596 & 0,06026 & \textbf{0,04670}\\
-Error max. [m] & 0,07354 & 0,10862 & 0,07362 & \textbf{0,05824}\\
-Rasgos finales & 94 & 84 & 91 & 20\\
-Actualizaciones SLAM & 4514 & 4470 & 4474 & 4275\\
-Submapas & 0 & 0 & \textbf{13} & 0\\
-Cierres de ciclo & 0 & 0 & \textbf{4} & 0\\
-Batería usada [\%] & 24,62 & \textbf{23,63} & 24,50 & 24,02\\
+Duración [s] & 84,30 & 80,00 & 80,70 & \textbf{79,90}\\
+Ruta [m] & 16,340 & \textbf{15,884} & 15,919 & 16,379\\
+RMSE pos. [m] & \textbf{0,01696} & 0,09079 & 0,07882 & 0,06089\\
+Error P95 [m] & \textbf{0,03097} & 0,24500 & 0,19774 & 0,13648\\
+Error max. [m] & \textbf{0,03896} & 0,28226 & 0,31163 & 0,20768\\
+Rasgos finales & 26 & 27 & 27 & 9\\
+Actualizaciones SLAM & 2583 & 2307 & 2382 & 2340\\
+Submapas & 0 & 0 & \textbf{16} & 0\\
+Cierres de ciclo & 0 & 0 & \textbf{2} & 0\\
+Batería usada [\%] & 24,05 & \textbf{23,26} & 23,27 & 23,88\\
 \bottomrule
+\multicolumn{5}{l}{\footnotesize \textit{n}=1 ejecución por método. Los resultados son indicadores cualitativos; no constituyen comparación estadísticamente validada.}\\
 \end{longtable}
 \endgroup
 
@@ -115,14 +130,18 @@ Batería usada [\%] & 24,62 & \textbf{23,63} & 24,50 & 24,02\\
 
 \section{Interpretación de resultados}
 
-Kalman-landmark obtuvo el menor error de pose y el menor consumo. En una celda
-pequeña, las landmarks fusionadas son suficientes para navegar. GMapping y Hector
-generan mapas más densos y comparan grid de ocupación con
-\textit{scan matching}; pagan con algo más de error y más trabajo de ajuste.
-Cartographer-submap redujo la ruta frente a GMapping y Hector y registró
-estructura por submapas con 4 cierres de ciclo locales, aunque su RMSE quedó por
-encima de Kalman-landmark.
+En este ensayo (Fig.~\ref{fig:slam-comparison}) el menor RMSE de pose fue de
+GMapping (0,017 m): al apoyarse en la grid de ocupación y en el ancla global, su
+estimación resulta la más suave. Las variantes con corrección activa por sensor
+quedan por encima: Kalman-landmark 0,061 m (EKF de rango y rumbo), Cartographer
+0,079 m y Hector 0,091 m (ajuste \textit{scan-to-map} Gauss-Newton); inyectar la
+información ruidosa de los 16 ultrasonidos en la pose tiene ese coste.
+Kalman-landmark fue el más rápido (79,9 s) y dejó el mapa más compacto (9
+rasgos); Hector recortó la ruta a 15,884 m con el menor consumo de batería
+(23,26\,\%); Cartographer registró estructura temporal con 16 submapas y 2
+cierres de ciclo. Todas completaron la misión.
 
-Para la escena base usamos \texttt{KALMAN\_LANDMARK} como estimador base. Los otros
-tres métodos quedan para comparar mapas calculados con los mismos rayos de
-proximidad.
+La escena base usa \texttt{KALMAN\_LANDMARK} como estimador aunque no tenga el
+menor RMSE: entrega al planificador una lista compacta de obstáculos puntuales
+fáciles de filtrar. Las grids y submapas se conservan para comparar cómo cambia
+el mapa con los mismos rayos de proximidad.

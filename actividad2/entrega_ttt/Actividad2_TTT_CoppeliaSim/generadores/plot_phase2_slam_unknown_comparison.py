@@ -8,7 +8,12 @@ import math
 from pathlib import Path
 from statistics import fmean
 
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+matplotlib.rcParams['font.sans-serif'] = ['DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 import plot_phase2_slam_unknown_export as phase2_plot
 

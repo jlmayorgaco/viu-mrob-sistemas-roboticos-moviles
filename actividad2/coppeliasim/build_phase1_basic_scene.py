@@ -158,7 +158,8 @@ def create_tool_shelf(
     visual_x, visual_y = visual_position if visual_position is not None else position
 
     create_dummy(sim, shelf_alias, (x, y + approach_offset_y, 0.22), parent, size=0.055)
-    create_dummy(sim, f"{shelf_alias}_Storage", (x, y + storage_offset_y, 0.28), parent, size=0.045)
+    # Storage point sits on a visible shelf level (~0.42 m), not near the floor.
+    create_dummy(sim, f"{shelf_alias}_Storage", (x, y + storage_offset_y, 0.42), parent, size=0.045)
     if rack_yaw is None:
         rack_yaw = math.pi if approach_offset_y < 0 else 0.0
     imported = load_library_model(
@@ -190,7 +191,7 @@ def create_tool_shelf(
         respondable=False,
         detectable=False,
     )
-    create_material_piece(sim, tool_alias, (x, y + storage_offset_y, 0.280), parent)
+    create_material_piece(sim, tool_alias, (x, y + storage_offset_y, 0.420), parent)
 
 
 def remove_previous_phase1(sim) -> None:
@@ -302,8 +303,8 @@ def add_phase1_warehouse(sim) -> int:
         (0.28, 0.33, 0.36),
         (0.95, 0.70, 0.12),
         group,
-        approach_offset_y=0.52,
-        storage_offset_y=-0.18,
+        approach_offset_y=-0.46,
+        storage_offset_y=-0.46,
         visual_position=(-1.46, -2.60),
         rack_yaw=math.radians(90),
     )
@@ -317,8 +318,8 @@ def add_phase1_warehouse(sim) -> int:
         (0.30, 0.34, 0.38),
         (0.22, 0.68, 0.92),
         group,
-        approach_offset_y=-0.52,
-        storage_offset_y=0.12,
+        approach_offset_y=0.45,
+        storage_offset_y=0.45,
         visual_position=(1.46, 2.55),
         rack_yaw=math.radians(90),
     )
@@ -396,7 +397,9 @@ def set_initial_layout(sim) -> None:
         sim.setObjectOrientation(bill, [0.0, 0.0, math.radians(90.0)])
         make_b1_visual_target_only(sim)
     if plant >= 0:
-        sim.setObjectPosition(plant, [4.35, 0.92, 0.165])
+        # Decorative plant inside the north-west corner (was at x=4.35, outside
+        # the east wall at 3.55).
+        sim.setObjectPosition(plant, [-3.10, 3.10, 0.165])
     if camera >= 0:
         sim.setObjectPosition(camera, [8.0, -9.0, 6.5])
         sim.setObjectOrientation(camera, [math.radians(61.0), 0.0, math.radians(40.0)])

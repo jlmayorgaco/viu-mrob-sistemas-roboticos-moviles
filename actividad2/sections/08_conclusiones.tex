@@ -3,36 +3,33 @@
 \markboth{Conclusiones}{Conclusiones}
 
 La escena base comprueba el ciclo completo entre R1, Bill, T1 y T2: el robot
-entrega herramientas, espera el trabajo humano, recupera cada pieza, evita
-obstáculos y termina en carga. La misión incluye cola de tareas, sensores,
-estimación y retorno a estación.
+entrega cada herramienta, espera a que Bill trabaje y recoge la pieza, evitando
+obstáculos, hasta volver a la estación de carga.
 
-Con los datos exportados, Kalman-landmark obtiene en Fase 2 el menor RMSE de
-posición (\SI{0.03185}{m}), la menor duración (\SI{124.80}{s}) y el menor
-consumo de batería entre los cuatro métodos, y se mantiene como candidato
-operativo para esta celda compacta. Las variantes inspiradas en GMapping,
-Hector y Cartographer se emplean para comparar tres representaciones de mapa:
-grid log-odds, ajuste de pose por scan-matching discreto y submapas con cierre
-de ciclo local. Las cuatro variantes usaron las mismas lecturas de proximidad
-y el mismo controlador PID para garantizar condiciones comparables. Cada modo
-se ejecutó en una única carrera de simulación (\(n=1\)); la ordenación por
-métricas es indicativa y puede variar ante diferentes condiciones de inicialización
-o trayectorias de Bill.
+En Fase 2, Kalman-landmark resultó el modo operativo para esta celda compacta:
+no logró el menor RMSE (lo hizo GMapping, con \SI{0.017}{m}), pero terminó en
+\SI{88.6}{s} con la lista de obstáculos más compacta, fácil de filtrar por el
+planificador. GMapping, Hector y Cartographer comparan tres representaciones de
+mapa (grid log-odds, scan-matching Gauss-Newton y submapas con cierre local) con
+las mismas lecturas de proximidad y el mismo PID. Cada modo se ejecutó una vez
+(\(n=1\)), de modo que la ordenación es indicativa y puede cambiar con otras
+condiciones de inicialización o trayectorias de Bill.
 
 El anticolisiones funciona como capa reactiva: cuando los sensores detectan algo
-cerca, el robot baja velocidad, modifica el giro y actualiza la señal de riesgo. La capa de
+cerca, el robot reduce velocidad y corrige el giro, y actualiza la señal de riesgo. La capa de
 punto intermedio SLAM filtra celdas de grid poco observadas, ignora obstáculos
-pegados al objetivo y penaliza desvíos fuera del área útil. En mapas de grid
-añadimos una recuperación por falta de progreso, con ruta directa durante una
+pegados al objetivo y penaliza desvíos fuera del área útil. En los mapas de grid
+se añadió una recuperación por falta de progreso, con ruta directa durante una
 ventana corta y evitación reactiva siempre activa.
 
 La comparación entre P, PI, PID, LQR y NMPC se conserva como análisis complementario. En el
-seguidor de Bill, PID dio el menor error final (\SI{0.0317}{m}), NMPC el menor
-error medio durante movimiento (\SI{0.0198}{m}) y LQR mantuvo buen error medio
-con menos variación que PID. En la misión T1 y T2, PI obtuvo el mejor puntaje
-ponderado de los CSV disponibles. LQR se aplicó como regulador discreto local y
-NMPC como control predictivo por disparo directo, resuelto con búsqueda local de
-comandos.
+seguidor de Bill, PID dio el menor error final (\SI{0.0457}{m}), LQR el menor
+error medio durante el movimiento (\SI{0.0167}{m}, seguido de NMPC con
+\SI{0.0189}{m}) y NMPC la mayor suavidad de comando (RMS de \(\Delta u\) de
+\num{0.0457} y solo 3 inversiones de sentido). En la misión T1 y T2, PI obtuvo el
+mejor puntaje ponderado de los CSV disponibles. El LQR usa una ganancia de
+Riccati calculada en escena y el NMPC un control predictivo de horizonte
+completo resuelto con una búsqueda de patrón de Hooke-Jeeves.
 
 \section*{Limitaciones y trabajo futuro}
 
@@ -56,7 +53,6 @@ adaptados manualmente \cite{googleGemini2026}.
 
 Como trabajo futuro, el sistema podría conectarse a ROS~2 para ejecutar los
 paquetes originales de \texttt{slam\_toolbox}, Cartographer, Hector o
-GMapping, lo que permitiría comparar las implementaciones Lua contra sus
-homólogos completos. La evaluación de mapas debe incorporar referencia
+GMapping y comparar así las implementaciones Lua con sus homólogos completos. La evaluación de mapas debe incorporar referencia
 geométrica, IoU de ocupación, precisión y exhaustividad por obstáculo y
 varias ejecuciones por método para obtener significancia estadística.
