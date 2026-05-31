@@ -1,0 +1,1 @@
+actividad2/figures/A2_*.mp4 filter=lfs diff=lfs merge=lfs -text

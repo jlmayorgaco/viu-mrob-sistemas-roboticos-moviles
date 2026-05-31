@@ -32,3 +32,6 @@ Thumbs.db
 desktop.ini
 *.swp
 *~
+
+# Temp render cache del build pixel-perfect (regenerable)
+actividad2/slides/_pp/
