@@ -63,7 +63,7 @@ El panel completo de la ejecución base queda recogido en la Fig.~\ref{fig:slam-
 
 \section{Incidencias corregidas}
 
-Durante la validación se corrigieron tres incidencias.
+Durante la validación se corrigieron cuatro incidencias.
 
 \subsection{Sincronización de tarea T2}
 R1 podía iniciar T2 antes de que Bill llegara a WS2, por lo que la tarea no
@@ -89,3 +89,16 @@ mínimas diferencias de ruido invierten el candidato ganador de un ciclo a otro;
 es un modo de fallo conocido del ajuste de scan en geometrías poco informativas
 \cite{thrun2005}. Se mitigó con una ventana de búsqueda pequeña, un umbral mínimo
 de puntuación y una ganancia de corrección parcial.
+
+\subsection{El robot móvil expulsaba a R1 de la celda}
+Al hacer al robot móvil un cuerpo sólido (respondable), su movimiento cinemático
+podía teletransportarlo sobre el chasis de R1, y el motor de física resolvía el
+solape expulsando a R1 con violencia; en el peor caso el Pioneer salía por encima
+de un muro y caía al vacío bajo el suelo. La geo-valla original solo corregía la
+posición en el plano (X/Y), no la altura, por lo que no impedía la caída. Se
+corrigió en tres frentes: R1 evita al robot móvil con un margen mayor que a un
+obstáculo estático; el robot móvil cede el paso apartándose de R1 en lugar de
+congelarse y bloquearlo; y la geo-valla pasa a vigilar también la altura (Z),
+restaurando la cota de apoyo del chasis si llegara a caer. Con ello la misión
+completa las cuatro tareas mientras el robot móvil sigue cruzando la celda, sin
+que R1 sea expulsado ni se bloquee.

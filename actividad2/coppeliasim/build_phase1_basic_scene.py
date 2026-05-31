@@ -288,10 +288,13 @@ def add_phase1_warehouse(sim) -> int:
 
     create_work_desk(sim, "P1_WorkTable_1", (-2.12, 1.76, 0.0), (0.34, 0.24, 0.18), group)
     create_dummy(sim, "WS1_Tool_Drop", (-2.12, 1.10, 0.36), group, size=0.055)
-    create_dummy(sim, "WS1_Work_Surface", (-2.12, 1.76, 0.42), group, size=0.045)
+    # Work-surface marker on the worktable TOP (~0.705 m) and on the front half of the
+    # desk (y=1.55, table spans y=[1.36,2.16]) so the delivered piece sits on the
+    # surface within reach of Bill, who stands in front at y=1.10.
+    create_dummy(sim, "WS1_Work_Surface", (-2.12, 1.55, 0.705), group, size=0.045)
     create_work_desk(sim, "P1_WorkTable_2", (2.12, -1.76, 0.0), (0.24, 0.32, 0.20), group)
     create_dummy(sim, "WS2_Tool_Drop", (2.12, -1.10, 0.36), group, size=0.055)
-    create_dummy(sim, "WS2_Work_Surface", (2.12, -1.76, 0.42), group, size=0.045)
+    create_dummy(sim, "WS2_Work_Surface", (2.12, -1.55, 0.705), group, size=0.045)
 
     create_operator_sofa(sim, "P1_Operator_Sofa", (-2.55, 0.10), group)
 

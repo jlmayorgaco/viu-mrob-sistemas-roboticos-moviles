@@ -22,6 +22,16 @@ local Config = {
     keepoutRadius = 0.55,
     waypointTolerance = 0.18,
     crossingDistance = 0.9,   -- distance to R1 that counts as a path crossing
+    -- Yield-to-R1: the wanderer is moved kinematically (setObjectPosition), so if it
+    -- drove straight into R1 it would teleport on top of the chassis and the physics
+    -- engine would eject R1 violently. Instead it behaves politely: it holds position
+    -- when R1 comes near and backs off if the two ever overlap, so both robots
+    -- mutually avoid each other.
+    yieldDistance = 0.85,     -- hold position while R1 is within this [m]
+    minSeparation = 0.52,     -- if closer than this, step away from R1 to open a gap [m]
+    -- Fog-of-war reveal: the Pioneer uncovers the dark map tiles it drives near, so the
+    -- operator watches the unknown cell get discovered. Radius ~ the sonar reach.
+    fogRevealRadius = 0.95,
     seed = 20260529,
 }
 
@@ -132,6 +142,38 @@ function Wanderer:update(t)
     local dt = MathEx.clamp(t - self.lastT, 0.0, 0.2)
     self.lastT = t
 
+    -- Yield to R1 first: never drive the kinematic body into the Pioneer. Measure the
+    -- gap to R1; if it is too small, hold (or back away) instead of advancing, so the
+    -- wanderer acts as a polite moving obstacle rather than teleporting onto R1 and
+    -- flinging it out of the cell.
+    local yielding = false
+    if self.robot >= 0 then
+        local okR, rp = pcall(sim.getObjectPosition, self.robot, -1)
+        if okR and rp then
+            local ax, ay = self.x - rp[1], self.y - rp[2]
+            local dRobot = math.sqrt(ax * ax + ay * ay)
+            if dRobot < self.cfg.yieldDistance and dRobot > 1e-4 then
+                -- Give way to R1 by stepping AWAY from it -- never just freezing in
+                -- place, which would turn the wanderer into a permanent block in R1's
+                -- path and deadlock both robots. The closer R1 is, the faster it backs
+                -- off. The retreat is clamped to the roaming bounds so it cannot clip a
+                -- wall. R1 still has to avoid it (they cross paths), but the path always
+                -- reopens.
+                local urgency = (self.cfg.yieldDistance - dRobot) / self.cfg.yieldDistance
+                local back = math.min(self.cfg.wanderSpeed * dt * (0.5 + 1.3 * urgency),
+                                      self.cfg.yieldDistance)
+                local nx = self.x + ax / dRobot * back
+                local ny = self.y + ay / dRobot * back
+                nx = MathEx.clamp(nx, self.cfg.boundXMin, self.cfg.boundXMax)
+                ny = MathEx.clamp(ny, self.cfg.boundYMin, self.cfg.boundYMax)
+                self.moved = self.moved + math.sqrt((nx - self.x) ^ 2 + (ny - self.y) ^ 2)
+                self.x, self.y = nx, ny
+                pcall(sim.setObjectPosition, self.handle, -1, {self.x, self.y, self.cfg.wanderZ})
+                yielding = true
+            end
+        end
+    end
+
     local dx = self.targetX - self.x
     local dy = self.targetY - self.y
     local dist = math.sqrt(dx * dx + dy * dy)
@@ -142,7 +184,7 @@ function Wanderer:update(t)
         dist = math.sqrt(dx * dx + dy * dy)
     end
 
-    if dist > 1e-4 then
+    if not yielding and dist > 1e-4 then
         local step = math.min(self.cfg.wanderSpeed * dt, dist)
         local nx = self.x + dx / dist * step
         local ny = self.y + dy / dist * step
@@ -282,6 +324,55 @@ function TracePublisher:update()
     self.signals:setInt('phase2GridMappingUpdateCount', mapping.gridUpdates)
 end
 
+-- Fog-of-war reveal. The scene ships a grid of dark tiles (P2_Fog_NNN) covering the
+-- whole cell; they start visible so the map reads as unknown. As R1 drives near each
+-- tile we drop it from all visibility layers, so the explored area is uncovered live.
+local Fog = {}
+Fog.__index = Fog
+
+function Fog:new(cfg, signals)
+    return setmetatable({cfg = cfg, signals = signals, tiles = {}, total = 0, revealed = 0}, self)
+end
+
+function Fog:init()
+    self.robot = safeGet('/PioneerP3DX')
+    self.tiles = {}
+    self.revealed = 0
+    local i = 1
+    while true do
+        local h = safeGet(string.format('/P2_Fog_%03d', i))
+        if h < 0 then break end
+        local ok, p = pcall(sim.getObjectPosition, h, -1)
+        if ok and p then
+            self.tiles[#self.tiles + 1] = {handle = h, x = p[1], y = p[2], hidden = false}
+        end
+        i = i + 1
+    end
+    self.total = #self.tiles
+    self.signals:setFloat('phase2FogRevealedPct', 0.0)
+end
+
+function Fog:update()
+    if self.robot == nil or self.robot < 0 or self.total == 0 then return end
+    local ok, rp = pcall(sim.getObjectPosition, self.robot, -1)
+    if not ok or not rp then return end
+    local r2 = self.cfg.fogRevealRadius * self.cfg.fogRevealRadius
+    for _, tile in ipairs(self.tiles) do
+        if not tile.hidden then
+            local dx = tile.x - rp[1]
+            local dy = tile.y - rp[2]
+            if dx * dx + dy * dy <= r2 then
+                -- Reveal: remove the tile from every visibility layer so the mapped
+                -- floor beneath shows through.
+                pcall(sim.setObjectInt32Param, tile.handle, sim.objintparam_visibility_layer, 0)
+                tile.hidden = true
+                self.revealed = self.revealed + 1
+            end
+        end
+    end
+    self.signals:setFloat('phase2FogRevealedPct', 100.0 * self.revealed / self.total)
+end
+
 local Phase2ScenarioApp = {}
 Phase2ScenarioApp.__index = Phase2ScenarioApp
 
@@ -289,9 +380,11 @@ function Phase2ScenarioApp:new()
     local signals = SignalBus:new()
     local evidence = MappingEvidence:new(Config, signals)
     local wanderer = Wanderer:new(Config, signals)
+    local fog = Fog:new(Config, signals)
     return setmetatable({
         signals = signals,
         wanderer = wanderer,
+        fog = fog,
         publisher = TracePublisher:new(Config, signals, evidence, wanderer),
     }, self)
 end
@@ -299,11 +392,13 @@ end
 function Phase2ScenarioApp:init()
     self.publisher:initialize()
     self.wanderer:init()
+    self.fog:init()
 end
 
 function Phase2ScenarioApp:actuate()
     local t = sim.getSimulationTime()
     self.wanderer:update(t)
+    self.fog:update()
     self.publisher:update()
 end
 

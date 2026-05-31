@@ -15,6 +15,19 @@ reactiva, pero no lo añade al mapa SLAM (es un agente móvil, como Bill); así,
 objeto en movimiento no entra en el mapa. Las cajas y los marcadores de zona
 desconocida quedan fijos como obstáculos no modelados.
 
+El robot móvil es un cuerpo \emph{sólido} (respondable y detectable), no un
+fantasma: si R1 no lo esquivara a tiempo, ambos chasis chocarían en lugar de
+atravesarse. Para que ese contacto no degenere, la interacción es de evitación
+\emph{mutua}. Por un lado, R1 trata al robot móvil con un margen mayor que a un
+obstáculo estático: empieza a apartarse a \(\approx0{,}82\) m y frena de frente
+si se le acerca demasiado. Por otro, el robot móvil \emph{cede el paso}: cuando R1
+entra en su radio de cortesía no se queda quieto bloqueándolo, sino que se aparta
+en dirección opuesta, de modo que el pasillo de R1 siempre se reabre y no se
+produce un bloqueo mutuo. Una primera versión lo dejaba \emph{congelarse} en el
+sitio o, al moverse de forma cinemática hacia donde estaba R1, lo expulsaba con
+violencia fuera de la celda; el cese de paso y una geo-valla reforzada (ver
+abajo) corrigen ambos fallos.
+
 Como el mapa empieza vacío, la misión arranca con una \emph{pasada exploratoria}:
 antes de intentar ninguna tarea, R1 recorre en orden de cercanía una serie de
 \emph{frontiers} repartidas por el área de operación (estado interno
@@ -24,6 +37,17 @@ manipular piezas, acotada en el tiempo: cuando alcanza las frontiers o agota su
 ventana, comienza el trabajo sobre el mapa que acaba de construir. Las frontiers se
 sitúan en los pasillos despejados centrales para que siempre sean alcanzables; el
 barrido es del área operativa, no de los rincones pegados a las paredes.
+
+Para hacer visible este descubrimiento progresivo, la escena incorpora una capa de
+\emph{niebla de exploración} (\emph{fog of war}): una rejilla de \(10\times10=100\)
+baldosas oscuras y opacas cubre toda la celda al inicio, de modo que el mapa se lee
+literalmente como ``desconocido''. A medida que R1 avanza, el gestor oculta las
+baldosas que entran en su radio de descubrimiento (\(\approx0{,}95\) m, del orden
+del alcance útil del sonar), dejando ver el suelo y el mapa de costes que hay
+debajo. Así, el operador ve en tiempo real qué porción de la celda ha sido
+explorada (señal \texttt{phase2FogRevealedPct}); las baldosas son finas, no
+colisionables y no detectables, por lo que la niebla es puramente visual y no
+altera la física ni el SLAM.
 
 Tras explorar, R1 \emph{repite el ciclo de trabajo varias veces} sobre la misma
 celda en lugar de detenerse tras la primera pasada. El mapa SLAM y el conocimiento
@@ -36,9 +60,14 @@ actualizaciones SLAM acumuladas\footnote{Señal interna
 seguridad al maniobrar junto a las estanterías.}. Para que el ciclo no se bloquee
 nunca, la navegación incorpora varias salvaguardas: el robot retrocede un instante
 al salir de una estantería; si una maniobra se estanca (por el robot móvil o un
-hueco estrecho) ejecuta un arco de retroceso para reorientarse; y una geo-valla
-reincorpora el chasis al recinto si un artefacto del motor de física llegara a
-expulsarlo.
+hueco estrecho) ejecuta un arco de retroceso para reorientarse, y si \emph{varios}
+intentos seguidos no lo liberan, escala a un giro de \(\approx180^\circ\)
+(\texttt{TURN\_AROUND}) para abandonar la zona por otro lado en lugar de seguir
+forcejeando; y una geo-valla vigila tanto la posición en el plano (X/Y) como la
+altura (Z): reincorpora el chasis al recinto si un artefacto del motor de física
+—o un empuje del robot móvil— llegara a sacarlo, y restaura su altura de apoyo si
+llegara a volcar por encima de un muro, de modo que nunca cae al vacío bajo el
+suelo.
 
 La Tabla~\ref{tab:phase2-loops} mide por fase la pasada exploratoria y las tres
 vueltas de trabajo, promediando tres ejecuciones. Conviene leerla con honestidad.

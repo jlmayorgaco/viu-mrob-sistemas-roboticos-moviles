@@ -25,6 +25,12 @@ local cfg = {
     avoidRange = 0.62,
     hardStopRange = 0.12,
     kRepulsion = 1.18,
+    -- The Phase 2 wandering robot is a moving agent: give it a much wider berth than
+    -- a static obstacle so R1 steers clear early and never lets it push the chassis
+    -- against (or over) a perimeter wall.
+    wanderAvoidRange = 0.82,     -- start veering away from the wanderer this far out [m]
+    wanderRepulsion = 1.45,      -- a bit stronger lateral push-away than a static obstacle
+    wanderStopRange = 0.26,      -- stop-and-turn only if it closes head-on within this [m]
     logPeriod = 0.75,
     batteryStart = 96.0,
     batteryReserve = 18.0,
@@ -43,6 +49,10 @@ local cfg = {
     manipulationDelay = 0.85,
     billWorkDelayWs1 = 5.0,
     billWorkDelayWs2 = 5.0,
+    -- Height at which the delivered tool rests ON the worktable top. The tables are
+    -- ~0.705 m tall, so the piece must sit at ~0.725 m to be visible on the surface
+    -- (placing it lower buries it inside/under the table).
+    tableWorkZ = 0.725,
     slamAssociationRadius = 0.45,
     slamMaxLandmarks = 24,
     slamMinSeenForPlanning = 1,
@@ -107,6 +117,13 @@ local cfg = {
     navRecoverTime = 1.4,        -- duration of the reverse-arc recovery [s]
     navRecoverTurn = 1.0,        -- angular rate during recovery [rad/s]
     recoverReverseSpeed = 0.16,  -- reverse speed during recovery (backs out of a wedge) [m/s]
+    -- Escalated escape: if several reverse-arc recoveries fire in quick succession in
+    -- the same spot (truly wedged, or boxed in by the wandering robot), stop nudging
+    -- and turn ~180 deg to leave the area the other way.
+    navEscapeAttempts = 3,       -- consecutive stuck recoveries before turning around
+    navEscapeTime = 3.4,         -- duration of the turn-around + drive-away window [s]
+    navEscapeAlignTol = 0.20,    -- heading tolerance to consider the 180 turn done [rad]
+    navEscapeSpeed = 0.18,       -- forward speed once turned around, to clear the spot [m/s]
     -- The global detour is recomputed at most this often; the chosen waypoint is held
     -- in between so the robot does not thrash when the "most blocking" mapped obstacle
     -- changes every control tick on a dense map.
@@ -130,6 +147,7 @@ local leftMotor = -1
 local rightMotor = -1
 local b1 = -1
 local wanderer = -1   -- Phase 2 dynamic wandering robot (optional, -1 in Phase 1)
+local robotNomZ = nil  -- chassis resting height [m], captured at init for the z-geofence
 local avoidIgnoreSet = {}   -- rack/shelf handles excluded from reactive avoidance
 -- The rack is only made "transparent" to reactive avoidance while the robot is
 -- actually approaching it to pick or return a tool, so it can pull right up to the
@@ -243,6 +261,8 @@ local plannerMode = 'DIRECT'
 local nav = {
     stallAnchorX = nil, stallAnchorY = nil, stallAnchorT = 0,
     recoverUntil = -1, recoverDir = 1,
+    recoverCount = 0, lastRecoverT = -100,   -- consecutive-stuck streak for the 180 escape
+    escapeUntil = -1, escapeHeading = 0,      -- turn-around escape window + target heading
     replanLastT = -1, replanPlanX = 0, replanPlanY = 0, replanActive = 0,
 }
 local controlMode = 'PID'
@@ -1348,8 +1368,15 @@ local function readObstacleField()
                 -- while approaching it (so R1 can pull right up to the shelf); on
                 -- other legs it repels normally so R1 routes around it.
                 local rackTransparent = avoidIgnoreSet[detectedObject] and RACK_APPROACH_STATES[taskState]
-                if not rackTransparent and distance < cfg.avoidRange then
-                    local influence = (cfg.avoidRange - distance) / cfg.avoidRange
+                -- The wandering robot is a moving agent: widen its avoidance envelope and
+                -- repulsion so R1 keeps well clear of it and never lets it push the chassis
+                -- into a wall.
+                local isWanderer = (wanderer >= 0 and detectedObject == wanderer)
+                local effRange = isWanderer and cfg.wanderAvoidRange or cfg.avoidRange
+                local effRepulsion = isWanderer and cfg.wanderRepulsion or cfg.kRepulsion
+                local effStop = isWanderer and cfg.wanderStopRange or cfg.hardStopRange
+                if not rackTransparent and distance < effRange then
+                    local influence = (effRange - distance) / effRange
                     influence = influence * influence
                     local side = s.y
                     if math.abs(side) < 0.035 then
@@ -1361,10 +1388,10 @@ local function readObstacleField()
                     elseif s.x < -0.04 then
                         frontWeight = 0.18
                     end
-                    steer = steer - sign(side) * cfg.kRepulsion * influence * frontWeight
+                    steer = steer - sign(side) * effRepulsion * influence * frontWeight
                     slow = math.max(slow, influence * frontWeight)
                     risk = math.max(risk, clamp(influence * frontWeight, 0, 1))
-                    if s.x > 0 and distance < cfg.hardStopRange then
+                    if s.x > 0 and distance < effStop then
                         hardStop = true
                         lastAvoidTurn = -sign(side)
                     end
@@ -1490,6 +1517,8 @@ local function setTaskState(newState)
         -- New goal: restart the stall tracker, drop the replan cache and re-enable
         -- the detour planner.
         nav.recoverUntil = -1
+        nav.escapeUntil = -1
+        nav.recoverCount = 0
         nav.replanLastT = -1
         nav.stallAnchorX = nil
     end
@@ -1828,12 +1857,49 @@ local function navigateTo(target, tolerance)
     local moved = math.sqrt((rpos[1] - nav.stallAnchorX) ^ 2 + (rpos[2] - nav.stallAnchorY) ^ 2)
     if moved > cfg.navStallMoveEps then
         nav.stallAnchorX, nav.stallAnchorY, nav.stallAnchorT = rpos[1], rpos[2], nowT
-    elseif nowT >= nav.recoverUntil
+    elseif nowT >= nav.recoverUntil and nowT >= nav.escapeUntil
         and nowT - nav.stallAnchorT > cfg.navStallTimeout
         and targetDistance > tolerance then
-        nav.recoverUntil = nowT + cfg.navRecoverTime
-        nav.recoverDir = -nav.recoverDir
+        -- Count recoveries that fire in quick succession as one stuck episode. If the
+        -- robot frees itself and drives on, the next recovery (if any) is far apart in
+        -- time, so the streak resets and the gentle reverse-arc is used again.
+        if nowT - nav.lastRecoverT < cfg.navStallTimeout * 2.5 then
+            nav.recoverCount = nav.recoverCount + 1
+        else
+            nav.recoverCount = 1
+        end
+        nav.lastRecoverT = nowT
+        if nav.recoverCount >= cfg.navEscapeAttempts then
+            -- Truly wedged: turn ~180 deg and leave the area the other way.
+            nav.escapeUntil = nowT + cfg.navEscapeTime
+            nav.escapeHeading = normalizeAngle(estTheta + math.pi)
+            nav.recoverCount = 0
+            nav.recoverUntil = -1
+        else
+            nav.recoverUntil = nowT + cfg.navRecoverTime
+            nav.recoverDir = -nav.recoverDir
+        end
         nav.stallAnchorX, nav.stallAnchorY, nav.stallAnchorT = rpos[1], rpos[2], nowT
+    end
+
+    if nowT < nav.escapeUntil then
+        -- Turn-around escape: first spin in place toward the opposite heading, then
+        -- once aligned drive forward to clear the spot. The obstacle field still gates
+        -- the forward push, and the geofence bounds it, so it stays safe and in-bounds.
+        local hErr = normalizeAngle(nav.escapeHeading - estTheta)
+        if math.abs(hErr) > cfg.navEscapeAlignTol then
+            setWheelSpeeds(0, sign(hErr) * cfg.navRecoverTurn)
+            motionMode = 'TURN_AROUND'
+            return targetDistance, -1, 0
+        end
+        local eSteer, eSlow, eMin, eHard, eRisk = readObstacleField()
+        if eHard then
+            setWheelSpeeds(-cfg.recoverReverseSpeed, cfg.navRecoverTurn)
+        else
+            setWheelSpeeds(cfg.navEscapeSpeed, clamp(eSteer * 0.5, -cfg.wMax, cfg.wMax))
+        end
+        motionMode = 'ESCAPE_AWAY'
+        return targetDistance, eMin, eRisk
     end
 
     if nowT < nav.recoverUntil then
@@ -1924,7 +1990,7 @@ local function deliverToolToBill(tool, workSurface, completedCount, nextSpec, ne
     stopRobot('MANIPULATING')
     if delayElapsed(cfg.manipulationDelay) then
         carryingTool = 0
-        placeToolAt(tool, workSurface, 0.43)
+        placeToolAt(tool, workSurface, cfg.tableWorkZ)
         completedTaskCount = math.max(completedTaskCount, completedCount)
         currentTaskSpec = nextSpec
         setShapeColorSafe(tool, ToolColor.onTable)
@@ -1935,7 +2001,7 @@ end
 
 local function waitForBillWork(tool, workSurface, dropPoint, workDelay, nextTaskId, nextSpec, nextState)
     stopRobot('WAIT_B1')
-    placeToolAt(tool, workSurface, 0.43)
+    placeToolAt(tool, workSurface, cfg.tableWorkZ)
     if delayElapsed(workDelay) then
         currentTaskId = nextTaskId
         currentTaskSpec = nextSpec
@@ -2271,6 +2337,10 @@ local function loadSceneHandles()
     robot = safeGetObject('/PioneerP3DX')
     leftMotor = safeGetObject('/PioneerP3DX/leftMotor')
     rightMotor = safeGetObject('/PioneerP3DX/rightMotor')
+    if robot >= 0 then
+        local p0 = sim.getObjectPosition(robot, -1)
+        robotNomZ = p0[3]   -- chassis resting height; the z-geofence restores to this
+    end
     b1 = safeGetObject('/B1')
     wanderer = safeGetObject('/P2_Wanderer')
     if wanderer >= 0 then
@@ -2388,16 +2458,21 @@ function sysCall_actuation()
         return
     end
 
-    -- Geofence: a simulator physics glitch can, very rarely, fling the chassis through
-    -- a perimeter wall. If the true position ever lands outside the cell, snap it back
-    -- just inside, stop its motion and re-anchor the pose estimate, so the mission
-    -- continues instead of the robot being lost or pinned outside the wall. In normal
-    -- operation the robot stays well within the cell and this never triggers; the
-    -- normal controller then drives it back to its task from the fence line.
+    -- Geofence: the wandering robot (or a rare physics glitch) can shove the chassis
+    -- against a perimeter wall and, in the worst case, over it -- after which it tips
+    -- and falls into the void below the floor. Guard both failure modes: if the true
+    -- position lands outside the cell in X/Y, OR the chassis has dropped well below its
+    -- resting height (it is falling), snap it back just inside, restore the floor
+    -- height, stop its motion and re-anchor the pose estimate, so the mission continues
+    -- instead of the robot being lost. In normal operation neither triggers; the normal
+    -- controller then drives it back to its task from the fence line.
     local fp = sim.getObjectPosition(robot, -1)
-    if math.abs(fp[1]) > cfg.fenceBound or math.abs(fp[2]) > cfg.fenceBound then
+    local outOfBounds = math.abs(fp[1]) > cfg.fenceBound or math.abs(fp[2]) > cfg.fenceBound
+    local falling = robotNomZ ~= nil and fp[3] < robotNomZ - 0.20
+    if outOfBounds or falling then
         fp[1] = clamp(fp[1], -cfg.fenceBound, cfg.fenceBound)
         fp[2] = clamp(fp[2], -cfg.fenceBound, cfg.fenceBound)
+        if robotNomZ ~= nil then fp[3] = robotNomZ end
         pcall(sim.setObjectPosition, robot, -1, fp)
         pcall(sim.resetDynamicObject, robot)
         setWheelSpeeds(0, 0)

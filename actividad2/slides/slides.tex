@@ -48,7 +48,7 @@
   \fill[VIUOrange] (0.58,0.18) rectangle (0.88,0.24);
   \node[anchor=west,font=\fontsize{4.7}{5.3}\selectfont,text=Muted] at (0.62,0.22) {Actividad 2 · Sistemas Robóticos Móviles · CoppeliaSim y Lua};
   \fill[VIUOrangeSoft,rounded corners=1.8pt] (14.82,0.10) rectangle (15.43,0.38);
-  \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Ink] at (15.125,0.24) {\theslide/41};
+  \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Ink] at (15.125,0.24) {\theslide/44};
 }
 
 \newcommand{\SectionRail}{%
@@ -350,7 +350,7 @@
   \node[anchor=west,font=\fontsize{8.2}{9.2}\selectfont\bfseries,text=Deep] at (10.10,6.36) {Operación en escena};
   \foreach \y/\txt/\col in {
     5.58/{La misión completa se ejecuta en una celda de almacén.}/Teal,
-    4.74/{Bill permanece orientado hacia la mesa durante el trabajo.}/Green,
+    4.74/{Al entregar, la pieza queda \emph{sobre} la mesa (z\(\approx\)0,73 m) y Bill mueve las manos sobre ella; al devolverla, desaparece de la mesa.}/Green,
     3.90/{La evitación local y el mapa SLAM se actualizan durante la misma ejecución.}/Orange,
     3.06/{El cierre se mide con estado, batería, riesgo, pose y mapa exportados.}/Violet} {
     \fill[\col] (10.20,\y+0.05) circle (0.055);
@@ -784,7 +784,7 @@
 
 \DeckSlide{Sensores: LiDAR y Pioneer}{de distancia a mapa local}{
   \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.5cm,align=left] at (0.82,7.06)
-    {La escena no añade un LiDAR físico 2D. Usa los 16 sensores de proximidad del Pioneer como rayos discretos: cada lectura entrega ángulo, distancia e impacto.};
+    {La escena no añade un LiDAR físico 2D. Usa los 16 sensores de proximidad (sonar) del Pioneer como rayos discretos: cada lectura entrega ángulo, distancia e impacto. En pantalla el haz se dibuja \textbf{azul} si no detecta nada y \textbf{rojo} si toca un obstáculo.};
 
   \begin{scope}[shift={(0.92,1.10)}]
     \fill[Paper,rounded corners=6pt] (0,0) rectangle (7.25,5.75);
@@ -792,16 +792,21 @@
     \foreach \x in {0.55,1.10,...,6.80} \draw[Rule,line width=0.15pt] (\x,0.38) -- (\x,5.35);
     \foreach \y in {0.55,1.10,...,5.25} \draw[Rule,line width=0.15pt] (0.38,\y) -- (6.90,\y);
     \Robot{2.05}{1.35}{Teal}
-    \foreach \a/\len in {-45/1.95,-30/2.45,-15/3.00,0/3.55,15/3.15,30/2.70,45/2.10,60/1.65} {
-      \draw[Teal!45,line width=0.36pt] (2.05,1.35) -- ++(\a:\len);
-      \fill[Teal!70] ($(2.05,1.35)+(\a:\len)$) circle (0.035);
+    % free sonar beams (blue): no echo -> drawn at fixed reach to show heading
+    \foreach \a/\len in {-48/2.05,-26/2.70,-6/3.40,68/1.70,86/1.40} {
+      \draw[Blue!58,line width=0.42pt] (2.05,1.35) -- ++(\a:\len);
+      \fill[Blue!72] ($(2.05,1.35)+(\a:\len)$) circle (0.036);
     }
-    \HazardBox{5.20}{2.70}{0.72}{0.66}{Red}
-    \HazardBox{4.15}{0.92}{0.62}{0.52}{Orange}
-    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Teal] at (2.70,3.32) {rayos de proximidad};
-    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Red] at (5.78,3.60) {impacto};
-    \draw[Orange,line width=0.85pt,-{Latex[length=1.8mm]}] (2.05,1.35) -- (3.88,4.55);
-    \node[font=\fontsize{4.6}{5.2}\selectfont\bfseries,text=Orange] at (3.28,4.62) {ángulo fijo \(\beta_i\)};
+    % sonar beams with an echo (red): stop short at the obstacle hit point
+    \foreach \a/\len in {20/1.50,35/1.40,50/1.30} {
+      \draw[Red!75,line width=0.58pt] (2.05,1.35) -- ++(\a:\len);
+      \fill[Red] ($(2.05,1.35)+(\a:\len)$) circle (0.046);
+    }
+    \HazardBox{2.78}{1.74}{0.92}{0.82}{Red}
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Blue] at (1.45,4.30) {azul: haz libre};
+    \node[font=\fontsize{4.7}{5.3}\selectfont\bfseries,text=Red] at (4.30,2.92) {rojo: impacto};
+    \draw[Orange,line width=0.80pt,-{Latex[length=1.7mm]}] (2.05,1.35) -- (1.30,2.95);
+    \node[font=\fontsize{4.6}{5.2}\selectfont\bfseries,text=Orange] at (0.95,3.18) {ángulo fijo \(\beta_i\)};
   \end{scope}
 
   \node[anchor=west,font=\fontsize{7.0}{7.8}\selectfont\bfseries,text=Deep] at (8.65,6.18) {Cómo se usa};
@@ -1041,11 +1046,11 @@
   \fill[Panel,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
   \draw[Rule,line width=0.38pt,rounded corners=6pt] (0.62,0.92) rectangle (14.72,7.02);
   \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.2cm,align=left] at (0.92,6.62)
-    {Fase 2 arranca con parte de la celda desconocida y obliga a descubrir obstáculos con rayos de proximidad mientras el robot mantiene la misión T1/T2.};
+    {Fase 2 arranca con parte de la celda desconocida y obliga a descubrir obstáculos con rayos de proximidad mientras el robot mantiene la misión T1/T2. La zona sin mapear se dibuja como una \textbf{niebla oscura} (rejilla de 100 baldosas) que R1 va despejando a su paso conforme la explora.};
   \fill[Violet!8,rounded corners=4pt] (0.92,3.40) rectangle ++(6.08,2.62);
   \draw[Violet!70,line width=0.36pt,rounded corners=4pt] (0.92,3.40) rectangle ++(6.08,2.62);
   \node at (3.96,4.74) {\includegraphics[width=5.58cm,height=1.95cm,keepaspectratio]{../figures/phase1/coppeliasim_phase2_initial_unknown_oriented.png}};
-  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (1.16,3.65) {inicio con zona no observada};
+  \node[anchor=west,font=\fontsize{4.9}{5.5}\selectfont\bfseries,text=Violet] at (1.16,3.65) {niebla de exploración: celda por descubrir};
   \fill[Orange!8,rounded corners=4pt] (7.62,3.40) rectangle ++(6.08,2.62);
   \draw[Orange!70,line width=0.36pt,rounded corners=4pt] (7.62,3.40) rectangle ++(6.08,2.62);
   \node at (10.66,4.74) {\includegraphics[width=5.58cm,height=1.95cm,keepaspectratio]{../figures/phase1/coppeliasim_phase2_replan_dynamic_oriented.png}};
@@ -1093,10 +1098,10 @@
     0.90/{Persistencia}/{la celda se marca como bloqueante solo tras detecciones repetidas en el log-odds}/Teal,
     4.45/{Distancia local}/{se ignoran celdas dentro del radio de R1 o pegadas al objetivo para no cerrar el punto final}/Green,
     8.00/{Área útil}/{el coste del waypoint penaliza puntos fuera del pasillo operativo del almacén}/Orange,
-    11.55/{Recuperación}/{si una maniobra se estanca, un arco de retroceso (\texttt{RECOVER\_BACK}) saca el chasis y lo reorienta; una geo-valla evita que escape de la celda}/Violet} {
-    \ClaimBox{\x}{4.45}{2.92}{1.48}{\col}
-    \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=\col] at (\x+0.22,5.55) {\tit};
-    \node[anchor=west,font=\fontsize{5.2}{6.0}\selectfont,text=Ink,text width=2.36cm,align=left] at (\x+0.22,5.05) {\body};
+    11.55/{Recuperación}/{si se estanca, retrocede en arco (\texttt{RECOVER\_BACK}); tras varios intentos gira 180\(^\circ\) (\texttt{TURN\_AROUND}) para salir por otro lado; geo-valla X/Y/Z evita escape y caída}/Violet} {
+    \ClaimBox{\x}{4.16}{2.92}{1.80}{\col}
+    \node[anchor=west,font=\fontsize{6.2}{7.0}\selectfont\bfseries,text=\col] at (\x+0.22,5.62) {\tit};
+    \node[anchor=north west,font=\fontsize{5.1}{5.9}\selectfont,text=Ink,text width=2.48cm,align=left] at (\x+0.22,5.30) {\body};
   }
   \foreach \x/\lab/\col in {1.55/{mapa crudo}/Red,4.30/filtros/Orange,7.05/waypoint/Violet,9.80/{control reactivo}/Teal,12.25/objetivo/Green} {
     \fill[\col!10,rounded corners=3pt] (\x,2.96) rectangle ++(1.70,0.58);
@@ -1312,31 +1317,32 @@
 }
 
 \DeckSlide{Incidencias corregidas y robustez}{depuración y salvaguardas de navegación}{
-  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.4cm,align=left] at (0.92,6.66)
-    {Tres incidencias detectadas en validación y las salvaguardas añadidas para que la misión repita el ciclo sin bloquearse.};
+  \node[anchor=west,font=\fontsize{6.2}{7.1}\selectfont,text=Muted,text width=13.4cm,align=left] at (0.92,6.70)
+    {Cuatro incidencias detectadas en validación y las salvaguardas añadidas para que la misión repita el ciclo sin bloquearse, sin chocar de forma destructiva ni salir de la celda.};
   \foreach \x/\tit/\body/\col in {%
-    0.92/{Sincronización T2}/{R1 podía iniciar T2 antes de que Bill llegara a WS2; se bloquea la solicitud hasta que B1 está en su estación}/Red,
-    5.52/{Ciclos del planificador}/{celdas de grid persistentes junto al objetivo hacían oscilar el desvío; se exige persistencia, se ignoran celdas pegadas y se vuelve a ruta directa}/Orange,
-    10.12/{Oscilación Hector}/{con poca textura el scan-matching daba puntajes casi planos; ventana pequeña, umbral mínimo y ganancia parcial lo estabilizan}/Violet} {
-    \ClaimBox{\x}{4.40}{4.25}{1.95}{\col}
-    \node[anchor=west,font=\fontsize{6.6}{7.4}\selectfont\bfseries,text=\col] at (\x+0.22,6.10) {\tit};
-    \node[anchor=west,font=\fontsize{5.2}{6.0}\selectfont,text=Ink,text width=3.78cm,align=left] at (\x+0.22,5.40) {\body};
+    0.92/{Sincronización T2}/{R1 podía iniciar T2 antes de que Bill llegara a WS2; se bloquea hasta que B1 está en su estación}/Red,
+    4.30/{Ciclos del planificador}/{celdas de grid persistentes hacían oscilar el desvío; se exige persistencia y se ignoran celdas pegadas}/Orange,
+    7.68/{Robot móvil empuja a R1}/{el robot errante sacaba a R1 de la celda; ahora R1 lo evita con margen, el robot cede el paso y la geo-valla en Z evita la caída}/Red,
+    11.06/{Oscilación Hector}/{con poca textura el scan-matching daba puntajes planos; ventana pequeña, umbral y ganancia parcial}/Violet} {
+    \ClaimBox{\x}{4.34}{3.16}{2.02}{\col}
+    \node[anchor=west,font=\fontsize{5.9}{6.6}\selectfont\bfseries,text=\col,text width=2.84cm,align=left] at (\x+0.20,6.06) {\tit};
+    \node[anchor=west,font=\fontsize{4.9}{5.7}\selectfont,text=Ink,text width=2.74cm,align=left] at (\x+0.20,5.32) {\body};
   }
   \node[anchor=west,font=\fontsize{5.6}{6.3}\selectfont\bfseries,text=Deep] at (0.92,3.78) {Salvaguardas de navegación añadidas (Fase 2 multi-ciclo)};
   \foreach \x/\lab/\col in {%
-    0.92/{Arco de retroceso}/Teal,
-    3.74/{Geo-valla anti-escape}/Green,
-    6.56/{Cotas por update del EKF}/Violet,
-    9.38/{Throttle de replanificación}/Orange,
-    12.20/{Ralentí al rack}/Blue} {
+    0.92/{Giro 180\(^\circ\) de escape}/Violet,
+    3.74/{Geo-valla X/Y/Z}/Green,
+    6.56/{El robot cede el paso}/Teal,
+    9.38/{Cotas por update del EKF}/Orange,
+    12.20/{Throttle de replan}/Blue} {
     \fill[\col!10,rounded corners=3pt] (\x,2.86) rectangle ++(2.66,0.66);
     \draw[\col!65,line width=0.34pt,rounded corners=3pt] (\x,2.86) rectangle ++(2.66,0.66);
     \node[anchor=west,font=\fontsize{5.2}{5.9}\selectfont\bfseries,text=\col,text width=2.44cm,align=center] at (\x+0.11,3.19) {\lab};
   }
-  \Metric{0.92}{1.30}{3}{incidencias corregidas}{Green}
+  \Metric{0.92}{1.30}{4}{incidencias corregidas}{Green}
   \Metric{4.40}{1.30}{0}{recuperaciones en 3 ejecuciones}{Teal}
   \Metric{7.88}{1.30}{3}{vueltas completas sin bloqueo}{Violet}
-  \Metric{11.36}{1.30}{en muros}{el chasis nunca escapa de la celda}{Orange}
+  \Metric{11.36}{1.30}{ni cae}{geo-valla X/Y/Z mantiene a R1 dentro}{Orange}
 }
 
 \DeckSlide{Conclusiones}{resultado técnico}{

@@ -42,6 +42,18 @@ muestra los 9 estados de tarea principales, omitiendo los estados intermedios de
 navegación (\texttt{PICK\_RETURN\_T1\_WS1}, \texttt{WAIT\_B1\_WS2\_REQUEST\_T2},
 \texttt{TO\_WS1\_DELIVER\_T1}, etc.).
 
+La entrega es visualmente explícita. Cuando R1 deja la herramienta en la estación,
+la pieza se coloca \emph{sobre} la superficie de la mesa de trabajo
+(\(z\approx0{,}725\) m, justo encima del tablero de \(0{,}705\) m) y en la mitad
+frontal del escritorio, al alcance de Bill, que permanece de pie frente a la mesa
+hasta que R1 completa el ciclo de esa herramienta. Mientras dura el trabajo, Bill
+recibe la acción \texttt{WORKING\_*\_ON\_*\_TABLE} y mueve los brazos hacia
+adelante sobre la mesa, de modo que se lee como manipulación de la pieza. Al
+devolverla, la pieza baja al punto de entrega y vuelve con R1, desapareciendo de
+la mesa. Una versión previa colocaba la pieza demasiado baja (\(z=0{,}43\) m), con
+lo que quedaba enterrada dentro del tablero y no se veía; el ajuste de altura, medido
+contra la caja envolvente real de la mesa, corrige esa incidencia de fidelidad.
+
 \section{Desempeño del estimador Kalman-landmark}
 
 En la exportación específica del estimador, la escena usa el modo PID como base y

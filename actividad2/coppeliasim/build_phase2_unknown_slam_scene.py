@@ -320,12 +320,43 @@ def add_wander_robot(sim) -> int:
     return body
 
 
+def add_fog_of_war(sim, root: int) -> int:
+    """Fog-of-war overlay: a grid of dark, opaque floor tiles covering the whole cell.
+    Every tile starts visible, so the map reads as unknown/black; the Phase2 manager
+    then hides the tiles the Pioneer drives near, so the operator literally watches the
+    robot reveal what it has discovered as it explores and maps. Purely visual -- the
+    tiles are thin, non-respondable and non-detectable, and sit just above the costmap
+    so they conceal it until that patch has been explored."""
+    group = phase1.create_dummy(sim, "P2_Fog", (0.0, 0.0, 0.02), root, size=0.04)
+    half = 3.30
+    cell = 0.66
+    n = int(round(2 * half / cell))   # 10 x 10 = 100 tiles
+    index = 1
+    for ix in range(n):
+        x = -half + cell * (ix + 0.5)
+        for iy in range(n):
+            y = -half + cell * (iy + 0.5)
+            phase1.create_box(
+                sim,
+                f"P2_Fog_{index:03d}",
+                (cell * 0.98, cell * 0.98, 0.008),
+                (x, y, 0.050),
+                (0.06, 0.07, 0.10),
+                group,
+                respondable=False,
+                detectable=False,
+            )
+            index += 1
+    return group
+
+
 def add_phase2_unknown_layer(sim) -> int:
     root = create_phase2_root(sim)
 
     add_unknown_zone(sim, "P2_Unknown_Zone_North", (-0.80, 2.45), (3.20, 1.80), root)
     add_unknown_zone(sim, "P2_Unknown_Zone_Center", (0.10, -0.20), (3.60, 2.10), root)
     add_costmap_cells(sim, root)
+    add_fog_of_war(sim, root)
     add_frontier_targets(sim, root)
     add_unknown_obstacles(sim, root)
     add_landmark_beacons(sim, root)
@@ -474,6 +505,8 @@ def validate_phase2_scene(sim, sim_loop) -> dict:
         ),
         "costmap_grid_present": phase1.safe_get(sim, "/P2_Costmap_Cell_01") >= 0
         and phase1.safe_get(sim, "/P2_Costmap_Cell_25") >= 0,
+        "fog_overlay_present": phase1.safe_get(sim, "/P2_Fog_001") >= 0
+        and phase1.safe_get(sim, "/P2_Fog_100") >= 0,
         "unknown_obstacles_present": phase1.safe_get(sim, "/P2_Unknown_Crate_A") >= 0
         and phase1.safe_get(sim, "/P2_Unknown_Crate_B") >= 0
         and phase1.safe_get(sim, "/P2_Unknown_Drum_C") >= 0,

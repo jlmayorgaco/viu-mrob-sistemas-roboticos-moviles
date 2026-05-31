@@ -92,10 +92,16 @@ sensores del lado derecho ocurre lo contrario.
 
 \section{Visualización de sensores}
 
-Los 16 sensores ultrasónicos del Pioneer se dibujan como rayos. Sin impacto, el
-rayo llega al rango nominal; con obstáculo, termina en el punto detectado. Esta
-visualización relaciona detección, giro reactivo y
-separación frente a pallet, pilar o caja.
+Los 16 sensores ultrasónicos del Pioneer se dibujan como rayos, con una
+convención de color que refleja su estado en cada paso. Sin impacto, el rayo se
+dibuja en \textbf{azul} y llega a un rango nominal fijo (\(0{,}84\) m): solo
+indica hacia dónde apunta ese sensor, por lo que se ve estático. Con obstáculo, el
+rayo se dibuja en \textbf{rojo} y termina en el punto de impacto, acortándose
+según la distancia al obstáculo (pared, rack, Bill o el robot móvil de la Fase~2).
+Así, de un vistazo, azul indica haz libre y rojo eco activo; esta visualización
+relaciona detección, giro reactivo y separación frente a pallet, pilar o caja. El
+Pioneer no monta un LiDAR físico en la escena: estos 16 ultrasonidos son su única
+percepción de distancia.
 
 \section{Punto intermedio de planificación SLAM}
 
