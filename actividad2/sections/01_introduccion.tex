@@ -11,23 +11,6 @@ El ciclo básico coordina los tiempos con Bill, evita obstáculos locales,
 distingue una estantería de un bloqueo y devuelve cada herramienta antes de
 volver a carga.
 
-Las cuatro variantes de estimación y mapeo (
-  \texttt{KALMAN\_LANDMARK},
-  \texttt{GMAPPING\_GRID}, 
-  \texttt{HECTOR\_GRID\_MATCHING} y
-  \texttt{CARTOGRAPHER\_SUBMAP}) son desarrollos propios en Lua: el \emph{núcleo} de
-cada método es genuino y se calcula en vivo a partir de los sensores, pero sin el
-componente de optimización pesado del original. La variante de GMapping mantiene una
-grid de ocupación \emph{log-odds} (sin el filtro de partículas Rao-Blackwell); la de
-Hector resuelve el ajuste \textit{scan-to-map} con un paso de Gauss-Newton
-real sobre la grid interpolada bilinealmente (a una sola resolución, sin la pirámide
-multi-resolución del original); la Kalman-landmark corrige la pose con un
-EKF de rango/rumbo y compuerta de Mahalanobis; y la de Cartographer mantiene
-submapas locales y detecta cierres de ciclo con una corrección de
-pose local (sin el grafo de poses global ni el optimizador Ceres).
-La comparación evalúa cuatro representaciones de mapa bajo las mismas
-condiciones de misión.
-
 \begin{center}
 \texttt{actividad2/coppeliasim/Sim\_T2\_Phase1\_Basic.ttt}
 \end{center}

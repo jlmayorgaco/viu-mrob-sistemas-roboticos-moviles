@@ -1,51 +1,5 @@
 \chapter{Anexos}
 
-\section{Archivos principales}
-
-\begin{table}[H]
-\small
-\setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\textwidth}{@{}P{0.43\textwidth}Y@{}}
-\toprule
-\textbf{Archivo} & \textbf{Función}\\
-\midrule
-\path{coppeliasim/Sim_T2_Phase1_Basic.ttt} & Escena final validada.\\
-\path{coppeliasim/Sim_T2_Phase1_Basic_validation.json} & Resultado de validación automática.\\
-\path{coppeliasim/build_phase1_basic_scene.py} & Generador de escena y validador.\\
-\path{coppeliasim/phase1_r1_task_controller.lua} & Controlador principal de R1: tareas, navegación, SLAM, batería y telemetría.\\
-\path{coppeliasim/phase1_b1_walking_manager.lua} & Movimiento y acciones visuales de B1 (Bill).\\
-\path{coppeliasim/capture_coppeliasim_screenshots.lua} & Capturas 3D renderizadas desde CoppeliaSim para el informe.\\
-\path{coppeliasim/Sim_T2_Phase2_SLAM_Unknown.ttt} & Escena con mapa desconocido, obstáculos no modelados y un robot móvil autónomo (\texttt{P2\_Wanderer}) con rutas aleatorias.\\
-\path{coppeliasim/build_phase2_unknown_slam_scene.py} & Generador y validador de Fase 2.\\
-\path{coppeliasim/Actividad2_1_Basic_Follower.ttt} & Escena básica de seguimiento de Bill.\\
-\path{coppeliasim/pioneer_pid_follower_controller.lua} & Controlador del seguidor con P, PI, PID, LQR y NMPC por disparo directo.\\
-\bottomrule
-\end{tabularx}
-\caption{Escenas y controladores principales.}
-\end{table}
-
-\begin{table}[H]
-\small
-\setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\textwidth}{@{}P{0.43\textwidth}Y@{}}
-\toprule
-\textbf{Archivo} & \textbf{Función}\\
-\midrule
-\path{coppeliasim/run_phase1_slam_export.py} & Exportación CSV de la ejecución base.\\
-\path{coppeliasim/run_phase1_slam_comparison.py} & Comparación de algoritmos SLAM implementados en Lua.\\
-\path{coppeliasim/plot_phase1_slam_comparison.py} & Generación de gráficas de comparación SLAM.\\
-\path{coppeliasim/phase1_slam_logs/} & CSV, JSON, Markdown y figuras de la comparación SLAM.\\
-\path{coppeliasim/run_phase2_slam_unknown_comparison.py} & Exportación comparativa Fase 2 para los cuatro modos SLAM.\\
-\path{coppeliasim/plot_phase2_slam_unknown_comparison.py} & Figuras y métricas de reconstrucción Fase 2.\\
-\path{coppeliasim/phase2_slam_logs/} & CSV, JSON, Markdown y figuras de Fase 2.\\
-\path{coppeliasim/phase1_controller_logs/} & Registros CSV y gráficas de comparación de controladores.\\
-\path{coppeliasim/follower_pid_logs/} & CSV y gráficas de seguimiento de Bill.\\
-\bottomrule
-\end{tabularx}
-\caption{Exportadores, registros y escena complementaria.}
-\end{table}
-
-\clearpage
 \section{Parámetros relevantes}
 
 \begin{table}[H]
